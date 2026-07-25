@@ -1,0 +1,10 @@
+packages:
+  - packages/**
+  - playground
+  - starter
+
+allowBuilds:
+  esbuild: true
+
+minimumReleaseAgeExclude:
+  - "@syora/vue@1.0.0"

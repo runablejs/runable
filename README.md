@@ -34,8 +34,6 @@ You keep your architecture.
 
 You keep your developer experience.
 
----
-
 ## Features
 
 - [x] File-system based routing
@@ -51,8 +49,6 @@ You keep your developer experience.
 - [x] Runtime Presets
 - [x] No dependency on a specific backend
 - [x] 💚 Powered by Vue
-
----
 
 ## Compatible With Your Favorite Backend
 
@@ -72,13 +68,9 @@ It integrates with it.
 - Node.js HTTP
 - ...and any technology capable of handling HTTP requests.
 
----
-
 ## Documentation
 
 The documentation is currently a work in progress.
-
----
 
 ## License
 
