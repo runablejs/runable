@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.app.json",
+
+  "include": ["./src/**/*"],
+
+  "exclude": [
+    "playground/**/*",
+    "syora.config.ts",
+    "dist",
+    ".output",
+    "node_modules",
+    ".app",
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts"
+  ]
+}
