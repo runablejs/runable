@@ -6,7 +6,6 @@
     "src/**/*.vue",
     "playground/**/*",
     "playground/**/*.vue",
-
     ".app/**/*.d.ts"
   ],
   "exclude": ["src/**/__tests__/*"],

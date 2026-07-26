@@ -6,7 +6,7 @@ import { registerPlugins } from "./plugin/index.js";
 
 import App from "./app-vue/app.vue";
 import { appContextPlugin } from "./vue/plugin.js";
-import { createAsyncData } from "./async-data/plugin.ts";
+import { createAsyncData } from "./async-data/plugin.js";
 
 import { createHead as createHeadClient } from "@unhead/vue/client";
 import { createHead as createHeadServer } from "@unhead/vue/server";

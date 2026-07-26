@@ -1,13 +1,10 @@
 {
-  "name": "syora-vue",
+  "name": "syora-framework",
   "private": true,
   "type": "module",
-  "scripts": {
-    "dev": "pnpm --filter @syora/vue dev",
-    "build": "pnpm --filter @syora/vue build",
-    "typecheck": "pnpm --filter @syora/vue typecheck"
-  },
+  "scripts": {},
   "devDependencies": {
+    "@tsconfig/node24": "^24.0.4",
     "@eslint/js": "^10.0.1",
     "@eslint/json": "^2.0.1",
     "@eslint/markdown": "^8.0.3",

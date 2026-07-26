@@ -5,14 +5,14 @@ import { join, resolve } from "node:path";
 import { atomicWriteFile, normalizeDir } from "../utils";
 import merge from "lodash/merge.js";
 
-async function build() {
+export async function build() {
   await loadConfig();
 
   const config = useConfig();
   const outDir = config.distDir;
 
-  const entryClient = resolve(import.meta.dirname, "../entry-client.ts");
-  const entryServer = resolve(import.meta.dirname, "../entry-server.ts");
+  const entryClient = resolve(import.meta.dirname, "../entry-client.js");
+  const entryServer = resolve(import.meta.dirname, "../entry-server.js");
 
   const clientConfig = merge(buildViteConfig(config), {
     build: {
@@ -91,5 +91,3 @@ async function build() {
     console.log("✅ Server built");
   }
 }
-
-build();

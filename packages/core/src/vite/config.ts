@@ -5,7 +5,6 @@ import vue from "@vitejs/plugin-vue";
 import vueDevTools from "vite-plugin-vue-devtools";
 import AutoImport from "unplugin-auto-import/vite";
 
-import router from "../router/unplugin.js";
 import plugin from "../plugin/unplugin.js";
 import appVue from "../app-vue/unplugin.js";
 import layout from "../layout/unplugin.js";
@@ -14,12 +13,13 @@ import pconfig from "../config/unplugin.js";
 import css from "../css/unplugin.js";
 import importMeta from "../import-meta/unplugin.js";
 import runtime from "../runtime/unplugin.js";
+import router from "../router/unplugin.js";
 
 import {
   schemaOrgAutoImports,
   SchemaOrgResolver,
 } from "@unhead/schema-org/vue";
-import { unheadVueComposablesImports, type ResolvableHead } from "@unhead/vue";
+import { unheadVueComposablesImports } from "@unhead/vue";
 import type { Config } from "../config";
 
 declare module "vite" {
@@ -64,7 +64,7 @@ export function buildViteConfig(config: Required<Config>) {
           join(import.meta.dirname, "../runtime/composable"),
           join(import.meta.dirname, "../plugin/globals"),
           {
-            glob: join(import.meta.dirname, "../router/types.ts"),
+            glob: join(import.meta.dirname, "../router/types.js"),
             types: true,
           },
         ],
@@ -99,12 +99,12 @@ export function buildViteConfig(config: Required<Config>) {
         },
       }),
 
-      router.vite({ routeDirs: [...config.pagesDirs], output: config.output }),
-
       layout.vite({
         layoutsDirs: [...config.layoutsDirs],
         output: config.output,
       }),
+
+      router.vite({ routeDirs: [...config.pagesDirs], output: config.output }),
 
       plugin.vite({
         pluginsDirs: [...config.pluginsDirs],

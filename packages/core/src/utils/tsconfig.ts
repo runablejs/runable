@@ -1,5 +1,5 @@
 import { join, relative, resolve } from "node:path";
-import { getPackageJson } from "./pkg";
+import { getPackageJson, resolvePackageDir } from "./pkg";
 import { normalizeDir } from "./dir";
 import { useConfig } from "../config";
 import uniq from "lodash/uniq.js";
@@ -8,7 +8,7 @@ import { atomicWriteFile } from "./atomic-write-file";
 
 export function generateTsconfigs() {
   let dependencies: string[] = [];
-  const { output, alias } = useConfig();
+  const { output, appDir, alias } = useConfig();
 
   const _dirs = [import.meta.dirname, process.cwd()];
 
@@ -33,28 +33,46 @@ export function generateTsconfigs() {
     return normalizeDir(relative(output, dep));
   });
 
+  console.log();
+
   const tsconfig = {
-    extends: "@vue/tsconfig/tsconfig.dom.json",
-    include: [...dependencies, "./**/.d.ts"],
-    type: ["vite/client"],
+    extends: relative(
+      output,
+      resolve(
+        resolvePackageDir("@vue/tsconfig", import.meta.dirname),
+        "tsconfig.dom.json",
+      ),
+    ),
+
     compilerOptions: {
-      // Extra safety for array and object lookups, but may have false positives.
+      esModuleInterop: true,
+      skipLibCheck: true,
+      target: "ESNext",
+      allowJs: true,
+      resolveJsonModule: true,
+      moduleDetection: "force",
+      isolatedModules: true,
+      verbatimModuleSyntax: true,
+      allowArbitraryExtensions: true,
+      strict: true,
       noUncheckedIndexedAccess: true,
-
-      /* Output */
+      forceConsistentCasingInFileNames: true,
+      noImplicitOverride: true,
+      module: "preserve",
       noEmit: true,
-      declaration: true,
-      declarationMap: true,
-      pretty: true,
-
-      /* Project references and cache */
-      composite: true,
-      incremental: true,
+      lib: ["ESNext", "dom", "dom.iterable", "webworker"],
+      jsx: "preserve",
+      jsxImportSource: "vue",
+      types: [],
+      moduleResolution: "Bundler",
+      useDefineForClassFields: true,
+      noImplicitThis: true,
+      allowSyntheticDefaultImports: true,
 
       // Path mapping for cleaner imports.
       paths: assign(
         {},
-        ...Object.keys(alias).map((key) => {
+        ...Object.keys(alias ?? {}).map((key) => {
           return {
             [key]: [normalizeDir(relative(process.cwd(), alias[key]!))],
           };
@@ -68,6 +86,16 @@ export function generateTsconfigs() {
         resolve(process.cwd(), "node_modules/.tmp/tsconfig.app.tsbuildinfo"),
       ),
     },
+
+    vueCompilerOptions: {
+      plugins: ["vue-router/volar/sfc-route-blocks"],
+    },
+
+    include: [
+      ...dependencies,
+      "./**/.d.ts",
+      normalizeDir(relative(output, appDir)),
+    ],
   };
 
   atomicWriteFile(

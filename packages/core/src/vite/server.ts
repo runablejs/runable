@@ -1,17 +1,16 @@
-import { loadConfig, useConfig } from "../config";
+import { loadConfig } from "../config";
 import { type ViteDevServer } from "vite";
-import { buildViteConfig } from "./config";
 import { generateTsconfigs } from "@/utils";
 
-export async function createViteServer() {
+export async function createServer() {
   const isProduction = process.env.NODE_ENV === "production";
   let vite: ViteDevServer | null = null;
 
   await loadConfig();
 
   if (!isProduction) {
-    const { createServer } = await import("vite");
-    vite = await createServer(buildViteConfig(useConfig()));
+    const { prepare } = await import("./prepare.js");
+    vite = await prepare();
 
     generateTsconfigs();
   }

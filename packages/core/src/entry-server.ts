@@ -1,6 +1,6 @@
 import { renderToString } from "vue/server-renderer";
 import { createHead } from "@unhead/vue/server";
-import { createApp } from "./main.ts";
+import { createApp } from "./main.js";
 
 export async function render(url: string) {
   const { app, head, router } = createApp(true);

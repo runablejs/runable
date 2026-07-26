@@ -1,0 +1,64 @@
+{
+  "name": "@syora/cli",
+  "private": false,
+  "version": "0.0.0",
+  "license": "MIT",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "syora": "tsx src/index.ts",
+    "build": "tsdown"
+  },
+  "engines": {
+    "npm": ">=10.0.0",
+    "node": ">=20.0.0"
+  },
+  "bin": {
+    "syora": "./dist/index.js"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.5.1",
+    "@syora/core": "workspace:*",
+    "consola": "^3.4.2",
+    "dayjs": "^1.11.21",
+    "esbuild": "^0.28.0",
+    "giget": "^3.2.0",
+    "lodash": "^4.18.1",
+    "nypm": "^0.6.6",
+    "pkg-types": "^2.3.1",
+    "std-env": "^4.1.0",
+    "tinyclip": "^0.1.14",
+    "tinyexec": "^1.2.4",
+    "tsx": "^4.22.4",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@eslint/json": "^2.0.1",
+    "@eslint/markdown": "^8.0.3",
+    "@types/node": "^22.19.19",
+    "citty": "^0.2.2",
+    "eslint": "^10.7.0",
+    "globals": "^17.7.0",
+    "pkg": "^5.8.1",
+    "tsdown": "^0.22.14",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.65.0"
+  }
+}

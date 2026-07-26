@@ -1,0 +1,21 @@
+{
+  "name": "syora-playground",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "app:build": "syora build",
+    "app:prepare": "syora prepare"
+  },
+  "dependencies": {
+    "@syora/cli": "workspace:*",
+    "@syora/core": "workspace:*",
+    "vue": "^3.5.40",
+    "vue-router": "^5.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.1",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.63.0"
+  },
+  "packageManager": "pnpm@11.10.0"
+}

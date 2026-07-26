@@ -8,8 +8,6 @@ It offers the complete developer experience that makes Nuxt so successful—file
 
 Whether your backend relies on Fastify, NestJS, AdonisJS, Koa, Express, Hono, Nitro, Bun, Deno, or your own custom server, Syora integrates naturally into your architecture.
 
----
-
 ## Why Syora?
 
 Modern applications often require a backend framework tailored to their specific needs.
