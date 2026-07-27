@@ -177,7 +177,7 @@ function plugin(config?: GlobalConfig) {
   function resolveImport(common: ImportsCommon) {
     const splits = common.from.split("/");
     const packageName = splits.slice(0, 2).join("/");
-    const { dir, content } = getPackageJson(packageName, import.meta.baseUrl);
+    const { dir, content } = getPackageJson(packageName, import.meta.dirname);
 
     const entry = resolvePackageEntry(
       content,

@@ -56,7 +56,6 @@ export function generateTsconfigs() {
       forceConsistentCasingInFileNames: true,
       noImplicitOverride: true,
       module: "preserve",
-      noEmit: true,
       lib: ["ESNext", "dom", "dom.iterable", "webworker"],
       jsx: "preserve",
       jsxImportSource: "vue",
@@ -65,6 +64,8 @@ export function generateTsconfigs() {
       useDefineForClassFields: true,
       noImplicitThis: true,
       allowSyntheticDefaultImports: true,
+
+      noEmit: true,
       composite: true,
       declaration: true,
 
@@ -91,8 +92,8 @@ export function generateTsconfigs() {
     },
 
     include: [
-      "./**/.d.ts",
       normalizeDir(join(relative(output, appDir), "**/*")),
+      "./**/*.d.ts",
       ...dependencies,
     ],
   };
