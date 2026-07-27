@@ -1,7 +1,7 @@
 packages:
   - packages/**
   - playground
-  - starter
+  - starters
 
 allowBuilds:
   esbuild: true

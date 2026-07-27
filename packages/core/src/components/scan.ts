@@ -5,6 +5,19 @@ import type { ComponentInfo, ResolvedOptions } from "./types.js";
 import { extractDeclaredName } from "./extract-name.js";
 import { toPascalCase } from "./utils.js";
 
+function parseDirPattern(dir: string) {
+  const globIndex = dir.search(/[*?{}[\]]/);
+  if (globIndex === -1) {
+    return { baseDir: dir, customPattern: null };
+  }
+
+  const lastSlash = dir.lastIndexOf("/", globIndex);
+  const baseDir = lastSlash === -1 ? "." : dir.slice(0, lastSlash);
+  const customPattern = dir.slice(lastSlash + 1);
+
+  return { baseDir, customPattern };
+}
+
 /**
  * Walks the configured directories and builds the finalName -> ComponentInfo
  * lookup table, applying `options.componentName` to support renaming.
@@ -24,18 +37,24 @@ export function scanComponents(
     : [options.extensions];
   const map = new Map<string, ComponentInfo>();
 
-  for (const dir of dirs) {
-    const absDir = path.resolve(root, dir);
+  for (const rawDir of dirs) {
+    const { baseDir, customPattern } = parseDirPattern(rawDir);
+    const absDir = path.resolve(root, baseDir);
+
     if (!fs.existsSync(absDir)) continue;
 
+    const isFile = fs.statSync(absDir).isFile();
+
     const pattern =
-      extensions.length === 1
+      customPattern ??
+      (extensions.length === 1
         ? `**/*.${extensions[0]}`
-        : `**/*.{${extensions.join(",")}}`;
+        : `**/*.{${extensions.join(",")}}`);
 
     let files: string[];
-    if (fs.statSync(dir).isFile()) files = [dir];
-    else {
+    if (isFile) {
+      files = [absDir];
+    } else {
       files = fg.sync(pattern, {
         cwd: absDir,
         ignore: options.exclude,
@@ -44,9 +63,14 @@ export function scanComponents(
       });
     }
 
+    const baseForRelative = isFile ? path.dirname(absDir) : absDir;
+
     for (const file of files) {
-      const relative = path.relative(absDir, file);
-      const declaredName = extractDeclaredName(file);
+      const relative = path.relative(baseForRelative, file);
+      const declaredName = file.endsWith("vue")
+        ? undefined
+        : extractDeclaredName(file);
+
       const defaultName = declaredName ?? toPascalCase(relative);
 
       let finalName: string | false | undefined = defaultName;
