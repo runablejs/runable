@@ -16,6 +16,6 @@ const template = (entry: string) => `
 </html>
 `;
 
-export function getIndexHtml(entry: string, target = process.cwd()) {
-  return template(normalizeDir(relative(target, entry)));
+export function getIndexHtml(entry: string) {
+  return template(entry);
 }

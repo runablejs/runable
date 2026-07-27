@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { relative } from "node:path";
 import { createUnplugin } from "unplugin";
-import { normalizeDir, resolveDir } from "@/utils";
+import { normalizeDir, resolveDir } from "@/utils/dir.js";
 
 const VIRTUAL_ID = ":app-vue";
 const RESOLVED_VIRTUAL_ID = "\0:app-vue";

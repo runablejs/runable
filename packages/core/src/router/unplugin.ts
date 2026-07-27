@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { extname, relative, resolve } from "node:path";
+import { extname, join, relative, resolve } from "node:path";
 import { createUnplugin } from "unplugin";
 import { getChildren } from "../utils/get-children.js";
 import { normalizeDir, resolveDir } from "../utils/dir.js";
@@ -37,16 +37,9 @@ type RouterConfig = {
 };
 
 const template = `
-import { createMemoryHistory, createWebHistory, createRouter } from 'vue-router';
-
 {{imports}}
 
 {{routes}}
-
-export const router = createRouter({
-  history: import.meta.env.SSR ? createMemoryHistory(): createWebHistory(),
-  routes,
-});
 `;
 
 const dtsTemplate = `

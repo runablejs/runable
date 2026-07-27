@@ -2,7 +2,6 @@ import { join, resolve } from "node:path";
 import { getIndexHtml } from "./html.js";
 import type { ViteDevServer } from "vite";
 import { readdirSync, readFileSync } from "node:fs";
-import { transformHtmlTemplate } from "@unhead/vue/server";
 import { useConfig } from "../config/index.js";
 
 export async function serve({
@@ -13,41 +12,33 @@ export async function serve({
   url: string;
 }) {
   const config = useConfig();
-
+  let entryPath = resolve(import.meta.dirname, "../entry/entry.js");
   const clientEntry = resolve(import.meta.dirname, "../entry-client.js");
-  let serverEntry = resolve(import.meta.dirname, "../entry-server.js");
 
   let template = "";
 
   try {
-    let render: (typeof import("../entry-server.js"))["render"];
+    let entry: (typeof import("../entry/entry.js"))["entry"];
 
     if (vite) {
       template = getIndexHtml(clientEntry);
       template = await vite!.transformIndexHtml(url, template);
     } else {
       const entryFileName = readdirSync(config.distDir).find((dir) =>
-        dir.startsWith("entry-server"),
+        dir.startsWith("entry-"),
       );
-      join(config.distDir, entryFileName!);
-      serverEntry = join(config.distDir, entryFileName!);
-
+      entryPath = join(config.distDir, entryFileName!);
       template = readFileSync(join(config.distDir, "index.html"), "utf-8");
     }
 
     if (!config.ssr) return template.replace(`<!--app-html-->`, "");
 
-    if (vite) render = (await vite.ssrLoadModule(serverEntry)).render;
-    else render = (await import(serverEntry)).render;
+    if (vite) entry = (await vite.ssrLoadModule(entryPath)).entry;
+    else entry = (await import(entryPath)).entry;
 
-    const rendered = await render(url);
+    const render = await entry({ url, template });
 
-    const html = transformHtmlTemplate(
-      rendered.head as any,
-      template.replace(`<!--app-html-->`, rendered.html ?? ""),
-    );
-
-    return html;
+    return render as string;
   } catch (e) {
     vite?.ssrFixStacktrace(e as Error);
     throw e as Error;

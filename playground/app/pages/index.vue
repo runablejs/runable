@@ -3,6 +3,7 @@ console.log(useRuntime());
 </script>
 
 <template>
+  <RouterLink to="/hello/yes">to hello yes</RouterLink>
   <div style="max-width: 662px; margin: 100px auto">
     <h1>Pourquoi @syora/vue ?</h1>
 

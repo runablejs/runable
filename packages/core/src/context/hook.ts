@@ -1,12 +1,33 @@
 import type { App, ComponentPublicInstance } from "vue";
-import { useApp } from "./composable/useApp.js";
-import type {
-  AppHooks,
-  OnHooks,
-  HookCallback,
-  AppContext,
-  HookSystem,
-} from "./context.js";
+import { useApp } from "./composables.js";
+import type { HookCallback, AppContext } from "./context.js";
+
+export type StripOnPrefix<T extends string> = T extends `on${infer Rest}`
+  ? `app:${Uncapitalize<Rest>}`
+  : T;
+
+export type AppHooks = StripOnPrefix<OnHooks>;
+
+export interface HookSystem {
+  hook(name: AppHooks, fn: HookCallback): () => void;
+  callHook(name: AppHooks, app: AppContext): Promise<void>;
+}
+
+export type OnHooks =
+  | "onBeforeCreate"
+  | "onCreated"
+  | "onBeforeMount"
+  | "onMounted"
+  | "onBeforeUpdate"
+  | "onUpdated"
+  | "onBeforeUnmount"
+  | "onUnmounted"
+  | "onErrorCaptured"
+  | "onActivated"
+  | "onDeactivated"
+  | "onRenderTracked"
+  | "onRenderTriggered"
+  | "onServerPrefetch";
 
 const OPTIONS_HOOK_NAMES: readonly OnHooks[] = [
   "onBeforeCreate",
@@ -24,6 +45,11 @@ const OPTIONS_HOOK_NAMES: readonly OnHooks[] = [
   "onRenderTriggered",
   "onServerPrefetch",
 ];
+
+export interface HookSystem {
+  hook(name: AppHooks, fn: HookCallback): () => void;
+  callHook(name: AppHooks, app: AppContext): Promise<void>;
+}
 
 function toOptionName(onHook: OnHooks): string {
   return onHook[2].toLowerCase() + onHook.slice(3);

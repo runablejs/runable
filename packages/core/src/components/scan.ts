@@ -1,13 +1,18 @@
 import fg from "fast-glob";
 import fs from "node:fs";
 import path from "node:path";
-import type { ComponentInfo, ResolvedOptions } from "./types";
-import { toPascalCase } from "./utils";
+import type { ComponentInfo, ResolvedOptions } from "./types.js";
+import { extractDeclaredName } from "./extract-name.js";
+import { toPascalCase } from "./utils.js";
 
 /**
  * Walks the configured directories and builds the finalName -> ComponentInfo
  * lookup table, applying `options.componentName` to support renaming.
  * Every local component is registered as a default export (`name: 'default'`).
+ *
+ * For non-SFC files (.js/.ts), if the component declares its own `name`
+ * via `defineComponent({ name: '...' })` (or a default-exported object
+ * literal), that name is used instead of the filename-derived one.
  */
 export function scanComponents(
   root: string,
@@ -29,7 +34,7 @@ export function scanComponents(
         : `**/*.{${extensions.join(",")}}`;
 
     let files: string[];
-    if (fs.statSync(dir).isFile() && dir.endsWith(".vue")) files = [dir];
+    if (fs.statSync(dir).isFile()) files = [dir];
     else {
       files = fg.sync(pattern, {
         cwd: absDir,
@@ -41,7 +46,8 @@ export function scanComponents(
 
     for (const file of files) {
       const relative = path.relative(absDir, file);
-      const defaultName = toPascalCase(relative);
+      const declaredName = extractDeclaredName(file);
+      const defaultName = declaredName ?? toPascalCase(relative);
 
       let finalName: string | false | undefined = defaultName;
       if (options.componentName) {
@@ -72,7 +78,8 @@ export function scanComponents(
 
       if (options.verbose && !existing)
         console.log(
-          `[unplugin-vue-components-rename] ${finalName} -> ${path.relative(root, file)}`,
+          `[unplugin-vue-components-rename] ${finalName} -> ${path.relative(root, file)}` +
+            (declaredName ? ` (declared name)` : ""),
         );
     }
   }

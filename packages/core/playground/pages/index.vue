@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-console.log(useRuntime().public.apiUrl);
+definePageMeta({ layout: "admin" });
 </script>
 
 <template>

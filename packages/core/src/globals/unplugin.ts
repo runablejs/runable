@@ -1,5 +1,5 @@
 import { existsSync, statSync } from "node:fs";
-import { join, relative, resolve } from "node:path";
+import { join, parse, relative, resolve } from "node:path";
 import MagicString from "magic-string";
 import _ from "lodash";
 import { getChildren } from "../utils/get-children.js";
@@ -277,35 +277,48 @@ export default createUnplugin((config?: GlobalConfig) => {
      * @returns The generated code and source map, or `null` if not handled by this plugin
      */
     load(id) {
-      if (id === RESOLVED_VIRTUAL_ID) {
-        const s = new MagicString("");
-        const imports: string[] = [];
-        const assignments: string[] = [];
+      if (id !== RESOLVED_VIRTUAL_ID) return null;
 
-        exports.forEach((exp) => {
-          if (["type", "interface"].includes(exp.kind)) return;
+      const s = new MagicString("");
+      const imports: string[] = [];
+      const assignments: string[] = [];
 
-          const namespace = exp.name;
-          const rPath = normalizeDir(relative(process.cwd(), exp.file));
+      exports.forEach((exp) => {
+        if (["type", "interface", "unknown"].includes(exp.kind)) return;
 
-          imports.push(`import { ${namespace} } from "${rPath}";`);
+        const namespace = exp.name;
+        const rPath = normalizeDir(relative(process.cwd(), exp.file));
 
-          assignments.push(
-            `Object.assign(globalThis, { "${exp.name}": ${namespace} });`,
-          );
-        });
+        imports.push(`import { ${namespace} } from "${rPath}";`);
 
-        const injection = [...imports, "\n", ...assignments].join("\n");
+        // assignments.push(namespace);
+        assignments.push(
+          `Object.assign(globalThis, { "${namespace}": ${namespace} });`,
+        );
+      });
 
-        s.prepend(injection);
+      // const exportDefault = `export default {\n  ${assignments.join(",\n  ")}\n}`;
 
-        return {
-          code: s.toString(),
-          map: s.generateMap({ hires: true }),
-        };
-      }
-      return null;
+      const injection = [...imports, "\n", ...assignments].join("\n");
+
+      s.prepend(injection);
+
+      return {
+        code: s.toString(),
+        map: s.generateMap({ hires: true }),
+      };
     },
+
+    // transform(code, id) {
+    //   if (
+    //     id.includes("node_modules") ||
+    //     ![".vue", ".ts", ".js", ".mjs", ".mts"].includes(parse(id).ext)
+    //   ) {
+    //     return null;
+    //   }
+
+    //   return `import __global ":globals";\n\n` + code;
+    // },
 
     /**
      * Resolves all configured imports once per build, before any module is loaded.

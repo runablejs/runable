@@ -1,5 +1,6 @@
 import type {
-  AppContext as VueAppContext,
+  AppConfig as VueAppContext,
+  App as VueApp,
   ComponentCustomProperties,
 } from "vue";
 
@@ -34,7 +35,7 @@ declare module "vue" {
   interface AppContext extends HookSystem {}
 }
 
-export type AppContext = VueAppContext &
+export type AppContext = VueApp &
   ComponentCustomProperties &
   HookSystem &
   Record<string, unknown>;
@@ -48,6 +49,6 @@ export type RuntimeHooks = {
 
 export let globalAppContext: AppContext | null = null;
 
-export function setAppContext(ctx: AppContext): void {
-  globalAppContext = ctx;
+export function setAppContext(vuaApp: VueApp): void {
+  globalAppContext = vuaApp as AppContext;
 }

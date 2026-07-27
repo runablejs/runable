@@ -1,10 +1,6 @@
-import ":css";
+import { entry } from "./entry/entry";
+import type { App } from "vue";
 
-import { createApp } from "@/main.js";
+const app = (await entry(false)) as App;
 
-const { app, head, router } = createApp();
-
-app.use(head);
-
-await router.isReady();
 app.mount("#app");

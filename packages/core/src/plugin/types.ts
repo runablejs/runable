@@ -1,5 +1,5 @@
 import type { App } from "vue";
-import type { RuntimeHooks } from "../vue/context";
+import type { RuntimeHooks } from "../context/context";
 
 export interface VuePluginObject<
   Injections extends Record<string, unknown> = Record<string, unknown>,

@@ -4,19 +4,19 @@
   "type": "module",
   "scripts": {
     "app:build": "syora build",
-    "app:prepare": "syora prepare"
+    "app:prepare": "syora prepare",
+    "dev": "tsx server.ts"
   },
   "dependencies": {
     "@syora/cli": "workspace:*",
     "@syora/core": "workspace:*",
-    "vue": "^3.5.40",
-    "vue-router": "^5.2.0",
     "express": "^5.2.1",
-    "sirv": "^3.0.2"
+    "sirv": "^3.0.2",
+    "vue": "^3.5.40"
   },
   "devDependencies": {
-    "@types/node": "^22.20.1",
     "@types/express": "^5.0.6",
+    "@types/node": "^22.20.1",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.63.0"
   },

@@ -1,7 +1,7 @@
 import { build as viteBuilder } from "vite";
 import { loadConfig, useConfig } from "../config";
 import { buildViteConfig, getIndexHtml } from ".";
-import { join, resolve } from "node:path";
+import { join, relative, resolve } from "node:path";
 import { atomicWriteFile, normalizeDir } from "../utils";
 import merge from "lodash/merge.js";
 
@@ -12,7 +12,7 @@ export async function build() {
   const outDir = config.distDir;
 
   const entryClient = resolve(import.meta.dirname, "../entry-client.js");
-  const entryServer = resolve(import.meta.dirname, "../entry-server.js");
+  const entryServer = resolve(import.meta.dirname, "../entry/entry.js");
 
   const clientConfig = merge(buildViteConfig(config), {
     build: {
@@ -66,8 +66,7 @@ export async function build() {
     }
 
     let htmlContent = getIndexHtml(
-      join(outDir, generatedMainFile.fileName),
-      outDir,
+      normalizeDir(relative(outDir, join(outDir, generatedMainFile.fileName))),
     );
 
     for (const file of result.output) {

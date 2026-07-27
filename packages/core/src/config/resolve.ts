@@ -1,4 +1,4 @@
-import { isAbsolute, join, relative, resolve } from "node:path";
+import { resolve } from "node:path";
 import { resolveDir } from "@/utils";
 import type { Config } from ".";
 
@@ -23,9 +23,14 @@ export function resolveConfig(config: Config = {}) {
 
   config.layoutsDirs ??= [resolve(config.appDir, "layouts")];
 
-  config.componentsDirs ??= [resolve(config.appDir, "components")];
+  config.componentsDirs ??= [resolve(config.appDir, "components/**/*.vue")];
 
   config.ssr ??= true;
+
+  config.publicDir ??= resolve(process.cwd(), "public");
+  if (typeof config.publicDir === "string") {
+    config.publicDir = resolveDir(config.publicDir);
+  }
 
   return config as Required<Config>;
 }

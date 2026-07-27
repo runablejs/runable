@@ -40,6 +40,7 @@ export function buildViteConfig(config: Required<Config>) {
     root: process.cwd(),
 
     _config: config,
+    publicDir: config.publicDir,
 
     plugins: [
       vue(),
@@ -49,27 +50,28 @@ export function buildViteConfig(config: Required<Config>) {
         output: config.output,
         imports: [
           "vue",
-          "vue-router",
+          // "vue-router",
 
-          { file: join(import.meta.dirname, "../plugin/globals/define") },
+          { file: join(import.meta.dirname, "../plugin/define") },
+          { file: join(import.meta.dirname, "../layout/useLayouts") },
+
+          { file: join(import.meta.dirname, "../router/composables") },
+          { file: join(import.meta.dirname, "../router/types") },
+
           { directory: join(import.meta.dirname, "../config/composable") },
-          { directory: join(import.meta.dirname, "../vue/composable") },
+          { directory: join(import.meta.dirname, "../context/composables") },
           { directory: join(import.meta.dirname, "../fetch") },
           { directory: join(import.meta.dirname, "../async-data/composable") },
           { directory: join(import.meta.dirname, "../runtime/composable") },
-          { directory: join(import.meta.dirname, "../plugin/globals") },
-
-          // {
-          //   glob: join(import.meta.dirname, "../router/types.js"),
-          //   types: true,
-          // },
 
           unheadVueComposablesImports,
           ...schemaOrgAutoImports,
           ...config.globalsDir.map((dir) => ({ directory: dir })),
         ],
       }),
+
       pconfig.vite(),
+
       css.vite({ cssDirs: config.css }),
 
       Components({
@@ -79,7 +81,8 @@ export function buildViteConfig(config: Required<Config>) {
 
         dirs: [
           ...config.componentsDirs,
-          resolve(import.meta.dirname, "../app-vue/layout.vue"),
+          // resolve(import.meta.dirname, "../app-vue/layout.vue"),
+          resolve(import.meta.dirname, "../components/globals"),
         ],
 
         componentName(filePath, defaultName) {
@@ -87,9 +90,9 @@ export function buildViteConfig(config: Required<Config>) {
             return defaultName.replace(/\.global$/, "");
           }
 
-          if (resolve(import.meta.dirname, "../app-vue/layout.vue")) {
-            return "Layout";
-          }
+          // if (resolve(import.meta.dirname, "../app-vue/layout.vue")) {
+          //   return "Layout";
+          // }
         },
       }),
 

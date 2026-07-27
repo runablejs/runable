@@ -3,33 +3,28 @@ import ":globals";
 import * as vue from "vue";
 import merge from "lodash/merge";
 
-import { router } from ":router";
-import { registerPlugins } from "./plugin/index.js";
+import { routerPlugin } from "./router/plugin.js";
+import { pluginPlugin } from "./plugin/index.js";
 
-import App from "./app-vue/app.vue";
-import { appContextPlugin } from "./vue/plugin.js";
+import { appContextPlugin } from "./context/plugin.js";
 import { createAsyncData } from "./async-data/plugin.js";
 
-import { createHead as createHeadClient } from "@unhead/vue/client";
+import {
+  createHead as createHeadClient,
+  type VueHeadClient,
+} from "@unhead/vue/client";
 import { createHead as createHeadServer } from "@unhead/vue/server";
 import { UnheadSchemaOrg } from "@unhead/schema-org/vue";
+import { layoutPlugin } from "./layout/plugin.ts";
 
-export function createApp(server = false) {
+export async function createApp(server = false) {
   const config = useConfig();
-  const app = vue.createSSRApp(App);
+  const { default: App } = await import("./app-vue/app.js");
 
-  app.use(appContextPlugin);
+  let app: vue.App<Element>;
+  let head: VueHeadClient;
 
-  registerPlugins(app);
-
-  const asyncData = createAsyncData();
-  app.use(asyncData);
-
-  app.use(router);
-
-  const createHead = server ? createHeadServer : createHeadClient;
-
-  const head = createHead({
+  const headOptions = {
     init: [
       merge(
         {
@@ -48,7 +43,21 @@ export function createApp(server = false) {
     ],
 
     plugins: [UnheadSchemaOrg({ host: config.siteUrl }) as any],
-  });
+  };
 
-  return { app, head, router };
+  if (server) {
+    app = vue.createSSRApp(App);
+    head = createHeadServer(headOptions);
+  } else {
+    app = vue.createApp(App);
+    head = createHeadClient(headOptions);
+  }
+
+  app.use(appContextPlugin);
+  app.use(routerPlugin);
+  app.use(layoutPlugin);
+  app.use(pluginPlugin);
+  app.use(createAsyncData());
+
+  return { app, head };
 }

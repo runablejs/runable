@@ -1,4 +1,4 @@
-import type { VuePluginSetup, VuePluginObject } from "../types.js";
+import type { VuePluginSetup, VuePluginObject } from "./types.js";
 
 /**
  * Declares a Vue plugin. Accepts either a configuration object or a setup function directly.

@@ -194,9 +194,12 @@ export function getExports(file: string, { target }: { target?: string } = {}) {
     if (meta.kind === "unknown") {
       const originNode = topLevelDeclarations.get(exportedName);
       if (originNode) {
-        // Si c'est un export indirect, le nœud d'origine est une déclaration standard
         if (originNode.type === "VariableDeclaration") {
           meta.kind = originNode.kind;
+        } else if (originNode.type === "FunctionDeclaration") {
+          meta.kind = "function";
+        } else if (originNode.type === "ClassDeclaration") {
+          meta.kind = "class";
         }
       }
     }

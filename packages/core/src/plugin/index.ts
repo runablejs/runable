@@ -3,17 +3,19 @@ import "./types.js";
 import type { App, Plugin } from "vue";
 import type { VuePluginObject } from "./types.js";
 import { plugins } from ":plugins";
-import { useApp } from "../vue/composable/useApp.js";
-import type { AppHooks, HookCallback } from "../vue/context.js";
+import { useApp } from "../context/composables.js";
+import type { AppHooks, HookCallback } from "../context/context.js";
 
-export function registerPlugins(app: App) {
-  // 1. Sort the plugins properly respecting 'enforce' and 'dependsOn'
-  const sortedPlugins = resolvePluginOrder(plugins);
+export const pluginPlugin: Plugin = {
+  install(app) {
+    // 1. Sort the plugins properly respecting 'enforce' and 'dependsOn'
+    const sortedPlugins = resolvePluginOrder(plugins);
 
-  for (const plugin of sortedPlugins) {
-    app.use(register(plugin));
-  }
-}
+    for (const plugin of sortedPlugins) {
+      app.use(register(plugin));
+    }
+  },
+};
 
 /**
  * Resolves the execution order of plugins using a topological sort.

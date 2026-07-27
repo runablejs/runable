@@ -1,6 +1,7 @@
 declare module ":router" {
-  import type { Router } from "vue-router";
+  import type { Router, RouteRecordRaw } from "vue-router";
   export const router: readonly Router;
+  export const routes: RouteRecordRaw[];
 }
 
 declare module ":globals" {}

@@ -24,7 +24,12 @@ export type Config = {
   siteUrl?: string;
   head?: ResolvableHead;
 
-  vite?: Omit<UserConfig, "ssr" | "appType" | "server" | "root" | "base">;
+  vite?: Omit<
+    UserConfig,
+    "ssr" | "appType" | "server" | "root" | "base" | "publicDir"
+  >;
+
+  publicDir?: UserConfig["publicDir"];
 };
 
 export type ClientConfig = Pick<Config, "head" | "siteUrl" | "baseUrl">;

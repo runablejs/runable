@@ -1,8 +1,7 @@
+import { defineConfig } from "@syora/core";
 import { join } from "node:path";
-import { defineConfig } from "./src/config";
 
 export default defineConfig({
-  appDir: "playground",
   devtools: { enable: true },
 
   head: {
@@ -11,9 +10,9 @@ export default defineConfig({
     link: [{ rel: "icon", href: "/favicon.svg" }],
   },
 
-  css: ["./playground/css/index.css"],
+  css: ["./app/css/index.css"],
 
   alias: { "@": join(import.meta.dirname, "src") },
 
-  publicDir: "playground/public",
+  ssr: true,
 });
