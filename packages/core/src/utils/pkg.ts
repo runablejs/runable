@@ -2,6 +2,8 @@ import { readFileSync } from "fs";
 import { dirname, join } from "path";
 import { resolvePathSync } from "mlly";
 
+export type ExportEntry = string | { types?: string; default?: string };
+
 export interface PackageJson {
   name?: string;
   version?: string;
@@ -11,6 +13,7 @@ export interface PackageJson {
   typings?: string;
   module?: string;
   type?: "commonjs" | "module";
+  exports?: Record<string, ExportEntry>;
   scripts?: Record<string, string>;
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;

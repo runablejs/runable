@@ -1,5 +1,5 @@
 import { existsSync, statSync } from "node:fs";
-import { join, relative, resolve } from "node:path";
+import { join, parse, relative, resolve } from "node:path";
 import MagicString from "magic-string";
 import _ from "lodash";
 import { getChildren } from "../utils/get-children.js";
@@ -14,11 +14,7 @@ import { normalizeDir, resolveDir } from "../utils/dir.js";
 import { getPackageJson } from "@/utils/pkg.js";
 import { resolvePackageEntry } from "@/utils/pkg-resolve-entry.js";
 
-/**
- * Built-in presets: shortcuts for commonly used libraries so users don't
- * have to list every named import manually (e.g. `imports: "vue"`).
- */
-const pressetNames = ["vue", "vue-router"] as const;
+const pressetNames = ["vue"] as const;
 const pressets: Record<(typeof pressetNames)[number], ImportsCommon> = {
   vue: {
     from: "vue",
@@ -91,15 +87,6 @@ const pressets: Record<(typeof pressetNames)[number], ImportsCommon> = {
       "withScopeId",
     ],
   },
-  "vue-router": {
-    from: "vue-router",
-    imports: [
-      "onBeforeRouteLeave",
-      "onBeforeRouteUpdate",
-      "useRoute",
-      "useRouter",
-    ],
-  },
 };
 
 type Arrayable<T> = T | Array<T>;
@@ -118,34 +105,17 @@ type GlobalConfig = {
   >;
 };
 
-// Public id used in user code (e.g. `import ":globals"`), and its resolved
-// internal id (the leading "\0" tells other plugins this is a virtual
-// module and should not be handled by the filesystem resolver).
 const VIRTUAL_ID = ":globals";
 const RESOLVED_VIRTUAL_ID = "\0:globals";
 
-/**
- * Collects every named export that should be exposed as a global, from
- * presets, individual files, whole directories, or npm packages, and
- * generates the corresponding `globals.d.ts` declaration file.
- *
- * @param config - Plugin configuration (imports sources and output directory)
- * @returns The list of resolved exports to be injected at runtime by the `load` hook
- */
 function plugin(config?: GlobalConfig) {
   let { imports = [], output = process.cwd() } = config ?? {};
 
   if (!Array.isArray(imports)) imports = [imports];
 
   const accumulatedExports: Record<string, ExportMetadata> = {};
+  const virtualModulesStore: Record<string, string> = {};
 
-  /**
-   * Resolves a file path by trying each supported extension in order and
-   * returning the first one that exists on disk, since callers may omit it.
-   *
-   * @param file - The file path, with or without extension
-   * @returns The resolved path with extension, or `undefined` if none matched
-   */
   function resolveFile(file: string) {
     let relativePath;
 
@@ -164,16 +134,6 @@ function plugin(config?: GlobalConfig) {
     return relativePath;
   }
 
-  /**
-   * Resolves a `{ from, imports }` entry (a preset or a user-declared
-   * package import) to its actual file on disk via the package's
-   * package.json, then registers each named import as a global.
-   *
-   * Supports subpath imports, e.g. `"@unhead/schema-org/vue"` resolves the
-   * package `@unhead/schema-org` with subpath `"vue"`.
-   *
-   * @param common - The package name (`from`) and the named imports to expose as globals
-   */
   function resolveImport(common: ImportsCommon) {
     const splits = common.from.split("/");
     const packageName = splits.slice(0, 2).join("/");
@@ -182,7 +142,6 @@ function plugin(config?: GlobalConfig) {
     const entry = resolvePackageEntry(
       content,
       splits.length > 2 ? splits.slice(2).join("/") : undefined,
-      "import",
     );
 
     if (!entry.default) return;
@@ -225,6 +184,7 @@ function plugin(config?: GlobalConfig) {
         const { code, exports } = getExports(file.path);
         Object.assign(accumulatedExports, exports);
       }
+      // console.log(files);
     } else if ("from" in toImport && "imports" in toImport) {
       resolveImport(toImport as ImportsCommon);
     } else {
@@ -242,6 +202,7 @@ function plugin(config?: GlobalConfig) {
     targetPath: output,
   });
 
+  // Atomic write of the global declaration file (.d.ts)
   atomicWriteFile(resolve(output, "globals.d.ts"), content);
 
   return Object.values(accumulatedExports);
@@ -249,33 +210,65 @@ function plugin(config?: GlobalConfig) {
 
 export default createUnplugin((config?: GlobalConfig) => {
   let exports: ExportMetadata[];
+  let { imports = [], output = process.cwd() } = config ?? {};
+
+  let globalsEntries: (
+    | { file: string; parent: string; importId: string }
+    | { from: string; imports: string[] }
+  )[] = [];
+  const accumulatedExports: Record<string, ExportMetadata> = {};
+  const virtualModulesStore: Record<string, string> = {};
+
+  function getGlobalsDirs(parentDir: string) {
+    parentDir = resolveDir(parentDir);
+
+    for (const ext of [".js", ".ts"]) {
+      let dir = parentDir;
+      if (!dir.endsWith(ext)) dir = `${dir}${ext}`;
+
+      if (!existsSync(dir)) continue;
+      if (!statSync(dir).isFile()) continue;
+
+      const relativePath = relative(process.cwd(), dir).replace(/\\/g, "/");
+
+      globalsEntries.push({
+        file: dir,
+        parent: process.cwd(),
+        importId: `:globals:${relativePath}`,
+      });
+    }
+
+    if (!existsSync(parentDir)) return [];
+
+    const files = getChildren(parentDir, {
+      recursive: true,
+      onlyFile: true,
+      endWith: /\.(js|ts)$/,
+    });
+
+    files.forEach((file) => {
+      const relativePath = relative(parentDir, file.path).replace(/\\/g, "/");
+
+      globalsEntries.push({
+        file: file.path,
+        parent: parentDir,
+        importId: `:globals:${relativePath}`,
+      });
+    });
+  }
 
   return {
     name: "syora:vue-globals",
     enforce: "pre",
 
-    /**
-     * Tells Vite/Rollup that the `":globals"` virtual module (and any
-     * `":globals:*"` id) is handled by this plugin rather than resolved
-     * from the filesystem.
-     *
-     * @param id - The module id being resolved
-     * @returns The resolved internal id, or `null` if not handled by this plugin
-     */
+    // 1. REQUIRED: Tell Vite/Rollup that virtual:globals is handled in-memory
     resolveId(id) {
       if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
       else if (id.startsWith(":globals:")) return id;
       return null;
     },
 
-    /**
-     * Generates the virtual module's content: imports every collected
-     * export and assigns it onto `globalThis`, making it available
-     * everywhere without an explicit import in user code.
-     *
-     * @param id - The module id being loaded
-     * @returns The generated code and source map, or `null` if not handled by this plugin
-     */
+    // 2. Load the cleaned source code for virtual modules intercepted by resolveId
     load(id) {
       if (id === RESOLVED_VIRTUAL_ID) {
         const s = new MagicString("");
@@ -283,19 +276,43 @@ export default createUnplugin((config?: GlobalConfig) => {
         const assignments: string[] = [];
 
         exports.forEach((exp) => {
-          if (["type", "interface"].includes(exp.kind)) return;
-
-          const namespace = exp.name;
+          const namespace = `__${exp.name}`;
           const rPath = normalizeDir(relative(process.cwd(), exp.file));
-
-          imports.push(`import { ${namespace} } from "${rPath}";`);
-
-          assignments.push(
-            `Object.assign(globalThis, { "${exp.name}": ${namespace} });`,
-          );
+          imports.push(`import * as ${namespace} from "${rPath}"`);
         });
 
-        const injection = [...imports, "\n", ...assignments].join("\n");
+        globalsEntries.forEach((entry, idx) => {
+          const namespace = `_globals_file_${idx}`;
+
+          // 1. Import the entire virtual module namespace
+          imports.push(`import * as ${namespace} from "${entry.importId}"`);
+
+          // 2. Map members individually to preserve class prototypes, getters, and default exports
+          const fileExports = getExports(entry.file).exports;
+
+          for (const [originalName, meta] of Object.entries(fileExports)) {
+            let globalName = originalName;
+            let sourceProperty = originalName;
+
+            if (["type", "interface"].includes(meta.kind)) continue;
+
+            if (meta.isDefault) {
+              globalName = _.camelCase(parse(entry.file).name);
+              sourceProperty = "default";
+            }
+
+            assignments.push(
+              `  globalThis.${globalName} = ${namespace}.${sourceProperty};`,
+            );
+          }
+        });
+
+        const injection = [
+          imports.join(";\n") + ";",
+          `(() => {`,
+          assignments.join("\n"),
+          `})();`,
+        ].join("\n");
 
         s.prepend(injection);
 
@@ -303,13 +320,12 @@ export default createUnplugin((config?: GlobalConfig) => {
           code: s.toString(),
           map: s.generateMap({ hires: true }),
         };
+      } else if (id.startsWith(":globals:")) {
+        return virtualModulesStore[id] ?? "";
       }
       return null;
     },
 
-    /**
-     * Resolves all configured imports once per build, before any module is loaded.
-     */
     async buildStart() {
       exports = plugin(config);
     },

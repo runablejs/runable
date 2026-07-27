@@ -3,7 +3,6 @@ import { join, resolve } from "node:path";
 import { type UserConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vueDevTools from "vite-plugin-vue-devtools";
-import AutoImport from "unplugin-auto-import/vite";
 
 import plugin from "../plugin/unplugin.js";
 import appVue from "../app-vue/unplugin.js";
@@ -14,6 +13,7 @@ import css from "../css/unplugin.js";
 import importMeta from "../import-meta/unplugin.js";
 import runtime from "../runtime/unplugin.js";
 import router from "../router/unplugin.js";
+import globals from "../globals/unplugin.js";
 
 import {
   schemaOrgAutoImports,
@@ -45,38 +45,32 @@ export function buildViteConfig(config: Required<Config>) {
       vue(),
       config.devtools?.enable ? vueDevTools({}) : [],
 
-      pconfig.vite(),
-      css.vite({ cssDirs: config.css }),
-
-      AutoImport({
-        dtsMode: "overwrite",
-
-        dirs: [
-          ...config.globalsDir.map((dir) => ({
-            glob: join(dir, "**"),
-            type: true,
-          })),
-
-          join(import.meta.dirname, "../config/composable"),
-          join(import.meta.dirname, "../vue/composable"),
-          join(import.meta.dirname, "../fetch"),
-          join(import.meta.dirname, "../async-data/composable"),
-          join(import.meta.dirname, "../runtime/composable"),
-          join(import.meta.dirname, "../plugin/globals"),
-          {
-            glob: join(import.meta.dirname, "../router/types.js"),
-            types: true,
-          },
-        ],
-
+      globals.vite({
+        output: config.output,
         imports: [
           "vue",
           "vue-router",
+
+          { file: join(import.meta.dirname, "../plugin/globals/define") },
+          { directory: join(import.meta.dirname, "../config/composable") },
+          { directory: join(import.meta.dirname, "../vue/composable") },
+          { directory: join(import.meta.dirname, "../fetch") },
+          { directory: join(import.meta.dirname, "../async-data/composable") },
+          { directory: join(import.meta.dirname, "../runtime/composable") },
+          { directory: join(import.meta.dirname, "../plugin/globals") },
+
+          // {
+          //   glob: join(import.meta.dirname, "../router/types.js"),
+          //   types: true,
+          // },
+
           unheadVueComposablesImports,
           ...schemaOrgAutoImports,
+          ...config.globalsDir.map((dir) => ({ directory: dir })),
         ],
-        dts: join(config.output, "imports.d.ts"),
       }),
+      pconfig.vite(),
+      css.vite({ cssDirs: config.css }),
 
       Components({
         dts: join(config.output, "components.d.ts"),

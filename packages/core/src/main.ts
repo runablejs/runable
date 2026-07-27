@@ -1,3 +1,5 @@
+import ":globals";
+
 import * as vue from "vue";
 import merge from "lodash/merge";
 

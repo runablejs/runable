@@ -34,6 +34,7 @@ export interface ExportMetadata {
   name: string;
   kind: ExportKind;
   file: string;
+  fileType?: string;
 }
 
 export function getExports(file: string, { target }: { target?: string } = {}) {
@@ -279,11 +280,7 @@ export function getExports(file: string, { target }: { target?: string } = {}) {
 
 export function generateGlobalTypesFromExports(
   exports: Record<string, ExportMetadata>,
-  {
-    onlyLine = false,
-    indent = 2,
-    targetPath,
-  }: { onlyLine?: boolean; indent?: number; targetPath?: string } = {},
+  { indent = 2, targetPath }: { indent?: number; targetPath?: string } = {},
 ) {
   // console.log(exports);
 
@@ -291,7 +288,7 @@ export function generateGlobalTypesFromExports(
     const gap = "".padStart(indent, " ");
 
     // 1. Déterminer le chemin propre de l'import (sans l'extension .ts/.tsx si nécessaire)
-    let importPath = value.file;
+    let importPath = value.fileType ?? value.file;
 
     if (targetPath) importPath = path.relative(targetPath, importPath);
 
@@ -315,7 +312,9 @@ export function generateGlobalTypesFromExports(
   });
 
   const content = lines.join("\n");
-  if (onlyLine) return content;
 
-  return `declare global {\n${content}\n}\n\nexport {};`;
+  return {
+    content: `declare global {\n${content}\n}\n\nexport {};`,
+    lines,
+  };
 }
