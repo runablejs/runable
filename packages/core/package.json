@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch playground/server",
-    "play:build": "ts",
+    "play:dev": "tsx watch playground/server",
+    "play:prepare": "tsx watch playground/prepare",
+    "play:build": "tsx watch playground/build",
     "build": "tsdown"
   },
   "main": "./dist/index.js",

@@ -10,7 +10,7 @@ export async function createServer() {
 
   if (!isProduction) {
     const { prepare } = await import("./prepare.js");
-    vite = await prepare();
+    vite = await prepare(false);
 
     generateTsconfigs();
   }
