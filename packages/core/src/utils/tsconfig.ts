@@ -5,6 +5,7 @@ import { useConfig } from "../config";
 import uniq from "lodash/uniq.js";
 import assign from "lodash/assign.js";
 import { atomicWriteFile } from "./atomic-write-file";
+import { resolvePackageEntry } from "./pkg-resolve-entry";
 
 export function generateTsconfigs() {
   let dependencies: string[] = [];
@@ -15,17 +16,23 @@ export function generateTsconfigs() {
   for (const dir of _dirs) {
     const pkg = getPackageJson(undefined, dir);
 
-    if (pkg.content.types) {
-      dependencies.push(resolve(pkg.dir, pkg.content.types));
+    if (process.cwd() !== dir) {
+      const entry = resolvePackageEntry(pkg.content, ".", "import");
+
+      if (entry.types) {
+        dependencies.push(resolve(pkg.dir, entry.types));
+      }
     }
 
     if (!pkg.content.dependencies) continue;
 
     for (const dependency of Object.keys(pkg.content.dependencies)) {
       const pkg = getPackageJson(dependency, dir);
+      const entry = resolvePackageEntry(pkg.content, ".", "import");
 
-      if (!pkg.content.types) continue;
-      dependencies.push(resolve(pkg.dir, pkg.content.types));
+      if (!entry.types) continue;
+
+      dependencies.push(resolve(pkg.dir, entry.types));
     }
   }
 
@@ -33,17 +40,7 @@ export function generateTsconfigs() {
     return normalizeDir(relative(output, dep));
   });
 
-  console.log();
-
   const tsconfig = {
-    extends: relative(
-      output,
-      resolve(
-        resolvePackageDir("@vue/tsconfig", import.meta.dirname),
-        "tsconfig.dom.json",
-      ),
-    ),
-
     compilerOptions: {
       esModuleInterop: true,
       skipLibCheck: true,
@@ -68,6 +65,8 @@ export function generateTsconfigs() {
       useDefineForClassFields: true,
       noImplicitThis: true,
       allowSyntheticDefaultImports: true,
+      composite: true,
+      declaration: true,
 
       // Path mapping for cleaner imports.
       paths: assign(
@@ -92,14 +91,14 @@ export function generateTsconfigs() {
     },
 
     include: [
-      ...dependencies,
       "./**/.d.ts",
-      normalizeDir(relative(output, appDir)),
+      normalizeDir(join(relative(output, appDir), "**/*")),
+      ...dependencies,
     ],
   };
 
   atomicWriteFile(
-    join(output, "app.tsconfig.json"),
+    join(output, "tsconfig.app.json"),
     JSON.stringify(tsconfig, undefined, 2),
   );
 }

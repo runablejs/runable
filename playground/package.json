@@ -10,11 +10,12 @@
     "@syora/cli": "workspace:*",
     "@syora/core": "workspace:*",
     "vue": "^3.5.40",
-    "vue-router": "^5.2.0"
+    "vue-router": "^5.2.0",
+    "express": "^5.2.1",
+    "sirv": "^3.0.2"
   },
   "devDependencies": {
     "@types/node": "^22.20.1",
-    "@types/estree": "^1.0.9",
     "@types/express": "^5.0.6",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.63.0"
