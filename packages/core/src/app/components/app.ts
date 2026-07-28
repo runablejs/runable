@@ -9,10 +9,7 @@ export default defineComponent({
   setup() {
     return () => {
       if (app) return h(app);
-
-      return h(Layout, null, {
-        default: () => h(RouterView),
-      });
+      return h(Layout, null, { default: () => h(RouterView) });
     };
   },
 });

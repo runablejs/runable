@@ -17,7 +17,7 @@ export type Config = {
   baseUrl?: string;
 
   ssr?: boolean;
-  devtools?: { enable: boolean };
+  devtools?: boolean;
 
   alias?: Record<string, string>;
 

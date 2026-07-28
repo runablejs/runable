@@ -24,7 +24,7 @@ import { type Config, useConfig } from "../config";
 
 declare module "vite" {
   interface UserConfig {
-    syoraConfig: Config;
+    syoraConfig: Required<Config>;
   }
 }
 
@@ -55,7 +55,7 @@ export function buildViteConfig(httpServer?: HttpServer) {
       vue(),
 
       // TODO: revoire le devtool
-      // config.devtools?.enable ? vueDevTools({ }) : [],
+      // config.devtools ? vueDevTools() : [],
 
       globals.vite({
         output: config.output,
@@ -91,7 +91,7 @@ export function buildViteConfig(httpServer?: HttpServer) {
 
         dirs: [
           ...config.componentsDirs,
-          resolve(import.meta.dirname, "../components/globals"),
+          resolve(import.meta.dirname, "../app/components"),
         ],
 
         componentName(filePath, defaultName) {

@@ -19,7 +19,7 @@ import { layoutPlugin } from "../layout/plugin.ts";
 
 export async function createApp(isSsr = false) {
   const config = useConfig();
-  const { default: App } = await import("../app-vue/app.js");
+  const { default: App } = await import("../app/components/app.js");
 
   let app: vue.App<Element>;
   let head: VueHeadClient;

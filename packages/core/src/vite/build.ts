@@ -1,17 +1,18 @@
 import { build as viteBuilder } from "vite";
-import { loadConfig, useConfig } from "../config";
+import { loadConfig } from "../config";
 import { buildViteConfig, getIndexHtml } from ".";
 import { join, relative, resolve } from "node:path";
 import { atomicWriteFile, normalizeDir } from "../utils";
 import merge from "lodash/merge.js";
+import cloneDeep from "lodash/cloneDeep.js";
 
 export async function build() {
   await loadConfig();
 
-  const config = useConfig();
-  const outDir = config.distDir;
+  const viteConfig = buildViteConfig();
+  const outDir = viteConfig.syoraConfig.distDir;
 
-  const clientConfig = merge(buildViteConfig(), {
+  const clientConfig = merge(cloneDeep(viteConfig), {
     build: {
       outDir: join(outDir, "client"),
       emptyOutDir: true,
@@ -29,7 +30,7 @@ export async function build() {
     },
   });
 
-  const servrConfig = merge(buildViteConfig(), {
+  const servrConfig = merge(cloneDeep(viteConfig), {
     build: {
       outDir: join(outDir, "server"),
       minify: true,
@@ -80,7 +81,7 @@ export async function build() {
 
   console.log("✅ Client built");
 
-  if (config.ssr) {
+  if (viteConfig.syoraConfig.ssr) {
     console.log("\n\n🔨 Building server...");
     await viteBuilder(servrConfig);
     console.log("✅ Server built");
