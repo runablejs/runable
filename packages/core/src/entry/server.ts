@@ -1,7 +1,7 @@
 import { renderToString } from "vue/server-renderer";
 import { createApp } from "./main.js";
 import { useRouter } from "../router/composables.js";
-import type { SSRContext } from "./entry.js";
+import type { SSRContext } from "./switcher.js";
 import { transformHtmlTemplate } from "@unhead/vue/server";
 
 export async function render(ssrContext: SSRContext) {

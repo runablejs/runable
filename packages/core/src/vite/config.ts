@@ -2,7 +2,7 @@ import { join, resolve } from "node:path";
 
 import { type HttpServer, type UserConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import vueDevTools from "vite-plugin-vue-devtools";
+// import vueDevTools from "vite-plugin-vue-devtools";
 
 import plugin from "../plugin/unplugin.js";
 import appVue from "../app-vue/unplugin.js";
@@ -36,14 +36,7 @@ export function buildViteConfig(httpServer?: HttpServer) {
 
     server: {
       middlewareMode: true,
-      // hmr: httpServer ? { server: httpServer } : undefined,
       ws: { server: httpServer },
-
-      // forwardConsole:
-      // {
-      //   unhandledErrors: false,
-      //   logLevels: ["warn", "error", "info", "debug", "log"],
-      // },
     },
 
     appType: "custom",
@@ -60,7 +53,9 @@ export function buildViteConfig(httpServer?: HttpServer) {
 
     plugins: [
       vue(),
-      config.devtools?.enable ? vueDevTools({}) : [],
+
+      // TODO: revoire le devtool
+      // config.devtools?.enable ? vueDevTools({ }) : [],
 
       globals.vite({
         output: config.output,

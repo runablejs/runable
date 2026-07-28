@@ -10,7 +10,7 @@ export async function prepare(onlyPrepare = true, httpServer?: HttpServer) {
   const config = buildViteConfig(httpServer);
   const vite = await createServer(config);
 
-  // if (onlyPrepare) await vite.close();
+  if (onlyPrepare) await vite.close();
 
   return vite;
 }

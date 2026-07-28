@@ -11,17 +11,15 @@ export async function build() {
   const config = useConfig();
   const outDir = config.distDir;
 
-  const entryClient = resolve(import.meta.dirname, "../entry-client.js");
-  const entryServer = resolve(import.meta.dirname, "../entry/entry.js");
-
   const clientConfig = merge(buildViteConfig(), {
     build: {
-      outDir,
+      outDir: join(outDir, "client"),
       emptyOutDir: true,
       minify: true,
 
       rolldownOptions: {
-        input: entryClient,
+        input: resolve(import.meta.dirname, "../entry/client.js"),
+        manifest: true,
         output: {
           entryFileNames: "assets/[name]-[hash].js",
           chunkFileNames: "assets/[name]-[hash].js",
@@ -33,13 +31,13 @@ export async function build() {
 
   const servrConfig = merge(buildViteConfig(), {
     build: {
-      outDir,
-      emptyOutDir: false,
+      outDir: join(outDir, "server"),
       minify: true,
       ssr: true,
 
       rolldownOptions: {
-        input: entryServer,
+        input: resolve(import.meta.dirname, "../entry/switcher.js"),
+        minify: true,
         output: {
           entryFileNames: "[name]-[hash].js",
           chunkFileNames: "[name]-[hash].js",
@@ -56,12 +54,12 @@ export async function build() {
     const css: string[] = [];
 
     const generatedMainFile = result.output.find((f) => {
-      return f.name === "entry-client" && f.fileName.endsWith(".js");
+      return f.name === "client" && f.fileName.endsWith(".js");
     });
 
     if (!generatedMainFile) {
       throw new Error(
-        "Impossible de trouver le fichier entry-fyle.js compilé dans les assets.",
+        "Impossible de trouver le fichier entry.js compilé dans les assets.",
       );
     }
 
@@ -77,15 +75,13 @@ export async function build() {
     }
 
     htmlContent = htmlContent.replace("</head>", `  ${css}\n  </head>`);
-    atomicWriteFile(join(outDir, "index.html"), htmlContent);
+    atomicWriteFile(join(outDir, "client/index.html"), htmlContent);
   }
 
   console.log("✅ Client built");
 
   if (config.ssr) {
-    console.log();
-
-    console.log("🔨 Building server...");
+    console.log("\n\n🔨 Building server...");
     await viteBuilder(servrConfig);
     console.log("✅ Server built");
   }

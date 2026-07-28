@@ -10,3 +10,8 @@ export async function render() {
 
   return app;
 }
+
+if (typeof window !== "undefined") {
+  const app = await render();
+  app.mount("#app", true);
+}

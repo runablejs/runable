@@ -12,33 +12,40 @@ export async function serve({
   url: string;
 }) {
   const config = useConfig();
-  let entryPath = resolve(import.meta.dirname, "../entry/entry.js");
-  const clientEntry = resolve(import.meta.dirname, "../entry-client.js");
-
-  let template = "";
+  let entryPath = resolve(import.meta.dirname, "../entry/switcher.js");
+  let template: string;
 
   try {
-    let entry: (typeof import("../entry/entry.js"))["entry"];
+    let render: (typeof import("../entry/switcher.js"))["render"];
 
     if (vite) {
-      template = getIndexHtml(clientEntry);
-      template = await vite!.transformIndexHtml(url, template);
+      template = getIndexHtml(
+        resolve(import.meta.dirname, "../entry/client.js"),
+      );
+      template = await vite.transformIndexHtml(url, template);
     } else {
       const entryFileName = readdirSync(config.distDir).find((dir) =>
-        dir.startsWith("entry-"),
+        dir.startsWith("server/entry-"),
       );
+
       entryPath = join(config.distDir, entryFileName!);
-      template = readFileSync(join(config.distDir, "index.html"), "utf-8");
+      template = readFileSync(
+        join(config.distDir, "client/index.html"),
+        "utf-8",
+      );
     }
 
-    if (!config.ssr) return template.replace(`<!--app-html-->`, "");
+    if (!config.ssr) {
+      return template
+        .replace(`<!--app-html-->`, "")
+        .replace(`<!--app-head-->`, "");
+    }
 
-    if (vite) entry = (await vite.ssrLoadModule(entryPath)).entry;
-    else entry = (await import(entryPath)).entry;
+    if (vite) render = (await vite.ssrLoadModule(entryPath)).render;
+    else render = (await import(entryPath)).render;
 
-    const render = await entry({ url, template });
-
-    return render as string;
+    const rendered = await render({ url, template });
+    return rendered as string;
   } catch (e) {
     vite?.ssrFixStacktrace(e as Error);
     throw e as Error;
