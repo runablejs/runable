@@ -14,7 +14,7 @@ export async function build() {
   const entryClient = resolve(import.meta.dirname, "../entry-client.js");
   const entryServer = resolve(import.meta.dirname, "../entry/entry.js");
 
-  const clientConfig = merge(buildViteConfig(config), {
+  const clientConfig = merge(buildViteConfig(), {
     build: {
       outDir,
       emptyOutDir: true,
@@ -31,7 +31,7 @@ export async function build() {
     },
   });
 
-  const servrConfig = merge(buildViteConfig(config), {
+  const servrConfig = merge(buildViteConfig(), {
     build: {
       outDir,
       emptyOutDir: false,

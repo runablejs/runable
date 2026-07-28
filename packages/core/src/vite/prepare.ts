@@ -1,14 +1,16 @@
-import { loadConfig, useConfig } from "../config";
+import { loadConfig } from "../config";
 import { buildViteConfig } from "./config";
 import { generateTsconfigs } from "@/utils";
-import { createServer } from "vite";
+import { createServer, type HttpServer } from "vite";
 
-export async function prepare(onlyPrepare = true) {
+export async function prepare(onlyPrepare = true, httpServer?: HttpServer) {
   await loadConfig();
   generateTsconfigs();
-  const vite = await createServer(buildViteConfig(useConfig()));
 
-  if (onlyPrepare) await vite.close();
+  const config = buildViteConfig(httpServer);
+  const vite = await createServer(config);
+
+  // if (onlyPrepare) await vite.close();
 
   return vite;
 }

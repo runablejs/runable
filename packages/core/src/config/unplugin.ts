@@ -19,6 +19,7 @@ export default createUnplugin(() => {
         head: config.head,
         siteUrl: config.siteUrl,
         baseUrl: config.baseUrl,
+        ssr: config.ssr,
       };
 
       code = [

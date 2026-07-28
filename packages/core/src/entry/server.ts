@@ -1,5 +1,5 @@
 import { renderToString } from "vue/server-renderer";
-import { createApp } from "../main.js";
+import { createApp } from "./main.js";
 import { useRouter } from "../router/composables.js";
 import type { SSRContext } from "./entry.js";
 import { transformHtmlTemplate } from "@unhead/vue/server";
@@ -8,10 +8,8 @@ export async function render(ssrContext: SSRContext) {
   const { app, head } = await createApp(true);
   const router = useRouter();
 
-  app.use(head);
-
   const { pathname, search, hash } = new URL(
-    ssrContext?.url ?? "/",
+    ssrContext.url ?? "/",
     "http://ssr-internal",
   );
   await router.push(pathname + search + hash);

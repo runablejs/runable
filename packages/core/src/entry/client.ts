@@ -1,11 +1,12 @@
 import ":css";
 
-import { createApp } from "@/main.js";
+import { createApp } from "@/entry/main.js";
+import { useRouter } from "@/router/composables.js";
 
 export async function render() {
-  const { app, head } = await createApp();
-  app.use(head);
-  // await router.isReady();
+  const { app } = await createApp();
+
+  await useRouter().isReady();
 
   return app;
 }

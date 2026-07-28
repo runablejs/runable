@@ -32,7 +32,7 @@ export type Config = {
   publicDir?: UserConfig["publicDir"];
 };
 
-export type ClientConfig = Pick<Config, "head" | "siteUrl" | "baseUrl">;
+export type ClientConfig = Pick<Config, "head" | "ssr" | "siteUrl" | "baseUrl">;
 
 let cachedConfig: Required<Config> | undefined;
 

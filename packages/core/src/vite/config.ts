@@ -1,6 +1,6 @@
 import { join, resolve } from "node:path";
 
-import { type UserConfig } from "vite";
+import { type HttpServer, type UserConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vueDevTools from "vite-plugin-vue-devtools";
 
@@ -20,27 +20,40 @@ import {
   SchemaOrgResolver,
 } from "@unhead/schema-org/vue";
 import { unheadVueComposablesImports } from "@unhead/vue";
-import type { Config } from "../config";
+import { type Config, useConfig } from "../config";
 
 declare module "vite" {
   interface UserConfig {
-    _config: Config;
     syoraConfig: Config;
   }
 }
 
-export function buildViteConfig(config: Required<Config>) {
+export function buildViteConfig(httpServer?: HttpServer) {
+  const config = useConfig();
+
   const _config: UserConfig = {
     base: config.baseUrl,
-    server: { middlewareMode: true },
+
+    server: {
+      middlewareMode: true,
+      // hmr: httpServer ? { server: httpServer } : undefined,
+      ws: { server: httpServer },
+
+      // forwardConsole:
+      // {
+      //   unhandledErrors: false,
+      //   logLevels: ["warn", "error", "info", "debug", "log"],
+      // },
+    },
+
     appType: "custom",
+
     ssr: {
       noExternal: process.env.NODE_ENV === "production" ? [] : ["vue-router"],
     },
 
     root: process.cwd(),
 
-    _config: config,
     syoraConfig: config,
 
     publicDir: config.publicDir,
@@ -53,7 +66,6 @@ export function buildViteConfig(config: Required<Config>) {
         output: config.output,
         imports: [
           "vue",
-          // "vue-router",
 
           { file: join(import.meta.dirname, "../plugin/define") },
           { file: join(import.meta.dirname, "../layout/useLayouts") },
@@ -84,7 +96,6 @@ export function buildViteConfig(config: Required<Config>) {
 
         dirs: [
           ...config.componentsDirs,
-          // resolve(import.meta.dirname, "../app-vue/layout.vue"),
           resolve(import.meta.dirname, "../components/globals"),
         ],
 
@@ -92,10 +103,6 @@ export function buildViteConfig(config: Required<Config>) {
           if (defaultName.endsWith(".global")) {
             return defaultName.replace(/\.global$/, "");
           }
-
-          // if (resolve(import.meta.dirname, "../app-vue/layout.vue")) {
-          //   return "Layout";
-          // }
         },
       }),
 

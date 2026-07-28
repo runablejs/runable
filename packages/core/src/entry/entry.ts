@@ -1,6 +1,6 @@
 import ":globals";
 
-export type SSRContext = { url?: string; template: string };
+export type SSRContext = { url: string; template: string };
 
 export async function entry(ssrContext: SSRContext | false) {
   if (ssrContext) {

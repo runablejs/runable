@@ -1,20 +1,25 @@
-import express from "express";
-import sirv from "sirv";
+import { createServer as createHttpServer } from "node:http";
+// import sirv from "sirv";
 import { createServer, useConfig, serve } from "../src";
+import Koa from "koa";
+import koaConnect from "koa-connect";
 
 // process.env.NODE_ENV = "production";
-const app = express();
-const vite = await createServer();
+const app = new Koa();
+const httpServer = createHttpServer(app.callback());
+
+const vite = await createServer(httpServer);
 const config = useConfig();
 
-if (vite) app.use(vite.middlewares);
+if (vite) app.use(koaConnect(vite.middlewares));
 else {
-  app.use(sirv(config.distDir, { extensions: [] }));
+  // app.use(sirv(config.distDir, { extensions: [] }));
 }
 
-app.use("*all", async (req, res) => {
-  const html = await serve({ vite, url: req.originalUrl });
-  res.status(200).set({ "Content-Type": "text/html" }).end(html);
+app.use(async (ctx) => {
+  const html = await serve({ vite, url: ctx.path });
+  ctx.type = "text/html";
+  ctx.body = html;
 });
 
-app.listen(3000);
+httpServer.listen(5173);
