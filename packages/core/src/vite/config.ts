@@ -25,6 +25,7 @@ import type { Config } from "../config";
 declare module "vite" {
   interface UserConfig {
     _config: Config;
+    syoraConfig: Config;
   }
 }
 
@@ -40,6 +41,8 @@ export function buildViteConfig(config: Required<Config>) {
     root: process.cwd(),
 
     _config: config,
+    syoraConfig: config,
+
     publicDir: config.publicDir,
 
     plugins: [

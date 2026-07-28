@@ -49,6 +49,7 @@
     "@types/express": "^5.0.6",
     "@types/lodash": "^4.17.24",
     "@types/node": "^24.13.3",
+    "@vitejs/devtools": "^0.4.9",
     "@vue/tsconfig": "^0.9.1",
     "express": "^5.2.1",
     "npm-run-all2": "^9.0.2",
