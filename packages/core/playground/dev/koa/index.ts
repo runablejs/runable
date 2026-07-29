@@ -1,20 +1,18 @@
-import { createServer as createHttpServer } from "node:http";
-import sirv from "sirv";
-import { createServer, useConfig, serve } from "../../src";
+import { createServer, useConfig, serve } from "../../../src";
 import Koa from "koa";
 import koaConnect from "koa-connect";
+import koaStatic from "koa-static";
 import { join } from "node:path";
 
 process.env.NODE_ENV = "production";
 const app = new Koa();
-const httpServer = createHttpServer(app.callback());
 
-const vite = await createServer(httpServer);
+const vite = await createServer();
 const config = useConfig();
 
 if (vite) app.use(koaConnect(vite.middlewares));
 else {
-  app.use(koaConnect(sirv(join(config.distDir, "client"), { extensions: [] })));
+  app.use(koaStatic(join(config.distDir, "client"), { extensions: [] }));
 }
 
 app.use(async (ctx) => {
@@ -23,4 +21,4 @@ app.use(async (ctx) => {
   ctx.body = html;
 });
 
-httpServer.listen(5173);
+app.listen(5173);

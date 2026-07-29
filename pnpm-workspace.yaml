@@ -1,9 +1,10 @@
 packages:
   - packages/**
+  - starters/**
   - playground
-  - starters
 
 allowBuilds:
+  '@swc/core': true
   esbuild: true
 
 minimumReleaseAgeExclude:

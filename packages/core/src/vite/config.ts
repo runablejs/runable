@@ -1,6 +1,6 @@
 import { join, resolve } from "node:path";
 
-import { type HttpServer, type UserConfig } from "vite";
+import { type UserConfig } from "vite";
 import { DevTools as viteDevtools } from "@vitejs/devtools";
 import vue from "@vitejs/plugin-vue";
 // import vueDevTools from "vite-plugin-vue-devtools";
@@ -29,7 +29,7 @@ declare module "vite" {
   }
 }
 
-export function buildViteConfig(httpServer?: HttpServer) {
+export function buildViteConfig() {
   const config = useConfig();
 
   const _config: UserConfig = {
@@ -37,7 +37,6 @@ export function buildViteConfig(httpServer?: HttpServer) {
 
     server: {
       middlewareMode: true,
-      ws: { server: httpServer },
     },
 
     appType: "custom",
