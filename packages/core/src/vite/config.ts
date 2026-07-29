@@ -1,6 +1,7 @@
 import { join, resolve } from "node:path";
 
 import { type HttpServer, type UserConfig } from "vite";
+import { DevTools as viteDevtools } from "@vitejs/devtools";
 import vue from "@vitejs/plugin-vue";
 // import vueDevTools from "vite-plugin-vue-devtools";
 
@@ -51,11 +52,15 @@ export function buildViteConfig(httpServer?: HttpServer) {
 
     publicDir: config.publicDir,
 
-    plugins: [
-      vue(),
+    devtools: {
+      enabled: true,
+    },
 
+    plugins: [
       // TODO: revoire le devtool
-      // config.devtools ? vueDevTools() : [],
+      config.devtools ? viteDevtools() : [],
+
+      vue(),
 
       globals.vite({
         output: config.output,

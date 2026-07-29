@@ -24,11 +24,11 @@ export async function serve({
       );
       template = await vite.transformIndexHtml(url, template);
     } else {
-      const entryFileName = readdirSync(config.distDir).find((dir) =>
-        dir.startsWith("server/entry-"),
+      const entryFileName = readdirSync(join(config.distDir, "server")).find(
+        (dir) => dir.startsWith("switcher-"),
       );
 
-      entryPath = join(config.distDir, entryFileName!);
+      entryPath = join(config.distDir, "server", entryFileName!);
       template = readFileSync(
         join(config.distDir, "client/index.html"),
         "utf-8",

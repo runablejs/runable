@@ -71,11 +71,14 @@ export async function build() {
     for (const file of result.output) {
       if (!file.fileName.endsWith(".css")) continue;
 
-      const cssLink = `<link rel="stylesheet" href="${normalizeDir(file.fileName)}">`;
+      const cssLink = `<link rel="stylesheet" href="${normalizeDir(join(process.cwd(), file.fileName))}">`;
       css.push(cssLink);
     }
 
-    htmlContent = htmlContent.replace("</head>", `  ${css}\n  </head>`);
+    htmlContent = htmlContent.replace(
+      "</head>",
+      `  ${css.join("\n    ")}\n  </head>`,
+    );
     atomicWriteFile(join(outDir, "client/index.html"), htmlContent);
   }
 
