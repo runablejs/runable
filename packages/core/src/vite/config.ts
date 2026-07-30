@@ -1,10 +1,10 @@
 import { join, resolve } from "node:path";
 
-import { mergeConfig, type UserConfig } from "vite";
+import { mergeConfig, type Plugin, type UserConfig } from "vite";
 // import { DevTools as viteDevtools } from "@vitejs/devtools";
 import vue from "@vitejs/plugin-vue";
 // import vueDevTools from "vite-plugin-vue-devtools";
-import { type ResolvedConfig } from "@/config/index.js";
+import { useAllConfigs, type ResolvedConfig } from "@/config/index.js";
 
 import plugin from "../plugin/unplugin.js";
 import appVue from "../app-vue/unplugin.js";
@@ -22,7 +22,6 @@ import {
   SchemaOrgResolver,
 } from "@unhead/schema-org/vue";
 import { unheadVueComposablesImports } from "@unhead/vue";
-import { useConfig } from "../config";
 
 declare module "vite" {
   interface UserConfig {
@@ -30,15 +29,68 @@ declare module "vite" {
   }
 }
 
+const MAIN_OVERRIDE_FIELDS = [
+  "output",
+] as const satisfies readonly (keyof ResolvedConfig)[];
+
+function withMainOverrides(
+  main: ResolvedConfig,
+  config: ResolvedConfig,
+): ResolvedConfig {
+  const overrides = {} as Pick<
+    ResolvedConfig,
+    (typeof MAIN_OVERRIDE_FIELDS)[number]
+  >;
+
+  for (const key of MAIN_OVERRIDE_FIELDS) overrides[key] = main[key];
+
+  return { ...config, ...overrides };
+}
+
 export function buildViteConfig() {
-  const config = useConfig();
+  const configs = useAllConfigs();
+  const main = configs[0]!;
 
-  const _config = mergeConfig(config.vite ?? {}, {
-    base: config.baseUrl,
+  const configToViteConfig = (config: ResolvedConfig): UserConfig => {
+    const plugins: (Plugin<any> | Plugin<any>[])[] = [];
 
-    server: {
-      middlewareMode: true,
-    },
+    plugins.push(
+      globals.vite({
+        output: config.output,
+        imports: [...config.globalsDir.map((dir) => ({ directory: dir }))],
+      }),
+    );
+
+    plugins.push(css.vite({ cssDirs: config.css, cwd: config.cwd }));
+
+    plugins.push(
+      components.vite({
+        dts: join(config.output, "components.d.ts"),
+        dirs: config.components,
+      }),
+    );
+
+    plugins.push(
+      layout.vite({ layoutsDirs: config.layoutsDirs, output: config.output }),
+    );
+
+    plugins.push(
+      router.vite({ routeDirs: config.pagesDirs, output: config.output }),
+    );
+
+    plugins.push(
+      plugin.vite({ pluginsDirs: config.pluginsDirs, output: config.output }),
+    );
+
+    mergeConfig(config.vite ?? {}, { plugins });
+
+    return mergeConfig(config.vite ?? {}, { plugins }) as UserConfig;
+  };
+
+  let viteCOnfig: UserConfig = {
+    base: main.baseUrl,
+
+    server: { middlewareMode: true },
 
     appType: "custom",
 
@@ -48,9 +100,9 @@ export function buildViteConfig() {
 
     root: process.cwd(),
 
-    syoraConfig: config,
+    syoraConfig: main,
 
-    publicDir: config.publicDir,
+    publicDir: main.publicDir,
 
     plugins: [
       // TODO: revoire le devtool
@@ -59,7 +111,8 @@ export function buildViteConfig() {
       vue(),
 
       globals.vite({
-        output: config.output,
+        output: main.output,
+
         imports: [
           "vue",
 
@@ -72,56 +125,43 @@ export function buildViteConfig() {
           { directory: join(import.meta.dirname, "../config/composable") },
           { directory: join(import.meta.dirname, "../context/composables") },
           { directory: join(import.meta.dirname, "../fetch") },
-          { directory: join(import.meta.dirname, "../async-data/composable") },
+          {
+            directory: join(import.meta.dirname, "../async-data/composable"),
+          },
           { directory: join(import.meta.dirname, "../runtime/composable") },
 
           unheadVueComposablesImports,
+
           ...schemaOrgAutoImports,
-          ...config.globalsDir.map((dir) => ({ directory: dir })),
         ],
       }),
 
       configPlugin.vite(),
 
-      css.vite({ cssDirs: config.css }),
-
       components.vite({
-        dts: join(config.output, "components.d.ts"),
-
+        dts: join(main.output, "components.d.ts"),
         resolvers: [SchemaOrgResolver() as any],
+        dirs: [resolve(import.meta.dirname, "../app/components")],
 
-        dirs: [
-          ...config.components,
-          resolve(import.meta.dirname, "../app/components"),
-        ],
-
-        componentName(filePath, defaultName) {
-          if (defaultName.endsWith(".global")) {
-            return defaultName.replace(/\.global$/, "");
-          }
-        },
+        // componentName(filePath, defaultName) {
+        //   if (defaultName.endsWith(".global")) {
+        //     return defaultName.replace(/\.global$/, "");
+        //   }
+        // },
       }),
 
-      layout.vite({
-        layoutsDirs: [...config.layoutsDirs],
-        output: config.output,
-      }),
-
-      router.vite({ routeDirs: [...config.pagesDirs], output: config.output }),
-
-      plugin.vite({
-        pluginsDirs: [...config.pluginsDirs],
-        output: config.output,
-      }),
-
-      appVue.vite({ dir: join(config.appDir, "app.vue") }),
-
+      appVue.vite({ dir: join(main.appDir, "app.vue") }),
       importMeta.vite(),
-      runtime.vite({ output: config.output }),
+      runtime.vite({ output: main.output }),
     ],
 
-    resolve: { alias: config.alias },
-  }) as UserConfig;
+    resolve: { alias: main.alias },
+  };
 
-  return _config;
+  configs.forEach((config) => {
+    const _config = configToViteConfig(withMainOverrides(main, config));
+    viteCOnfig = mergeConfig(viteCOnfig, _config) as UserConfig;
+  });
+
+  return viteCOnfig;
 }

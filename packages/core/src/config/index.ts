@@ -217,7 +217,7 @@ export function useConfig() {
 }
 
 /** Returns the resolved all app configs. Throws if `loadConfig()` hasn't run yet. */
-export function useAllConfig() {
+export function useAllConfigs() {
   if (!cachedConfigs) {
     throw new Error("Syora config is not loaded. Call loadConfig() first.");
   }

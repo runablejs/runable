@@ -8,10 +8,11 @@ const RESOLVED_VIRTUAL_ID = "\:css";
 
 type CssConfig = {
   cssDirs: string[];
+  cwd?: string;
 };
 
 export default createUnplugin((config: CssConfig) => {
-  const { cssDirs = [] } = config;
+  const { cssDirs = [], cwd = process.cwd() } = config;
   const cssFiles: string[] = [];
 
   return {
@@ -23,7 +24,7 @@ export default createUnplugin((config: CssConfig) => {
 
       cssFiles.push(
         ...cssDirs.map((file) => {
-          if (file.startsWith(".")) return path.resolve(process.cwd(), file);
+          if (file.startsWith(".")) return path.resolve(cwd, file);
           return file;
         }),
       );
