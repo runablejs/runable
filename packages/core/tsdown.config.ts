@@ -2,11 +2,11 @@ import "dotenv/config";
 
 import path from "node:path";
 import { defineConfig } from "tsdown";
+import Vue from "unplugin-vue/rolldown";
 
 export default defineConfig({
   entry: [
-    // "./src/**/*.{vue}",
-    "./src/**/*.{js,jsx,ts,tsx}",
+    "./src/**/*.{js,jsx,ts,tsx,vue}",
     "!./src/**/*.test.{js,jsx,ts,tsx}",
     "!./src/**/*.spec.{js,jsx,ts,tsx}",
     "!./src/plugins/vite/vite-env.d.ts",
@@ -14,21 +14,21 @@ export default defineConfig({
 
   tsconfig: "./tsconfig.build.json",
   format: ["esm"],
-  dts: true,
   sourcemap: false,
   clean: true,
   unbundle: true,
+
+  dts: { vue: true },
 
   alias: {
     "@/*": path.resolve(import.meta.dirname, "src"),
   },
 
-  plugins: [],
+  plugins: [Vue({ isProduction: true })],
 
   deps: {
     neverBundle: (id) => {
       if (id.startsWith("@/")) return false;
-      if (id.endsWith(".vue")) return true;
       if (id.startsWith(":")) return true;
 
       return /^[^./]/.test(id);

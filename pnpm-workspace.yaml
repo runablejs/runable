@@ -2,10 +2,13 @@ packages:
   - packages/**
   - starters/**
   - playground
+  - docs
 
 allowBuilds:
-  '@swc/core': true
+  "@swc/core": true
   esbuild: true
+  vue-demi: true
 
 minimumReleaseAgeExclude:
   - "@syora/vue@1.0.0"
+  - '@syora/fastify@1.1.1'

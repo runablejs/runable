@@ -1,15 +1,16 @@
 import { join, resolve } from "node:path";
 
-import { type UserConfig } from "vite";
-import { DevTools as viteDevtools } from "@vitejs/devtools";
+import { mergeConfig, type UserConfig } from "vite";
+// import { DevTools as viteDevtools } from "@vitejs/devtools";
 import vue from "@vitejs/plugin-vue";
 // import vueDevTools from "vite-plugin-vue-devtools";
+import { type ResolvedConfig } from "@/config/index.js";
 
 import plugin from "../plugin/unplugin.js";
 import appVue from "../app-vue/unplugin.js";
 import layout from "../layout/unplugin.js";
-import Components from "../components/vite.js";
-import pconfig from "../config/unplugin.js";
+import components from "../components/unplugin.js";
+import configPlugin from "../config/unplugin.js";
 import css from "../css/unplugin.js";
 import importMeta from "../import-meta/unplugin.js";
 import runtime from "../runtime/unplugin.js";
@@ -21,18 +22,18 @@ import {
   SchemaOrgResolver,
 } from "@unhead/schema-org/vue";
 import { unheadVueComposablesImports } from "@unhead/vue";
-import { type Config, useConfig } from "../config";
+import { useConfig } from "../config";
 
 declare module "vite" {
   interface UserConfig {
-    syoraConfig: Required<Config>;
+    syoraConfig: ResolvedConfig;
   }
 }
 
 export function buildViteConfig() {
   const config = useConfig();
 
-  const _config: UserConfig = {
+  const _config = mergeConfig(config.vite ?? {}, {
     base: config.baseUrl,
 
     server: {
@@ -51,13 +52,9 @@ export function buildViteConfig() {
 
     publicDir: config.publicDir,
 
-    devtools: {
-      enabled: true,
-    },
-
     plugins: [
       // TODO: revoire le devtool
-      config.devtools ? viteDevtools() : [],
+      // config.devtools ? viteDevtools() : [],
 
       vue(),
 
@@ -84,17 +81,17 @@ export function buildViteConfig() {
         ],
       }),
 
-      pconfig.vite(),
+      configPlugin.vite(),
 
       css.vite({ cssDirs: config.css }),
 
-      Components({
+      components.vite({
         dts: join(config.output, "components.d.ts"),
 
         resolvers: [SchemaOrgResolver() as any],
 
         dirs: [
-          ...config.componentsDirs,
+          ...config.components,
           resolve(import.meta.dirname, "../app/components"),
         ],
 
@@ -124,7 +121,7 @@ export function buildViteConfig() {
     ],
 
     resolve: { alias: config.alias },
-  };
+  }) as UserConfig;
 
   return _config;
 }

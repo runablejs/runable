@@ -60,7 +60,7 @@ It integrates with it.
 - Koa
 - Express
 - Hono
-- Nitro
+- H3
 - Bun
 - Deno
 - Node.js HTTP

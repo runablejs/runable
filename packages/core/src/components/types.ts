@@ -1,3 +1,5 @@
+import type { Arrayable } from "@/utils";
+
 /** A side-effect-only import to inject alongside a resolved component (e.g. its CSS). */
 export type SideEffectsInfo = string | string[];
 
@@ -40,13 +42,78 @@ export type ComponentResolver =
   | ComponentResolverFunction
   | ComponentResolverObject;
 
+export type ComponentDir =
+  | string
+  | {
+      /**
+       * Directory(ies) to scan for local components.
+       * Resolved relative to the project root (Vite's `root`).
+       * @default 'src/components'
+       */
+      dirs?: string | string[];
+
+      /**
+       * File extensions considered as components.
+       * @default ['vue']
+       */
+      extensions?: string | string[];
+
+      /**
+       * Globs to exclude from the scan.
+       * @default ['**\/node_modules/**', '**\/.git/**']
+       */
+      exclude?: string[];
+
+      /**
+       * Renaming function: receives the absolute path of the component file
+       * and the default PascalCase name computed from that path, and must
+       * return the final name to recognize in templates.
+       *
+       * - Return a string: use it as the final name.
+       * - Return `undefined`: keep the default name.
+       * - Return `false`: exclude this component from auto-import.
+       *
+       * @example
+       * // Prefix every component under a "base" folder
+       * componentName: (filePath, defaultName) =>
+       *   filePath.includes('/base/') ? `Base${defaultName}` : defaultName
+       *
+       * @example
+       * // Explicit rename for a specific component
+       * componentName: (filePath, defaultName) => {
+       *   const overrides = { MyButton: 'AppButton' }
+       *   return overrides[defaultName] ?? defaultName
+       * }
+       */
+      componentName?: (
+        filePath: string,
+        defaultName: string,
+      ) => string | false | undefined;
+
+      /**
+       * Custom resolvers used to resolve components that are not found under
+       * `dirs` — typically components published by third-party UI libraries.
+       * Accepts a mix of single resolvers and arrays of resolvers, so that
+       * community resolver packages exporting an array (e.g. one resolver per
+       * icon set) can be spread in directly, matching the same shape as
+       * `unplugin-vue-components`.
+       *
+       * @example
+       * resolvers: [
+       *   ElementPlusResolver(),
+       *   [IconResolverA(), IconResolverB()],
+       * ]
+       */
+      resolvers?: (ComponentResolver | ComponentResolver[])[];
+    };
+
 export interface Options {
   /**
    * Directory(ies) to scan for local components.
    * Resolved relative to the project root (Vite's `root`).
    * @default 'src/components'
    */
-  dirs?: string | string[];
+  dirs?: Arrayable<ComponentDir>;
 
   /**
    * File extensions considered as components.

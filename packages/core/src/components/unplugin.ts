@@ -2,7 +2,7 @@ import { createUnplugin } from "unplugin";
 import type { ComponentInfo, Options, ResolvedOptions } from "./types";
 import { scanComponents } from "./scan";
 import { transformVueFile } from "./transform";
-import { createResolverEngine } from "./resolvers";
+import { collectResolvers, createResolverEngine } from "./resolvers";
 import { generateDts } from "./dts";
 
 const DEFAULT_OPTIONS: ResolvedOptions = {
@@ -13,17 +13,10 @@ const DEFAULT_OPTIONS: ResolvedOptions = {
   verbose: false,
 };
 
-export type {
-  ComponentInfo,
-  ComponentResolveResult,
-  ComponentResolver,
-  ComponentResolverObject,
-  Options,
-} from "./types";
-
 export default createUnplugin((rawOptions: Options = {}) => {
   const options: ResolvedOptions = { ...DEFAULT_OPTIONS, ...rawOptions };
-  const resolve = createResolverEngine(options.resolvers);
+  // const resolve = createResolverEngine(options.resolvers);
+  const resolve = createResolverEngine(collectResolvers(options));
 
   let root = process.cwd();
   let componentsMap = new Map<string, ComponentInfo>();

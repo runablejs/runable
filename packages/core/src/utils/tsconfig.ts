@@ -27,12 +27,14 @@ export function generateTsconfigs() {
     if (!pkg.content.dependencies) continue;
 
     for (const dependency of Object.keys(pkg.content.dependencies)) {
-      const pkg = getPackageJson(dependency, dir);
-      const entry = resolvePackageEntry(pkg.content, ".", "import");
+      try {
+        const pkg = getPackageJson(dependency, dir);
+        const entry = resolvePackageEntry(pkg.content, ".", "import");
 
-      if (!entry.types) continue;
+        if (!entry.types) continue;
 
-      dependencies.push(resolve(pkg.dir, entry.types));
+        dependencies.push(resolve(pkg.dir, entry.types));
+      } catch {}
     }
   }
 

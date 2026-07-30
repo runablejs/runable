@@ -6,3 +6,4 @@ export * from "./pkg-resolve-entry.js";
 export * from "./tsconfig.js";
 export * from "./load-env.js";
 export * from "./infer-env.js";
+export * from "./types.js";
