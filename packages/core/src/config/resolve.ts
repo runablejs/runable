@@ -34,6 +34,8 @@ export function resolveConfig(config: Config = {}) {
     config.publicDir = resolveDir(config.publicDir, config.cwd);
   }
 
+  config.modules ??= [];
+
   return config as ResolvedConfig;
 }
 
