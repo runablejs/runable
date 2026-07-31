@@ -9,7 +9,7 @@ import { resolveDir } from "@/utils";
 const DEFAULT_OPTIONS: ResolvedOptions = {
   dirs: "src/components",
   extensions: ["vue", "ts", "js", "mjs", "mts"],
-  exclude: ["**/node_modules/**", "**/.git/**", "**/*.d.*"],
+  exclude: ["**/.git/**", "**/*.d.*", "**/-*.*"], //"**/node_modules/**"
   dts: "components.d.ts",
   verbose: false,
   pathPrefix: true,

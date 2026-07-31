@@ -1,11 +1,10 @@
-import { existsSync } from "node:fs";
 import { extname, relative, resolve } from "node:path";
 import { createUnplugin } from "unplugin";
-import { getChildren } from "../utils/get-children.js";
-import { normalizeDir, resolveDir } from "../utils/dir.js";
+import { normalizeDir, parseDirPattern, resolveDir } from "../utils/dir.js";
 import { extractPageMeta } from "./extract-page-meta.js";
 import { atomicWriteFile } from "../utils/atomic-write-file.js";
 import merge from "lodash/merge.js";
+import fg from "fast-glob";
 
 const VIRTUAL_ID = ":router";
 const RESOLVED_VIRTUAL_ID = "\0:router";
@@ -57,6 +56,9 @@ declare module "vue-router" {
 export {};
 `;
 
+const extensions = ["vue", "ts", "js", "mjs", "mts", "jsx", "tsx"];
+const exclude = ["**/.git/**", "**/*.d.*", "**/-*.*"];
+
 function toRouteSegment(segment: string): string {
   const catchAllMatch = /^\[\.\.\.(.+)\]$/.exec(segment);
   if (catchAllMatch) return `:${catchAllMatch[1]}*`;
@@ -86,16 +88,24 @@ function resolveRouteEntry(viewsDir: string, filePath: string): RouteEntry {
 /** Scans one `routeDirs` entry and pushes its routes into the shared accumulator. */
 function collectViews(viewsDir: string, target: RouteEntry[]) {
   viewsDir = resolveDir(viewsDir);
-  if (!existsSync(viewsDir)) return;
 
-  const files = getChildren(viewsDir, {
-    recursive: true,
-    onlyFile: true,
-    endWith: /\.(vue|jsx|tsx)$/,
+  const { baseDir, customPattern } = parseDirPattern(viewsDir);
+
+  const pattern =
+    customPattern ??
+    (extensions.length === 1
+      ? `**/*.${extensions[0]}`
+      : `**/*.{${extensions.join(",")}}`);
+
+  const files = fg.sync(pattern, {
+    cwd: baseDir,
+    ignore: exclude,
+    absolute: true,
+    onlyFiles: true,
   });
 
   for (const file of files) {
-    target.push(resolveRouteEntry(viewsDir, file.path));
+    target.push(resolveRouteEntry(viewsDir, file));
   }
 }
 

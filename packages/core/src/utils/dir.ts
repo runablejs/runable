@@ -35,3 +35,16 @@ export function resolveDir(dir: string, root?: string) {
 
   return dir;
 }
+
+export function parseDirPattern(dir: string) {
+  const globIndex = dir.search(/[*?{}[\]]/);
+  if (globIndex === -1) {
+    return { baseDir: dir, customPattern: null };
+  }
+
+  const lastSlash = dir.lastIndexOf("/", globIndex);
+  const baseDir = lastSlash === -1 ? "." : dir.slice(0, lastSlash);
+  const customPattern = dir.slice(lastSlash + 1);
+
+  return { baseDir, customPattern };
+}

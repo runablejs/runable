@@ -4,19 +4,7 @@ import path from "node:path";
 import type { ComponentDir, ComponentInfo, ResolvedOptions } from "./types.js";
 import { extractDeclaredName } from "./extract-name.js";
 import { toArray, toPascalCase } from "./utils.js";
-
-function parseDirPattern(dir: string) {
-  const globIndex = dir.search(/[*?{}[\]]/);
-  if (globIndex === -1) {
-    return { baseDir: dir, customPattern: null };
-  }
-
-  const lastSlash = dir.lastIndexOf("/", globIndex);
-  const baseDir = lastSlash === -1 ? "." : dir.slice(0, lastSlash);
-  const customPattern = dir.slice(lastSlash + 1);
-
-  return { baseDir, customPattern };
-}
+import { parseDirPattern } from "@/utils/dir.js";
 
 interface ResolvedDirEntry {
   dirPaths: string[];

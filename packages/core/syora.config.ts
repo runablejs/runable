@@ -5,10 +5,7 @@ export default defineConfig({
   appDir: "playground",
   // devtools: { enable: true },
 
-  components: {
-    dirs: "playground/components",
-    pathPrefix: false,
-  },
+  components: { dirs: "playground/components" },
 
   head: {
     title: "Syora/vue playground",
