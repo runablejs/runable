@@ -14,18 +14,18 @@ export function resolveConfig(config: Config = {}) {
   config.output ??= ".app";
   config.output = resolveDir(config.output, config.cwd);
 
-  config.globalsDir ??= [
+  config.globals ??= [
     resolve(config.appDir, "globals"),
     resolve(config.appDir, "composables"),
   ];
 
   config.components = resolveComponents(config);
 
-  config.pagesDirs ??= [resolve(config.appDir, "pages")];
+  config.pages ??= ["pages"];
 
-  config.pluginsDirs ??= [resolve(config.appDir, "plugins")];
+  config.plugins ??= [resolve(config.appDir, "plugins")];
 
-  config.layoutsDirs ??= [resolve(config.appDir, "layouts")];
+  config.layouts ??= [resolve(config.appDir, "layouts")];
 
   config.ssr ??= true;
 

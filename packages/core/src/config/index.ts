@@ -8,22 +8,29 @@ import { dirname, join, relative, resolve } from "node:path";
 import { existsSync } from "node:fs";
 import { createRequire } from "node:module";
 import merge from "lodash/merge.js";
+import type { PluginRouterOptions } from "@/router/unplugin";
 
 /** Shape of a `syora.config.*` file, as authored by the user. */
 export type Config = {
   cwd?: string;
 
   appDir?: string;
-  globalsDir?: string[];
-  pagesDirs?: string[];
-  pluginsDirs?: string[];
-  layoutsDirs?: string[];
+
+  globals?: string[];
+
+  plugins?: string[];
+
+  layouts?: string[];
+
+  pages?: PluginRouterOptions[];
 
   components?: Arrayable<ComponentDir>;
   css?: string[];
 
   output?: string;
+
   distDir?: string;
+
   baseUrl?: string;
 
   ssr?: boolean;

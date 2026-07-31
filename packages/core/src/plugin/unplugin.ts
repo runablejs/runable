@@ -43,7 +43,7 @@ export {};
 `;
 
 type PluginConfig = {
-  pluginsDirs?: string[];
+  plugins?: string[];
   output?: string;
 };
 
@@ -136,10 +136,10 @@ export default createUnplugin((config?: PluginConfig) => {
     enforce: "pre",
 
     buildStart() {
-      const { pluginsDirs = [], output = process.cwd() } = config ?? {};
+      const { plugins = [], output = process.cwd() } = config ?? {};
       sharedOutput ??= output;
 
-      for (const dir of pluginsDirs) collectPlugins(dir);
+      for (const dir of plugins) collectPlugins(dir);
 
       completed++;
       if (completed === total) generateDtsFile(sharedOutput);

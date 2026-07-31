@@ -88,7 +88,7 @@ export function buildViteConfig(): UserConfig {
         output: config.output,
         imports: [
           ...(isMain ? getGlbalsImports() : []),
-          ...config.globalsDir.map((dir) => ({ directory: dir })),
+          ...config.globals.map((dir) => ({ directory: dir })),
         ],
       }),
     );
@@ -117,13 +117,17 @@ export function buildViteConfig(): UserConfig {
     );
 
     plugins.push(
-      layout.vite({ layoutsDirs: config.layoutsDirs, output: config.output }),
+      layout.vite({ layouts: config.layouts, output: config.output }),
     );
     plugins.push(
-      router.vite({ routeDirs: config.pagesDirs, output: config.output }),
+      router.vite({
+        pages: config.pages,
+        output: config.output,
+        appDir: config.appDir,
+      }),
     );
     plugins.push(
-      plugin.vite({ pluginsDirs: config.pluginsDirs, output: config.output }),
+      plugin.vite({ plugins: config.plugins, output: config.output }),
     );
 
     if (isMain) {

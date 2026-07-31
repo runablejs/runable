@@ -10,7 +10,7 @@ const VIRTUAL_ID = ":layouts";
 const RESOLVED_VIRTUAL_ID = "\0:layouts";
 
 type LayoutConfig = {
-  layoutsDirs?: string[];
+  layouts?: string[];
   output?: string;
 };
 
@@ -138,10 +138,10 @@ export default createUnplugin((config?: LayoutConfig) => {
     enforce: "pre",
 
     buildStart() {
-      const { output = process.cwd(), layoutsDirs = [] } = config ?? {};
+      const { output = process.cwd(), layouts = [] } = config ?? {};
       sharedOutput ??= output;
 
-      for (const dir of layoutsDirs) collectLayouts(dir, output);
+      for (const dir of layouts) collectLayouts(dir, output);
 
       completed++;
       if (completed === total) generateDts(sharedOutput);

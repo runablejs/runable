@@ -5,6 +5,7 @@ import { extractPageMeta } from "./extract-page-meta.js";
 import { atomicWriteFile } from "../utils/atomic-write-file.js";
 import merge from "lodash/merge.js";
 import fg from "fast-glob";
+import type { Arrayable } from "@/utils/types.js";
 
 const VIRTUAL_ID = ":router";
 const RESOLVED_VIRTUAL_ID = "\0:router";
@@ -29,11 +30,19 @@ type VueRoute = {
   children?: VueRoute[];
 };
 
-type RouterConfig = {
+export type RouterOptions = {
   dynamic?: boolean;
-  routeDirs?: string[];
-  output?: string;
+  pages?: Arrayable<string>;
+  exclude?: string[];
+  extensions?: string[];
 };
+
+type ResolvedRouterOptions = Exclude<RouterOptions, "pages"> &
+  Required<
+    Pick<RouterOptions, "dynamic" | "exclude" | "extensions" | "exclude">
+  > & { pages: string[] };
+
+export type PluginRouterOptions = string | RouterOptions;
 
 const template = `
 {{imports}}
@@ -58,6 +67,13 @@ export {};
 
 const extensions = ["vue", "ts", "js", "mjs", "mts", "jsx", "tsx"];
 const exclude = ["**/.git/**", "**/*.d.*", "**/-*.*"];
+
+const DEFAULT_OPTIONS = {
+  extensions: ["vue", "ts", "js", "mjs", "mts"],
+  exclude: ["**/.git/**", "**/*.d.*", "**/-*.*"],
+  dynamic: true,
+  pages: [],
+};
 
 function toRouteSegment(segment: string): string {
   const catchAllMatch = /^\[\.\.\.(.+)\]$/.exec(segment);
@@ -274,46 +290,98 @@ let sharedOutput: string | undefined;
 let sharedDynamic: boolean | undefined;
 let sharedCode = "";
 
-export default createUnplugin((config?: RouterConfig) => {
-  total++;
+export default createUnplugin(
+  ({
+    pages = [],
+    output = process.cwd(),
+    appDir,
+  }: {
+    pages: Arrayable<PluginRouterOptions>;
+    output?: string;
+    appDir?: string;
+  }) => {
+    total++;
+    sharedOutput ??= output;
 
-  return {
-    name: "syora:vue-router",
-    enforce: "post",
+    pages = Array.isArray(pages) ? pages : [pages];
 
-    buildStart() {
-      const {
-        routeDirs = [],
-        dynamic = true,
-        output = process.cwd(),
-      } = config ?? {};
-      sharedOutput ??= output;
-      sharedDynamic ??= dynamic;
+    const options = pages.map((raw) => {
+      if (typeof raw === "string") raw = { pages: [raw] };
 
-      for (const dir of routeDirs) collectViews(dir, sharedRouteEntries);
+      raw = { ...DEFAULT_OPTIONS, ...raw };
 
-      completed++;
-      if (completed === total) {
-        sharedCode = generateRouterCode(sharedRouteEntries, sharedDynamic);
-        atomicWriteFile(
-          resolve(sharedOutput, "router.d.ts"),
-          dtsTemplate.replaceAll(
-            "{{router_helper_path}}",
-            normalizeDir(
-              relative(output, resolve(import.meta.dirname, "./helpers.js")),
+      raw.pages ??= [];
+      raw.pages = Array.isArray(raw.pages) ? raw.pages : [raw.pages];
+
+      raw.pages = raw.pages.map((page) => {
+        page = resolveDir(page, appDir);
+        return page;
+      });
+
+      return raw as ResolvedRouterOptions;
+    });
+
+    // if (typeof rawOptions === "string") rawOptions = { pages: [rawOptions] };
+
+    // const options = { ...DEFAULT_OPTIONS, ...rawOptions };
+
+    return {
+      name: "syora:vue-router",
+      enforce: "post",
+
+      buildStart() {
+        completed++;
+
+        for (const option of options) {
+          const { pages, dynamic } = option ?? {};
+
+          sharedDynamic ??= dynamic;
+
+          for (const dir of pages) collectViews(dir, sharedRouteEntries);
+
+          // if (completed === total) {
+          //   sharedCode = generateRouterCode(sharedRouteEntries, sharedDynamic);
+          //   atomicWriteFile(
+          //     resolve(sharedOutput, "router.d.ts"),
+          //     dtsTemplate.replaceAll(
+          //       "{{router_helper_path}}",
+          //       normalizeDir(
+          //         relative(
+          //           output,
+          //           resolve(import.meta.dirname, "./helpers.js"),
+          //         ),
+          //       ),
+          //     ),
+          //   );
+          // }
+        }
+
+        if (completed === total) {
+          sharedCode = generateRouterCode(sharedRouteEntries, sharedDynamic!);
+
+          atomicWriteFile(
+            resolve(sharedOutput!, "router.d.ts"),
+            dtsTemplate.replaceAll(
+              "{{router_helper_path}}",
+              normalizeDir(
+                relative(
+                  sharedOutput!,
+                  resolve(import.meta.dirname, "./helpers.js"),
+                ),
+              ),
             ),
-          ),
-        );
-      }
-    },
+          );
+        }
+      },
 
-    resolveId(id) {
-      if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
-    },
+      resolveId(id) {
+        if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
+      },
 
-    load(id) {
-      if (id !== RESOLVED_VIRTUAL_ID) return null;
-      return sharedCode;
-    },
-  };
-});
+      load(id) {
+        if (id !== RESOLVED_VIRTUAL_ID) return null;
+        return sharedCode;
+      },
+    };
+  },
+);
