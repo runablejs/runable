@@ -7,6 +7,7 @@ export default defineConfig({
 
   components: {
     dirs: "playground/components",
+    pathPrefix: false,
   },
 
   head: {

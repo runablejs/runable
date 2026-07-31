@@ -23,6 +23,7 @@ interface ResolvedDirEntry {
   extensions: string[];
   exclude: string[];
   componentName?: ResolvedOptions["componentName"];
+  pathPrefix: boolean;
 }
 
 /** Merges one `ComponentDir` entry with the top-level defaults. */
@@ -31,6 +32,7 @@ function resolveDirEntry(
   fallback: ResolvedOptions,
 ): ResolvedDirEntry {
   const fallbackExtensions = toArray(fallback.extensions, []);
+  fallback.pathPrefix;
 
   if (typeof entry === "string") {
     return {
@@ -38,6 +40,7 @@ function resolveDirEntry(
       extensions: fallbackExtensions,
       exclude: fallback.exclude,
       componentName: fallback.componentName,
+      pathPrefix: fallback.pathPrefix,
     };
   }
 
@@ -52,6 +55,7 @@ function resolveDirEntry(
     extensions: toArray(entry.extensions, fallbackExtensions),
     exclude: entry.exclude ?? fallback.exclude,
     componentName: entry.componentName ?? fallback.componentName,
+    pathPrefix: entry.pathPrefix ?? fallback.pathPrefix,
   };
 }
 
@@ -63,10 +67,8 @@ export function scanComponents(
   const map = new Map<string, ComponentInfo>();
 
   for (const rawEntry of entries) {
-    const { dirPaths, extensions, exclude, componentName } = resolveDirEntry(
-      rawEntry,
-      options,
-    );
+    const { dirPaths, extensions, exclude, componentName, pathPrefix } =
+      resolveDirEntry(rawEntry, options);
 
     for (const rawDir of dirPaths) {
       const { baseDir, customPattern } = parseDirPattern(rawDir);
@@ -105,7 +107,7 @@ export function scanComponents(
 
         const defaultName =
           declaredName ??
-          toPascalCase(options.pathPrefix ? relative : path.basename(file));
+          toPascalCase(pathPrefix ? relative : path.basename(file));
 
         let finalName: string | false | undefined = defaultName;
         if (componentName) {
