@@ -115,15 +115,14 @@ export async function _loadConfig({
     if (cwd) config.cwd ??= cwd;
     config = resolveConfig(config);
 
+    config._name = name;
+    if (typeof config._index !== "number") config._index = index++;
+
     cachedConfigs ??= {};
     cachedConfigs[name] = merge(
       cachedConfigs[name] ?? {},
       config,
     ) as ResolvedConfig;
-
-    config._name = name;
-
-    if (typeof config._index !== "number") config._index = index++;
 
     await loadModulesConfigs(config);
   })();

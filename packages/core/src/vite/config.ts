@@ -15,7 +15,7 @@ import css from "../css/unplugin.js";
 import importMeta from "../import-meta/unplugin.js";
 import runtime from "../runtime/unplugin.js";
 import router from "../router/unplugin.js";
-import globals from "../globals/unplugin.js";
+import globals, { type GlobalConfig } from "../globals/unplugin.js";
 
 import {
   schemaOrgAutoImports,
@@ -53,43 +53,42 @@ export function buildViteConfig(): UserConfig {
 
   const configToViteConfig = (config: ResolvedConfig): UserConfig => {
     const isMain = config._name === "__main";
+
     const plugins: (Plugin<any> | Plugin<any>[])[] = [];
+
+    function getGlbalsImports() {
+      const imports: GlobalConfig["imports"] = [
+        "vue",
+        { file: join(import.meta.dirname, "../plugin/define") },
+        { file: join(import.meta.dirname, "../layout/useLayouts") },
+        { file: join(import.meta.dirname, "../router/composables") },
+        { file: join(import.meta.dirname, "../router/helpers") },
+        {
+          directory: join(import.meta.dirname, "../config/composable"),
+        },
+        {
+          directory: join(import.meta.dirname, "../context/composables"),
+        },
+        { directory: join(import.meta.dirname, "../fetch") },
+        {
+          directory: join(import.meta.dirname, "../async-data/composable"),
+        },
+        {
+          directory: join(import.meta.dirname, "../runtime/composable"),
+        },
+        unheadVueComposablesImports,
+        ...schemaOrgAutoImports,
+      ];
+
+      return imports;
+    }
 
     plugins.push(
       globals.vite({
         output: config.output,
         imports: [
+          ...(isMain ? getGlbalsImports() : []),
           ...config.globalsDir.map((dir) => ({ directory: dir })),
-          ...(isMain
-            ? [
-                // "vue",
-                { file: join(import.meta.dirname, "../plugin/define") },
-                { file: join(import.meta.dirname, "../layout/useLayouts") },
-                { file: join(import.meta.dirname, "../router/composables") },
-                { file: join(import.meta.dirname, "../router/types") },
-                {
-                  directory: join(import.meta.dirname, "../config/composable"),
-                },
-                {
-                  directory: join(
-                    import.meta.dirname,
-                    "../context/composables",
-                  ),
-                },
-                { directory: join(import.meta.dirname, "../fetch") },
-                {
-                  directory: join(
-                    import.meta.dirname,
-                    "../async-data/composable",
-                  ),
-                },
-                {
-                  directory: join(import.meta.dirname, "../runtime/composable"),
-                },
-                unheadVueComposablesImports,
-                ...schemaOrgAutoImports,
-              ]
-            : []),
         ],
       }),
     );
@@ -104,9 +103,16 @@ export function buildViteConfig(): UserConfig {
           ...config.components,
 
           ...(isMain
-            ? [resolve(import.meta.dirname, "../app/components")]
+            ? [
+                {
+                  dirs: resolve(import.meta.dirname, "../app/components"),
+                  pathPrefix: false,
+                },
+              ]
             : []),
         ],
+
+        cwd: config.cwd,
       }),
     );
 
@@ -137,7 +143,7 @@ export function buildViteConfig(): UserConfig {
 
   let viteCOnfig = {};
 
-  configs.reverse().forEach((config) => {
+  configs.forEach((config) => {
     const _config = configToViteConfig(withMainOverrides(main, config));
     viteCOnfig = mergeConfig(viteCOnfig, _config) as UserConfig;
   });

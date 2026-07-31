@@ -98,11 +98,14 @@ export function scanComponents(
 
       for (const file of files) {
         const relative = path.relative(baseForRelative, file);
+
         const declaredName = file.endsWith("vue")
           ? undefined
           : extractDeclaredName(file);
 
-        const defaultName = declaredName ?? toPascalCase(relative);
+        const defaultName =
+          declaredName ??
+          toPascalCase(options.pathPrefix ? relative : path.basename(file));
 
         let finalName: string | false | undefined = defaultName;
         if (componentName) {

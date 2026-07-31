@@ -47,88 +47,79 @@ type PluginConfig = {
   output?: string;
 };
 
-async function generateCode({
-  pluginsDirs = [],
-  output = process.cwd(),
-}: PluginConfig) {
-  // Key: Plugin variable name, Value: Absolute file path
-  const pluginEntries: Record<string, string> = {};
+/**
+ * Shared across every instance of this plugin (one per Syora config: main +
+ * each module) so `:plugins` and `plugins.d.ts` include every config's
+ * plugins, not just whichever instance's `buildStart`/`load` happens to win.
+ */
+let total = 0;
+let completed = 0;
+const sharedPlugins: Record<string, string> = {};
+let sharedOutput: string | undefined;
 
-  // Converts a file path into a valid JS variable name (CamelCase)
-  function getPluginVariableName(parentDir: string, filePath: string): string {
-    const baseName = relative(parentDir, filePath).replace(/\.(ts|js)$/, "");
+function getPluginVariableName(parentDir: string, filePath: string): string {
+  const baseName = relative(parentDir, filePath).replace(/\.(ts|js)$/, "");
+  return camelCase(baseName) + "Plugin";
+}
 
-    return camelCase(baseName) + "Plugin";
+function collectPlugins(parentDir: string) {
+  parentDir = resolveDir(parentDir);
+  if (!existsSync(parentDir)) return;
+
+  const files = getChildren(parentDir, {
+    recursive: true,
+    onlyFile: true,
+    endWith: /\.(ts|js)$/,
+  });
+
+  for (const file of files) {
+    if (file.path.endsWith(".d.ts")) continue;
+
+    const varName = getPluginVariableName(parentDir, file.path);
+    sharedPlugins[varName] = file.path;
+  }
+}
+
+function generateDtsFile(output: string) {
+  const dtsPath = resolve(output, "plugins.d.ts");
+  const pluginHelperPath = normalizeDir(
+    relative(output, resolve(import.meta.dirname, "./types")),
+  );
+
+  const entries = Object.values(sharedPlugins);
+  let customPropertiesUnion = "{}";
+
+  if (entries.length > 0) {
+    customPropertiesUnion =
+      "\n  " +
+      entries
+        .map((filePath) => {
+          const relativePluginPath = normalizeDir(relative(output, filePath));
+          return `InjectionType<typeof import("${relativePluginPath}")>`;
+        })
+        .join("&\n  ");
   }
 
-  function getPlugins(parentDir: string) {
-    parentDir = resolveDir(parentDir);
+  try {
+    const content = dtsTemplate
+      .replaceAll("{{plugin_types_path}}", pluginHelperPath)
+      .replaceAll("{{custom_properties_union}}", customPropertiesUnion);
 
-    if (!existsSync(parentDir)) return;
-
-    // Scan all files ending with .ts or .js (excluding .d.ts)
-    const files = getChildren(parentDir, {
-      recursive: true,
-      onlyFile: true,
-      endWith: /\.(ts|js)$/,
-    });
-
-    for (const file of files) {
-      if (file.path.endsWith(".d.ts")) continue;
-
-      const varName = getPluginVariableName(parentDir, file.path);
-      pluginEntries[varName] = file.path;
-    }
+    atomicWriteFile(dtsPath, content);
+  } catch (error) {
+    console.error("[Vite Plugin] Failed to write plugins.d.ts:", error);
   }
+}
 
-  async function generateDtsFile(): Promise<void> {
-    const dtsPath = resolve(output, "plugins.d.ts");
-    const pluginHelperPath = normalizeDir(
-      relative(output, resolve(import.meta.dirname, "./types")),
-    );
-
-    // 2. Build the TypeScript intersection type mapping all plugins
-    const entries = Object.values(pluginEntries);
-    let customPropertiesUnion = "{}";
-
-    if (entries.length > 0) {
-      customPropertiesUnion =
-        "\n  " +
-        entries
-          .map((filePath) => {
-            const relativePluginPath = normalizeDir(relative(output, filePath));
-
-            return `InjectionType<typeof import("${relativePluginPath}")>`;
-          })
-          .join("&\n  ");
-    }
-
-    try {
-      const content = dtsTemplate
-        .replaceAll("{{plugin_types_path}}", pluginHelperPath)
-        .replaceAll("{{custom_properties_union}}", customPropertiesUnion);
-
-      atomicWriteFile(dtsPath, content);
-    } catch (error) {
-      console.error("[Vite Plugin] Failed to write plugins.d.ts:", error);
-    }
-  }
-
-  for (const pluginsDir of pluginsDirs) getPlugins(pluginsDir);
-
-  // Write TS declarations
-  await generateDtsFile();
-
-  // 1. Generate Static Imports (e.g., import myPluginPlugin from "path/to/plugin.ts")
-  const imports = Object.entries(pluginEntries)
+function generateVirtualCode(): string {
+  const imports = Object.entries(sharedPlugins)
     .map(([varName, filePath]) => {
       const rPath = normalizeDir(relative(process.cwd(), filePath));
       return `import ${varName} from ${JSON.stringify(rPath)};`;
     })
     .join("\n");
 
-  // 2. Generate the key-value dictionary for the array
-  const pluginArray = Object.keys(pluginEntries)
+  const pluginArray = Object.keys(sharedPlugins)
     .map((varName) => `  ${varName}`)
     .join(",\n");
 
@@ -138,14 +129,20 @@ async function generateCode({
 }
 
 export default createUnplugin((config?: PluginConfig) => {
-  let code = "";
+  total++;
 
   return {
     name: "syora:vue-plugins",
     enforce: "pre",
 
-    async buildStart() {
-      code = await generateCode(config ?? {});
+    buildStart() {
+      const { pluginsDirs = [], output = process.cwd() } = config ?? {};
+      sharedOutput ??= output;
+
+      for (const dir of pluginsDirs) collectPlugins(dir);
+
+      completed++;
+      if (completed === total) generateDtsFile(sharedOutput);
     },
 
     resolveId(id) {
@@ -153,9 +150,7 @@ export default createUnplugin((config?: PluginConfig) => {
     },
 
     load(id) {
-      if (id === RESOLVED_VIRTUAL_ID) {
-        return code;
-      }
+      if (id === RESOLVED_VIRTUAL_ID) return generateVirtualCode();
     },
   };
 });

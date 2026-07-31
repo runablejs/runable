@@ -1,46 +1,48 @@
 import path from "node:path";
-import _ from "lodash";
 import { normalizeDir } from "@/utils/dir.js";
 import { createUnplugin } from "unplugin";
 
 const VIRTUAL_ID = ":css";
-const RESOLVED_VIRTUAL_ID = "\:css";
+const RESOLVED_VIRTUAL_ID = "\0:css";
 
 type CssConfig = {
   cssDirs: string[];
   cwd?: string;
 };
 
+/**
+ * Shared across every instance of this plugin (one per Syora config: main +
+ * each module) so the `:css` virtual module ends up importing every
+ * config's CSS, not just whichever instance's `load()` wins the resolution.
+ * A Set dedupes a file listed by more than one config.
+ */
+const sharedCssFiles = new Set<string>();
+
 export default createUnplugin((config: CssConfig) => {
   const { cssDirs = [], cwd = process.cwd() } = config;
-  const cssFiles: string[] = [];
 
   return {
     name: "syora:css",
     enforce: "pre",
 
     buildStart() {
-      if (!cssDirs || !Array.isArray(cssDirs)) return;
+      if (!Array.isArray(cssDirs)) return;
 
-      cssFiles.push(
-        ...cssDirs.map((file) => {
-          if (file.startsWith(".")) return path.resolve(cwd, file);
-          return file;
-        }),
-      );
-    },
-
-    resolveId(id) {
-      if (id === VIRTUAL_ID) {
-        return RESOLVED_VIRTUAL_ID;
+      for (const file of cssDirs) {
+        sharedCssFiles.add(
+          file.startsWith(".") ? path.resolve(cwd, file) : file,
+        );
       }
     },
 
-    async load(id) {
+    resolveId(id) {
+      if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
+    },
+
+    load(id) {
       if (id !== RESOLVED_VIRTUAL_ID) return null;
 
-      // Generate imports using actual resolved and normalized paths relative to working directory
-      return cssFiles
+      return Array.from(sharedCssFiles)
         .map((file) => {
           const rPath = normalizeDir(path.relative(process.cwd(), file));
           return `import "${rPath}";`;

@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { ComponentInfo } from "./types";
+import { atomicWriteFile } from "@/utils";
 
 /**
  * Generates a `components.d.ts` declaration file for the locally scanned
@@ -42,5 +43,5 @@ ${lines.join("\n")}
   const dir = path.dirname(filePath);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
-  fs.writeFileSync(filePath, content, "utf-8");
+  atomicWriteFile(filePath, content);
 }

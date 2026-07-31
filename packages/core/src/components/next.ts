@@ -4,7 +4,6 @@ import { scanComponents } from "./scan";
 import { transformVueFile } from "./transform";
 import { collectResolvers, createResolverEngine } from "./resolvers";
 import { generateDts } from "./dts";
-import { resolveDir } from "@/utils";
 
 const DEFAULT_OPTIONS: ResolvedOptions = {
   dirs: "src/components",
@@ -12,7 +11,6 @@ const DEFAULT_OPTIONS: ResolvedOptions = {
   exclude: ["**/node_modules/**", "**/.git/**", "**/*.d.*"],
   dts: "components.d.ts",
   verbose: false,
-  pathPrefix: true,
 };
 
 /**
@@ -40,28 +38,8 @@ function writeSharedDts(root: string) {
   generateDts(root, mergedComponents(), sharedDts ?? true);
 }
 
-export default createUnplugin((rawOptions: Options & { cwd?: string } = {}) => {
+export default createUnplugin((rawOptions: Options = {}) => {
   const options: ResolvedOptions = { ...DEFAULT_OPTIONS, ...rawOptions };
-  const { cwd = process.cwd() } = rawOptions;
-
-  options.dirs = Array.isArray(options.dirs) ? options.dirs : [options.dirs];
-  options.dirs = options.dirs.map((dir) => {
-    if (typeof dir === "string") {
-      dir = resolveDir(dir, cwd);
-    } else {
-      dir.dirs = Array.isArray(dir.dirs) ? dir.dirs : [dir.dirs];
-
-      for (let i = 0; i < dir.dirs.length; i++) {
-        const _dir = dir.dirs[i];
-        if (!_dir) continue;
-
-        dir.dirs[i] = resolveDir(_dir, cwd);
-      }
-    }
-
-    return dir;
-  });
-
   const resolve = createResolverEngine(collectResolvers(options));
   const instanceId = total++;
 

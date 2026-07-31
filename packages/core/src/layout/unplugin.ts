@@ -53,93 +53,74 @@ type CustomLayoutConfigurations =
 {{layout_config_union}};
 `;
 
-async function generateCode({
-  output = process.cwd(),
-  layoutsDirs = [],
-}: LayoutConfig) {
-  // Structure: Record<layoutName, { parent: string; file: string; dtsImportPath: string }>
-  const layoutsEntries: Record<
-    string,
-    { parent: string; file: string; dtsImportPath: string }
-  > = {};
+type LayoutEntry = { parent: string; file: string; dtsImportPath: string };
 
-  function getLayoutName(parentDir: string, filePath: string): string {
-    const baseName = path.relative(parentDir, filePath).replace(/\.vue$/, "");
-    return _.camelCase(baseName);
-  }
+/**
+ * Shared across every instance of this plugin (one per Syora config: main +
+ * each module) so `:layouts` and `layouts.d.ts` include every config's
+ * layouts, not just whichever instance's `buildStart`/`load` happens to win.
+ */
+let total = 0;
+let completed = 0;
+const sharedLayouts: Record<string, LayoutEntry> = {};
+let sharedOutput: string | undefined;
 
-  async function getLayouts(parentDir: string) {
-    if (!fs.existsSync(parentDir)) return;
+function getLayoutName(parentDir: string, filePath: string): string {
+  const baseName = path.relative(parentDir, filePath).replace(/\.vue$/, "");
+  return _.camelCase(baseName);
+}
 
-    const files = getChildren(parentDir, {
-      onlyFile: true,
-      endWith: /\.vue$/,
-    });
+function collectLayouts(parentDir: string, output: string) {
+  if (!fs.existsSync(parentDir)) return;
 
-    for (const file of files) {
-      const name = getLayoutName(parentDir, file.path);
+  const files = getChildren(parentDir, { onlyFile: true, endWith: /\.vue$/ });
 
-      // Calculate a relative path from where layouts.d.ts will live (root) to the layout file
-      // to import its native component type definition
-      const dtsImportPath = normalizeDir(
-        path.relative(output, file.path).replace(/\.vue$/, ""),
-      );
-
-      layoutsEntries[name] = {
-        parent: parentDir,
-        file: file.path,
-        dtsImportPath,
-      };
-    }
-  }
-
-  // Generates the TypeScript declaration file with typed props imports
-  async function generateDts(): Promise<void> {
-    if (!Object.keys(layoutsEntries).length) return;
-
-    const layoutNames = Object.keys(layoutsEntries);
-
-    // 1. Generate individual dynamic imports for each layout to extract their props types
-    const imports = Object.entries(layoutsEntries)
-      .map(([name, entry]) => {
-        // We import the component instance type to extract its runtime props structure
-        return `type ${name}Component = (typeof import('${entry.dtsImportPath}.vue'))['default'];`;
-      })
-      .join("\n");
-
-    // 2. Map mapped types matching each layout name with its specific props
-    const layoutConfigUnion = Object.keys(layoutsEntries)
-      .map((name) => {
-        return `  | {
-      name: "${name}";
-      props?: ExtractComponentProps<${name}Component>;
-    }`;
-      })
-      .join("\n");
-
-    const layoutUnionType = layoutNames.map((name) => `"${name}"`).join(" | ");
-    const pageMetaHelperPath = normalizeDir(
-      path.relative(
-        output,
-        path.resolve(import.meta.dirname, "../router/types"),
-      ),
+  for (const file of files) {
+    const name = getLayoutName(parentDir, file.path);
+    const dtsImportPath = normalizeDir(
+      path.relative(output, file.path).replace(/\.vue$/, ""),
     );
 
-    const dtsContent = dtsTemplate
-      .replaceAll("{{page_meta_helper_path}}", pageMetaHelperPath)
-      .replaceAll("{{imports}}", imports)
-      .replaceAll("{{layout_union_type}}", layoutUnionType)
-      .replaceAll("{{layout_config_union}}", layoutConfigUnion);
-
-    const dtsPath = path.resolve(output, "layouts.d.ts");
-    atomicWriteFile(dtsPath, dtsContent);
+    sharedLayouts[name] = { parent: parentDir, file: file.path, dtsImportPath };
   }
+}
 
-  for (const layoutsDir of layoutsDirs) await getLayouts(layoutsDir);
+function generateDts(output: string) {
+  if (!Object.keys(sharedLayouts).length) return;
 
-  await generateDts();
+  const layoutNames = Object.keys(sharedLayouts);
 
-  const objectEntries = Object.entries(layoutsEntries)
+  const imports = Object.entries(sharedLayouts)
+    .map(([name, entry]) => {
+      return `type ${name}Component = (typeof import('${entry.dtsImportPath}.vue'))['default'];`;
+    })
+    .join("\n");
+
+  const layoutConfigUnion = layoutNames
+    .map(
+      (name) => `  | {
+      name: "${name}";
+      props?: ExtractComponentProps<${name}Component>;
+    }`,
+    )
+    .join("\n");
+
+  const layoutUnionType = layoutNames.map((name) => `"${name}"`).join(" | ");
+  const pageMetaHelperPath = normalizeDir(
+    path.relative(output, path.resolve(import.meta.dirname, "../router/types")),
+  );
+
+  const dtsContent = dtsTemplate
+    .replaceAll("{{page_meta_helper_path}}", pageMetaHelperPath)
+    .replaceAll("{{imports}}", imports)
+    .replaceAll("{{layout_union_type}}", layoutUnionType)
+    .replaceAll("{{layout_config_union}}", layoutConfigUnion);
+
+  atomicWriteFile(path.resolve(output, "layouts.d.ts"), dtsContent);
+}
+
+function generateVirtualCode(): string {
+  const objectEntries = Object.entries(sharedLayouts)
     .map(([name, { file }]) => {
       const rPath = normalizeDir(path.relative(process.cwd(), file));
       return `  "${name}": () => import('${rPath}').then(m => m.default || m)`;
@@ -150,14 +131,20 @@ async function generateCode({
 }
 
 export default createUnplugin((config?: LayoutConfig) => {
-  let code = "";
+  total++;
 
   return {
     name: "syora:vue-layouts",
     enforce: "pre",
 
-    async buildStart() {
-      code = await generateCode(config ?? {});
+    buildStart() {
+      const { output = process.cwd(), layoutsDirs = [] } = config ?? {};
+      sharedOutput ??= output;
+
+      for (const dir of layoutsDirs) collectLayouts(dir, output);
+
+      completed++;
+      if (completed === total) generateDts(sharedOutput);
     },
 
     resolveId(id) {
@@ -165,7 +152,7 @@ export default createUnplugin((config?: LayoutConfig) => {
     },
 
     load(id) {
-      if (id === RESOLVED_VIRTUAL_ID) return code;
+      if (id === RESOLVED_VIRTUAL_ID) return generateVirtualCode();
     },
   };
 });

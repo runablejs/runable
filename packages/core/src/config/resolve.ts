@@ -44,13 +44,5 @@ function resolveComponents(config: Config) {
 
   if (!Array.isArray(components)) components = [components];
 
-  components = components.map((component) => {
-    if (typeof component === "string") {
-      component = resolveDir(component, config.cwd);
-    }
-
-    return component;
-  });
-
   return components;
 }

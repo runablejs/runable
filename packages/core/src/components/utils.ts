@@ -1,3 +1,6 @@
+import toCamelCase from "lodash/camelCase.js";
+import toUpperFirst from "lodash/upperFirst.js";
+
 /** Native Vue global components, never resolved/auto-imported. */
 export const BUILTIN_COMPONENTS = new Set([
   "Transition",
@@ -17,12 +20,13 @@ export const BUILTIN_COMPONENTS = new Set([
  * "form/text-input.vue" -> "FormTextInput".
  */
 export function toPascalCase(input: string): string {
-  return input
-    .replace(/\.\w+$/, "")
-    .split(/[-_/\\ ]+/)
-    .filter(Boolean)
-    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
-    .join("");
+  return toUpperFirst(toCamelCase(input.replace(/\.\w+$/, "")));
+  // input
+  //   .replace(/\.\w+$/, "")
+  //   .split(/[-_/\\ ]+/)
+  //   .filter(Boolean)
+  //   .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+  //   .join("");
 }
 
 /** Converts a kebab-case tag ("text-input") into PascalCase ("TextInput"). */

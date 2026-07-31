@@ -50,7 +50,7 @@ export type ComponentDir =
        * Resolved relative to the project root (Vite's `root`).
        * @default 'src/components'
        */
-      dirs?: string | string[];
+      dirs: string | string[];
 
       /**
        * File extensions considered as components.
@@ -63,6 +63,8 @@ export type ComponentDir =
        * @default ['**\/node_modules/**', '**\/.git/**']
        */
       exclude?: string[];
+
+      pathPrefix?: boolean;
 
       /**
        * Renaming function: receives the absolute path of the component file
@@ -127,6 +129,8 @@ export interface Options {
    */
   exclude?: string[];
 
+  pathPrefix?: boolean;
+
   /**
    * Renaming function: receives the absolute path of the component file
    * and the default PascalCase name computed from that path, and must
@@ -185,6 +189,6 @@ export interface Options {
 }
 
 export type ResolvedOptions = Required<
-  Pick<Options, "dirs" | "extensions" | "exclude" | "verbose">
+  Pick<Options, "dirs" | "extensions" | "exclude" | "verbose" | "pathPrefix">
 > &
   Pick<Options, "componentName" | "dts" | "resolvers">;
