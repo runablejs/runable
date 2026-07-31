@@ -59,6 +59,8 @@ export type ResolvedConfig = Required<Config> & {
    * order (whichever `c12Load` resolves first), not declaration order.
    */
   _index: number;
+
+  _name: string;
 };
 
 /** Subset of the config safe to forward to the client bundle. */
@@ -118,6 +120,8 @@ export async function _loadConfig({
       cachedConfigs[name] ?? {},
       config,
     ) as ResolvedConfig;
+
+    config._name = name;
 
     if (typeof config._index !== "number") config._index = index++;
 
