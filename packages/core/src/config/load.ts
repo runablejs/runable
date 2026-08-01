@@ -137,7 +137,8 @@ export async function loadAndCacheConfig({
     const { configKey, defaults, setup, meta, ...rest } = loaded ?? {};
     let config = rest as ResolvedConfig;
 
-    if (cwd) config.cwd ??= cwd;
+    config.cwd = cwd ?? process.cwd();
+
     config = resolveConfig(config);
     cachedConfigs ??= {};
     config = merge(cloneDeep(cachedConfigs[name] ?? {}), config);

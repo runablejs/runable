@@ -4,15 +4,13 @@ import type { UserConfig } from "vite";
 import type { ComponentDir } from "@/components/types";
 import type { PluginRouterOptions } from "@/router/unplugin";
 import { type Arrayable } from "@/utils";
+import type { RuntimeHooks } from "@/context/hook.js";
 
 import type { ResolvedConfig } from "./load.js";
 
 /** Shape of a `syora.config.*` file, as authored by the user. */
 export interface SyoraConfig {
   // --- Project root ---------------------------------------------------
-
-  /** Working directory from which relative paths are resolved. */
-  cwd?: string;
 
   /** Directory containing the Vue.js application's source code. */
   appDir?: string;

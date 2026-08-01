@@ -32,6 +32,8 @@ export interface ContentConfig<
   >,
 > {
   collections: TCollections;
+  root?: string;
+  output?: string;
 }
 
 export function defineContentConfig<

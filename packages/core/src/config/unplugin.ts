@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { createUnplugin } from "unplugin";
-import { useConfig } from "./load.js";
+import { useConfig } from "./index.js";
 
 const VIRTUAL_ID = ":config";
 const RESOLVED_VIRTUAL_ID = "\0:config";

@@ -113,6 +113,7 @@ export function buildViteConfig(): UserConfig {
     plugins.push(
       layout.vite({ layouts: config.layouts, output: config.output }),
     );
+
     plugins.push(
       router.vite({
         pages: config.pages,
@@ -120,8 +121,15 @@ export function buildViteConfig(): UserConfig {
         appDir: config.appDir,
       }),
     );
+
     plugins.push(
-      plugin.vite({ plugins: config.plugins, output: config.output }),
+      plugin.vite({
+        plugins: [
+          ...(isMain ? [join(import.meta.dirname, "../app/plugins")] : []),
+          ...config.plugins,
+        ],
+        output: config.output,
+      }),
     );
 
     if (isMain) {

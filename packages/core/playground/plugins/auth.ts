@@ -6,8 +6,6 @@ export default defineVuePlugin({
   },
 
   setup: () => {
-    console.log("hello from plugin++");
-
     return {
       provide: {
         test: () => "hey is test",

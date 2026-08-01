@@ -4,7 +4,11 @@ import type { App, Plugin } from "vue";
 import type { VuePluginObject } from "./types.js";
 import { plugins } from ":plugins";
 import { useApp } from "../context/composables.js";
-import type { AppHooks, HookCallback } from "../context/context.js";
+import {
+  type AppHooks,
+  type HookCallback,
+  registerHooks,
+} from "@/context/hook.js";
 
 export const pluginPlugin: Plugin = {
   install(app) {
@@ -100,12 +104,7 @@ function register(plugin: VuePluginObject) {
     async install(app: App) {
       if (plugin.hooks) {
         const appCtx = useApp();
-        for (const [key, fn] of Object.entries(plugin.hooks) as [
-          AppHooks,
-          HookCallback,
-        ][]) {
-          appCtx.hook(key, fn);
-        }
+        registerHooks(appCtx, plugin.hooks);
       }
 
       if (!plugin.setup) return;

@@ -12,4 +12,11 @@ export default defineModule<ModuleOptions>({
   default: { dir: "content" },
 
   setup(options, config) {},
+
+  // hooks: {
+  //   "app:mounted"() {
+
+  //     console.log("+*/*************");
+  //   },
+  // },
 });

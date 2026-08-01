@@ -48,18 +48,46 @@ type PluginConfig = {
 };
 
 /**
+ * Which build a plugin file is allowed into, derived from its filename:
+ * `*.server.*` -> only the SSR build, `*.client.*` -> only the client
+ * build, anything else -> both.
+ */
+type PluginEnvironment = "server" | "client" | "universal";
+
+interface PluginEntry {
+  filePath: string;
+  environment: PluginEnvironment;
+}
+
+/**
  * Shared across every instance of this plugin (one per Syora config: main +
  * each module) so `:plugins` and `plugins.d.ts` include every config's
  * plugins, not just whichever instance's `buildStart`/`load` happens to win.
  */
 let total = 0;
 let completed = 0;
-const sharedPlugins: Record<string, string> = {};
+const sharedPlugins: Record<string, PluginEntry> = {};
 let sharedOutput: string | undefined;
 
 function getPluginVariableName(parentDir: string, filePath: string): string {
   const baseName = relative(parentDir, filePath).replace(/\.(ts|js)$/, "");
   return camelCase(baseName) + "Plugin";
+}
+
+/** `foo.server.ts` -> "server", `foo.client.ts` -> "client", anything else -> "universal" (loaded in both builds). */
+function getPluginEnvironment(filePath: string): PluginEnvironment {
+  if (/\.server\.(ts|js)$/.test(filePath)) return "server";
+  if (/\.client\.(ts|js)$/.test(filePath)) return "client";
+  return "universal";
+}
+
+/** Whether a plugin's declared environment matches the build currently being generated. */
+function matchesEnvironment(
+  environment: PluginEnvironment,
+  isSsr: boolean,
+): boolean {
+  if (environment === "universal") return true;
+  return isSsr ? environment === "server" : environment === "client";
 }
 
 function collectPlugins(parentDir: string) {
@@ -76,7 +104,10 @@ function collectPlugins(parentDir: string) {
     if (file.path.endsWith(".d.ts")) continue;
 
     const varName = getPluginVariableName(parentDir, file.path);
-    sharedPlugins[varName] = file.path;
+    sharedPlugins[varName] = {
+      filePath: file.path,
+      environment: getPluginEnvironment(file.path),
+    };
   }
 }
 
@@ -93,8 +124,10 @@ function generateDtsFile(output: string) {
     customPropertiesUnion =
       "\n  " +
       entries
-        .map((filePath) => {
-          const relativePluginPath = normalizeDir(relative(output, filePath));
+        .map((entry) => {
+          const relativePluginPath = normalizeDir(
+            relative(output, entry.filePath),
+          );
           return `InjectionType<typeof import("${relativePluginPath}")>`;
         })
         .join("&\n  ");
@@ -111,17 +144,26 @@ function generateDtsFile(output: string) {
   }
 }
 
-function generateVirtualCode(): string {
-  const imports = Object.entries(sharedPlugins)
-    .map(([varName, filePath]) => {
-      const rPath = normalizeDir(relative(process.cwd(), filePath));
+/**
+ * Only plugins matching the current build (`isSsr`) get an `import` line —
+ * a `*.server.*` plugin is simply never imported into the client's
+ * `:plugins` module (and vice versa), rather than shipped and guarded at
+ * runtime. Works the same in `vite dev` and `vite build`, since inclusion
+ * happens at `load()` time per the `ssr` flag Vite passes for each call.
+ */
+function generateVirtualCode(isSsr: boolean): string {
+  const included = Object.entries(sharedPlugins).filter(([, entry]) =>
+    matchesEnvironment(entry.environment, isSsr),
+  );
+
+  const imports = included
+    .map(([varName, entry]) => {
+      const rPath = normalizeDir(relative(process.cwd(), entry.filePath));
       return `import ${varName} from ${JSON.stringify(rPath)};`;
     })
     .join("\n");
 
-  const pluginArray = Object.keys(sharedPlugins)
-    .map((varName) => `  ${varName}`)
-    .join(",\n");
+  const pluginArray = included.map(([varName]) => `  ${varName}`).join(",\n");
 
   return template
     .replace("{{imports}}", imports)
@@ -149,8 +191,13 @@ export default createUnplugin((config?: PluginConfig) => {
       if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
     },
 
-    load(id) {
-      if (id === RESOLVED_VIRTUAL_ID) return generateVirtualCode();
+    vite: {
+      load(id, options) {
+        if (id !== RESOLVED_VIRTUAL_ID) return;
+
+        const isSsr = !!options?.ssr;
+        return generateVirtualCode(isSsr);
+      },
     },
   };
 });

@@ -1,5 +1,3 @@
-export * from "./collection";
-
 import { unified } from "unified";
 import { read } from "to-vfile";
 import type { VFile } from "vfile";
@@ -20,7 +18,7 @@ import rehypeSortAttributeValues from "rehype-sort-attribute-values";
 import rehypeSortAttributes from "rehype-sort-attributes";
 import rehypeStringify from "rehype-stringify";
 
-import remarkMeta from "./meta";
+import remarkMeta from "./meta.js";
 
 function getSkipLevels(maxDepth: number): HeadingDepth[] {
   if (maxDepth < 1 || maxDepth > 6) {
@@ -33,7 +31,7 @@ function getSkipLevels(maxDepth: number): HeadingDepth[] {
   );
 }
 
-export async function buildRemark(
+export async function mdc(
   options: ({ value: string | VFile } | { file: string }) & {
     /** @default 3 */
     maxDepth?: HeadingDepth;

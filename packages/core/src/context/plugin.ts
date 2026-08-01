@@ -1,5 +1,5 @@
 import type { App } from "vue";
-import { type AppContext, setAppContext } from "./context.js";
+import { setAppContext } from "./context.js";
 import { createHooks, installLifecycleBridge } from "./hook.js";
 
 export const appContextPlugin = {

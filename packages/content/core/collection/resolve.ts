@@ -6,9 +6,9 @@ import type {
   CollectionDefinition,
   CollectionSource,
   SchemaValidator,
-} from "./collection";
-import { normalizeSources } from "./collection";
-import { buildRemark } from "../index.js";
+} from "./collection.js";
+import { normalizeSources } from "./collection.js";
+import { mdc } from "../index.js";
 
 export interface ResolvedPageEntry<TMeta = unknown> {
   type: "page";
@@ -77,7 +77,7 @@ async function resolvePageEntry<T>(
   source: CollectionSource,
   schema: SchemaValidator<T> | undefined,
 ): Promise<ResolvedPageEntry<T>> {
-  const vfile = await buildRemark({ file: filePath, root: cwd });
+  const vfile = await mdc({ file: filePath, root: cwd });
 
   const meta = validate(schema, vfile.data.meta, filePath);
   const path = applyPrefix(vfile.data.path!, source.prefix);
