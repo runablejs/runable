@@ -1,8 +1,9 @@
 import { resolve } from "node:path";
 import { resolveDir } from "@/utils";
-import type { Config, ResolvedConfig } from "./index.js";
+import type { ResolvedConfig } from "./load.js";
+import type { SyoraConfig } from "./types.js";
 
-export function resolveConfig(config: Config = {}) {
+export function resolveConfig(config: SyoraConfig = {}) {
   config.cwd ??= process.cwd();
 
   config.distDir ??= ".output";
@@ -39,7 +40,7 @@ export function resolveConfig(config: Config = {}) {
   return config as ResolvedConfig;
 }
 
-function resolveComponents(config: Config) {
+function resolveComponents(config: SyoraConfig) {
   let components = config.components ?? [];
 
   if (!Array.isArray(components)) components = [components];

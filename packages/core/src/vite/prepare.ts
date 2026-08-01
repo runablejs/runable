@@ -1,4 +1,4 @@
-import { loadConfig } from "../config";
+import { loadConfig } from "../config/load";
 import { buildViteConfig } from "./config";
 import { generateTsconfigs } from "@/utils";
 import { createServer } from "vite";

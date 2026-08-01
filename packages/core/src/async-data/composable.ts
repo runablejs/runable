@@ -4,8 +4,8 @@ import type {
   AsyncDataResult,
   AsyncDataStatus,
   AsyncDataContext,
-} from "../types.js";
-import { ASYNC_DATA_CONTEXT_KEY } from "../symbols.js";
+} from "./types.js";
+import { ASYNC_DATA_CONTEXT_KEY } from "./symbols.js";
 
 // Définition du type "Thenable" pour permettre l'await optionnel
 export type _AsyncData<Data, ErrorType> = AsyncDataResult<Data, ErrorType> &

@@ -2,7 +2,7 @@ import { join, resolve } from "node:path";
 import { getIndexHtml } from "./html.js";
 import type { ViteDevServer } from "vite";
 import { readdirSync, readFileSync } from "node:fs";
-import { useConfig } from "../config/index.js";
+import { useConfig } from "../config/load.js";
 
 export async function serve({
   vite,

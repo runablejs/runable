@@ -4,7 +4,7 @@ import { mergeConfig, type Plugin, type UserConfig } from "vite";
 // import { DevTools as viteDevtools } from "@vitejs/devtools";
 import vue from "@vitejs/plugin-vue";
 // import vueDevTools from "vite-plugin-vue-devtools";
-import { useAllConfigs, type ResolvedConfig } from "@/config/index.js";
+import { useAllConfigs, type ResolvedConfig } from "@/config/load.js";
 
 import plugin from "../plugin/unplugin.js";
 import appVue from "../app-vue/unplugin.js";
@@ -63,20 +63,14 @@ export function buildViteConfig(): UserConfig {
         { file: join(import.meta.dirname, "../layout/useLayouts") },
         { file: join(import.meta.dirname, "../router/composables") },
         { file: join(import.meta.dirname, "../router/helpers") },
-        {
-          directory: join(import.meta.dirname, "../config/composable"),
-        },
-        {
-          directory: join(import.meta.dirname, "../context/composables"),
-        },
+        { file: join(import.meta.dirname, "../config/composables") },
+        { file: join(import.meta.dirname, "../context/composables") },
         { directory: join(import.meta.dirname, "../fetch") },
-        {
-          directory: join(import.meta.dirname, "../async-data/composable"),
-        },
-        {
-          directory: join(import.meta.dirname, "../runtime/composable"),
-        },
+        { file: join(import.meta.dirname, "../async-data/composable") },
+        { file: join(import.meta.dirname, "../runtime/composables") },
+
         unheadVueComposablesImports,
+
         ...schemaOrgAutoImports,
       ];
 

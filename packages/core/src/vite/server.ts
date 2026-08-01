@@ -1,4 +1,4 @@
-import { loadConfig } from "../config";
+import { loadConfig } from "../config/load.js";
 import { type HttpServer, type ViteDevServer } from "vite";
 import { generateTsconfigs } from "@/utils";
 

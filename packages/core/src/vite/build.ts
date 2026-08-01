@@ -1,5 +1,5 @@
 import { build as viteBuilder } from "vite";
-import { loadConfig } from "../config";
+import { loadConfig } from "../config/load";
 import { buildViteConfig, getIndexHtml } from ".";
 import { join, relative, resolve } from "node:path";
 import { atomicWriteFile, normalizeDir } from "../utils";

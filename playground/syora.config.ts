@@ -2,7 +2,9 @@ import { defineConfig } from "@syora/core";
 import { join } from "node:path";
 
 export default defineConfig({
-  devtools: { enable: true },
+  // devtools: { enable: true },
+
+  modules: ["./modules/content"],
 
   head: {
     title: "Syora/vue playground",
@@ -15,4 +17,6 @@ export default defineConfig({
   alias: { "@": join(import.meta.dirname, "src") },
 
   ssr: true,
+
+  content: {},
 });

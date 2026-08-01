@@ -1,7 +1,7 @@
 import { join, relative, resolve } from "node:path";
 import { getPackageJson, resolvePackageDir } from "./pkg";
 import { normalizeDir } from "./dir";
-import { useConfig } from "../config";
+import { useConfig } from "../config/load";
 import uniq from "lodash/uniq.js";
 import assign from "lodash/assign.js";
 import { atomicWriteFile } from "./atomic-write-file";

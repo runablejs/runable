@@ -5,6 +5,8 @@ export default defineConfig({
   appDir: "playground",
   // devtools: { enable: true },
 
+  modules: ["./playground/modules/content"],
+
   components: { dirs: "playground/components" },
 
   head: {
@@ -18,4 +20,6 @@ export default defineConfig({
   alias: { "@": join(import.meta.dirname, "src") },
 
   publicDir: "playground/public",
+
+  content: { dir: "" },
 });
