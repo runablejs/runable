@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 
 import { parse } from "@babel/parser";
@@ -13,6 +13,7 @@ import type {
 } from "@babel/types";
 
 import { useAllConfigs, useConfig, type ResolvedConfig } from "./load.js";
+import { atomicWriteFile } from "@/utils/atomic-write-file.js";
 
 // @babel/traverse's ESM/CJS interop is inconsistent across bundler targets
 // (varies between `^7` and the `^8` beta pinned in package.json) — always
@@ -373,6 +374,5 @@ ${props}
 export {};
 `;
 
-  mkdirSync(dirname(outFile), { recursive: true });
-  writeFileSync(outFile, content, "utf-8");
+  atomicWriteFile(outFile, content);
 }

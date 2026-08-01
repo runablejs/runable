@@ -33,17 +33,73 @@ function rowToEntry<T>(
   };
 }
 
-/** Query builder chaînable, à la `queryCollection` de Nuxt Content */
+export interface NavigationItem {
+  title: string;
+  path: string;
+  children?: NavigationItem[];
+}
+
+function titleFromSegment(segment: string): string {
+  return segment
+    .replace(/[-_]/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+/**
+ * Builds a nested navigation tree from page paths. An `index.md` file
+ * resolves to its parent directory's path, so it naturally becomes the
+ * folder node (its title overrides the placeholder derived from the
+ * segment name).
+ */
+function buildNavigationTree(
+  entries: ResolvedPageEntry<{ title?: string }>[],
+): NavigationItem[] {
+  const root: NavigationItem[] = [];
+  const nodesByPath = new Map<string, NavigationItem>();
+
+  for (const entry of entries) {
+    const segments = entry.path.split("/").filter(Boolean);
+    let currentPath = "";
+    let siblings = root;
+
+    segments.forEach((segment, index) => {
+      currentPath += "/" + segment;
+      const isLeaf = index === segments.length - 1;
+
+      let node = nodesByPath.get(currentPath);
+
+      if (!node) {
+        node = { title: titleFromSegment(segment), path: currentPath };
+        nodesByPath.set(currentPath, node);
+        siblings.push(node);
+      }
+
+      if (isLeaf) {
+        node.title = entry.meta.title ?? node.title;
+      } else {
+        node.children ??= [];
+      }
+
+      siblings = node.children ?? siblings;
+    });
+  }
+
+  return root;
+}
+
+/** Chainable query builder, à la `queryCollection` de Nuxt Content */
 export interface CollectionQuery<T> {
-  /** Filtre sur un path exact (ex: "/docs/get-started") */
+  /** Filter on an exact path (e.g. "/docs/get-started") */
   path(path: string): CollectionQuery<T>;
-  /** Tri par path (ASC par défaut) */
+  /** Sort by path (ASC by default) */
   order(direction?: "ASC" | "DESC"): CollectionQuery<T>;
   limit(n: number): CollectionQuery<T>;
-  /** Exécute la requête, retourne toutes les entrées matchées */
+  /** Run the query, return every matching entry */
   all(): (ResolvedPageEntry<T> | ResolvedDataEntry<T>)[];
-  /** Exécute la requête, retourne la première entrée (ou undefined) */
+  /** Run the query, return the first matching entry (or undefined) */
   first(): ResolvedPageEntry<T> | ResolvedDataEntry<T> | undefined;
+  /** Nested navigation tree for this collection (empty for "data" collections) */
+  navigation(): NavigationItem[];
 }
 
 interface QueryState {
@@ -87,6 +143,26 @@ class CollectionQueryImpl<T> implements CollectionQuery<T> {
     return row ? rowToEntry<T>(row) : undefined;
   }
 
+  navigation(): NavigationItem[] {
+    // always walks the full, unfiltered collection (ignores any
+    // .path()/.limit() already set), sorted ASC so parents are always
+    // encountered before their children in a single pass
+    const rows = this.db
+      .prepare(
+        `SELECT type, path, meta_or_data, toc, html
+         FROM entries
+         WHERE collection = ? AND type = 'page'
+         ORDER BY path ASC`,
+      )
+      .all(this.collection) as EntryRow[];
+
+    const entries = rows.map((row) =>
+      rowToEntry<{ title?: string }>(row),
+    ) as ResolvedPageEntry<{ title?: string }>[];
+
+    return buildNavigationTree(entries);
+  }
+
   private build(forcedLimit?: number): { sql: string; params: unknown[] } {
     const params: unknown[] = [this.collection];
     let sql = `SELECT type, path, meta_or_data, toc, html FROM entries WHERE collection = ?`;
@@ -118,10 +194,8 @@ export function getCollection<
 ): TCollections[K] extends CollectionDefinition<infer T>
   ? CollectionQuery<T>
   : never {
-  // garde-fou : évite une requête avec un nom de collection qui n'existe
-  // pas dans la config (typo, collection renommée, etc.)
   if (!(name in config.collections)) {
-    throw new Error(`Collection "${name}" inconnue`);
+    throw new Error(`Unknown collection "${name}"`);
   }
 
   return new CollectionQueryImpl<any>(db, name) as any;

@@ -3,8 +3,11 @@ import { createApp } from "./main.js";
 import { useRouter } from "../router/composables.js";
 import type { SSRContext } from "./switcher.js";
 import { transformHtmlTemplate } from "@unhead/vue/server";
+import { loadConfig } from "@/config/load.js";
 
 export async function render(ssrContext: SSRContext) {
+  await loadConfig();
+
   const { app, head } = await createApp(true);
   const router = useRouter();
 

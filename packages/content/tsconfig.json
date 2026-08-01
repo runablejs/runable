@@ -3,11 +3,6 @@
   "compilerOptions": {
     "outDir": "dist"
   },
-  "include": [
-    "core/**/*.ts",
-    "playground/**/*.ts",
-    "syora.config.ts",
-    "tsconfig.config.ts"
-  ],
+  "include": ["core/**/*.ts", "playground/**/*.ts", "syora.config.ts"],
   "exclude": ["dist", "node_modules", "templates"]
 }

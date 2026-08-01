@@ -1,6 +1,7 @@
 import { defineModule } from "@syora/core";
 import {
   ContentConfig,
+  defineCollection,
   defineContentConfig,
   resolveContentConfig,
   saveCollections,
@@ -11,9 +12,33 @@ import Database from "better-sqlite3";
 export default defineModule<ContentConfig>({
   appDir: "playground/app",
 
+  modules: ["./playground/module"],
+
   meta: {},
 
   configKey: "content",
+
+  content: {
+    collections: {
+      docs: defineCollection({
+        type: "page",
+        source: {
+          include: "docs/**/*.md",
+          exclude: "docs/**/*.draft.md",
+          prefix: "/docs",
+        },
+        // schema: docSchema,
+      }),
+
+      authors: defineCollection({
+        type: "data",
+        source: "authors/**/*.yml",
+        // pas de schema => data typée `unknown`
+      }),
+    },
+    root: join(import.meta.dirname, "playground"),
+    output: join(import.meta.dirname, "playground"),
+  },
 
   async setup(options, config) {
     // const _config = defineContentConfig(options);

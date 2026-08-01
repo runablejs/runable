@@ -33,6 +33,15 @@ export type ResolvedConfig = Required<SyoraConfig> & {
   _parentName?: string;
 
   _configFile?: string;
+
+  /**
+   * A module's resolved options (`defaults` merged with the consumer's
+   * overrides) — only ever set for a config loaded on behalf of a `parent`
+   * (see `loadAndCacheConfig`), never on the root app config. Read through
+   * `getModuleOptions<OptionsT>()` rather than off this field directly, so
+   * callers get it back typed instead of `unknown`.
+   */
+  _options?: unknown;
 };
 
 /** Subset of the config safe to forward to the client bundle. */
@@ -137,6 +146,8 @@ export async function loadAndCacheConfig({
     const { configKey, defaults, setup, meta, ...rest } = loaded ?? {};
     let config = rest as ResolvedConfig;
 
+    name = meta?.name ?? name;
+
     config.cwd = cwd ?? process.cwd();
 
     config = resolveConfig(config);
@@ -166,6 +177,8 @@ export async function loadAndCacheConfig({
         cloneDeep(resolvedDefaults ?? {}),
         cloneDeep((userOptions as object) ?? {}),
       );
+
+      cachedConfigs[name]!._options = options;
 
       await setup?.(options, config);
     }
@@ -273,4 +286,33 @@ export function useAllConfigs() {
   }
 
   return Object.values(cachedConfigs).sort((a, b) => a._index - b._index);
+}
+
+/**
+ * Returns a module's resolved options (`defaults` merged with whatever the
+ * consumer provided at `configKey` — see `loadAndCacheConfig`). `OptionsT`
+ * isn't inferred from anything at runtime — nothing survives to tell us
+ * which `defineModule<OptionsT>` a given module was declared with — so pass
+ * it explicitly to get a typed result back instead of `unknown`.
+ *
+ * `name` accepts the same forms as `modules` entries in a config (a bare
+ * package name or a `"./relative/path"`) — it's normalized the same way
+ * before the cache lookup.
+ *
+ * @example
+ * const { root } = getModuleOptions<{ root?: string }>("content");
+ */
+export function getModuleOptions<
+  OptionsT extends Record<string, any> = Record<string, any>,
+>(name: string): OptionsT {
+  if (!cachedConfigs) {
+    throw new Error("Syora config is not loaded. Call loadConfig() first.");
+  }
+
+  const config = cachedConfigs[name];
+  if (!config) {
+    throw new Error(`Syora module "${name}" is not loaded.`);
+  }
+
+  return (config._options ?? {}) as OptionsT;
 }

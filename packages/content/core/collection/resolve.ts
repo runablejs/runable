@@ -143,7 +143,7 @@ export async function resolveCollection<T>(
 export async function resolveContentConfig<
   TCollections extends Record<string, CollectionDefinition<any>>,
 >(
-  config: { collections: TCollections },
+  config: { collections?: TCollections },
   options: ResolveOptions,
 ): Promise<{
   [K in keyof TCollections]: TCollections[K] extends CollectionDefinition<
@@ -152,11 +152,13 @@ export async function resolveContentConfig<
     ? (ResolvedPageEntry<T> | ResolvedDataEntry<T>)[]
     : never;
 }> {
+  const collections = config.collections ?? ({} as TCollections);
+
   const result = {} as any;
 
-  for (const key of Object.keys(config.collections)) {
+  for (const key of Object.keys(collections)) {
     result[key] = await resolveCollection(
-      config.collections[key as keyof TCollections],
+      collections[key as keyof TCollections],
       options,
     );
   }
