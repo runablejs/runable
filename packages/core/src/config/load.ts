@@ -9,9 +9,9 @@ import merge from "lodash/merge.js";
 import type { ComponentDir } from "@/components/types";
 import { normalizeDir } from "@/utils";
 
-import { generateModulesDts } from "./dts.js";
+import { generateModulesOptionsDts } from "./modules-options.js";
 import { resolveConfig } from "./resolve.js";
-import type { SyoraConfig } from "./types.js";
+import type { ModuleDefinition, SyoraConfig } from "./types.js";
 
 /**
  * `Config` after defaults have been applied by `resolveConfig`.
@@ -58,9 +58,51 @@ let inFlight: Map<string, Promise<void>> | undefined;
 /** Memoizes `resolveModuleDir` by name so repeated references only touch the filesystem once. */
 let moduleDirCache: Map<string, string> | undefined;
 
+/**
+ * Falls back to a clean camelCase identifier when `name` is a filesystem
+ * path (a local module declared as `"./modules/my-module"`, stored as
+ * `"modules/my-module"` on `_name`) rather than a bare/scoped package name —
+ * keeps only the last path segment, camel-cased. Left untouched otherwise.
+ */
+function normalizeModuleName(name: string): string {
+  const isPath =
+    (name.includes("/") || name.includes("\\")) && !name.startsWith("@");
+  if (!isPath) return name;
+
+  const base =
+    name.replace(/\\/g, "/").replace(/\/+$/, "").split("/").pop() ?? name;
+
+  return base
+    .replace(/[^a-zA-Z0-9]+(.)/g, (_, char: string) => char.toUpperCase())
+    .replace(/^[^a-zA-Z_$]+/, "");
+}
+
 /** Identity helper so `syora.config.*` files get type-checking/autocomplete without a runtime cost. */
 export function defineConfig(config: SyoraConfig): SyoraConfig {
   return config;
+}
+
+/**
+ * Identity helper for authoring a Syora module's `syora.config.*` file.
+ * Builds on top of `defineConfig`: a module can declare everything a regular
+ * config can (plugins, components, layouts...), plus `configKey`/`defaults`
+ * to expose typed, overridable options, and a `setup` hook invoked once
+ * those options are resolved (see `loadAndCacheConfig`).
+ *
+ * @example
+ * export default defineModule<{ prefix: string }>({
+ *   meta: { name: "my-module" },
+ *   configKey: "myModule",
+ *   defaults: { prefix: "/api" },
+ *   setup(options, config) {
+ *     config.plugins.push(resolve(__dirname, "runtime/plugin.js"));
+ *   },
+ * });
+ */
+export function defineModule<
+  OptionsT extends Record<string, any> = Record<string, any>,
+>(moduleDef: ModuleDefinition<OptionsT>): ModuleDefinition<OptionsT> {
+  return moduleDef;
 }
 
 /** Assigns each loaded config (main + modules) an incrementing `_index`, reset per `loadConfig()` call. */
@@ -78,15 +120,22 @@ export async function loadAndCacheConfig({
   parent,
 }: { cwd?: string; name?: string; parent?: ResolvedConfig } = {}) {
   inFlight ??= new Map();
+  name = normalizeModuleName(name);
 
   const existing = inFlight.get(name);
   if (existing) return existing;
 
   const promise = (async () => {
-    let { config, configFile } = await c12Load<ResolvedConfig>({
+    let { config: loaded, configFile } = await c12Load<ModuleDefinition>({
       configFile: "syora.config",
       cwd,
     });
+
+    // `configKey`/`defaults`/`setup`/`meta` only make sense for a module
+    // (i.e. `defineModule`'d config); the rest is a plain `SyoraConfig` and
+    // is resolved/merged exactly like before.
+    const { configKey, defaults, setup, meta, ...rest } = loaded ?? {};
+    let config = rest as ResolvedConfig;
 
     if (cwd) config.cwd ??= cwd;
     config = resolveConfig(config);
@@ -103,6 +152,22 @@ export async function loadAndCacheConfig({
     }
 
     cachedConfigs[name] = config;
+
+    // Only configs loaded on behalf of a `parent` are modules — the root
+    // app config never goes through options resolution/`setup`.
+    if (parent) {
+      const key = configKey ?? meta?.name ?? name;
+      const userOptions = (parent as Record<string, unknown>)[key];
+      const resolvedDefaults =
+        typeof defaults === "function" ? defaults(config) : defaults;
+
+      const options = merge(
+        cloneDeep(resolvedDefaults ?? {}),
+        cloneDeep((userOptions as object) ?? {}),
+      );
+
+      await setup?.(options, config);
+    }
 
     await loadModulesConfigs(config);
   })();
@@ -188,7 +253,7 @@ export async function loadConfig() {
   moduleDirCache = undefined;
 
   await loadAndCacheConfig();
-  await generateModulesDts();
+  await generateModulesOptionsDts();
 }
 
 /** Returns the resolved main app config. Throws if `loadConfig()` hasn't run yet. */

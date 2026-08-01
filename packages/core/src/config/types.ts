@@ -5,6 +5,8 @@ import type { ComponentDir } from "@/components/types";
 import type { PluginRouterOptions } from "@/router/unplugin";
 import { type Arrayable } from "@/utils";
 
+import type { ResolvedConfig } from "./load.js";
+
 /** Shape of a `syora.config.*` file, as authored by the user. */
 export interface SyoraConfig {
   // --- Project root ---------------------------------------------------
@@ -76,4 +78,62 @@ export interface SyoraConfig {
 
   /** Enables Syora's built-in developer tools (devtools). */
   devtools?: boolean;
+
+  // --- Escape hatch -----------------------------------------------------
+
+  /**
+   * Lets a module read/write its own options under an arbitrary key, e.g.
+   * `{ myModule: { foo: 'bar' } }`. Not meant to be typed manually — modules
+   * declare the shape of their own options via `defineModule`'s `OptionsT`.
+   */
+  [key: string]: unknown;
+}
+
+// --- Modules ------------------------------------------------------------
+
+/** Metadata describing a Syora module. */
+export interface ModuleMeta {
+  /** Module name. Used for logs and as a fallback `configKey`. */
+  name?: string;
+
+  /** Minimum Syora version required by the module (informational only). */
+  version?: string;
+}
+
+/**
+ * Shape of a `syora.config.*` file authored via `defineModule`.
+ *
+ * Extends `SyoraConfig` so a module can ship its own layers (plugins,
+ * components, layouts...) exactly like a regular config, while adding the
+ * module-specific plumbing: typed options (`OptionsT`), their default
+ * values, the key consumers use to override them, and a `setup` hook run
+ * once those options are resolved.
+ */
+export interface ModuleDefinition<
+  OptionsT extends Record<string, any> = Record<string, any>,
+> extends SyoraConfig {
+  /** Module metadata. */
+  meta?: ModuleMeta;
+
+  /**
+   * Key under which consumers configure this module's options in their own
+   * `syora.config`, e.g. `defineConfig({ myModule: { foo: 'bar' } })`.
+   * Falls back to `meta.name`, then to the name/path the module was
+   * referenced by in the parent's `modules` array.
+   */
+  configKey?: string;
+
+  /**
+   * Default values for the module's options (`OptionsT`). Merged with
+   * whatever the consumer provides at `configKey` — consumer values win.
+   * Can also be a function of the module's own resolved config.
+   */
+  defaults?: OptionsT | ((config: SyoraConfig) => OptionsT);
+
+  /**
+   * Runs once the module's options are resolved (`defaults` merged with the
+   * consumer's overrides). Use it to mutate/extend `config` — register
+   * plugins, components dirs, globals, etc.
+   */
+  setup?: (options: OptionsT, config: ResolvedConfig) => void | Promise<void>;
 }

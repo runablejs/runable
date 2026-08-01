@@ -1,14 +1,15 @@
-// packages/content/src/index.ts
-import { defineModule } from "@/config/module";
+import { defineModule } from "@/config";
 
 interface ModuleOptions {
   dir?: string;
 }
 
-export default defineModule<ModuleOptions, "content">({
-  meta: {
-    default: { dir: "content" },
-  },
+export default defineModule<ModuleOptions>({
+  meta: {},
 
-  modules: [],
+  configKey: "content",
+
+  default: { dir: "content" },
+
+  setup(options, config) {},
 });
