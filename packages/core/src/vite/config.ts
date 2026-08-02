@@ -8,7 +8,7 @@ import { useAllConfigs, type ResolvedConfig } from "@/config/load.js";
 
 import plugin from "../plugin/unplugin.js";
 import appVue from "../app-vue/unplugin.js";
-import layout from "../layout/unplugin.js";
+import layout, { type LayoutOptions } from "../layout/unplugin.js";
 import components, {
   type AutoComponentOptions,
   type ComponentDir,
@@ -17,7 +17,7 @@ import configPlugin from "../config/unplugin.js";
 import css, { type CssOptions } from "../css/unplugin.js";
 import importMeta from "../import-meta/unplugin.js";
 import runtime from "../runtime/unplugin.js";
-import router from "../router/unplugin.js";
+import router, { type PagesOptions } from "../router/unplugin.js";
 import globals, {
   type GlobalConfig,
   type GlobalOptionsImports,
@@ -69,6 +69,16 @@ export function buildViteConfig(): UserConfig {
 
   const _css: CssOptions & { dirs: string[] } = { cwd: main.cwd, dirs: [] };
 
+  const _layouts: LayoutOptions & { dirs: string[] } = {
+    output: main.output,
+    dirs: [],
+  };
+
+  const _pages: PagesOptions & { dirs: PagesOptions["dirs"][] } = {
+    output: main.output,
+    dirs: [],
+  };
+
   const configToViteConfig = (config: ResolvedConfig): UserConfig => {
     const isMain = config._name === "__main";
     const plugins: (Plugin<any> | Plugin<any>[])[] = [];
@@ -113,17 +123,14 @@ export function buildViteConfig(): UserConfig {
       _css.dirs.push(...config.css.map((css) => resolveDir(css, config.cwd)));
     }
 
-    plugins.push(
-      layout.vite({ layouts: config.layouts, output: config.output }),
-    );
+    resolveLayouts();
+    function resolveLayouts() {
+      _layouts.dirs.push(
+        ...config.layouts.map((layout) => resolveDir(layout, config.cwd)),
+      );
+    }
 
-    plugins.push(
-      router.vite({
-        pages: config.pages,
-        output: config.output,
-        appDir: config.appDir,
-      }),
-    );
+    _pages.dirs.push({ appDir: config.appDir, pages: config.pages });
 
     plugins.push(
       plugin.vite({
@@ -192,9 +199,12 @@ export function buildViteConfig(): UserConfig {
     publicDir: main.publicDir,
     plugins: [
       vue(),
+
       globals.vite(_globals),
       components.vite(_components),
       css.vite(_css),
+      layout.vite(_layouts),
+      router.vite(_pages),
     ],
     resolve: { alias: main.alias },
     devtools: false,

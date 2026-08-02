@@ -9,8 +9,8 @@ import { createUnplugin } from "unplugin";
 const VIRTUAL_ID = ":layouts";
 const RESOLVED_VIRTUAL_ID = "\0:layouts";
 
-type LayoutConfig = {
-  layouts?: string[];
+export type LayoutOptions = {
+  dirs?: string[];
   output?: string;
 };
 
@@ -130,7 +130,7 @@ function generateVirtualCode(): string {
   return template.replace("{{layoutsObject}}", objectEntries);
 }
 
-export default createUnplugin((config?: LayoutConfig) => {
+export default createUnplugin((config?: LayoutOptions) => {
   total++;
 
   return {
@@ -138,10 +138,10 @@ export default createUnplugin((config?: LayoutConfig) => {
     enforce: "pre",
 
     buildStart() {
-      const { output = process.cwd(), layouts = [] } = config ?? {};
+      const { output = process.cwd(), dirs = [] } = config ?? {};
       sharedOutput ??= output;
 
-      for (const dir of layouts) collectLayouts(dir, output);
+      for (const dir of dirs) collectLayouts(dir, output);
 
       completed++;
       if (completed === total) generateDts(sharedOutput);

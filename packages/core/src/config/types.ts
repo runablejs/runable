@@ -1,11 +1,9 @@
 import { type ResolvableHead } from "@unhead/vue";
 import type { UserConfig } from "vite";
 
-import type { ComponentDir } from "@/components/types";
-import type { PluginRouterOptions } from "@/router/unplugin";
+import type { ComponentDir } from "@/components/types.js";
+import type { RouterOptionsRaw } from "@/router/types.js";
 import { type Arrayable } from "@/utils";
-import type { RuntimeHooks } from "@/context/hook.js";
-
 import type { ResolvedConfig } from "./load.js";
 
 /** Shape of a `syora.config.*` file, as authored by the user. */
@@ -18,7 +16,7 @@ export interface SyoraConfig {
   // --- Application structure -----------------------------------------
 
   /** Routing options defining the application's pages. */
-  pages?: PluginRouterOptions[];
+  pages?: RouterOptionsRaw[];
 
   /** Paths to layout files/directories. */
   layouts?: string[];

@@ -6,6 +6,7 @@ import { atomicWriteFile } from "../utils/atomic-write-file.js";
 import merge from "lodash/merge.js";
 import fg from "fast-glob";
 import type { Arrayable } from "@/utils/types.js";
+import type { RouterOptions, RouterOptionsRaw } from "./types.js";
 
 const VIRTUAL_ID = ":router";
 const RESOLVED_VIRTUAL_ID = "\0:router";
@@ -30,19 +31,15 @@ type VueRoute = {
   children?: VueRoute[];
 };
 
-export type RouterOptions = {
-  dynamic?: boolean;
-  pages?: Arrayable<string>;
-  exclude?: string[];
-  extensions?: string[];
-};
-
 type ResolvedRouterOptions = Exclude<RouterOptions, "pages"> &
   Required<
     Pick<RouterOptions, "dynamic" | "exclude" | "extensions" | "exclude">
   > & { pages: string[] };
 
-export type PluginRouterOptions = string | RouterOptions;
+export type PagesOptions = {
+  output?: string;
+  dirs: { pages: RouterOptionsRaw[]; appDir?: string }[];
+};
 
 const template = `
 {{imports}}
@@ -65,7 +62,7 @@ declare module "vue-router" {
 export {};
 `;
 
-const extensions = ["vue", "ts", "js", "mjs", "mts", "jsx", "tsx"];
+const extensions = ["vue", "ts", "js", "mjs", "mts"];
 const exclude = ["**/.git/**", "**/*.d.*", "**/-*.*"];
 
 const DEFAULT_OPTIONS = {
@@ -159,12 +156,15 @@ function joinPath(base: string, sub: string): string {
   return `${base}/${sub}`.replace(/\/+/g, "/");
 }
 
+// FIX: `lodash.merge(dest, src)` mutates `dest` in place. `parent`/`ownMeta`
+// objects are reused across siblings in buildChildRoutes, so mutating them
+// directly corrupted meta on unrelated routes. Merge into a fresh object.
 function mergeMeta(
   parent?: Record<string, unknown>,
   own?: Record<string, unknown>,
 ): Record<string, unknown> | undefined {
   if (!parent && !own) return undefined;
-  return merge(parent, own);
+  return merge({}, parent, own);
 }
 
 /**
@@ -210,7 +210,13 @@ function buildChildRoutes(
 
 function buildVueRoutes(tree: RouteTree): VueRoute[] {
   const routes: VueRoute[] = [];
-  const rootMeta = extractPageMeta(tree.file ?? "");
+  // FIX: only compute rootMeta when there is an actual root file/index,
+  // avoid calling extractPageMeta("") for no reason.
+  const rootMeta = tree.file
+    ? extractPageMeta(tree.file)
+    : tree.indexFile
+      ? extractPageMeta(tree.indexFile)
+      : undefined;
 
   if (tree.file) {
     routes.push({ path: "/", component: tree.file, meta: rootMeta });
@@ -218,7 +224,7 @@ function buildVueRoutes(tree: RouteTree): VueRoute[] {
     routes.push({
       path: "/",
       component: tree.indexFile,
-      meta: mergeMeta(rootMeta, extractPageMeta(tree.indexFile)),
+      meta: rootMeta,
     });
   }
 
@@ -285,45 +291,35 @@ function generateRouterCode(
  */
 let total = 0;
 let completed = 0;
-const sharedRouteEntries: RouteEntry[] = [];
+let sharedRouteEntries: RouteEntry[] = [];
 let sharedOutput: string | undefined;
 let sharedDynamic: boolean | undefined;
 let sharedCode = "";
 
 export default createUnplugin(
-  ({
-    pages = [],
-    output = process.cwd(),
-    appDir,
-  }: {
-    pages: Arrayable<PluginRouterOptions>;
-    output?: string;
-    appDir?: string;
-  }) => {
+  ({ dirs = [], output = process.cwd() }: PagesOptions) => {
     total++;
     sharedOutput ??= output;
 
-    pages = Array.isArray(pages) ? pages : [pages];
+    const options = dirs.map((dir) => {
+      dir.pages = dir.pages.map((raw) => {
+        if (typeof raw === "string") raw = { pages: [raw] };
 
-    const options = pages.map((raw) => {
-      if (typeof raw === "string") raw = { pages: [raw] };
+        raw = { ...DEFAULT_OPTIONS, ...raw };
 
-      raw = { ...DEFAULT_OPTIONS, ...raw };
+        raw.pages ??= [];
+        raw.pages = Array.isArray(raw.pages) ? raw.pages : [raw.pages];
 
-      raw.pages ??= [];
-      raw.pages = Array.isArray(raw.pages) ? raw.pages : [raw.pages];
+        raw.pages = raw.pages.map((page) => {
+          page = resolveDir(page, dir.appDir);
+          return page;
+        });
 
-      raw.pages = raw.pages.map((page) => {
-        page = resolveDir(page, appDir);
-        return page;
+        return raw as RouterOptions;
       });
 
-      return raw as ResolvedRouterOptions;
+      return dir;
     });
-
-    // if (typeof rawOptions === "string") rawOptions = { pages: [rawOptions] };
-
-    // const options = { ...DEFAULT_OPTIONS, ...rawOptions };
 
     return {
       name: "syora:vue-router",
@@ -332,28 +328,36 @@ export default createUnplugin(
       buildStart() {
         completed++;
 
-        for (const option of options) {
-          const { pages, dynamic } = option ?? {};
+        // FIX: reset shared state at the start of a fresh full pass
+        // (first instance to run in this cycle) so watch-mode rebuilds
+        // don't just keep appending to sharedRouteEntries forever, and
+        // completed/total stay in sync across rebuilds.
+        if (completed === 1) {
+          sharedRouteEntries = [];
+        }
 
-          sharedDynamic ??= dynamic;
+        for (const option of options as {
+          pages: RouterOptions[];
+          appDir?: string;
+        }[]) {
+          const { pages } = option;
 
-          for (const dir of pages) collectViews(dir, sharedRouteEntries);
+          for (const page of pages) {
+            sharedDynamic ??= page.dynamic;
 
-          // if (completed === total) {
-          //   sharedCode = generateRouterCode(sharedRouteEntries, sharedDynamic);
-          //   atomicWriteFile(
-          //     resolve(sharedOutput, "router.d.ts"),
-          //     dtsTemplate.replaceAll(
-          //       "{{router_helper_path}}",
-          //       normalizeDir(
-          //         relative(
-          //           output,
-          //           resolve(import.meta.dirname, "./helpers.js"),
-          //         ),
-          //       ),
-          //     ),
-          //   );
-          // }
+            // FIX: `dir` didn't exist here — the actual view directories
+            // to scan are `page.pages` (already resolved to absolute
+            // paths above), not the outer `dir`/`option` object.
+            const viewDirs = Array.isArray(page.pages)
+              ? page.pages
+              : page.pages
+                ? [page.pages]
+                : [];
+
+            for (const viewDir of viewDirs) {
+              collectViews(viewDir as string, sharedRouteEntries);
+            }
+          }
         }
 
         if (completed === total) {
@@ -371,6 +375,11 @@ export default createUnplugin(
               ),
             ),
           );
+
+          // FIX: reset completed so the next full build/rebuild cycle
+          // can reach `completed === total` again instead of counting
+          // up indefinitely.
+          completed = 0;
         }
       },
 
