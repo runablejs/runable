@@ -29,16 +29,17 @@ type ImportsCommon = { from: string; imports: string[] };
 type ImportsMap = Record<string, string[]>;
 type ImportPreset = keyof typeof presets;
 
+export type GlobalOptionsImports =
+  | { directory: string }
+  | { file: string }
+  | ImportPreset
+  | ImportsCommon
+  | ImportsMap;
+
 export type GlobalConfig = {
   /** Directory where `globals.d.ts` is written. Defaults to `process.cwd()`. */
   output?: string;
-  imports?: Arrayable<
-    | { directory: string }
-    | { file: string }
-    | ImportPreset
-    | ImportsCommon
-    | ImportsMap
-  >;
+  imports?: Arrayable<GlobalOptionsImports>;
 };
 
 // -----------------------------------------------------------------------
