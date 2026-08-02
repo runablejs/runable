@@ -1,5 +1,47 @@
 import type { Arrayable } from "@/utils";
 
+/** A side-effect-only import to inject alongside a resolved component (e.g. its CSS). */
+export type SideEffectsInfo = string | string[];
+
+/**
+ * Describes how to import a single component.
+ *
+ * `from` is the import source: an absolute file path for components found
+ * by scanning `dirs`, or a bare module specifier (e.g. `'my-ui-lib/es'`)
+ * for components resolved via `resolvers`.
+ *
+ * `name` is the export to import: use the literal string `'default'` for a
+ * default export, or the named export identifier otherwise.
+ */
+export interface ComponentInfo {
+  from: string;
+  name: string;
+  /** Extra side-effect-only imports to inject alongside the component (e.g. a CSS file). */
+  sideEffects?: SideEffectsInfo;
+}
+
+export type ComponentResolveResult =
+  | ComponentInfo
+  | string
+  | null
+  | undefined
+  | void;
+
+export type ComponentResolverFunction = (
+  name: string,
+) => ComponentResolveResult | Promise<ComponentResolveResult>;
+
+export interface ComponentResolverObject {
+  /** Only 'component' resolvers are used by this plugin; 'directive' entries are ignored. */
+  type?: "component" | "directive";
+  resolve: ComponentResolverFunction;
+}
+
+/** A resolver can be a plain function, or an object wrapping one. */
+export type ComponentResolver =
+  | ComponentResolverFunction
+  | ComponentResolverObject;
+
 export type ComponentDir =
   | string
   | {
@@ -22,12 +64,6 @@ export type ComponentDir =
        */
       exclude?: string[];
 
-      /**
-       * When `true`, the component name is prefixed with its folder path
-       * (e.g. `base/Button.vue` -> `BaseButton`). When `false`, only the
-       * file name is used (e.g. `Button.vue` -> `Button`).
-       * @default true
-       */
       pathPrefix?: boolean;
 
       /**
@@ -55,9 +91,25 @@ export type ComponentDir =
         filePath: string,
         defaultName: string,
       ) => string | false | undefined;
+
+      /**
+       * Custom resolvers used to resolve components that are not found under
+       * `dirs` — typically components published by third-party UI libraries.
+       * Accepts a mix of single resolvers and arrays of resolvers, so that
+       * community resolver packages exporting an array (e.g. one resolver per
+       * icon set) can be spread in directly, matching the same shape as
+       * `unplugin-vue-components`.
+       *
+       * @example
+       * resolvers: [
+       *   ElementPlusResolver(),
+       *   [IconResolverA(), IconResolverB()],
+       * ]
+       */
+      resolvers?: (ComponentResolver | ComponentResolver[])[];
     };
 
-export interface AutoComponentOptions {
+export interface Options {
   /**
    * Directory(ies) to scan for local components.
    * Resolved relative to the project root (Vite's `root`).
@@ -77,10 +129,6 @@ export interface AutoComponentOptions {
    */
   exclude?: string[];
 
-  /**
-   * When `true`, the component name is prefixed with its folder path.
-   * @default true
-   */
   pathPrefix?: boolean;
 
   /**
@@ -110,6 +158,22 @@ export interface AutoComponentOptions {
   ) => string | false | undefined;
 
   /**
+   * Custom resolvers used to resolve components that are not found under
+   * `dirs` — typically components published by third-party UI libraries.
+   * Accepts a mix of single resolvers and arrays of resolvers, so that
+   * community resolver packages exporting an array (e.g. one resolver per
+   * icon set) can be spread in directly, matching the same shape as
+   * `unplugin-vue-components`.
+   *
+   * @example
+   * resolvers: [
+   *   ElementPlusResolver(),
+   *   [IconResolverA(), IconResolverB()],
+   * ]
+   */
+  resolvers?: (ComponentResolver | ComponentResolver[])[];
+
+  /**
    * Generates a TypeScript declaration file listing the detected local
    * components (useful for template auto-completion). `true` writes to
    * 'components.d.ts' at the project root, or pass a custom path.
@@ -124,31 +188,7 @@ export interface AutoComponentOptions {
   verbose?: boolean;
 }
 
-/** Fully resolved version of a `ComponentDir` entry, ready to be scanned. */
-export interface ResolvedComponentDir {
-  dirs: string[];
-  extensions: string[];
-  exclude: string[];
-  pathPrefix: boolean;
-  componentName?: (
-    filePath: string,
-    defaultName: string,
-  ) => string | false | undefined;
-}
-
-/** Fully resolved plugin options. */
-export interface ResolvedOptions {
-  root: string;
-  dirs: ResolvedComponentDir[];
-  dts: string | false;
-  verbose: boolean;
-}
-
-/** Metadata about a single discovered component. */
-export interface ComponentInfo {
-  name: string;
-  /** Absolute path to the component file. */
-  path: string;
-  /** File extension, without the leading dot. */
-  ext: string;
-}
+export type ResolvedOptions = Required<
+  Pick<Options, "dirs" | "extensions" | "exclude" | "verbose" | "pathPrefix">
+> &
+  Pick<Options, "componentName" | "dts" | "resolvers">;

@@ -1,4 +1,4 @@
-import ":globals";
+// import ":globals";
 
 export type SSRContext = { url: string; template: string };
 

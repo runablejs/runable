@@ -1,6 +1,12 @@
 import { uneval } from "devalue";
 import type { CacheEntry } from "./types.js";
 
+function replacer(value: unknown): string | void {
+  if (value instanceof Error) {
+    return `new Error(${JSON.stringify(value.message)})`;
+  }
+}
+
 /**
  * Sérialise l'état du cache de manière sécurisée et robuste (SSR -> Client).
  *
@@ -14,7 +20,7 @@ import type { CacheEntry } from "./types.js";
  */
 export function serializeState(state: Record<string, CacheEntry>): string {
   // uneval transforme l'objet en une expression JavaScript évaluable
-  return uneval(state);
+  return uneval(state, replacer);
 }
 
 /**

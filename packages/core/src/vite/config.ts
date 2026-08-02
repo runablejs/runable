@@ -9,7 +9,9 @@ import { useAllConfigs, type ResolvedConfig } from "@/config/load.js";
 import plugin from "../plugin/unplugin.js";
 import appVue from "../app-vue/unplugin.js";
 import layout from "../layout/unplugin.js";
-import components from "../components/unplugin.js";
+import components, {
+  type AutoComponentOptions,
+} from "../components/unplugin.js";
 import configPlugin from "../config/unplugin.js";
 import css from "../css/unplugin.js";
 import importMeta from "../import-meta/unplugin.js";
@@ -22,6 +24,7 @@ import {
   SchemaOrgResolver,
 } from "@unhead/schema-org/vue";
 import { unheadVueComposablesImports } from "@unhead/vue";
+import { resolveDir } from "@/utils/dir.js";
 
 declare module "vite" {
   interface UserConfig {
@@ -51,6 +54,11 @@ export function buildViteConfig(): UserConfig {
   const configs = useAllConfigs();
   const main = configs[0]!;
 
+  const _components: AutoComponentOptions = {
+    dts: join(main.output, "components.d.ts"),
+    dirs: [],
+  };
+
   const configToViteConfig = (config: ResolvedConfig): UserConfig => {
     const isMain = config._name === "__main";
 
@@ -58,7 +66,8 @@ export function buildViteConfig(): UserConfig {
 
     function getGlbalsImports() {
       const imports: GlobalConfig["imports"] = [
-        "vue",
+        // "vue",
+        { directory: join(import.meta.dirname, "../app/globals") },
         { file: join(import.meta.dirname, "../plugin/define") },
         { file: join(import.meta.dirname, "../layout/useLayouts") },
         { file: join(import.meta.dirname, "../router/composables") },
@@ -77,6 +86,36 @@ export function buildViteConfig(): UserConfig {
       return imports;
     }
 
+    resolveComponents();
+    function resolveComponents() {
+      config.components = Array.isArray(config.components)
+        ? config.components
+        : [config.components];
+
+      config.components = config.components.map((component) => {
+        if (typeof component === "string") {
+          component = resolveDir(component, config.cwd);
+        } else {
+          component.dirs = Array.isArray(component.dirs)
+            ? component.dirs
+            : [component.dirs];
+
+          for (let i = 0; i < component.dirs.length; i++) {
+            const _dir = component.dirs[i];
+            if (!_dir) continue;
+
+            component.dirs[i] = resolveDir(_dir, config.cwd);
+          }
+        }
+
+        return component;
+      });
+
+      (_components.dirs as any).push(...config.components);
+    }
+
+    plugins.push(css.vite({ cssDirs: config.css, cwd: config.cwd }));
+
     plugins.push(
       globals.vite({
         output: config.output,
@@ -87,28 +126,26 @@ export function buildViteConfig(): UserConfig {
       }),
     );
 
-    plugins.push(css.vite({ cssDirs: config.css, cwd: config.cwd }));
+    // plugins.push(
+    //   components.vite({
+    //     dts: join(config.output, "components.d.ts"),
+    //     // resolvers: isMain ? [SchemaOrgResolver() as any] : [],
+    //     dirs: [
+    //       ...(isMain
+    //         ? [
+    //             {
+    //               dirs: resolve(import.meta.dirname, "../app/components"),
+    //               pathPrefix: false,
+    //             },
+    //           ]
+    //         : []),
 
-    plugins.push(
-      components.vite({
-        dts: join(config.output, "components.d.ts"),
-        resolvers: isMain ? [SchemaOrgResolver() as any] : [],
-        dirs: [
-          ...config.components,
+    //       ...config.components,
+    //     ],
 
-          ...(isMain
-            ? [
-                {
-                  dirs: resolve(import.meta.dirname, "../app/components"),
-                  pathPrefix: false,
-                },
-              ]
-            : []),
-        ],
-
-        cwd: config.cwd,
-      }),
-    );
+    //     cwd: config.cwd,
+    //   }),
+    // );
 
     plugins.push(
       layout.vite({ layouts: config.layouts, output: config.output }),
@@ -154,6 +191,12 @@ export function buildViteConfig(): UserConfig {
     viteCOnfig = mergeConfig(viteCOnfig, _config) as UserConfig;
   });
 
+  (_components.dirs as any).push({
+    dirs: resolve(import.meta.dirname, "../app/components"),
+    pathPrefix: false,
+    extensions: ["ts", "js", "jsx", "tsx", "vue"],
+  });
+
   viteCOnfig = mergeConfig(viteCOnfig, {
     base: main.baseUrl,
     server: { middlewareMode: true },
@@ -164,8 +207,9 @@ export function buildViteConfig(): UserConfig {
     root: process.cwd(),
     syoraConfig: main,
     publicDir: main.publicDir,
-    plugins: [vue()],
+    plugins: [vue(), components.vite(_components)],
     resolve: { alias: main.alias },
+    devtools: false,
   });
 
   return viteCOnfig as UserConfig;

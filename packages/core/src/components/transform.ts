@@ -1,279 +1,197 @@
-import { parse as parseSFC } from "vue/compiler-sfc";
-import { baseParse, NodeTypes } from "@vue/compiler-core";
+import { dirname, extname, relative } from "node:path";
 import MagicString from "magic-string";
-import path from "node:path";
-import type { ComponentInfo } from "./types";
-import { isBuiltIn, kebabToPascal } from "./utils";
-import { HTML_TAGS } from "./html-tags";
-import type { ResolveFn } from "./resolvers";
-
-interface RegisterEntry {
-  /** Local identifier used in the template (after renaming). */
-  localName: string;
-  info: ComponentInfo;
-}
+import type { AutoImportContext } from "./context";
+import { parseScript, traverse } from "./babel";
+import { slash } from "./utils";
+import { extractTemplateTags, parseSfc } from "./vue-sfc";
 
 export interface TransformResult {
   code: string;
   map: ReturnType<MagicString["generateMap"]>;
 }
 
-/** Collects the set of tag names present in the template. */
-function collectUsedTags(templateContent: string): Set<string> {
-  const tags = new Set<string>();
+const JS_LIKE = /\.(?:jsx?|tsx?|mjs|mts)$/;
 
-  let ast;
-  try {
-    ast = baseParse(templateContent, { comments: true });
-  } catch {
-    // Unparsable template: let Vue's own compiler raise the real error later.
-    return tags;
-  }
+export function shouldTransform(id: string, ctx: AutoImportContext): boolean {
+  if (ctx.components.size === 0) return false;
+  const [path] = id.split("?", 1);
+  if (!path) return false;
 
-  const walk = (node: any): void => {
-    if (!node) return;
-    if (node.type === NodeTypes.ELEMENT) tags.add(node.tag);
-
-    if (Array.isArray(node.children)) {
-      for (const child of node.children) walk(child);
-    }
-    // v-if/v-else-if/v-else chains are represented as branches.
-    if (Array.isArray(node.branches)) {
-      for (const branch of node.branches) walk(branch);
-    }
-  };
-
-  for (const child of ast.children) walk(child);
-
-  return tags;
+  // if (path.includes('/node_modules/')) return false
+  return path.endsWith(".vue") || JS_LIKE.test(path);
 }
 
-/** Checks whether an identifier is already imported/declared in the script. */
-function alreadyBound(scriptContent: string, name: string): boolean {
-  if (!scriptContent) return false;
-
-  const defaultImportRe = new RegExp(`import\\s+${name}\\b`);
-  const namedImportRe = new RegExp(
-    `import\\s*\\{[^}]*\\b${name}\\b[^}]*\\}\\s*from`,
-  );
-  const localDeclRe = new RegExp(
-    `\\b(?:const|let|var|function|class)\\s+${name}\\b`,
-  );
-
-  return (
-    defaultImportRe.test(scriptContent) ||
-    namedImportRe.test(scriptContent) ||
-    localDeclRe.test(scriptContent)
-  );
-}
-
-/** True for components resolved from an absolute file path (local scan). */
-function isFilePath(from: string): boolean {
-  return path.isAbsolute(from);
-}
-
-function toImportSpecifier(from: string, fromFile: string): string {
-  if (!isFilePath(from)) return from;
-
-  let rel = path.relative(path.dirname(fromFile), from).replace(/\\/g, "/");
+/** Builds the relative import specifier from `fromFile` to a component's absolute path. */
+function toImportPath(fromFile: string, componentAbsPath: string): string {
+  let rel = slash(relative(dirname(fromFile), componentAbsPath));
   if (!rel.startsWith(".")) rel = `./${rel}`;
+
+  // Keep the extension for `.vue` (required for resolution), strip it for
+  // JS/TS-like files so bundler/tsconfig extension rules stay in control.
+  const ext = extname(rel);
+  if (ext && ext !== ".vue") rel = rel.slice(0, -ext.length);
   return rel;
 }
 
-function buildImportStatement(
-  localName: string,
-  info: ComponentInfo,
+function buildImportLines(
+  names: Iterable<string>,
   fromFile: string,
+  ctx: AutoImportContext,
 ): string {
-  const specifier = JSON.stringify(toImportSpecifier(info.from, fromFile));
-
-  if (info.name === "default") return `import ${localName} from ${specifier}`;
-
-  return info.name === localName
-    ? `import { ${info.name} } from ${specifier}`
-    : `import { ${info.name} as ${localName} } from ${specifier}`;
-}
-
-function buildSideEffectImports(entries: RegisterEntry[]): string[] {
-  const effects = new Set<string>();
-  for (const { info } of entries) {
-    if (!info.sideEffects) continue;
-    const list = Array.isArray(info.sideEffects)
-      ? info.sideEffects
-      : [info.sideEffects];
-    for (const effect of list) effects.add(effect);
+  const lines: string[] = [];
+  for (const name of names) {
+    const info = ctx.components.get(name);
+    if (!info) continue;
+    lines.push(`import ${name} from '${toImportPath(fromFile, info.path)}'`);
   }
-  return [...effects].map((effect) => `import ${JSON.stringify(effect)}`);
+  return lines.join("\n");
 }
 
-/** Matches `_resolveComponent("Name")` / `_resolveComponent('Name')` calls in already-compiled render code. */
-const RESOLVE_COMPONENT_RE =
-  /_resolveComponent\(\s*(['"])((?:(?!\1).)+)\1\s*\)/g;
-
-function escapeRegExp(input: string): string {
-  return input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+/** Collects every top-level bound identifier (imports, const/let/var, functions, classes...) of a script. */
+function collectTopLevelBindings(code: string): Set<string> {
+  const bindings = new Set<string>();
+  try {
+    const ast = parseScript(code);
+    traverse(ast, {
+      Program(path) {
+        for (const name of Object.keys(path.scope.getAllBindings()))
+          bindings.add(name);
+      },
+    });
+  } catch {
+    // Parse errors are ignored here — Vite's own pipeline will surface them properly.
+  }
+  return bindings;
 }
 
 /**
- * Transforms a .vue file: detects components used in the template that are
- * not already imported (resolving them first against locally scanned
- * components, then against the configured `resolvers`), and injects the
- * matching import statements. Returns `null` when no transform is needed.
- *
- * Normally this runs on the raw SFC source, before `@vitejs/plugin-vue`
- * compiles it, so `parseSFC` yields a `descriptor.template` we can scan.
- * However, depending on plugin ordering (e.g. running after
- * `@vitejs/plugin-vue` and/or `vite-plugin-vue-inspector`), this hook may
- * instead receive the file *after* it has already been compiled into a
- * plain render function. In that case there is no `<template>` block left
- * — `descriptor.template` is `null` — but the compiled code still contains
- * `_resolveComponent("Name")` calls for every component the compiler
- * couldn't statically resolve (because it was never imported). We detect
- * that case and patch the compiled output directly instead of bailing out,
- * otherwise those components would silently fail to resolve at runtime.
+ * Handles `.vue` SFCs: template tags are matched (as-is, and PascalCase'd
+ * from kebab-case) against the known component map, then any name not
+ * already bound in the `<script>`/`<script setup>` block is imported.
  */
-export async function transformVueFile(
+function transformVue(
   code: string,
   id: string,
-  componentsMap: Map<string, ComponentInfo>,
-  resolve: ResolveFn,
-): Promise<TransformResult | null> {
-  const { descriptor } = parseSFC(code, { filename: id });
+  ctx: AutoImportContext,
+): TransformResult | null {
+  const { template, script } = parseSfc(code);
+  if (!template) return null;
 
-  if (!descriptor.template) {
-    // --- Fallback path: already-compiled render function output ---
-    const matches = [...code.matchAll(RESOLVE_COMPONENT_RE)];
-    if (matches.length === 0) return null;
+  const tags = extractTemplateTags(template.content);
+  const candidateNames = new Set<string>();
 
-    const toRegister: RegisterEntry[] = [];
-    const seenPascal = new Set<string>();
-    // rawTag (as written in `_resolveComponent("rawTag")`) -> local import identifier
-    const rawTagToLocalName = new Map<string, string>();
-
-    for (const match of matches) {
-      const rawTag = match[2];
-      if (!rawTag) continue;
-      if (rawTagToLocalName.has(rawTag)) continue;
-
-      const pascal = rawTag.includes("-") ? kebabToPascal(rawTag) : rawTag;
-
-      // Locally scanned components take priority over library resolvers.
-      const info =
-        componentsMap.get(pascal) ?? (await resolve(pascal)) ?? undefined;
-      if (!info) continue;
-      if (isFilePath(info.from) && path.resolve(info.from) === path.resolve(id))
-        continue; // avoid a component importing itself
-      if (alreadyBound(code, pascal)) continue;
-
-      rawTagToLocalName.set(rawTag, pascal);
-      if (!seenPascal.has(pascal)) {
-        seenPascal.add(pascal);
-        toRegister.push({ localName: pascal, info });
-      }
+  for (const tag of tags) {
+    if (ctx.components.has(tag)) {
+      candidateNames.add(tag);
+      continue;
     }
-
-    if (toRegister.length === 0) return null;
-
-    const s = new MagicString(code);
-    const importLines = `${[
-      ...toRegister.map(({ localName, info }) =>
-        buildImportStatement(localName, info, id),
-      ),
-      ...buildSideEffectImports(toRegister),
-    ].join("\n")}\n`;
-    s.prepend(importLines);
-
-    // Rewire every `_resolveComponent("Name")` call to reference the
-    // newly imported identifier directly, instead of a runtime lookup
-    // that would otherwise fail (or silently warn) since the component
-    // was never registered as a global or local component.
-    for (const [rawTag, localName] of rawTagToLocalName) {
-      const re = new RegExp(
-        `_resolveComponent\\(\\s*(['"])${escapeRegExp(rawTag)}\\1\\s*\\)`,
-        "g",
-      );
-      s.replaceAll(re, localName);
-    }
-
-    return {
-      code: s.toString(),
-      map: s.generateMap({ hires: true, source: id }),
-    };
+    const pascal = tag
+      .split("-")
+      .filter(Boolean)
+      .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+      .join("");
+    if (ctx.components.has(pascal)) candidateNames.add(pascal);
   }
 
-  // --- Normal path: raw, uncompiled SFC source ---
-  const usedTags = collectUsedTags(descriptor.template.content);
-  if (usedTags.size === 0) return null;
+  if (candidateNames.size === 0) return null;
 
-  const scriptContent = `${descriptor.scriptSetup?.content ?? ""}\n${descriptor.script?.content ?? ""}`;
-  const toRegister: RegisterEntry[] = [];
-  const seen = new Set<string>();
+  const existingBindings = script
+    ? collectTopLevelBindings(script.content)
+    : new Set<string>();
+  const needed = [...candidateNames].filter((n) => !existingBindings.has(n));
+  if (needed.length === 0) return null;
 
-  for (const tag of usedTags) {
-    if (isBuiltIn(tag) || HTML_TAGS.has(tag)) continue;
-
-    const pascal = tag.includes("-") ? kebabToPascal(tag) : tag;
-    if (seen.has(pascal)) continue;
-
-    // Locally scanned components take priority over library resolvers.
-    const info =
-      componentsMap.get(pascal) ?? (await resolve(pascal)) ?? undefined;
-    if (!info) continue;
-    if (isFilePath(info.from) && path.resolve(info.from) === path.resolve(id))
-      continue; // avoid a component importing itself
-    if (alreadyBound(scriptContent, pascal)) continue;
-
-    seen.add(pascal);
-    toRegister.push({ localName: pascal, info });
-  }
-
-  if (toRegister.length === 0) return null;
+  const importLines = buildImportLines(needed, id, ctx);
+  if (!importLines) return null;
 
   const s = new MagicString(code);
-  const importLines = `${[
-    ...toRegister.map(({ localName, info }) =>
-      buildImportStatement(localName, info, id),
-    ),
-    ...buildSideEffectImports(toRegister),
-  ].join("\n")}\n`;
 
-  if (descriptor.scriptSetup) {
-    s.appendLeft(descriptor.scriptSetup.loc.start.offset, importLines);
-  } else if (descriptor.script) {
-    const block = descriptor.script;
-    s.appendLeft(block.loc.start.offset, importLines);
-
-    const namesToInject = toRegister
-      .map(({ localName }) => localName)
-      .join(", ");
-    const content = block.content;
-
-    const componentsOptionMatch = content.match(/components\s*:\s*\{/);
-    if (componentsOptionMatch?.index !== undefined) {
-      const insertPos =
-        block.loc.start.offset +
-        componentsOptionMatch.index +
-        componentsOptionMatch[0].length;
-      s.appendLeft(insertPos, ` ${namesToInject},`);
-    } else {
-      const exportMatch = content.match(
-        /export\s+default\s+(?:defineComponent\s*\(\s*)?\{/,
-      );
-      if (exportMatch?.index !== undefined) {
-        const insertPos =
-          block.loc.start.offset + exportMatch.index + exportMatch[0].length;
-        s.appendLeft(insertPos, ` components: { ${namesToInject} },`);
-      }
-      // Neither <script setup> nor a recognizable default-export object
-      // (e.g. `export default defineComponent(functionalComponent)`):
-      // rare case, we still inject the import but cannot auto-register it.
-    }
+  if (script) {
+    // Inject right at the top of the existing block (works for both
+    // `<script setup>`, where an import is immediately usable in the
+    // template, and a plain `<script>`, left for the user to wire into
+    // `components: {}` if needed).
+    s.appendLeft(script.contentStart, `\n${importLines}\n`);
   } else {
-    return null;
+    // No <script> block at all: create a `<script setup>` before the template.
+    s.appendLeft(
+      template.start,
+      `<script setup>\n${importLines}\n</script>\n\n`,
+    );
   }
 
   return {
     code: s.toString(),
-    map: s.generateMap({ hires: true, source: id }),
+    map: s.generateMap({ source: id, hires: true, includeContent: true }),
   };
+}
+
+/** Handles `.js/.jsx/.ts/.tsx` files: any un-bound, PascalCase JSX tag is imported. */
+function transformScript(
+  code: string,
+  id: string,
+  ctx: AutoImportContext,
+): TransformResult | null {
+  let ast;
+  try {
+    ast = parseScript(code);
+  } catch {
+    return null;
+  }
+
+  const used = new Set<string>();
+  const bound = new Set<string>();
+
+  traverse(ast, {
+    Program(path) {
+      for (const name of Object.keys(path.scope.getAllBindings()))
+        bound.add(name);
+    },
+    JSXOpeningElement(path) {
+      const nameNode = path.node.name;
+      if (nameNode.type === "JSXIdentifier" && /^[A-Z]/.test(nameNode.name)) {
+        used.add(nameNode.name);
+      }
+    },
+  });
+
+  const needed = [...used].filter(
+    (name) => ctx.components.has(name) && !bound.has(name),
+  );
+  if (needed.length === 0) return null;
+
+  const importLines = buildImportLines(needed, id, ctx);
+  if (!importLines) return null;
+
+  const s = new MagicString(code);
+
+  // Insert after the last top-level `import` declaration, or at the very top.
+  let insertAt = 0;
+  for (const node of ast.program.body) {
+    if (node.type === "ImportDeclaration" && typeof node.end === "number")
+      insertAt = node.end;
+    else break;
+  }
+
+  s.appendLeft(insertAt, `${insertAt === 0 ? "" : "\n"}${importLines}\n`);
+
+  return {
+    code: s.toString(),
+    map: s.generateMap({ source: id, hires: true, includeContent: true }),
+  };
+}
+
+export function transformCode(
+  code: string,
+  id: string,
+  ctx: AutoImportContext,
+): TransformResult | null {
+  if (ctx.components.size === 0) return null;
+  const [path] = id.split("?", 1);
+  if (!path) return null;
+
+  if (path.endsWith(".vue")) return transformVue(code, path, ctx);
+  if (JS_LIKE.test(path)) return transformScript(code, path, ctx);
+
+  return null;
 }

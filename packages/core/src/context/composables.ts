@@ -12,5 +12,6 @@ export function useApp(): AppContext {
       "useApp() must be called within a component’s setup() method, or after the app context plugin has been installed.",
     );
   }
+
   return merge(app, app.config.globalProperties) as AppContext;
 }

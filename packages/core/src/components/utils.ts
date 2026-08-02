@@ -1,48 +1,53 @@
-import toCamelCase from "lodash/camelCase.js";
-import toUpperFirst from "lodash/upperFirst.js";
+import { extname, isAbsolute, relative } from "node:path";
 
-/** Native Vue global components, never resolved/auto-imported. */
-export const BUILTIN_COMPONENTS = new Set([
-  "Transition",
-  "TransitionGroup",
-  "KeepAlive",
-  "Teleport",
-  "Suspense",
-  "component",
-  "slot",
-  "template",
-]);
-
-/**
- * Converts a file path segment (e.g. "my-button.vue" or
- * "form/text-input.vue") into a default PascalCase component name.
- * Directory separators are treated as word boundaries, so
- * "form/text-input.vue" -> "FormTextInput".
- */
-export function toPascalCase(input: string): string {
-  return toUpperFirst(toCamelCase(input.replace(/\.\w+$/, "")));
-  // input
-  //   .replace(/\.\w+$/, "")
-  //   .split(/[-_/\\ ]+/)
-  //   .filter(Boolean)
-  //   .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
-  //   .join("");
+export function slash(p: string): string {
+  return p.replace(/\\/g, "/");
 }
 
-/** Converts a kebab-case tag ("text-input") into PascalCase ("TextInput"). */
-export function kebabToPascal(tag: string): string {
-  return tag
-    .split("-")
+export function toArray<T>(value: T | T[] | undefined | null): T[] {
+  if (value === undefined || value === null) return [];
+  return Array.isArray(value) ? value : [value];
+}
+
+/** Converts a single path segment (kebab-case, snake_case, dot.case...) to PascalCase. */
+export function segmentToPascalCase(segment: string): string {
+  return segment
+    .split(/[-_.\s]+/)
     .filter(Boolean)
-    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join("");
 }
 
-export function isBuiltIn(name: string): boolean {
-  return BUILTIN_COMPONENTS.has(name);
+/**
+ * Computes the default PascalCase component name from an absolute file path.
+ *
+ * - `src/components/base/Button.vue` -> `BaseButton` (pathPrefix: true) or `Button`
+ * - `src/components/Button/index.vue` -> `Button` (folder name is used, not "Index")
+ */
+export function getDefaultComponentName(
+  absPath: string,
+  scanDir: string,
+  pathPrefix: boolean,
+): string {
+  const ext = extname(absPath);
+  const rel = relative(scanDir, absPath);
+  const relNoExt = ext ? rel.slice(0, -ext.length) : rel;
+  const segments = slash(relNoExt).split("/").filter(Boolean);
+
+  // Folder/index.vue -> use the folder name only, drop the trailing "index".
+  if (
+    segments.length > 1 &&
+    segments[segments.length - 1]?.toLowerCase() === "index"
+  ) {
+    segments.pop();
+  }
+
+  const parts = pathPrefix ? segments : [segments[segments.length - 1]!];
+  return parts.map(segmentToPascalCase).join("");
 }
 
-export function toArray<T>(value: T | T[] | undefined, fallback: T[]): T[] {
-  if (value === undefined) return fallback;
-  return Array.isArray(value) ? value : [value];
+/** True if `child` is inside (or equal to) `parent`. */
+export function isSubPath(parent: string, child: string): boolean {
+  const rel = relative(parent, child);
+  return rel === "" || (!rel.startsWith("..") && !isAbsolute(rel));
 }

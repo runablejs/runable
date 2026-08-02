@@ -12,7 +12,6 @@ import remarkFlexibleToc, { HeadingDepth } from "remark-flexible-toc";
 import rehypeRaw from "rehype-raw";
 import rehypeExternalLinks from "rehype-external-links";
 import rehypeMinifyWhitespace from "rehype-minify-whitespace";
-// import rehyperemark from "rehype-remark";
 import rehypeSlug from "rehype-slug";
 import rehypeSortAttributeValues from "rehype-sort-attribute-values";
 import rehypeSortAttributes from "rehype-sort-attributes";

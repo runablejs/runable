@@ -1,9 +1,19 @@
 <!-- components/SyoraWelcome.vue -->
 <script setup lang="ts">
+const page = ref(1);
+
+const { data, refresh } = useAsyncData(
+  "fsf",
+  () => $fetch(`https://jsonplaceholder.typicode.com/todos/${page.value}`),
+  { watch: [page] },
+);
+
 const version = ref("1.1.0");
 </script>
 
 <template>
+  {{ data }}+
+  <div><button @click="page++">refresh</button> {{ page }}</div>
   <div class="syora-welcome">
     <!-- Background Grid with Vignette Fade -->
     <div class="bg-grid"></div>
