@@ -1,12 +1,13 @@
 import path from "node:path";
 import { normalizeDir } from "@/utils/dir.js";
 import { createUnplugin } from "unplugin";
+import type { Arrayable } from "@/utils";
 
 const VIRTUAL_ID = ":css";
 const RESOLVED_VIRTUAL_ID = "\0:css";
 
-type CssConfig = {
-  cssDirs: string[];
+export type CssOptions = {
+  dirs?: Arrayable<string>;
   cwd?: string;
 };
 
@@ -18,21 +19,20 @@ type CssConfig = {
  */
 const sharedCssFiles = new Set<string>();
 
-export default createUnplugin((config: CssConfig) => {
-  const { cssDirs = [], cwd = process.cwd() } = config;
+export default createUnplugin((config: CssOptions) => {
+  let { dirs = [], cwd = process.cwd() } = config;
 
   return {
     name: "syora:css",
     enforce: "pre",
 
     buildStart() {
-      if (!Array.isArray(cssDirs)) return;
+      if (!dirs) return;
 
-      for (const file of cssDirs) {
-        sharedCssFiles.add(
-          file.startsWith(".") ? path.resolve(cwd, file) : file,
-        );
-      }
+      dirs = Array.isArray(dirs) ? dirs : [dirs];
+
+      for (const file of dirs) sharedCssFiles.add(file);
+      // file.startsWith(".") ? path.resolve(cwd, file) : file,
     },
 
     resolveId(id) {
@@ -44,7 +44,7 @@ export default createUnplugin((config: CssConfig) => {
 
       return Array.from(sharedCssFiles)
         .map((file) => {
-          const rPath = normalizeDir(path.relative(process.cwd(), file));
+          const rPath = normalizeDir(path.relative(cwd, file));
           return `import "${rPath}";`;
         })
         .join("\n");

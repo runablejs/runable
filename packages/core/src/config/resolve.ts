@@ -3,7 +3,7 @@ import { resolveDir } from "@/utils";
 import type { ResolvedConfig } from "./load.js";
 import type { SyoraConfig } from "./types.js";
 
-export function resolveConfig(config: SyoraConfig = {}) {
+export function resolveConfig(config: SyoraConfig & { cwd: string }) {
   config.cwd ??= process.cwd();
 
   config.distDir ??= ".output";
@@ -36,6 +36,8 @@ export function resolveConfig(config: SyoraConfig = {}) {
   }
 
   config.modules ??= [];
+
+  config.css ??= [];
 
   return config as ResolvedConfig;
 }

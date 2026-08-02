@@ -14,7 +14,7 @@ import components, {
   type ComponentDir,
 } from "../components/unplugin.js";
 import configPlugin from "../config/unplugin.js";
-import css from "../css/unplugin.js";
+import css, { type CssOptions } from "../css/unplugin.js";
 import importMeta from "../import-meta/unplugin.js";
 import runtime from "../runtime/unplugin.js";
 import router from "../router/unplugin.js";
@@ -67,31 +67,11 @@ export function buildViteConfig(): UserConfig {
     dirs: [],
   };
 
+  const _css: CssOptions & { dirs: string[] } = { cwd: main.cwd, dirs: [] };
+
   const configToViteConfig = (config: ResolvedConfig): UserConfig => {
     const isMain = config._name === "__main";
     const plugins: (Plugin<any> | Plugin<any>[])[] = [];
-
-    function getGlbalsImports() {
-      const imports: GlobalConfig["imports"] = [
-        // "vue",
-        { directory: join(import.meta.dirname, "../app/globals") },
-        { file: join(import.meta.dirname, "../plugin/define") },
-        { file: join(import.meta.dirname, "../layout/useLayouts") },
-        { file: join(import.meta.dirname, "../router/composables") },
-        { file: join(import.meta.dirname, "../router/helpers") },
-        { file: join(import.meta.dirname, "../config/composables") },
-        { file: join(import.meta.dirname, "../context/composables") },
-        { directory: join(import.meta.dirname, "../fetch") },
-        { file: join(import.meta.dirname, "../async-data/composable") },
-        { file: join(import.meta.dirname, "../runtime/composables") },
-
-        unheadVueComposablesImports,
-
-        ...schemaOrgAutoImports,
-      ];
-
-      return imports;
-    }
 
     resolveGlobals();
     function resolveGlobals() {
@@ -128,17 +108,10 @@ export function buildViteConfig(): UserConfig {
       _components.dirs.push(...config.components);
     }
 
-    plugins.push(css.vite({ cssDirs: config.css, cwd: config.cwd }));
-
-    // plugins.push(
-    //   globals.vite({
-    //     output: config.output,
-    //     imports: [
-    //       ...(isMain ? getGlbalsImports() : []),
-    //       ...config.globals.map((dir) => ({ directory: dir })),
-    //     ],
-    //   }),
-    // );
+    resolveCss();
+    function resolveCss() {
+      _css.dirs.push(...config.css.map((css) => resolveDir(css, config.cwd)));
+    }
 
     plugins.push(
       layout.vite({ layouts: config.layouts, output: config.output }),
@@ -217,7 +190,12 @@ export function buildViteConfig(): UserConfig {
     root: process.cwd(),
     syoraConfig: main,
     publicDir: main.publicDir,
-    plugins: [vue(), globals.vite(_globals), components.vite(_components)],
+    plugins: [
+      vue(),
+      globals.vite(_globals),
+      components.vite(_components),
+      css.vite(_css),
+    ],
     resolve: { alias: main.alias },
     devtools: false,
   });
