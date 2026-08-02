@@ -42,8 +42,8 @@ declare module 'vue' {
 export {};
 `;
 
-type PluginConfig = {
-  plugins?: string[];
+export type PluginOptions = {
+  dirs?: string[];
   output?: string;
 };
 
@@ -170,7 +170,7 @@ function generateVirtualCode(isSsr: boolean): string {
     .replace("{{pluginArray}}", pluginArray);
 }
 
-export default createUnplugin((config?: PluginConfig) => {
+export default createUnplugin((config?: PluginOptions) => {
   total++;
 
   return {
@@ -178,10 +178,10 @@ export default createUnplugin((config?: PluginConfig) => {
     enforce: "pre",
 
     buildStart() {
-      const { plugins = [], output = process.cwd() } = config ?? {};
+      const { dirs = [], output = process.cwd() } = config ?? {};
       sharedOutput ??= output;
 
-      for (const dir of plugins) collectPlugins(dir);
+      for (const dir of dirs) collectPlugins(dir);
 
       completed++;
       if (completed === total) generateDtsFile(sharedOutput);
