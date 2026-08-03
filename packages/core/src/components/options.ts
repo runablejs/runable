@@ -9,7 +9,12 @@ import { toArray } from "./utils";
 
 const DEFAULT_DIRS = "src/components";
 const DEFAULT_EXTENSIONS = ["vue"];
-const DEFAULT_EXCLUDE = ["**/.git/**", "**/*.d.*", "**/-*.*"]; // "**/node_modules/**",
+const DEFAULT_EXCLUDE = [
+  "**/node_modules/**",
+  "**/.git/**",
+  "**/*.d.*",
+  "**/-*.*",
+];
 const DEFAULT_DTS = "components.d.ts";
 
 interface Fallback {

@@ -17,7 +17,7 @@ export function shouldTransform(id: string, ctx: AutoImportContext): boolean {
   const [path] = id.split("?", 1);
   if (!path) return false;
 
-  // if (path.includes('/node_modules/')) return false
+  if (path.includes("/node_modules/")) return false;
   return path.endsWith(".vue") || JS_LIKE.test(path);
 }
 
