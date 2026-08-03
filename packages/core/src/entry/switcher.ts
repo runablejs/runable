@@ -1,5 +1,3 @@
-// import ":globals";
-
 export type SSRContext = { url: string; template: string };
 
 export async function render(ctx: SSRContext | false) {

@@ -1,7 +1,7 @@
 import Fastify from "fastify";
 import middie from "@fastify/middie";
 import fastifyStatic from "@fastify/static";
-import { createServer, useConfig, serve } from "../../../src";
+import { createServer, useConfig, serve } from "@syora/core";
 import { join } from "node:path";
 
 const app = Fastify();

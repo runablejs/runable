@@ -1,6 +1,6 @@
 import { renderToString } from "vue/server-renderer";
 import { createApp } from "./main.js";
-import { useRouter } from "../router/composables.js";
+import { useRouter } from "../app/composables/router.js";
 import type { SSRContext } from "./switcher.js";
 import { transformHtmlTemplate } from "@unhead/vue/server";
 import { loadConfig } from "@/config/load.js";

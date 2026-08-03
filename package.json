@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "pnpm --filter './packages/**' build"
+    "build": "pnpm --filter './packages/**' build",
+    "play:dev": "pnpm --filter syora-playground dev"
   },
   "devDependencies": {
     "@tsconfig/node24": "^24.0.4",

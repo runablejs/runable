@@ -1,5 +1,5 @@
 import { computed, defineAsyncComponent, defineComponent, h } from "vue";
-import { useRoute } from "@/router/composables.js";
+import { useRoute } from "@/app/composables/router.js";
 import { useLayouts } from "@/layout/useLayouts.js";
 
 type LayoutMeta =

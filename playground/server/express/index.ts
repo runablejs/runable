@@ -1,6 +1,7 @@
-import { createServer, useConfig, serve } from "../../../src";
+import { createServer, useConfig, serve } from "@syora/core";
 import express from "express";
 import { join } from "node:path";
+// console.log("******************************");
 
 const app = express();
 

@@ -1,5 +1,3 @@
-// import ":globals";
-
 import * as vue from "vue";
 import merge from "lodash/merge";
 
@@ -15,7 +13,7 @@ import {
 } from "@unhead/vue/client";
 import { createHead as createHeadServer } from "@unhead/vue/server";
 import { UnheadSchemaOrg } from "@unhead/schema-org/vue";
-import { layoutPlugin } from "../layout/plugin.ts";
+import { layoutPlugin } from "../layout/plugin.js";
 
 export async function createApp(isSsr = false) {
   const config = useConfig();

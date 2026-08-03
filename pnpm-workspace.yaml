@@ -4,6 +4,69 @@ packages:
   - playground
   - docs
 
+catalog:
+  vue: ^3.5.40
+  vue-router: ^5.2.0
+  "@vue/compiler-core": ^3.5.40
+  "@vue/tsconfig": ^0.9.1
+  "@vitejs/plugin-vue": ^6.0.8
+  unplugin-vue: ^7.2.0
+  unplugin-vue-components: ^32.1.0
+  vue-sfc-transformer: ^0.2.3
+  vue-tsc: ^3.3.7
+
+  vite: ^8.2.0
+
+  "@babel/parser": ^8.0.4
+  "@babel/traverse": ^8.0.4
+  "@babel/types": ^8.0.4
+
+  c12: 4.0.0-beta.5
+  mlly: ^1.8.2
+  ofetch: ^1.5.1
+  unhead: ^3.2.3
+  "@unhead/vue": 3.0.0-beta.9
+  "@unhead/schema-org": ^3.2.3
+  h3: 2.0.1-rc.26
+
+  express: ^5.2.1
+  fastify: ^5.10.0
+  "@fastify/middie": ^9.3.3
+  "@fastify/static": ^10.1.2
+  hono: ^4.12.32
+  "@hono/node-server": ^2.0.12
+  koa: ^3.2.1
+  koa-connect: ^2.1.1
+  koa-static: ^5.0.0
+  "@types/express": ^5.0.6
+  "@types/koa": ^3.0.3
+  "@types/koa-static": ^4.0.4
+
+  "@nestjs/common": ^11.1.28
+  "@nestjs/core": ^11.1.28
+  "@nestjs/platform-express": ^11.1.28
+
+  typescript: ~6.0.0
+  "@types/node": ^24.13.3
+  "@types/lodash": ^4.17.24
+  "@types/estree": ^1.0.9
+
+  tsdown: ^0.22.14
+  tsx: ^4.23.1
+  npm-run-all2: ^9.0.2
+
+  lodash: ^4.18.1
+  dotenv: ^17.4.2
+  devalue: ^5.8.2
+  magic-string: ^1.0.0
+  fast-glob: ^3.3.3
+  estree-walker: ^3.0.3
+  acorn: ^8.17.0
+  tinyglobby: ^0.2.17
+  sirv: ^3.0.2
+  srvx: ^0.12.4
+  syt: ^0.2.0
+
 allowBuilds:
   "@swc/core": true
   better-sqlite3: true
@@ -12,5 +75,5 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - "@syora/vue@1.0.0"
-  - '@syora/fastify@1.1.1'
+  - "@syora/fastify@1.1.1"
   - syt@0.2.0

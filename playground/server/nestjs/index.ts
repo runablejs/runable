@@ -2,7 +2,7 @@ import { NestFactory } from "@nestjs/core";
 import type { NestExpressApplication } from "@nestjs/platform-express";
 import { Module } from "@nestjs/common";
 import { join } from "node:path";
-import { createServer, useConfig, serve } from "../../../src";
+import { createServer, useConfig, serve } from "@syora/core";
 import type { Request, Response } from "express";
 
 @Module({})

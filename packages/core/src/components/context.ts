@@ -31,7 +31,7 @@ export class AutoImportContext {
     this.scanning = (async () => {
       this.components = await scanComponents(this.options, (m) => this.log(m));
       this.log(
-        `[unplugin-auto-components] scanned ${this.components.size} component(s)`,
+        `[syora:components] scanned ${this.components.size} component(s)`,
       );
       await writeDts(this.components, this.options.dts, this.root);
     })();
@@ -66,7 +66,7 @@ export class AutoImportContext {
     if (!this.isWatchedDir(id) || !this.matchesExtension(id)) return;
 
     this.log(
-      `[unplugin-auto-components] ${event} detected for "${id}", rescanning components`,
+      `[syora:components] ${event} detected for "${id}", rescanning components`,
     );
     await this.rescan();
   }

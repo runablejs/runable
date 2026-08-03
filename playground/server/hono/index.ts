@@ -5,7 +5,7 @@ import {
   createServer as createViteServer,
   useConfig,
   serve,
-} from "../../../src";
+} from "@syora/core";
 import { join } from "node:path";
 
 const app = new Hono<{ Bindings: HttpBindings }>();

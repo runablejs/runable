@@ -1,4 +1,4 @@
-import { createServer, useConfig, serve } from "../../../src";
+import { createServer, useConfig, serve } from "@syora/core";
 import Koa from "koa";
 import koaConnect from "koa-connect";
 import koaStatic from "koa-static";

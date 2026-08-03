@@ -4,11 +4,7 @@ import type { App, Plugin } from "vue";
 import type { VuePluginObject } from "./types.js";
 import { plugins } from ":plugins";
 import { useApp } from "../context/composables.js";
-import {
-  type AppHooks,
-  type HookCallback,
-  registerHooks,
-} from "@/context/hook.js";
+import { registerHooks } from "@/context/hook.js";
 
 export const pluginPlugin: Plugin = {
   install(app) {

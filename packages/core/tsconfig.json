@@ -5,19 +5,13 @@
     "module": "preserve",
     "moduleResolution": "bundler",
     "noUncheckedIndexedAccess": true,
-    "types": ["node"],
+
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
 
     "paths": {
       "@/*": ["./src/*"]
     }
   },
 
-  "include": [
-    "./types",
-    "./src/**/*",
-    "./src/**/*.vue",
-    "./playground/**/*",
-    "./playground/**/*.vue",
-    ".app/**/*.d.ts"
-  ]
+  "include": ["./types", "./src/**/*", "./src/**/*.vue"]
 }

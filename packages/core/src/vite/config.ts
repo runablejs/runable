@@ -86,14 +86,14 @@ export function buildViteConfig(): UserConfig {
     server: { middlewareMode: true },
     appType: "custom",
     ssr: {
-      noExternal: process.env.NODE_ENV === "production" ? [] : ["vue-router"],
+      // noExternal: process.env.NODE_ENV === "production" ? [] : ["vue-router"],
     },
     root: process.cwd(),
     syoraConfig: main,
     publicDir: main.publicDir,
 
-    resolve: { alias: main.alias, preserveSymlinks: true },
-    devtools: false,
+    resolve: { alias: main.alias },
+    // devtools: false,
 
     plugins: [
       vue(),
@@ -103,6 +103,10 @@ export function buildViteConfig(): UserConfig {
       appVue.vite({ dir: join(main.appDir, "app.vue") }),
       importMeta.vite(),
     ],
+
+    optimizeDeps: {
+      include: ["@vue/runtime-dom", "nostics"],
+    },
   };
 
   const resolveViteConfig = (config: ResolvedConfig) => {
@@ -166,9 +170,10 @@ export function buildViteConfig(): UserConfig {
 
   _globals.imports.unshift(
     { directory: join(import.meta.dirname, "../app/globals") },
+    { directory: join(import.meta.dirname, "../app/composables") },
+
     { file: join(import.meta.dirname, "../plugin/define") },
     { file: join(import.meta.dirname, "../layout/useLayouts") },
-    { file: join(import.meta.dirname, "../router/composables") },
     { file: join(import.meta.dirname, "../router/helpers") },
     { file: join(import.meta.dirname, "../config/composables") },
     { file: join(import.meta.dirname, "../context/composables") },

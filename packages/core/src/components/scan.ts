@@ -24,7 +24,7 @@ export async function scanComponents(
         });
       } catch (err) {
         log(
-          `[unplugin-auto-components] failed to scan "${dir}": ${(err as Error).message}`,
+          `[syora:components] failed to scan "${dir}": ${(err as Error).message}`,
         );
         continue;
       }
@@ -40,7 +40,7 @@ export async function scanComponents(
             name = componentName(absPath, defaultName);
           } catch (err) {
             log(
-              `[unplugin-auto-components] componentName() threw for "${absPath}": ${(err as Error).message}`,
+              `[syora:components] componentName() threw for "${absPath}": ${(err as Error).message}`,
             );
             name = defaultName;
           }
@@ -52,7 +52,7 @@ export async function scanComponents(
         const previous = map.get(name);
         if (previous && previous.path !== absPath) {
           log(
-            `[unplugin-auto-components] duplicate component name "${name}": ` +
+            `[syora:components] duplicate component name "${name}": ` +
               `"${previous.path}" is overridden by "${absPath}"`,
           );
         }

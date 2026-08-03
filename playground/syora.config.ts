@@ -14,18 +14,7 @@ export default defineConfig({
 
   css: ["./app/css/index.css"],
 
-  alias: {
-    "@/*": join(import.meta.dirname, "../packages/core/src/*"),
-    "@syora/core": join(import.meta.dirname, "../packages/core/src/index.ts"),
-    "@syora/core/*": join(import.meta.dirname, "../packages/core/src/*"),
-
-    "@cli/*": join(import.meta.dirname, "../packages/cli/src/*"),
-    "@syora/cli": join(import.meta.dirname, "../packages/cli/src/index.ts"),
-    "@syora/cli/*": join(import.meta.dirname, "../packages/cli/src/*"),
-
-    "@content/*": join(import.meta.dirname, "../packages/content/*"),
-    "@syora/content/*": join(import.meta.dirname, "../packages/content/*"),
-  },
+  alias: {},
 
   ssr: true,
 

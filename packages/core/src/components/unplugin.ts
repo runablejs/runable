@@ -11,7 +11,7 @@ export default createUnplugin<AutoComponentOptions | undefined>(
     let ctx: AutoImportContext | undefined;
 
     return {
-      name: "unplugin-auto-components",
+      name: "syora:components",
       enforce: "pre",
 
       vite: {

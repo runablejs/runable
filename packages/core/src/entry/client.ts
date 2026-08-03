@@ -1,9 +1,10 @@
 import ":css";
+
 import { deserializeState } from "@/async-data/serialize.js";
 import { hydrateAsyncData } from "@/async-data/ssr.js";
 
 import { createApp } from "@/entry/main.js";
-import { useRouter } from "@/router/composables.js";
+import { useRouter } from "@/app/composables/router.js";
 
 export async function render() {
   const { app } = await createApp();

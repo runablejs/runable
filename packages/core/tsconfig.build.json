@@ -3,14 +3,5 @@
 
   "include": ["./src/**/*"],
 
-  "exclude": [
-    "playground/**/*",
-    "syora.config.ts",
-    "dist",
-    ".output",
-    "node_modules",
-    ".app",
-    "src/**/*.test.ts",
-    "src/**/*.spec.ts"
-  ]
+  "exclude": ["dist", "node_modules", "src/**/*.test.ts", "src/**/*.spec.ts"]
 }
