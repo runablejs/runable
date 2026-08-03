@@ -1,10 +1,15 @@
-import type { Arrayable } from "@/utils";
+import { ResolvedScanDir, ScanDir } from "@/utils";
 
-export type RouterOptions = {
+/**
+ * Router-specific scan options, on top of the shared `ScanDir` base.
+ */
+type RouterScanExtra = {
   dynamic?: boolean;
-  pages?: Arrayable<string>;
-  exclude?: string[];
-  extensions?: string[];
 };
 
-export type RouterOptionsRaw = string | RouterOptions;
+/**
+ * @default dirs: 'src/pages'
+ */
+export type RouterOptionsRaw = ScanDir<RouterScanExtra>;
+
+export type RouterOptionsRawResolved = ResolvedScanDir<RouterScanExtra>;

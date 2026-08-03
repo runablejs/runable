@@ -1,5 +1,6 @@
 import { existsSync, statSync } from "node:fs";
 import { dirname, extname, join, relative, resolve } from "node:path";
+
 import MagicString from "magic-string";
 import { parse as parseVueSFC } from "vue/compiler-sfc";
 import { parse as babelParse, type ParserOptions } from "@babel/parser";
@@ -7,6 +8,7 @@ import _traverse from "@babel/traverse";
 import type { NodePath } from "@babel/traverse";
 import type * as t from "@babel/types";
 import { createUnplugin } from "unplugin";
+
 import { getChildren } from "../utils/get-children.js";
 import {
   generateGlobalTypesFromExports,
@@ -14,10 +16,15 @@ import {
   type ExportMetadata,
 } from "../utils/get-exports.js";
 import { atomicWriteFile } from "../utils/atomic-write-file.js";
-import { normalizeDir } from "../utils/dir.js";
+import {
+  normalizeDir,
+  ResolvedScanDir,
+  resolveScanFiles,
+} from "../utils/dir/index.js";
 import { getPackageJson } from "@/utils/pkg.js";
 import { resolvePackageEntry } from "@/utils/pkg-resolve-entry.js";
 import type { Arrayable } from "@/utils/types.js";
+import { toArray } from "@/utils/to-array.js";
 
 const traverse: typeof _traverse = (_traverse as any).default ?? _traverse;
 
@@ -29,8 +36,8 @@ type ImportsCommon = { from: string; imports: string[] };
 type ImportsMap = Record<string, string[]>;
 
 export type GlobalOptionsImports =
-  | { directory: string }
-  | { file: string }
+  | ResolvedScanDir[]
+  | string
   | ImportsCommon
   | ImportsMap;
 
@@ -104,22 +111,36 @@ function resolveConfigImports(
   const entries = Array.isArray(rawImports) ? rawImports : [rawImports];
 
   for (const entry of entries) {
-    if ("file" in entry && typeof entry.file === "string") {
-      const file = resolveFile(entry.file);
-      if (!file) continue;
-      Object.assign(target, getExports(file).exports);
+    if (typeof entry === "string") {
+      if (!existsSync(entry)) continue;
+
+      if (statSync(entry).isFile()) {
+        const file = resolveFile(entry);
+        if (!file) continue;
+
+        Object.assign(target, getExports(file).exports);
+      } else {
+        const files = getChildren(entry, {
+          recursive: true,
+          onlyFile: true,
+          endWith: /\.(js|ts|mjs|mts|cjs)$/,
+        });
+
+        for (const file of files) {
+          Object.assign(target, getExports(file.path).exports);
+        }
+      }
+
       continue;
     }
 
-    if ("directory" in entry && typeof entry.directory === "string") {
-      const files = getChildren(entry.directory, {
-        recursive: true,
-        onlyFile: true,
-        endWith: /\.(js|ts|mjs|mts)$/,
-      });
+    if (Array.isArray(entry)) {
+      const files = resolveScanFiles(entry);
+
       for (const file of files) {
-        Object.assign(target, getExports(file.path).exports);
+        Object.assign(target, getExports(file).exports);
       }
+
       continue;
     }
 
@@ -129,7 +150,7 @@ function resolveConfigImports(
     }
 
     for (const [from, imports] of Object.entries(entry)) {
-      resolvePackageImport({ from, imports }, target);
+      resolvePackageImport({ from, imports: toArray(imports) }, target);
     }
   }
 }

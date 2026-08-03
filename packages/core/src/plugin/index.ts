@@ -3,7 +3,7 @@ import "./types.js";
 import type { App, Plugin } from "vue";
 import type { VuePluginObject } from "./types.js";
 import { plugins } from ":plugins";
-import { useApp } from "../context/composables.js";
+import { useApp } from "../app/composables/context.js";
 import { registerHooks } from "@/context/hook.js";
 
 export const pluginPlugin: Plugin = {

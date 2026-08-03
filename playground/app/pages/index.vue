@@ -14,6 +14,7 @@ const version = ref("1.1.0");
 <template>
   {{ data }}+
   <div><button @click="page++">refresh</button> {{ page }}</div>
+  <HelloGlobal />
   <div class="syora-welcome">
     <!-- Background Grid with Vignette Fade -->
     <div class="bg-grid"></div>

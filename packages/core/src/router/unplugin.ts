@@ -1,12 +1,14 @@
-import { extname, relative, resolve } from "node:path";
+import { dirname, extname, relative, resolve } from "node:path";
+import { existsSync, statSync } from "node:fs";
+
 import { createUnplugin } from "unplugin";
-import { normalizeDir, parseDirPattern, resolveDir } from "../utils/dir.js";
+import fg from "fast-glob";
+
+import { normalizeDir } from "../utils/dir/index.js";
 import { extractPageMeta } from "./extract-page-meta.js";
 import { atomicWriteFile } from "../utils/atomic-write-file.js";
 import merge from "lodash/merge.js";
-import fg from "fast-glob";
-import type { Arrayable } from "@/utils/types.js";
-import type { RouterOptions, RouterOptionsRaw } from "./types.js";
+import type { RouterOptionsRawResolved } from "./types.js";
 
 const VIRTUAL_ID = ":router";
 const RESOLVED_VIRTUAL_ID = "\0:router";
@@ -31,14 +33,9 @@ type VueRoute = {
   children?: VueRoute[];
 };
 
-type ResolvedRouterOptions = Exclude<RouterOptions, "pages"> &
-  Required<
-    Pick<RouterOptions, "dynamic" | "exclude" | "extensions" | "exclude">
-  > & { pages: string[] };
-
 export type PagesOptions = {
   output?: string;
-  dirs: { pages: RouterOptionsRaw[]; appDir?: string }[];
+  dirs: RouterOptionsRawResolved[];
 };
 
 const template = `
@@ -61,16 +58,6 @@ declare module "vue-router" {
 
 export {};
 `;
-
-const extensions = ["vue", "ts", "js", "mjs", "mts"];
-const exclude = ["**/.git/**", "**/*.d.*", "**/-*.*"];
-
-const DEFAULT_OPTIONS = {
-  extensions: ["vue", "ts", "js", "mjs", "mts"],
-  exclude: ["**/.git/**", "**/*.d.*", "**/-*.*"],
-  dynamic: true,
-  pages: [],
-};
 
 function toRouteSegment(segment: string): string {
   const catchAllMatch = /^\[\.\.\.(.+)\]$/.exec(segment);
@@ -99,26 +86,25 @@ function resolveRouteEntry(viewsDir: string, filePath: string): RouteEntry {
 }
 
 /** Scans one `routeDirs` entry and pushes its routes into the shared accumulator. */
-function collectViews(viewsDir: string, target: RouteEntry[]) {
-  viewsDir = resolveDir(viewsDir);
+function collectViews(lists: RouterOptionsRawResolved[], target: RouteEntry[]) {
+  for (const ntry of lists) {
+    for (const dir of ntry.dirs) {
+      if (existsSync(dir) && statSync(dir).isFile()) {
+        target.push(resolveRouteEntry(dirname(dir), dir));
+        continue;
+      }
 
-  const { baseDir, customPattern } = parseDirPattern(viewsDir);
+      const files = fg.sync(ntry.extGlob, {
+        ...ntry,
+        cwd: dir,
+        absolute: true,
+        onlyFiles: true,
+      });
 
-  const pattern =
-    customPattern ??
-    (extensions.length === 1
-      ? `**/*.${extensions[0]}`
-      : `**/*.{${extensions.join(",")}}`);
-
-  const files = fg.sync(pattern, {
-    cwd: baseDir,
-    ignore: exclude,
-    absolute: true,
-    onlyFiles: true,
-  });
-
-  for (const file of files) {
-    target.push(resolveRouteEntry(viewsDir, file));
+      for (const file of files) {
+        target.push(resolveRouteEntry(dir, file));
+      }
+    }
   }
 }
 
@@ -301,64 +287,20 @@ export default createUnplugin(
     total++;
     sharedOutput ??= output;
 
-    const options = dirs.map((dir) => {
-      dir.pages = dir.pages.map((raw) => {
-        if (typeof raw === "string") raw = { pages: [raw] };
-
-        raw = { ...DEFAULT_OPTIONS, ...raw };
-
-        raw.pages ??= [];
-        raw.pages = Array.isArray(raw.pages) ? raw.pages : [raw.pages];
-
-        raw.pages = raw.pages.map((page) => {
-          page = resolveDir(page, dir.appDir);
-          return page;
-        });
-
-        return raw as RouterOptions;
-      });
-
-      return dir;
-    });
-
     return {
       name: "syora:vue-router",
       enforce: "post",
 
-      buildStart() {
+      async buildStart() {
         completed++;
 
         // FIX: reset shared state at the start of a fresh full pass
         // (first instance to run in this cycle) so watch-mode rebuilds
         // don't just keep appending to sharedRouteEntries forever, and
         // completed/total stay in sync across rebuilds.
-        if (completed === 1) {
-          sharedRouteEntries = [];
-        }
+        if (completed === 1) sharedRouteEntries = [];
 
-        for (const option of options as {
-          pages: RouterOptions[];
-          appDir?: string;
-        }[]) {
-          const { pages } = option;
-
-          for (const page of pages) {
-            sharedDynamic ??= page.dynamic;
-
-            // FIX: `dir` didn't exist here — the actual view directories
-            // to scan are `page.pages` (already resolved to absolute
-            // paths above), not the outer `dir`/`option` object.
-            const viewDirs = Array.isArray(page.pages)
-              ? page.pages
-              : page.pages
-                ? [page.pages]
-                : [];
-
-            for (const viewDir of viewDirs) {
-              collectViews(viewDir as string, sharedRouteEntries);
-            }
-          }
-        }
+        collectViews(dirs, sharedRouteEntries);
 
         if (completed === total) {
           sharedCode = generateRouterCode(sharedRouteEntries, sharedDynamic!);

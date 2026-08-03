@@ -1,5 +1,5 @@
-import { LAYOUTS_CONTEXT_KEY } from "./symbols";
-import { inject } from "vue";
+import { LAYOUTS_CONTEXT_KEY } from "../../layout/symbols";
+import { Component, inject } from "vue";
 
 export function useLayouts() {
   const layouts =

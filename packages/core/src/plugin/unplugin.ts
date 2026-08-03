@@ -1,10 +1,18 @@
-import { existsSync } from "node:fs";
-import { getChildren } from "../utils/get-children.js";
-import { relative, resolve } from "node:path";
-import { atomicWriteFile } from "../utils/atomic-write-file.js";
-import { normalizeDir, resolveDir } from "../utils/dir.js";
-import { createUnplugin } from "unplugin";
+import { existsSync, statSync } from "node:fs";
+import { basename, relative, resolve } from "node:path";
+
 import camelCase from "lodash/camelCase.js";
+import fg from "fast-glob";
+import { createUnplugin } from "unplugin";
+
+import { getChildren } from "../utils/get-children.js";
+import { atomicWriteFile } from "../utils/atomic-write-file.js";
+import {
+  normalizeDir,
+  removeFileExtension,
+  resolveDir,
+  ResolvedScanDir,
+} from "../utils/dir/index.js";
 
 const VIRTUAL_ID = ":plugins";
 const RESOLVED_VIRTUAL_ID = "\0:plugins";
@@ -43,7 +51,7 @@ export {};
 `;
 
 export type PluginOptions = {
-  dirs?: string[];
+  dirs: ResolvedScanDir[];
   output?: string;
 };
 
@@ -69,8 +77,17 @@ let completed = 0;
 const sharedPlugins: Record<string, PluginEntry> = {};
 let sharedOutput: string | undefined;
 
-function getPluginVariableName(parentDir: string, filePath: string): string {
-  const baseName = relative(parentDir, filePath).replace(/\.(ts|js)$/, "");
+function getPluginVariableName(filePath: string, parentDir?: string): string {
+  filePath = removeFileExtension(filePath);
+  if (parentDir) filePath = relative(parentDir, filePath);
+
+  if (parentDir) relative(parentDir, filePath);
+  else basename(filePath);
+
+  const baseName = parentDir
+    ? relative(parentDir, filePath)
+    : basename(filePath);
+
   return camelCase(baseName) + "Plugin";
 }
 
@@ -90,7 +107,40 @@ function matchesEnvironment(
   return isSsr ? environment === "server" : environment === "client";
 }
 
-function collectPlugins(parentDir: string) {
+function collectPlugins(lists: ResolvedScanDir[]) {
+  for (const ntry of lists) {
+    for (const dir of ntry.dirs) {
+      if (existsSync(dir) && statSync(dir).isFile()) {
+        const varName = getPluginVariableName(dir);
+
+        sharedPlugins[varName] = {
+          filePath: dir,
+          environment: getPluginEnvironment(dir),
+        };
+
+        continue;
+      }
+
+      const files = fg.sync(ntry.extGlob, {
+        ...ntry,
+        cwd: dir,
+        absolute: true,
+        onlyFiles: true,
+      });
+
+      for (const file of files) {
+        const varName = getPluginVariableName(file, dir);
+
+        sharedPlugins[varName] = {
+          filePath: file,
+          environment: getPluginEnvironment(file),
+        };
+      }
+    }
+  }
+}
+
+function collectPlugins0(parentDir: string) {
   parentDir = resolveDir(parentDir);
   if (!existsSync(parentDir)) return;
 
@@ -181,7 +231,7 @@ export default createUnplugin((config?: PluginOptions) => {
       const { dirs = [], output = process.cwd() } = config ?? {};
       sharedOutput ??= output;
 
-      for (const dir of dirs) collectPlugins(dir);
+      collectPlugins(dirs);
 
       completed++;
       if (completed === total) generateDtsFile(sharedOutput);

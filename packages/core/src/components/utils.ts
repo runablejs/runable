@@ -4,11 +4,6 @@ export function slash(p: string): string {
   return p.replace(/\\/g, "/");
 }
 
-export function toArray<T>(value: T | T[] | undefined | null): T[] {
-  if (value === undefined || value === null) return [];
-  return Array.isArray(value) ? value : [value];
-}
-
 /** Converts a single path segment (kebab-case, snake_case, dot.case...) to PascalCase. */
 export function segmentToPascalCase(segment: string): string {
   return segment

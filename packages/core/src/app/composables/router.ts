@@ -6,7 +6,7 @@ import type {
   useRoute as _useRoute,
   useRouter as _useRouter,
 } from "vue-router";
-import { useApp } from "@/context/composables";
+import { useApp } from "@/app/composables/context";
 export const useRouter: typeof _useRouter = () => {
   return useApp()?.$router as unknown as Router;
 };

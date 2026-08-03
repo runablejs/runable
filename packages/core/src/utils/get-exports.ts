@@ -6,7 +6,7 @@ import MagicString from "magic-string";
 import { parse } from "@babel/parser";
 import _ from "lodash";
 import type { Identifier } from "estree";
-import { normalizeDir } from "./dir.js";
+import { normalizeDir } from "./dir/index.js";
 
 // Type d'extension étendu pour inclure start/end d'acorn
 type AcornNode = Node & { start: number; end: number };

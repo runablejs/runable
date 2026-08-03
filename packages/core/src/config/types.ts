@@ -1,10 +1,12 @@
 import { type ResolvableHead } from "@unhead/vue";
 import type { UserConfig } from "vite";
 
-import type { ComponentDir } from "@/components/types.js";
-import type { RouterOptionsRaw } from "@/router/types.js";
-import { type Arrayable } from "@/utils";
-import type { ResolvedConfig } from "./load.js";
+import type { ComponentDir, ResolvedComponentDir } from "@/components/types.js";
+import type {
+  RouterOptionsRaw,
+  RouterOptionsRawResolved,
+} from "@/router/types.js";
+import type { AliasMap, ResolvedScanDir, ScanDir, Arrayable } from "@/utils";
 
 /** Shape of a `syora.config.*` file, as authored by the user. */
 export interface SyoraConfig {
@@ -19,22 +21,25 @@ export interface SyoraConfig {
   pages?: RouterOptionsRaw[];
 
   /** Paths to layout files/directories. */
-  layouts?: string[];
+  layouts?: Arrayable<ComponentDir>;
 
   /** Directory(ies) containing global components to auto-register. */
   components?: Arrayable<ComponentDir>;
 
-  /** Files of global functions, variables, or composables to auto-import in the application. */
-  globals?: string[];
+  /** Files of composables to auto-import in the application. */
+  composables?: Arrayable<ComponentDir>;
+
+  /** Files of global functions, variables, to auto-import in the application. */
+  globals?: Arrayable<ScanDir>;
 
   /** Syora plugins to load, by name or relative path. */
-  plugins?: string[];
+  plugins?: Arrayable<ScanDir>;
 
   /** Names or relative paths of Syora modules to load alongside this config. */
   modules?: string[];
 
   /** Global CSS files to include in the application. */
-  css?: string[];
+  css?: Arrayable<ScanDir>;
 
   // --- Build & output -------------------------------------------------
 
@@ -133,3 +138,57 @@ export interface ModuleDefinition<
    */
   setup?: (options: OptionsT, config: ResolvedConfig) => void | Promise<void>;
 }
+
+/**
+ * `Config` after defaults have been applied by `resolveConfig`.
+ * `_index` is internal bookkeeping, not part of the user-facing config.
+ */
+export type ResolvedConfig = {
+  cwd: string;
+  distDir: string;
+  appDir: string;
+  output: string;
+  publicDir: string | false;
+
+  components: ResolvedComponentDir[];
+  layouts: ResolvedScanDir[];
+  globals: ResolvedScanDir[];
+  composables: ResolvedScanDir[];
+  pages: RouterOptionsRawResolved[];
+  plugins: ResolvedScanDir[];
+  css: ResolvedScanDir[];
+
+  alias: AliasMap;
+  modules: string[];
+  ssr: boolean;
+  baseUrl: string | undefined;
+  devtools: boolean | undefined;
+  head: ResolvableHead | undefined;
+  siteUrl: string | undefined;
+  defineConfig: SyoraConfig;
+  vite: SyoraConfig["vite"];
+
+  /**
+   * Load order across the main config and its modules, assigned in `loadAndCacheConfig`.
+   * NOTE: with parallel module loading below, this now reflects completion
+   * order (whichever `c12Load` resolves first), not declaration order.
+   */
+  _index: number;
+
+  _name: string;
+
+  _parentName?: string;
+
+  _configFile?: string;
+
+  _isSyoraModule?: boolean;
+
+  /**
+   * A module's resolved options (`defaults` merged with the consumer's
+   * overrides) — only ever set for a config loaded on behalf of a `parent`
+   * (see `loadAndCacheConfig`), never on the root app config. Read through
+   * `getModuleOptions<OptionsT>()` rather than off this field directly, so
+   * callers get it back typed instead of `unknown`.
+   */
+  _options?: unknown;
+};

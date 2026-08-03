@@ -1,5 +1,5 @@
 import { getCurrentInstance } from "vue";
-import { type AppContext, globalAppContext } from "./context.js";
+import { type AppContext, globalAppContext } from "../../context/context.js";
 import merge from "lodash/merge.js";
 
 export function useApp(): AppContext {

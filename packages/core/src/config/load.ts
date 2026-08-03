@@ -10,14 +10,14 @@ import type { ComponentDir } from "@/components/types";
 import { normalizeDir } from "@/utils";
 
 import { generateModulesOptionsDts } from "./modules-options.js";
-import { resolveConfig } from "./resolve.js";
-import type { ModuleDefinition, SyoraConfig } from "./types.js";
+import { resolveConfig, resolveConfig_v2 } from "./resolve.js";
+import type { ModuleDefinition, SyoraConfig, ResolvedConfig } from "./types.js";
 
 /**
  * `Config` after defaults have been applied by `resolveConfig`.
  * `_index` is internal bookkeeping, not part of the user-facing config.
  */
-export type ResolvedConfig = Required<SyoraConfig> & {
+type ResolvedConfig0 = Required<SyoraConfig> & {
   cwd: string;
   components: ComponentDir[];
 
@@ -33,6 +33,8 @@ export type ResolvedConfig = Required<SyoraConfig> & {
   _parentName?: string;
 
   _configFile?: string;
+
+  _isSyoraModule?: boolean;
 
   /**
    * A module's resolved options (`defaults` merged with the consumer's
@@ -111,6 +113,8 @@ export function defineConfig(config: SyoraConfig): SyoraConfig {
 export function defineModule<
   OptionsT extends Record<string, any> = Record<string, any>,
 >(moduleDef: ModuleDefinition<OptionsT>): ModuleDefinition<OptionsT> {
+  moduleDef._isSyoraModule = true;
+
   return moduleDef;
 }
 
@@ -135,7 +139,7 @@ export async function loadAndCacheConfig({
   if (existing) return existing;
 
   const promise = (async () => {
-    let { config: loaded, configFile } = await c12Load<ModuleDefinition>({
+    let { config: loaded, _configFile } = await c12Load<ModuleDefinition>({
       configFile: "syora.config",
       cwd,
     });
@@ -147,15 +151,14 @@ export async function loadAndCacheConfig({
     let config = rest as ResolvedConfig;
 
     name = meta?.name ?? name;
-
     config.cwd = cwd ?? process.cwd();
 
-    config = resolveConfig(config);
+    config = resolveConfig_v2(config);
+    config._name = name;
+    config._configFile = _configFile;
+
     cachedConfigs ??= {};
     config = merge(cloneDeep(cachedConfigs[name] ?? {}), config);
-
-    config._name = name;
-    config._configFile = configFile;
 
     if (typeof config._index !== "number") config._index = index++;
 
@@ -271,12 +274,12 @@ export async function loadConfig() {
 }
 
 /** Returns the resolved main app config. Throws if `loadConfig()` hasn't run yet. */
-export function useConfig() {
-  if (!cachedConfigs || !cachedConfigs["__main"]) {
+export function useConfig(name = "__main") {
+  if (!cachedConfigs || !cachedConfigs[name]) {
     throw new Error("Syora config is not loaded. Call loadConfig() first.");
   }
 
-  return cachedConfigs["__main"];
+  return cachedConfigs[name];
 }
 
 /** Returns the resolved all app configs. Throws if `loadConfig()` hasn't run yet. */

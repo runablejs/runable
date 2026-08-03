@@ -1,5 +1,5 @@
 import type { App, ComponentPublicInstance } from "vue";
-import { useApp } from "./composables.js";
+import { useApp } from "../app/composables/context.js";
 import type { AppContext } from "./context.js";
 
 export type StripOnPrefix<T extends string> = T extends `on${infer Rest}`

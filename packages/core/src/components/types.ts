@@ -1,61 +1,49 @@
-import type { Arrayable } from "@/utils";
+import type { Arrayable, Fallback, ResolvedScanDir, ScanDir } from "@/utils";
 
-export type ComponentDir =
-  | string
-  | {
-      /**
-       * Directory(ies) to scan for local components.
-       * Resolved relative to the project root (Vite's `root`).
-       * @default 'src/components'
-       */
-      dirs: string | string[];
+/**
+ * Component-specific scan options, on top of the shared `ScanDir` base.
+ */
+export type ComponentScanExtra = {
+  /**
+   * When `true`, the component name is prefixed with its folder path
+   * (e.g. `base/Button.vue` -> `BaseButton`). When `false`, only the
+   * file name is used (e.g. `Button.vue` -> `Button`).
+   * @default true
+   */
+  pathPrefix?: boolean;
 
-      /**
-       * File extensions considered as components.
-       * @default ['vue']
-       */
-      extensions?: string | string[];
+  /**
+   * Renaming function: receives the absolute path of the component file
+   * and the default PascalCase name computed from that path, and must
+   * return the final name to recognize in templates.
+   *
+   * - Return a string: use it as the final name.
+   * - Return `undefined`: keep the default name.
+   * - Return `false`: exclude this component from auto-import.
+   *
+   * @example
+   * // Prefix every component under a "base" folder
+   * componentName: (filePath, defaultName) =>
+   *   filePath.includes('/base/') ? `Base${defaultName}` : defaultName
+   *
+   * @example
+   * // Explicit rename for a specific component
+   * componentName: (filePath, defaultName) => {
+   *   const overrides = { MyButton: 'AppButton' }
+   *   return overrides[defaultName] ?? defaultName
+   * }
+   */
+  componentName?: (
+    filePath: string,
+    defaultName: string,
+  ) => string | false | undefined;
+};
 
-      /**
-       * Globs to exclude from the scan.
-       * @default ['**\/node_modules/**', '**\/.git/**']
-       */
-      exclude?: string[];
-
-      /**
-       * When `true`, the component name is prefixed with its folder path
-       * (e.g. `base/Button.vue` -> `BaseButton`). When `false`, only the
-       * file name is used (e.g. `Button.vue` -> `Button`).
-       * @default true
-       */
-      pathPrefix?: boolean;
-
-      /**
-       * Renaming function: receives the absolute path of the component file
-       * and the default PascalCase name computed from that path, and must
-       * return the final name to recognize in templates.
-       *
-       * - Return a string: use it as the final name.
-       * - Return `undefined`: keep the default name.
-       * - Return `false`: exclude this component from auto-import.
-       *
-       * @example
-       * // Prefix every component under a "base" folder
-       * componentName: (filePath, defaultName) =>
-       *   filePath.includes('/base/') ? `Base${defaultName}` : defaultName
-       *
-       * @example
-       * // Explicit rename for a specific component
-       * componentName: (filePath, defaultName) => {
-       *   const overrides = { MyButton: 'AppButton' }
-       *   return overrides[defaultName] ?? defaultName
-       * }
-       */
-      componentName?: (
-        filePath: string,
-        defaultName: string,
-      ) => string | false | undefined;
-    };
+/**
+ * @default dirs: 'src/components'
+ * @default extensions: ['vue']
+ */
+export type ComponentDir = ScanDir<ComponentScanExtra>;
 
 export interface AutoComponentOptions {
   /**
@@ -63,7 +51,8 @@ export interface AutoComponentOptions {
    * Resolved relative to the project root (Vite's `root`).
    * @default 'src/components'
    */
-  dirs?: Arrayable<ComponentDir>;
+  // dirs?: Arrayable<ComponentDir>;
+  dirs?: Arrayable<ResolvedComponentDir>;
 
   /**
    * File extensions considered as components.
@@ -125,16 +114,19 @@ export interface AutoComponentOptions {
 }
 
 /** Fully resolved version of a `ComponentDir` entry, ready to be scanned. */
-export interface ResolvedComponentDir {
-  dirs: string[];
-  extensions: string[];
-  exclude: string[];
-  pathPrefix: boolean;
-  componentName?: (
-    filePath: string,
-    defaultName: string,
-  ) => string | false | undefined;
-}
+// export interface ResolvedComponentDir {
+//   dirs: string[];
+//   extGlob: string;
+//   extensions: string[];
+//   exclude: string[];
+//   pathPrefix: boolean;
+//   componentName?: (
+//     filePath: string,
+//     defaultName: string,
+//   ) => string | false | undefined;
+// }
+
+export type ResolvedComponentDir = ResolvedScanDir<ComponentScanExtra>;
 
 /** Fully resolved plugin options. */
 export interface ResolvedOptions {
@@ -152,3 +144,7 @@ export interface ComponentInfo {
   /** File extension, without the leading dot. */
   ext: string;
 }
+
+export type ComponentFallback = Fallback<
+  ComponentScanExtra & Required<Pick<ComponentScanExtra, "pathPrefix">>
+>;

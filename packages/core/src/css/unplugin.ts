@@ -1,13 +1,13 @@
 import path from "node:path";
-import { normalizeDir } from "@/utils/dir.js";
+import { normalizeDir, resolveScanFiles } from "@/utils/dir/index.js";
 import { createUnplugin } from "unplugin";
-import type { Arrayable } from "@/utils";
+import type { Arrayable, ResolvedScanDir } from "@/utils";
 
 const VIRTUAL_ID = ":css";
 const RESOLVED_VIRTUAL_ID = "\0:css";
 
 export type CssOptions = {
-  dirs?: Arrayable<string>;
+  dirs: ResolvedScanDir[];
   cwd?: string;
 };
 
@@ -27,11 +27,8 @@ export default createUnplugin((config: CssOptions) => {
     enforce: "pre",
 
     buildStart() {
-      if (!dirs) return;
-
-      dirs = Array.isArray(dirs) ? dirs : [dirs];
-
-      for (const file of dirs) sharedCssFiles.add(file);
+      const files = resolveScanFiles(dirs);
+      for (const file of files) sharedCssFiles.add(file);
       // file.startsWith(".") ? path.resolve(cwd, file) : file,
     },
 

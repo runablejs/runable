@@ -1,6 +1,6 @@
-import fg from "fast-glob";
 import type { ComponentInfo, ResolvedOptions } from "./types";
 import { getDefaultComponentName, slash } from "./utils";
+import { resolveScanFiles, toArray } from "@/utils";
 
 export async function scanComponents(
   options: ResolvedOptions,
@@ -9,31 +9,19 @@ export async function scanComponents(
   const map = new Map<string, ComponentInfo>();
 
   for (const dirConfig of options.dirs) {
-    const { dirs, extensions, exclude, pathPrefix, componentName } = dirConfig;
-    const extGlob =
-      extensions.length === 1 ? extensions[0] : `{${extensions.join(",")}}`;
+    const { dirs, extensions, pathPrefix, componentName } = dirConfig;
 
-    for (const dir of dirs) {
-      let files: string[] = [];
-      try {
-        files = await fg(`**/*.${extGlob}`, {
-          cwd: dir,
-          absolute: true,
-          onlyFiles: true,
-          ignore: exclude,
-        });
-      } catch (err) {
-        log(
-          `[syora:components] failed to scan "${dir}": ${(err as Error).message}`,
-        );
-        continue;
-      }
+    for (const dir of toArray(dirs)) {
+      const files = resolveScanFiles([{ ...dirConfig, dirs: [dir] }]);
 
       for (const file of files) {
         const absPath = slash(file);
-        const defaultName = getDefaultComponentName(absPath, dir, pathPrefix);
+        const defaultName = getDefaultComponentName(
+          absPath,
+          dir,
+          pathPrefix ?? true,
+        );
         if (!defaultName) continue;
-
         let name: string | false | undefined = defaultName;
         if (componentName) {
           try {
@@ -45,10 +33,8 @@ export async function scanComponents(
             name = defaultName;
           }
         }
-
         if (name === false) continue;
         if (name === undefined) name = defaultName;
-
         const previous = map.get(name);
         if (previous && previous.path !== absPath) {
           log(
@@ -56,7 +42,6 @@ export async function scanComponents(
               `"${previous.path}" is overridden by "${absPath}"`,
           );
         }
-
         const ext = extensions.find((e) => absPath.endsWith(`.${e}`)) ?? "";
         map.set(name, { name, path: absPath, ext });
       }

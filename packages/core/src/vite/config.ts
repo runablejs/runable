@@ -5,8 +5,8 @@ import vue from "@vitejs/plugin-vue";
 import { unheadVueComposablesImports } from "@unhead/vue";
 import { schemaOrgAutoImports } from "@unhead/schema-org/vue";
 
-import { useAllConfigs, type ResolvedConfig } from "@/config/load.js";
-import { resolveDir } from "@/utils/dir.js";
+import { useAllConfigs } from "@/config/load.js";
+import { resolveScanDirs } from "@/utils/dir/index.js";
 
 import plugin, { type PluginOptions } from "../plugin/unplugin.js";
 import appVue from "../app-vue/unplugin.js";
@@ -24,6 +24,7 @@ import globals, {
   type GlobalConfig,
   type GlobalOptionsImports,
 } from "../globals/unplugin.js";
+import { ResolvedConfig } from "@/config/types.js";
 
 declare module "vite" {
   interface UserConfig {
@@ -55,28 +56,40 @@ export function buildViteConfig(): UserConfig {
 
   const _globals: GlobalConfig & { imports: GlobalOptionsImports[] } = {
     output: main.output,
-    imports: [],
+    imports: [
+      join(import.meta.dirname, "../app/globals"),
+      join(import.meta.dirname, "../app/composables"),
+
+      join(import.meta.dirname, "../fetch"),
+      join(import.meta.dirname, "../async-data/composable"),
+
+      unheadVueComposablesImports,
+
+      ...schemaOrgAutoImports,
+    ],
   };
   const _components: AutoComponentOptions & { dirs: ComponentDir[] } = {
     dts: join(main.output, "components.d.ts"),
     dirs: [],
   };
 
-  const _css: CssOptions & { dirs: string[] } = { cwd: main.cwd, dirs: [] };
+  const _css: CssOptions = { cwd: main.cwd, dirs: [] };
 
-  const _layouts: LayoutOptions & { dirs: string[] } = {
-    output: main.output,
-    dirs: [],
-  };
+  const _layouts: LayoutOptions = { output: main.output, dirs: [] };
 
-  const _pages: PagesOptions & { dirs: PagesOptions["dirs"][] } = {
-    output: main.output,
-    dirs: [],
-  };
+  const _pages: PagesOptions = { output: main.output, dirs: [] };
 
-  const _plugins: PluginOptions & { dirs: string[] } = {
+  const _plugins: PluginOptions = {
     output: main.output,
-    dirs: [],
+    dirs: [
+      ...resolveScanDirs(
+        resolve(import.meta.dirname, ".."),
+        [join(import.meta.dirname, "../app/plugins")],
+        {
+          defaultExtensions: ["js", "ts", "mjs", "mts", "cjs"],
+        },
+      ),
+    ],
   };
 
   let _vites = {} as UserConfig;
@@ -110,55 +123,12 @@ export function buildViteConfig(): UserConfig {
   };
 
   const resolveViteConfig = (config: ResolvedConfig) => {
-    resolveGlobals();
-    function resolveGlobals() {
-      _globals.imports.push(
-        ...config.globals.map((dir) => ({ directory: dir })),
-      );
-    }
+    _globals.imports.push(config.globals);
 
-    resolveComponents();
-    function resolveComponents() {
-      config.components = Array.isArray(config.components)
-        ? config.components
-        : [config.components];
-
-      config.components = config.components.map((component) => {
-        if (typeof component === "string") {
-          component = resolveDir(component, config.cwd);
-        } else {
-          component.dirs = Array.isArray(component.dirs)
-            ? component.dirs
-            : [component.dirs];
-
-          for (let i = 0; i < component.dirs.length; i++) {
-            const _dir = component.dirs[i];
-            if (!_dir) continue;
-
-            component.dirs[i] = resolveDir(_dir, config.cwd);
-          }
-        }
-
-        return component;
-      });
-
-      _components.dirs.push(...config.components);
-    }
-
-    resolveCss();
-    function resolveCss() {
-      _css.dirs.push(...config.css.map((css) => resolveDir(css, config.cwd)));
-    }
-
-    resolveLayouts();
-    function resolveLayouts() {
-      _layouts.dirs.push(
-        ...config.layouts.map((layout) => resolveDir(layout, config.cwd)),
-      );
-    }
-
-    _pages.dirs.push({ appDir: config.appDir, pages: config.pages });
-
+    _components.dirs.push(...config.components);
+    _css.dirs.push(...config.css);
+    _layouts.dirs.push(...config.layouts);
+    _pages.dirs.push(...config.pages);
     _plugins.dirs.push(...config.plugins);
 
     _vites = mergeConfig(_vites, config.vite ?? {}) as UserConfig;
@@ -168,31 +138,18 @@ export function buildViteConfig(): UserConfig {
     resolveViteConfig(withMainOverrides(main, config));
   });
 
-  _globals.imports.unshift(
-    { directory: join(import.meta.dirname, "../app/globals") },
-    { directory: join(import.meta.dirname, "../app/composables") },
-
-    { file: join(import.meta.dirname, "../plugin/define") },
-    { file: join(import.meta.dirname, "../layout/useLayouts") },
-    { file: join(import.meta.dirname, "../router/helpers") },
-    { file: join(import.meta.dirname, "../config/composables") },
-    { file: join(import.meta.dirname, "../context/composables") },
-    { directory: join(import.meta.dirname, "../fetch") },
-    { file: join(import.meta.dirname, "../async-data/composable") },
-    { file: join(import.meta.dirname, "../runtime/composables") },
-
-    unheadVueComposablesImports,
-
-    ...schemaOrgAutoImports,
+  _components.dirs.push(
+    ...resolveScanDirs(
+      resolve(import.meta.dirname, ".."),
+      [join(import.meta.dirname, "../app/components")],
+      { defaultExtensions: ["js", "ts", "mjs", "mts", "cjs", "vue"] },
+    ),
+    //   {
+    //   dirs: resolve(import.meta.dirname, "../app/components"),
+    //   pathPrefix: false,
+    //   extensions: ["ts", "js", "jsx", "tsx", "vue"],
+    // }
   );
-
-  _components.dirs.push({
-    dirs: resolve(import.meta.dirname, "../app/components"),
-    pathPrefix: false,
-    extensions: ["ts", "js", "jsx", "tsx", "vue"],
-  });
-
-  _plugins.dirs.unshift(join(import.meta.dirname, "../app/plugins"));
 
   viteConfig = mergeConfig(viteConfig, {
     plugins: [

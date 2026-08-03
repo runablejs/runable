@@ -1,16 +1,23 @@
-import fs from "node:fs";
-import { getChildren } from "../utils/get-children.js";
-import path from "node:path";
-import _ from "lodash";
-import { normalizeDir } from "../utils/dir.js";
-import { atomicWriteFile } from "../utils/atomic-write-file.js";
+import fs, { existsSync, statSync } from "node:fs";
+import path, { basename } from "node:path";
+
+import fg from "fast-glob";
 import { createUnplugin } from "unplugin";
+import camelCase from "lodash/camelCase.js";
+
+import { getChildren } from "../utils/get-children.js";
+import {
+  normalizeDir,
+  ResolvedScanDir,
+  resolveScanFiles,
+} from "../utils/dir/index.js";
+import { atomicWriteFile } from "../utils/atomic-write-file.js";
 
 const VIRTUAL_ID = ":layouts";
 const RESOLVED_VIRTUAL_ID = "\0:layouts";
 
 export type LayoutOptions = {
-  dirs?: string[];
+  dirs: ResolvedScanDir[];
   output?: string;
 };
 
@@ -65,23 +72,48 @@ let completed = 0;
 const sharedLayouts: Record<string, LayoutEntry> = {};
 let sharedOutput: string | undefined;
 
-function getLayoutName(parentDir: string, filePath: string): string {
-  const baseName = path.relative(parentDir, filePath).replace(/\.vue$/, "");
-  return _.camelCase(baseName);
+function getLayoutName(filePath: string, parentDir?: string): string {
+  if (parentDir) filePath = path.relative(parentDir, filePath);
+
+  const baseName = filePath.replace(/\.(vue|[cm]?ts|[cm]?js|jsx|tsx)$/, "");
+
+  return camelCase(baseName);
 }
 
-function collectLayouts(parentDir: string, output: string) {
-  if (!fs.existsSync(parentDir)) return;
+function collectLayouts(lists: ResolvedScanDir[], output: string) {
+  for (const ntry of lists) {
+    for (const dir of ntry.dirs) {
+      if (existsSync(dir) && statSync(dir).isFile()) {
+        const name = getLayoutName(dir);
+        const dtsImportPath = normalizeDir(
+          path
+            .relative(output, dir)
+            .replace(/\.(vue|[cm]?ts|[cm]?js|jsx|tsx)$/, ""),
+        );
 
-  const files = getChildren(parentDir, { onlyFile: true, endWith: /\.vue$/ });
+        sharedLayouts[name] = { parent: dir, file: dir, dtsImportPath };
 
-  for (const file of files) {
-    const name = getLayoutName(parentDir, file.path);
-    const dtsImportPath = normalizeDir(
-      path.relative(output, file.path).replace(/\.vue$/, ""),
-    );
+        continue;
+      }
 
-    sharedLayouts[name] = { parent: parentDir, file: file.path, dtsImportPath };
+      const files = fg.sync(ntry.extGlob, {
+        ...ntry,
+        cwd: dir,
+        absolute: true,
+        onlyFiles: true,
+      });
+
+      for (const file of files) {
+        const name = getLayoutName(file, dir);
+        const dtsImportPath = normalizeDir(
+          path
+            .relative(output, file)
+            .replace(/\.(vue|[cm]?ts|[cm]?js|jsx|tsx)$/, ""),
+        );
+
+        sharedLayouts[name] = { parent: dir, file: file, dtsImportPath };
+      }
+    }
   }
 }
 
@@ -141,7 +173,11 @@ export default createUnplugin((config?: LayoutOptions) => {
       const { output = process.cwd(), dirs = [] } = config ?? {};
       sharedOutput ??= output;
 
-      for (const dir of dirs) collectLayouts(dir, output);
+      collectLayouts(dirs, output);
+
+      // const files = resolveScanFiles(dirs);
+
+      // for (const dir of dirs) collectLayouts(dir, output);
 
       completed++;
       if (completed === total) generateDts(sharedOutput);
