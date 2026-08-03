@@ -1,15 +1,9 @@
 {
   "name": "@syora/cli",
-  "private": false,
   "version": "0.0.0",
+  "private": false,
   "license": "MIT",
   "type": "module",
-  "publishConfig": {
-    "access": "public"
-  },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -17,19 +11,18 @@
       "require": "./dist/index.js"
     }
   },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "syora": "./dist/index.js"
+  },
   "files": [
     "dist"
   ],
   "scripts": {
-    "syora": "tsx src/index.ts",
-    "build": "tsdown"
-  },
-  "engines": {
-    "npm": ">=10.0.0",
-    "node": ">=20.0.0"
-  },
-  "bin": {
-    "syora": "./dist/index.js"
+    "build": "tsdown",
+    "syora": "tsx src/index.ts"
   },
   "dependencies": {
     "@clack/prompts": "^1.5.1",
@@ -60,5 +53,12 @@
     "tsx": "^4.21.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.65.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

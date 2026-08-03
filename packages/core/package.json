@@ -3,12 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "scripts": {
-    "build": "tsdown"
-  },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -16,39 +10,45 @@
       "require": "./dist/index.js"
     }
   },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
+  "scripts": {
+    "build": "tsdown"
+  },
   "dependencies": {
     "@babel/parser": "catalog:",
     "@babel/traverse": "catalog:",
     "@babel/types": "catalog:",
-    "vue": "catalog:",
-    "vue-router": "catalog:",
+    "@unhead/schema-org": "catalog:",
+    "@unhead/vue": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "@vue/compiler-core": "catalog:",
-    "@unhead/vue": "catalog:",
-    "@unhead/schema-org": "catalog:",
-    "unhead": "catalog:",
-    "vite": "catalog:",
+    "acorn": "catalog:",
     "c12": "catalog:",
+    "devalue": "catalog:",
+    "dotenv": "catalog:",
+    "estree-walker": "catalog:",
+    "fast-glob": "catalog:",
+    "lodash": "catalog:",
+    "magic-string": "catalog:",
     "mlly": "catalog:",
     "ofetch": "catalog:",
-    "lodash": "catalog:",
-    "dotenv": "catalog:",
-    "magic-string": "catalog:",
-    "devalue": "catalog:",
-    "fast-glob": "catalog:",
-    "estree-walker": "catalog:",
-    "acorn": "catalog:",
-    "syt": "catalog:"
+    "syt": "catalog:",
+    "unhead": "catalog:",
+    "vite": "catalog:",
+    "vue": "catalog:",
+    "vue-router": "catalog:"
   },
   "devDependencies": {
-    "typescript": "catalog:",
-    "@types/node": "catalog:",
     "@types/lodash": "catalog:",
+    "@types/node": "catalog:",
     "tsdown": "catalog:",
     "tsx": "catalog:",
+    "typescript": "catalog:",
     "unplugin-vue": "catalog:"
   },
   "engines": {
