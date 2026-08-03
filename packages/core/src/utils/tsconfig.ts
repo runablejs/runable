@@ -1,15 +1,70 @@
 import { join, relative, resolve } from "node:path";
-import { getPackageJson, resolvePackageDir } from "./pkg";
+import { getPackageJson } from "./pkg";
 import { normalizeDir } from "./dir";
 import { useConfig } from "../config/load";
 import uniq from "lodash/uniq.js";
 import assign from "lodash/assign.js";
 import { atomicWriteFile } from "./atomic-write-file";
 import { resolvePackageEntry } from "./pkg-resolve-entry";
+import { TsConfigBuilder } from "syt";
 
-export function generateTsconfigs() {
-  let dependencies: string[] = [];
+export const tsconfig = {
+  app: new TsConfigBuilder()
+    .esModuleInterop()
+    .skipLibCheck()
+    .setTarget("ESNext")
+    .allowJs()
+    .resolveJsonModule()
+    .setModuleDetection("force")
+    .isolatedModules()
+    .verbatimModuleSyntax()
+    .setCompilerOption("allowArbitraryExtensions", true)
+    .strict()
+    .setCompilerOption("noUncheckedIndexedAccess", true)
+    .forceConsistentCasingInFileNames()
+    .setCompilerOption("noImplicitOverride", true)
+    .setModule("Preserve")
+    .addLib(["ESNext", "dom", "dom.iterable", "webworker"])
+    .setJsx("preserve")
+    .setCompilerOption("jsxImportSource", "vue")
+    .setModuleResolution("Bundler")
+    .useDefineForClassFields()
+    .setCompilerOption("noImplicitThis", true)
+    .allowSyntheticDefaultImports()
+    .noEmit()
+    .composite()
+    .declaration(),
+};
+
+export function writeTsConfig() {
   const { output, appDir, alias } = useConfig();
+
+  Object.entries(alias ?? {}).forEach(([key, value]) => {
+    tsconfig.app.addAlias(key, normalizeDir(relative(process.cwd(), value)));
+  });
+
+  tsconfig.app.addAlias("#app/*", "./*");
+
+  tsconfig.app.setCompilerOption(
+    "tsBuildInfoFile",
+    normalizeDir(
+      relative(
+        output,
+        resolve(process.cwd(), "node_modules/.tmp/tsconfig.app.tsbuildinfo"),
+      ),
+    ),
+  );
+
+  tsconfig.app.addInclude(normalizeDir(join(relative(output, appDir), "**/*")));
+  tsconfig.app.addInclude("./**/*.d.ts");
+
+  tsconfig.app.write(join(output, "tsconfig.app.json"));
+}
+
+/** @deprecated use writeTsConfig */
+export function generateTsconfigs() {
+  const { output, appDir, alias } = useConfig();
+  let dependencies: string[] = [];
 
   const _dirs = [import.meta.dirname, process.cwd()];
 
@@ -42,7 +97,7 @@ export function generateTsconfigs() {
     return normalizeDir(relative(output, dep));
   });
 
-  const tsconfig = {
+  const otsconfig = {
     compilerOptions: {
       esModuleInterop: true,
       skipLibCheck: true,
@@ -102,6 +157,6 @@ export function generateTsconfigs() {
 
   atomicWriteFile(
     join(output, "tsconfig.app.json"),
-    JSON.stringify(tsconfig, undefined, 2),
+    JSON.stringify(otsconfig, undefined, 2),
   );
 }

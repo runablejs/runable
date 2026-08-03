@@ -1,16 +1,18 @@
 import { loadConfig } from "../config/load";
 import { buildViteConfig } from "./config";
-import { generateTsconfigs } from "@/utils";
+import { writeTsConfig } from "@/utils";
 import { createServer } from "vite";
 
 export async function prepare(onlyPrepare = true) {
   await loadConfig();
-  generateTsconfigs();
 
   const config = buildViteConfig();
   const vite = await createServer(config);
 
-  if (onlyPrepare) await vite.close();
+  if (onlyPrepare) {
+    await vite.close();
+    writeTsConfig();
+  }
 
   return vite;
 }

@@ -13,3 +13,4 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - "@syora/vue@1.0.0"
   - '@syora/fastify@1.1.1'
+  - syt@0.2.0
