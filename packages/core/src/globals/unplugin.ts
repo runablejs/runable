@@ -27,12 +27,10 @@ const traverse: typeof _traverse = (_traverse as any).default ?? _traverse;
 
 type ImportsCommon = { from: string; imports: string[] };
 type ImportsMap = Record<string, string[]>;
-type ImportPreset = keyof typeof presets;
 
 export type GlobalOptionsImports =
   | { directory: string }
   | { file: string }
-  | ImportPreset
   | ImportsCommon
   | ImportsMap;
 
@@ -41,84 +39,6 @@ export type GlobalConfig = {
   output?: string;
   imports?: Arrayable<GlobalOptionsImports>;
 };
-
-// -----------------------------------------------------------------------
-// Built-in presets
-// -----------------------------------------------------------------------
-
-const presets = {
-  vue: {
-    from: "vue",
-    imports: [
-      "computed",
-      "customRef",
-      "defineAsyncComponent",
-      "defineComponent",
-      "effect",
-      "effectScope",
-      "getCurrentInstance",
-      "getCurrentScope",
-      "h",
-      "hasInjectionContext",
-      "inject",
-      "isProxy",
-      "isReactive",
-      "isReadonly",
-      "isRef",
-      "isShallow",
-      "markRaw",
-      "nextTick",
-      "onActivated",
-      "onBeforeMount",
-      "onBeforeUnmount",
-      "onBeforeUpdate",
-      "onDeactivated",
-      "onErrorCaptured",
-      "onMounted",
-      "onRenderTracked",
-      "onRenderTriggered",
-      "onScopeDispose",
-      "onServerPrefetch",
-      "onUnmounted",
-      "onUpdated",
-      "onWatcherCleanup",
-      "provide",
-      "proxyRefs",
-      "reactive",
-      "readonly",
-      "ref",
-      "resolveComponent",
-      "shallowReactive",
-      "shallowReadonly",
-      "shallowRef",
-      "toRaw",
-      "toRef",
-      "toRefs",
-      "toValue",
-      "triggerRef",
-      "unref",
-      "useAttrs",
-      "useCssModule",
-      "useCssVars",
-      "useId",
-      "useModel",
-      "useShadowRoot",
-      "useSlots",
-      "useTemplateRef",
-      "useTransitionState",
-      "watch",
-      "watchEffect",
-      "watchPostEffect",
-      "watchSyncEffect",
-      "withCtx",
-      "withDirectives",
-      "withKeys",
-      "withMemo",
-      "withModifiers",
-      "withScopeId",
-    ],
-  },
-} as const satisfies Record<string, ImportsCommon>;
 
 // -----------------------------------------------------------------------
 // Export resolution — turns config `imports` entries into a flat map of
@@ -184,11 +104,6 @@ function resolveConfigImports(
   const entries = Array.isArray(rawImports) ? rawImports : [rawImports];
 
   for (const entry of entries) {
-    if (typeof entry === "string") {
-      resolvePackageImport(presets[entry], target);
-      continue;
-    }
-
     if ("file" in entry && typeof entry.file === "string") {
       const file = resolveFile(entry.file);
       if (!file) continue;
