@@ -1,6 +1,6 @@
 import ":css";
-import { deserializeState } from "@/async-data/serialize";
-import { hydrateAsyncData } from "@/async-data/ssr";
+import { deserializeState } from "@/async-data/serialize.js";
+import { hydrateAsyncData } from "@/async-data/ssr.js";
 
 import { createApp } from "@/entry/main.js";
 import { useRouter } from "@/router/composables.js";

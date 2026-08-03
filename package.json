@@ -2,7 +2,9 @@
   "name": "syora-framework",
   "private": true,
   "type": "module",
-  "scripts": {},
+  "scripts": {
+    "build": "pnpm --filter './packages/**' build"
+  },
   "devDependencies": {
     "@tsconfig/node24": "^24.0.4",
     "@eslint/js": "^10.0.1",

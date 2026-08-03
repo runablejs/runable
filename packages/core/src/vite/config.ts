@@ -92,7 +92,7 @@ export function buildViteConfig(): UserConfig {
     syoraConfig: main,
     publicDir: main.publicDir,
 
-    resolve: { alias: main.alias },
+    resolve: { alias: main.alias, preserveSymlinks: true },
     devtools: false,
 
     plugins: [

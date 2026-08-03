@@ -22,7 +22,7 @@
   ],
   "scripts": {
     "play:dev": "tsx watch playground/dev.ts",
-    "build": "tsdown"
+    "obuild": "tsdown"
   },
   "engines": {
     "npm": ">=10.0.0",
