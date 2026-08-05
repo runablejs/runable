@@ -2,6 +2,7 @@ import { createServer, useConfig, requestNode } from "@syora/core";
 import express from "express";
 import { join } from "node:path";
 import { ContentNotFoundError, defineCollection, initContent } from "../core";
+import { resolveContentConfig } from "../core/collection/resolve";
 
 const app = express();
 
@@ -20,7 +21,7 @@ await initContent({
       source: {
         include: "docs/**/*.md",
         exclude: "docs/**/*.draft.md",
-        prefix: "/docs",
+        // prefix: "/docs",
       },
       // schema: docSchema,
     }),

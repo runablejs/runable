@@ -10,6 +10,7 @@ import type {
 import { normalizeSources } from "./collection.js";
 import { mdc } from "../index.js";
 import { compressCollection } from "./compressor.js";
+import { atomicWriteFile, normalizeDir, ResolvedConfig } from "@syora/core";
 
 export interface ResolvedPageEntry<TMeta = unknown> {
   type: "page";
@@ -29,6 +30,7 @@ export type ResolvedEntry = ResolvedPageEntry | ResolvedDataEntry;
 
 interface ResolveOptions {
   root: string;
+  syoraConfig: ResolvedConfig;
 }
 
 function applyPrefix(path: string, prefix?: string): string {
@@ -141,11 +143,13 @@ export async function resolveCollection<T>(
   return entries;
 }
 
-// [K in keyof TCollections]: TCollections[K] extends CollectionDefinition<
-//     infer T
-//   >
-//     ? (ResolvedPageEntry<T> | ResolvedDataEntry<T>)[]
-//     : never;
+const dtsCollectionTemplate = `
+import type { ResolvedPageEntry, ResolvedDataEntry } from '{{resolve_path}}';
+
+export type Collections = {
+{{collection_types}}
+}
+`;
 
 export async function resolveContentConfig<
   TCollections extends Record<string, CollectionDefinition<any>>,
@@ -158,7 +162,9 @@ export async function resolveContentConfig<
     [K in keyof TCollections]: TCollections[K] extends CollectionDefinition<
       infer T
     >
-      ? (ResolvedPageEntry<T> | ResolvedDataEntry<T>)[]
+      ? TCollections[K]["type"] extends "page"
+        ? ResolvedPageEntry<T>[]
+        : ResolvedDataEntry<T>[]
       : never;
   };
 }> {
@@ -166,6 +172,7 @@ export async function resolveContentConfig<
 
   const result = {} as any;
   const _collections = [];
+  const types = [];
 
   for (const key of Object.keys(collections)) {
     result[key] = await resolveCollection(
@@ -176,7 +183,31 @@ export async function resolveContentConfig<
     const compressed = await compressCollection(result[key]);
 
     _collections.push(`export const ${key} = "${compressed}";`);
+
+    if (collections[key].type === "page") {
+      types.push(`  ${key}: ResolvedPageEntry;`);
+    } else {
+      types.push(`  ${key}: ResolvedDataEntry;`);
+    }
   }
+
+  const outputContent = join(options.syoraConfig.output, "content");
+
+  atomicWriteFile(
+    join(options.syoraConfig.output, "content", "compressed.ts"),
+    _collections.join("\n"),
+  );
+
+  atomicWriteFile(
+    join(outputContent, "collections.d.ts"),
+
+    dtsCollectionTemplate
+      .replaceAll(
+        "{{resolve_path}}",
+        normalizeDir(relative(outputContent, import.meta.filename)),
+      )
+      .replaceAll("{{collection_types}}", types.join("\n")),
+  );
 
   return { collections: result, compressed: _collections.join("\n") };
 }

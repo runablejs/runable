@@ -19,9 +19,15 @@ export interface CollectionDefinition<T = unknown> {
   schema?: SchemaValidator<T>;
 }
 
-export function defineCollection<T = unknown>(
-  definition: CollectionDefinition<T>,
-): CollectionDefinition<T> {
+// export function defineCollection<T = unknown>(
+//   definition: CollectionDefinition<T>,
+// ): CollectionDefinition<T> {
+//   return definition;
+// }
+
+export function defineCollection<const T extends CollectionDefinition<any>>(
+  definition: T,
+): T {
   return definition;
 }
 

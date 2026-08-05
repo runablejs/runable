@@ -1,4 +1,3 @@
-import type { CollectionDefinition } from "../collection/collection.js";
 import type {
   ResolvedDataEntry,
   ResolvedPageEntry,
@@ -14,9 +13,27 @@ interface EntryRow {
   html: string | null;
 }
 
-function rowToEntry<T>(
-  row: EntryRow,
-): ResolvedPageEntry<T> | ResolvedDataEntry<T> {
+// function rowToEntry<T>(
+//   row: EntryRow,
+// ): ResolvedPageEntry<T> | ResolvedDataEntry<T> {
+//   if (row.type === "page") {
+//     return {
+//       type: "page",
+//       path: row.path,
+//       meta: JSON.parse(row.meta_or_data) as T,
+//       toc: row.toc ? JSON.parse(row.toc) : undefined,
+//       html: row.html ?? "",
+//     };
+//   }
+
+//   return {
+//     type: "data",
+//     path: row.path,
+//     data: JSON.parse(row.meta_or_data) as T,
+//   };
+// }
+
+function rowToEntry<T>(row: EntryRow): T {
   if (row.type === "page") {
     return {
       type: "page",
@@ -24,14 +41,14 @@ function rowToEntry<T>(
       meta: JSON.parse(row.meta_or_data) as T,
       toc: row.toc ? JSON.parse(row.toc) : undefined,
       html: row.html ?? "",
-    };
+    } as T;
   }
 
   return {
     type: "data",
     path: row.path,
     data: JSON.parse(row.meta_or_data) as T,
-  };
+  } as T;
 }
 
 export interface NavigationItem {
@@ -89,7 +106,9 @@ function buildNavigationTree(
 }
 
 /** Chainable query builder, à la `queryCollection` de Nuxt Content */
-export interface CollectionQuery<T> {
+export interface CollectionQuery<
+  T extends ResolvedPageEntry | ResolvedDataEntry,
+> {
   /** Filter on an exact path (e.g. "/docs/get-started") */
   path(path: string): CollectionQuery<T>;
   /** Sort by path (ASC by default) */
@@ -97,9 +116,9 @@ export interface CollectionQuery<T> {
   limit(n: number): CollectionQuery<T>;
 
   /** Run the query, return every matching entry */
-  all(): Promise<(ResolvedPageEntry<T> | ResolvedDataEntry<T>)[]>;
+  all(): Promise<T[]>;
   /** Run the query, return the first matching entry (or undefined) */
-  first(): Promise<ResolvedPageEntry<T> | ResolvedDataEntry<T> | undefined>;
+  first(): Promise<T | undefined>;
 
   /** Nested navigation tree for this collection (empty for "data" collections) */
   navigation(): Promise<NavigationItem[]>;
@@ -111,7 +130,9 @@ interface QueryState {
   limit?: number;
 }
 
-export class CollectionQueryImpl<T> implements CollectionQuery<T> {
+export class CollectionQueryImpl<
+  T extends ResolvedPageEntry | ResolvedDataEntry,
+> implements CollectionQuery<T> {
   private state: QueryState = { order: "ASC" };
   private db: Promise<Database<SqlParam>>;
   private collection: string;
@@ -136,16 +157,16 @@ export class CollectionQueryImpl<T> implements CollectionQuery<T> {
     return this;
   }
 
-  async all(): Promise<(ResolvedPageEntry<T> | ResolvedDataEntry<T>)[]> {
+  async all() {
     const db = await this.db;
     const { sql, params } = this.build();
     const rows = await db.all<EntryRow>(sql, params);
+    // return row ? rowToEntry<T>(row) : undefined;
+
     return rows.map((row) => rowToEntry<T>(row));
   }
 
-  async first(): Promise<
-    ResolvedPageEntry<T> | ResolvedDataEntry<T> | undefined
-  > {
+  async first(): Promise<T | undefined> {
     const db = await this.db;
     const { sql, params } = this.build(1);
     const row = await db.get<EntryRow>(sql, params);

@@ -61,7 +61,7 @@ async function seedCollection(db: Database, collectionName: string) {
     );
   `);
 
-  if (!seeded.has(collectionName)) return;
+  if (seeded.has(collectionName)) return;
 
   const entries = await decompressCollection<ResolvedEntry[]>(raw);
 
