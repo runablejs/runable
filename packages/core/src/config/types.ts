@@ -129,6 +129,19 @@ export interface ModuleDefinition<
   defaults?: OptionsT | ((config: SyoraConfig) => OptionsT);
 
   /**
+   * Names of other modules whose `setup` must complete before this
+   * module's own `setup` runs. Names must match the target module's own
+   * name — `meta.name` if it declares one, otherwise the name/path it's
+   * referenced by. Modules with no ordering constraint between them run
+   * their `setup` in parallel.
+   *
+   * Referencing a module that doesn't exist in the graph throws while
+   * configs are loaded; a circular chain (A depends on B depends on A)
+   * throws once setups run instead of deadlocking.
+   */
+  dependOn?: string[];
+
+  /**
    * Runs once the module's options are resolved (`defaults` merged with the
    * consumer's overrides). Use it to mutate/extend `config` — register
    * plugins, components dirs, globals, etc.
@@ -193,4 +206,6 @@ export type ResolvedConfig = {
   _options?: unknown;
 
   _dependents: string[];
+
+  _dependOn: string[];
 };

@@ -55,8 +55,9 @@ export function defineConfig(config: SyoraConfig): SyoraConfig {
  * Identity helper for authoring a Syora module's `syora.config.*` file.
  * Builds on top of `defineConfig`: a module can declare everything a regular
  * config can (plugins, components, layouts...), plus `configKey`/`defaults`
- * to expose typed, overridable options, and a `setup` hook invoked once
- * every config in the graph has been resolved (see `runSetups`).
+ * to expose typed, overridable options, a `setup` hook invoked once every
+ * config in the graph has been resolved (see `runSetups`), and `dependOn`
+ * to order that hook relative to other modules' setups.
  *
  * @example
  * export default defineModule<{ prefix: string }>({
@@ -221,6 +222,8 @@ type PendingSetup = {
   config: ResolvedConfig;
   options: Record<string, unknown>;
   setup?: ModuleDefinition["setup"];
+  /** Canonical names of modules whose `setup` must run before this one's. */
+  dependOn: string[];
 };
 
 function resolveAllConfigs(entries: Map<string, RawEntry>): {
@@ -231,7 +234,8 @@ function resolveAllConfigs(entries: Map<string, RawEntry>): {
   const pendingSetups: PendingSetup[] = [];
 
   for (const entry of entries.values()) {
-    const { configKey, defaults, setup, meta, ...rest } = entry.loaded;
+    const { configKey, defaults, setup, dependOn, meta, ...rest } =
+      entry.loaded;
     const config = rest as ResolvedConfig;
     config.cwd = entry.cwd;
 
@@ -259,8 +263,21 @@ function resolveAllConfigs(entries: Map<string, RawEntry>): {
         options = merge(options, cloneDeep(dependentOptions ?? {}));
       }
 
+      for (const depName of dependOn ?? []) {
+        if (!entries.has(depName)) {
+          throw new Error(
+            `Module "${entry.name}" declares dependOn: "${depName}", but no module with that name was found.`,
+          );
+        }
+      }
+
       rConfig._options = options;
-      pendingSetups.push({ config: rConfig, options, setup });
+      pendingSetups.push({
+        config: rConfig,
+        options,
+        setup,
+        dependOn: dependOn ?? [],
+      });
     }
 
     resolved[entry.name] = rConfig;
@@ -273,14 +290,44 @@ function resolveAllConfigs(entries: Map<string, RawEntry>): {
  * Phase 3 — setup
  *
  * Every config in the graph is resolved and every module's `_options`
- * already reflects all of its dependents, so setups have no ordering
- * dependency on one another and can run in parallel.
+ * already reflects all of its dependents, so by default setups have no
+ * ordering dependency on one another and run in parallel. A module can opt
+ * into an explicit ordering via `dependOn`: its `setup` then waits for the
+ * named modules' setups to complete first. `run` is memoized (like `load`
+ * in phase 1) so a module referenced by several `dependOn` lists only runs
+ * its `setup` once, and cycles (A depends on B depends on A) are caught via
+ * `visiting` instead of deadlocking.
  * ------------------------------------------------------------------------ */
 
 async function runSetups(pendingSetups: PendingSetup[]) {
-  await Promise.all(
-    pendingSetups.map(({ config, options, setup }) => setup?.(options, config)),
-  );
+  const byName = new Map(pendingSetups.map((p) => [p.config._name, p]));
+  const done = new Map<string, Promise<void>>();
+  const visiting = new Set<string>();
+
+  function run(name: string): Promise<void> {
+    const cached = done.get(name);
+    if (cached) return cached;
+
+    const pending = byName.get(name);
+    if (!pending) return Promise.resolve();
+
+    if (visiting.has(name)) {
+      throw new Error(
+        `Circular "dependOn": "${name}" depends on itself, directly or transitively.`,
+      );
+    }
+    visiting.add(name);
+
+    const promise = (async () => {
+      await Promise.all(pending.dependOn.map(run));
+      await pending.setup?.(pending.options, pending.config);
+    })();
+
+    done.set(name, promise);
+    return promise;
+  }
+
+  await Promise.all(pendingSetups.map((p) => run(p.config._name)));
 }
 
 /**
