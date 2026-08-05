@@ -17,6 +17,7 @@ export default defineConfig({
   sourcemap: false,
   clean: true,
   unbundle: true,
+  globImport: false,
 
   dts: { vue: true },
 

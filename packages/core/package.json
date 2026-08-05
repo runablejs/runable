@@ -40,6 +40,7 @@
     "ofetch": "catalog:",
     "syt": "catalog:",
     "unhead": "catalog:",
+    "unplugin-vue": "catalog:",
     "vite": "catalog:",
     "vue": "catalog:",
     "vue-router": "catalog:"
@@ -49,8 +50,7 @@
     "@types/node": "catalog:",
     "tsdown": "catalog:",
     "tsx": "catalog:",
-    "typescript": "catalog:",
-    "unplugin-vue": "catalog:"
+    "typescript": "catalog:"
   },
   "engines": {
     "node": "^22.18.0 || >=24.12.0"

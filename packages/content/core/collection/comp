@@ -1,0 +1,57 @@
+type CompressionType = "gzip" | "deflate";
+
+export async function compressCollection<T>(
+  data: T,
+  compressionType: CompressionType = "gzip",
+): Promise<string> {
+  const json = JSON.stringify(data);
+
+  const stream = new Blob([json])
+    .stream()
+    .pipeThrough(new CompressionStream(compressionType));
+
+  const compressed = new Uint8Array(await new Response(stream).arrayBuffer());
+
+  return uint8ArrayToBase64(compressed);
+}
+
+export async function decompressCollection<T>(
+  base64: string,
+  compressionType: CompressionType = "gzip",
+): Promise<T> {
+  const compressed = base64ToUint8Array(base64);
+
+  const stream = new Blob([compressed])
+    .stream()
+    .pipeThrough(new DecompressionStream(compressionType));
+
+  const json = await new Response(stream).text();
+
+  return JSON.parse(json) as T;
+}
+
+function uint8ArrayToBase64(data: Uint8Array): string {
+  let binary = "";
+
+  const chunkSize = 0x8000;
+
+  for (let i = 0; i < data.length; i += chunkSize) {
+    const chunk = data.subarray(i, i + chunkSize);
+
+    binary += String.fromCharCode(...chunk);
+  }
+
+  return btoa(binary);
+}
+
+function base64ToUint8Array(base64: string): Uint8Array {
+  const binary = atob(base64);
+
+  const data = new Uint8Array(binary.length);
+
+  for (let i = 0; i < binary.length; i++) {
+    data[i] = binary.charCodeAt(i);
+  }
+
+  return data;
+}

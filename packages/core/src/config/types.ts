@@ -46,9 +46,6 @@ export interface SyoraConfig {
   /** Build output mode/format. */
   output?: string;
 
-  /** Destination directory for the build output. */
-  distDir?: string;
-
   /** Base URL the application is served from (routes/assets prefix). */
   baseUrl?: string;
 
@@ -59,7 +56,7 @@ export interface SyoraConfig {
   vite?: Omit<
     UserConfig,
     "ssr" | "appType" | "server" | "root" | "base" | "publicDir" | "syoraConfig"
-  >;
+  > & { server: Omit<UserConfig["server"], "middlewareMode"> };
 
   /** Directory of static assets served as-is. */
   publicDir?: UserConfig["publicDir"];
@@ -144,8 +141,6 @@ export interface ModuleDefinition<
  * `_index` is internal bookkeeping, not part of the user-facing config.
  */
 export type ResolvedConfig = {
-  cwd: string;
-  distDir: string;
   appDir: string;
   output: string;
   publicDir: string | false;
@@ -167,6 +162,11 @@ export type ResolvedConfig = {
   siteUrl: string | undefined;
   defineConfig: SyoraConfig;
   vite: SyoraConfig["vite"];
+
+  // ------------------------------------------------
+
+  cwd: string;
+  _cwd: string;
 
   /**
    * Load order across the main config and its modules, assigned in `loadAndCacheConfig`.

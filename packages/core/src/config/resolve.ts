@@ -1,67 +1,12 @@
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 import merge from "lodash/merge.js";
 
 import { resolveDir, resolveScanDirs } from "@/utils";
 import type { ResolvedConfig, SyoraConfig } from "./types.js";
 import { resolveComponentDirs } from "@/components/options.js";
 
-export function resolveConfig(
-  config: SyoraConfig & { cwd: string },
-  main?: typeof config,
-) {
-  config.cwd ??= process.cwd();
-
-  config.distDir ??= ".output";
-  config.distDir = resolveDir(config.distDir, config.cwd);
-
-  config.appDir ??= "app";
-  config.appDir = resolveDir(config.appDir, config.cwd);
-
-  config.output ??= ".app";
-  config.output = resolveDir(config.output, config.cwd);
-
-  config.globals ??= [
-    resolve(config.appDir, "globals"),
-    resolve(config.appDir, "composables"),
-  ];
-
-  config.components = resolveComponents(config);
-
-  config.pages ??= ["pages"];
-
-  config.plugins ??= [resolve(config.appDir, "plugins")];
-
-  config.layouts ??= [resolve(config.appDir, "layouts")];
-
-  config.ssr ??= true;
-
-  config.publicDir ??= resolve(process.cwd(), "public");
-  if (typeof config.publicDir === "string") {
-    config.publicDir = resolveDir(config.publicDir, config.cwd);
-  }
-
-  config.modules ??= [];
-
-  config.css ??= [];
-
-  config.alias ??= {};
-
-  return config as ResolvedConfig;
-}
-
-function resolveComponents(config: SyoraConfig) {
-  let components = config.components ?? [];
-
-  if (!Array.isArray(components)) components = [components];
-
-  return components;
-}
-
 export function resolveConfig_v2(config: SyoraConfig & { cwd: string }) {
   let _cwd = config.cwd ?? process.cwd();
-
-  let _distDir = config.distDir ?? ".output";
-  _distDir = resolveDir(_distDir, _cwd);
 
   let _appDir = config.appDir ?? "app";
   _appDir = resolveDir(_appDir, _cwd);
@@ -119,7 +64,6 @@ export function resolveConfig_v2(config: SyoraConfig & { cwd: string }) {
 
   return {
     cwd: _cwd,
-    distDir: _distDir,
     appDir: _appDir,
     output: _output,
     publicDir: _publicDir,

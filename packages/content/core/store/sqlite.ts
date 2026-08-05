@@ -1,13 +1,13 @@
-import Database from "better-sqlite3";
 import type { ResolvedEntry } from "../collection/resolve.js";
+import { SqliteDatabase } from "./types.js";
 
 /**
  * Table unique pour toutes les collections : `meta_or_data` contient soit
  * `meta` (entrées "page"), soit `data` (entrées "data"), sérialisé en JSON.
  * On distingue le contenu via `collection` + `type`.
  */
-export function initSchema(db: Database.Database): void {
-  db.exec(`
+export async function initSchema(db: SqliteDatabase) {
+  await db.exec(`
     CREATE TABLE IF NOT EXISTS entries (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       collection TEXT NOT NULL,
@@ -22,7 +22,7 @@ export function initSchema(db: Database.Database): void {
 }
 
 export function saveCollections(
-  db: Database.Database,
+  db: SqliteDatabase,
   collections: Record<string, ResolvedEntry[]>,
 ): void {
   initSchema(db);

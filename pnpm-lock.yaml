@@ -448,6 +448,9 @@ importers:
 
   packages/content:
     dependencies:
+      '@sqlite.org/sqlite-wasm':
+        specifier: 3.53.0-build1
+        version: 3.53.0-build1
       '@syora/cli':
         specifier: workspace:*
         version: link:../cli
@@ -457,6 +460,9 @@ importers:
       better-sqlite3:
         specifier: ^13.0.2
         version: 13.0.2
+      db0:
+        specifier: ^0.3.4
+        version: 0.3.4(better-sqlite3@13.0.2)
       fast-glob:
         specifier: ^3.3.3
         version: 3.3.3
@@ -614,6 +620,9 @@ importers:
       unhead:
         specifier: 'catalog:'
         version: 3.2.3(esbuild@0.28.1)(rolldown@1.2.1)(vite@8.2.0)
+      unplugin-vue:
+        specifier: 'catalog:'
+        version: 7.2.0(@types/node@24.13.3)(@vitejs/devtools@0.4.10)(esbuild@0.28.1)(jiti@2.7.0)(rolldown@1.2.1)(tsx@4.23.1)(vue@3.5.40(typescript@6.0.3))(yaml@2.9.0)
       vite:
         specifier: 'catalog:'
         version: 8.2.0(@types/node@24.13.3)(@vitejs/devtools@0.4.10)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0)
@@ -639,9 +648,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
-      unplugin-vue:
-        specifier: 'catalog:'
-        version: 7.2.0(@types/node@24.13.3)(@vitejs/devtools@0.4.10)(esbuild@0.28.1)(jiti@2.7.0)(rolldown@1.2.1)(tsx@4.23.1)(vue@3.5.40(typescript@6.0.3))(yaml@2.9.0)
 
   playground:
     dependencies:
@@ -1447,6 +1453,10 @@ packages:
     resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==}
     engines: {node: '>=10'}
 
+  '@sqlite.org/sqlite-wasm@3.53.0-build1':
+    resolution: {integrity: sha512-PfWPWN2n+/37doa8oh2/oUXk4OOsRYZsxc1W1sDXIGb/Pu5Yrb+f2eyYpgQMGITVX7HVgxhs9P18Rc6I97ym/g==}
+    engines: {node: '>=22'}
+
   '@tokenizer/inflate@0.4.1':
     resolution: {integrity: sha512-2mAv+8pkG6GIZiF1kNg1jAjh27IDxEPKwdGul3snfztFerfPGI1LjDezZp3i7BElXompqEtPmoPx6c2wgtWsOA==}
     engines: {node: '>=18'}
@@ -2175,6 +2185,29 @@ packages:
 
   dayjs@1.11.21:
     resolution: {integrity: sha512-98IT+HOahAisibz/yjKbzuOBwYcjJ7BCLPzARyHiyEBmRz4fatF+KPJszEHXsGYjUG234aH/cOjW1wwTbKUZlA==}
+
+  db0@0.3.4:
+    resolution: {integrity: sha512-RiXXi4WaNzPTHEOu8UPQKMooIbqOEyqA1t7Z6MsdxSCeb8iUC9ko3LcmsLmeUt2SM5bctfArZKkRQggKZz7JNw==}
+    peerDependencies:
+      '@electric-sql/pglite': '*'
+      '@libsql/client': '*'
+      better-sqlite3: '*'
+      drizzle-orm: '*'
+      mysql2: '*'
+      sqlite3: '*'
+    peerDependenciesMeta:
+      '@electric-sql/pglite':
+        optional: true
+      '@libsql/client':
+        optional: true
+      better-sqlite3:
+        optional: true
+      drizzle-orm:
+        optional: true
+      mysql2:
+        optional: true
+      sqlite3:
+        optional: true
 
   debug@3.2.7:
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
@@ -4865,6 +4898,8 @@ snapshots:
 
   '@sindresorhus/is@4.6.0': {}
 
+  '@sqlite.org/sqlite-wasm@3.53.0-build1': {}
+
   '@tokenizer/inflate@0.4.1':
     dependencies:
       debug: 4.4.3
@@ -5698,6 +5733,10 @@ snapshots:
   csstype@3.2.3: {}
 
   dayjs@1.11.21: {}
+
+  db0@0.3.4(better-sqlite3@13.0.2):
+    optionalDependencies:
+      better-sqlite3: 13.0.2
 
   debug@3.2.7:
     dependencies:

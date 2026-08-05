@@ -18,13 +18,14 @@
     "dist"
   ],
   "scripts": {
-    "obuild": "tsdown",
-    "play:dev": "tsx watch playground/dev.ts"
+    "test": "tsx watch playground/test.ts",
+    "build": "syora build"
   },
   "dependencies": {
+    "@sqlite.org/sqlite-wasm": "3.53.0-build1",
     "@syora/cli": "workspace:*",
     "@syora/core": "workspace:*",
-    "better-sqlite3": "^13.0.2",
+    "db0": "^0.3.4",
     "fast-glob": "^3.3.3",
     "rehype": "^13.0.2",
     "rehype-external-links": "^3.0.0",
@@ -58,6 +59,14 @@
     "@types/unist": "^3.0.3",
     "express": "^5.2.1",
     "tsx": "^4.23.1"
+  },
+  "peerDependencies": {
+    "better-sqlite3": "^13.0.2"
+  },
+  "peerDependenciesMeta": {
+    "better-sqlite3": {
+      "optional": true
+    }
   },
   "engines": {
     "node": ">=20.0.0",

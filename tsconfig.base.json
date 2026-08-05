@@ -9,17 +9,6 @@
     "noEmit": true,
     "strict": true,
 
-    "paths": {
-      // "@/*": ["./packages/core/src/*"],
-      // "@cli/*": ["./packages/cli/src/*"],
-      // "@content/*": ["./packages/content/*"]
-      // "@syora/core": ["./packages/core/src/index.ts"],
-      // "@syora/core/*": ["./packages/core/src/*"],
-      // "@syora/cli": ["./packages/cli/src/index.ts"],
-      // "@syora/cli/*": ["./packages/cli/src/*"],
-      // "@syora/content/*": ["./packages/content/*"]
-    },
-
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo"
   }
 }

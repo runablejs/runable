@@ -9,6 +9,7 @@ import type {
 } from "./collection.js";
 import { normalizeSources } from "./collection.js";
 import { mdc } from "../index.js";
+import { compressCollection } from "./compressor.js";
 
 export interface ResolvedPageEntry<TMeta = unknown> {
   type: "page";
@@ -140,28 +141,42 @@ export async function resolveCollection<T>(
   return entries;
 }
 
+// [K in keyof TCollections]: TCollections[K] extends CollectionDefinition<
+//     infer T
+//   >
+//     ? (ResolvedPageEntry<T> | ResolvedDataEntry<T>)[]
+//     : never;
+
 export async function resolveContentConfig<
   TCollections extends Record<string, CollectionDefinition<any>>,
 >(
   config: { collections?: TCollections },
   options: ResolveOptions,
 ): Promise<{
-  [K in keyof TCollections]: TCollections[K] extends CollectionDefinition<
-    infer T
-  >
-    ? (ResolvedPageEntry<T> | ResolvedDataEntry<T>)[]
-    : never;
+  compressed: string;
+  collections: {
+    [K in keyof TCollections]: TCollections[K] extends CollectionDefinition<
+      infer T
+    >
+      ? (ResolvedPageEntry<T> | ResolvedDataEntry<T>)[]
+      : never;
+  };
 }> {
   const collections = config.collections ?? ({} as TCollections);
 
   const result = {} as any;
+  const _collections = [];
 
   for (const key of Object.keys(collections)) {
     result[key] = await resolveCollection(
       collections[key as keyof TCollections],
       options,
     );
+
+    const compressed = await compressCollection(result[key]);
+
+    _collections.push(`export const ${key} = "${compressed}";`);
   }
 
-  return result;
+  return { collections: result, compressed: _collections.join("\n") };
 }

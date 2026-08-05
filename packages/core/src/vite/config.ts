@@ -96,7 +96,9 @@ export function buildViteConfig(): UserConfig {
 
   let viteConfig: UserConfig = {
     base: main.baseUrl,
-    server: { middlewareMode: true },
+    server: {
+      middlewareMode: true,
+    },
     appType: "custom",
     ssr: {
       // noExternal: process.env.NODE_ENV === "production" ? [] : ["vue-router"],

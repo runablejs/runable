@@ -1,8 +1,12 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "dist"
+    "outDir": "dist",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "paths": {
+      "#app/*": ["./.app/*"]
+    }
   },
-  "include": ["core/**/*.ts", "playground/**/*.ts", "syora.config.ts"],
-  "exclude": ["dist", "node_modules", "templates"]
+  "include": ["core/**/*.ts", "playground/**/*", "syora.config.ts"],
+  "exclude": ["dist", "node_modules"]
 }

@@ -3,7 +3,8 @@ import type {
   ResolvedDataEntry,
   ResolvedPageEntry,
 } from "../collection/resolve.js";
-import { SqliteDatabase } from "./types.js";
+import { createDb } from "../database/index.js";
+import type { Database, SqlParam } from "../database/types.js";
 
 interface EntryRow {
   type: "page" | "data";
@@ -94,12 +95,14 @@ export interface CollectionQuery<T> {
   /** Sort by path (ASC by default) */
   order(direction?: "ASC" | "DESC"): CollectionQuery<T>;
   limit(n: number): CollectionQuery<T>;
+
   /** Run the query, return every matching entry */
-  all(): (ResolvedPageEntry<T> | ResolvedDataEntry<T>)[];
+  all(): Promise<(ResolvedPageEntry<T> | ResolvedDataEntry<T>)[]>;
   /** Run the query, return the first matching entry (or undefined) */
-  first(): ResolvedPageEntry<T> | ResolvedDataEntry<T> | undefined;
+  first(): Promise<ResolvedPageEntry<T> | ResolvedDataEntry<T> | undefined>;
+
   /** Nested navigation tree for this collection (empty for "data" collections) */
-  navigation(): NavigationItem[];
+  navigation(): Promise<NavigationItem[]>;
 }
 
 interface QueryState {
@@ -108,13 +111,15 @@ interface QueryState {
   limit?: number;
 }
 
-class CollectionQueryImpl<T> implements CollectionQuery<T> {
+export class CollectionQueryImpl<T> implements CollectionQuery<T> {
   private state: QueryState = { order: "ASC" };
+  private db: Promise<Database<SqlParam>>;
+  private collection: string;
 
-  constructor(
-    private db: SqliteDatabase,
-    private collection: string,
-  ) {}
+  constructor(collection: string) {
+    this.collection = collection;
+    this.db = createDb(collection);
+  }
 
   path(path: string): this {
     this.state.path = path;
@@ -131,30 +136,34 @@ class CollectionQueryImpl<T> implements CollectionQuery<T> {
     return this;
   }
 
-  all(): (ResolvedPageEntry<T> | ResolvedDataEntry<T>)[] {
+  async all(): Promise<(ResolvedPageEntry<T> | ResolvedDataEntry<T>)[]> {
+    const db = await this.db;
     const { sql, params } = this.build();
-    const rows = this.db.prepare(sql).all(...params) as EntryRow[];
+    const rows = await db.all<EntryRow>(sql, params);
     return rows.map((row) => rowToEntry<T>(row));
   }
 
-  first(): ResolvedPageEntry<T> | ResolvedDataEntry<T> | undefined {
+  async first(): Promise<
+    ResolvedPageEntry<T> | ResolvedDataEntry<T> | undefined
+  > {
+    const db = await this.db;
     const { sql, params } = this.build(1);
-    const row = this.db.prepare(sql).get(...params) as EntryRow | undefined;
+    const row = await db.get<EntryRow>(sql, params);
+
     return row ? rowToEntry<T>(row) : undefined;
   }
 
-  navigation(): NavigationItem[] {
+  async navigation(): Promise<NavigationItem[]> {
     // always walks the full, unfiltered collection (ignores any
     // .path()/.limit() already set), sorted ASC so parents are always
     // encountered before their children in a single pass
-    const rows = this.db
-      .prepare(
-        `SELECT type, path, meta_or_data, toc, html
+    const db = await this.db;
+    const sql = `SELECT type, path, meta_or_data, toc, html
          FROM entries
          WHERE collection = ? AND type = 'page'
-         ORDER BY path ASC`,
-      )
-      .all(this.collection) as EntryRow[];
+         ORDER BY path ASC`;
+
+    const rows = await db.all<EntryRow>(sql, [this.collection]);
 
     const entries = rows.map((row) =>
       rowToEntry<{ title?: string }>(row),
@@ -163,8 +172,8 @@ class CollectionQueryImpl<T> implements CollectionQuery<T> {
     return buildNavigationTree(entries);
   }
 
-  private build(forcedLimit?: number): { sql: string; params: unknown[] } {
-    const params: unknown[] = [this.collection];
+  private build(forcedLimit?: number): { sql: string; params: SqlParam[] } {
+    const params: SqlParam[] = [this.collection];
     let sql = `SELECT type, path, meta_or_data, toc, html FROM entries WHERE collection = ?`;
 
     if (this.state.path !== undefined) {
@@ -182,21 +191,4 @@ class CollectionQueryImpl<T> implements CollectionQuery<T> {
 
     return { sql, params };
   }
-}
-
-export function getCollection<
-  TCollections extends Record<string, CollectionDefinition<any>>,
-  K extends keyof TCollections & string,
->(
-  db: SqliteDatabase,
-  config: { collections: TCollections },
-  name: K,
-): TCollections[K] extends CollectionDefinition<infer T>
-  ? CollectionQuery<T>
-  : never {
-  if (!(name in config.collections)) {
-    throw new Error(`Unknown collection "${name}"`);
-  }
-
-  return new CollectionQueryImpl<any>(db, name) as any;
 }

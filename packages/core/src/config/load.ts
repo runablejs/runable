@@ -13,39 +13,6 @@ import { generateModulesOptionsDts } from "./modules-options.js";
 import { resolveConfig, resolveConfig_v2 } from "./resolve.js";
 import type { ModuleDefinition, SyoraConfig, ResolvedConfig } from "./types.js";
 
-/**
- * `Config` after defaults have been applied by `resolveConfig`.
- * `_index` is internal bookkeeping, not part of the user-facing config.
- */
-type ResolvedConfig0 = Required<SyoraConfig> & {
-  cwd: string;
-  components: ComponentDir[];
-
-  /**
-   * Load order across the main config and its modules, assigned in `loadAndCacheConfig`.
-   * NOTE: with parallel module loading below, this now reflects completion
-   * order (whichever `c12Load` resolves first), not declaration order.
-   */
-  _index: number;
-
-  _name: string;
-
-  _parentName?: string;
-
-  _configFile?: string;
-
-  _isSyoraModule?: boolean;
-
-  /**
-   * A module's resolved options (`defaults` merged with the consumer's
-   * overrides) — only ever set for a config loaded on behalf of a `parent`
-   * (see `loadAndCacheConfig`), never on the root app config. Read through
-   * `getModuleOptions<OptionsT>()` rather than off this field directly, so
-   * callers get it back typed instead of `unknown`.
-   */
-  _options?: unknown;
-};
-
 /** Subset of the config safe to forward to the client bundle. */
 export type ClientConfig = Pick<
   SyoraConfig,
@@ -148,25 +115,23 @@ export async function loadAndCacheConfig({
     // (i.e. `defineModule`'d config); the rest is a plain `SyoraConfig` and
     // is resolved/merged exactly like before.
     const { configKey, defaults, setup, meta, ...rest } = loaded ?? {};
-    let config = rest as ResolvedConfig;
+    const config = rest as ResolvedConfig;
 
     name = meta?.name ?? name;
     config.cwd = cwd ?? process.cwd();
 
-    config = resolveConfig_v2(config);
-    config._name = name;
-    config._configFile = _configFile;
+    let rConfig = resolveConfig_v2(config);
+    rConfig._name = name;
+    rConfig._configFile = _configFile;
+    rConfig._isSyoraModule = config._isSyoraModule;
 
     cachedConfigs ??= {};
-    config = merge(cloneDeep(cachedConfigs[name] ?? {}), config);
+    rConfig = merge(cloneDeep(cachedConfigs[name] ?? {}), rConfig);
 
     if (typeof config._index !== "number") config._index = index++;
+    if (parent && !config._parentName) rConfig._parentName = parent._name;
 
-    if (parent && !config._parentName) {
-      config._parentName = parent._name;
-    }
-
-    cachedConfigs[name] = config;
+    cachedConfigs[name] = rConfig;
 
     // Only configs loaded on behalf of a `parent` are modules — the root
     // app config never goes through options resolution/`setup`.
@@ -174,7 +139,7 @@ export async function loadAndCacheConfig({
       const key = configKey ?? meta?.name ?? name;
       const userOptions = (parent as Record<string, unknown>)[key];
       const resolvedDefaults =
-        typeof defaults === "function" ? defaults(config) : defaults;
+        typeof defaults === "function" ? defaults(rConfig) : defaults;
 
       const options = merge(
         cloneDeep(resolvedDefaults ?? {}),
@@ -183,10 +148,10 @@ export async function loadAndCacheConfig({
 
       cachedConfigs[name]!._options = options;
 
-      await setup?.(options, config);
+      await setup?.(options, rConfig);
     }
 
-    await loadModulesConfigs(config);
+    await loadModulesConfigs(rConfig);
   })();
 
   inFlight.set(name, promise);
