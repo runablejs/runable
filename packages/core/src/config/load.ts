@@ -56,8 +56,8 @@ export function defineConfig(config: SyoraConfig): SyoraConfig {
  * Builds on top of `defineConfig`: a module can declare everything a regular
  * config can (plugins, components, layouts...), plus `configKey`/`defaults`
  * to expose typed, overridable options, a `setup` hook invoked once every
- * config in the graph has been resolved (see `runSetups`), and `dependOn`
- * to order that hook relative to other modules' setups.
+ * config in the graph has been resolved (see `runSetups`), and `dependOn` /
+ * `enforce` to order that hook relative to other modules' setups.
  *
  * @example
  * export default defineModule<{ prefix: string }>({
@@ -224,7 +224,13 @@ type PendingSetup = {
   setup?: ModuleDefinition["setup"];
   /** Canonical names of modules whose `setup` must run before this one's. */
   dependOn: string[];
+  enforce: ModuleDefinition["enforce"];
 };
+
+/** `pre` < default < `post`, used to order `enforce` groups and validate `dependOn` against them. */
+function enforceRank(enforce: ModuleDefinition["enforce"]): number {
+  return enforce === "pre" ? 0 : enforce === "post" ? 2 : 1;
+}
 
 function resolveAllConfigs(entries: Map<string, RawEntry>): {
   resolved: Record<string, ResolvedConfig>;
@@ -234,7 +240,7 @@ function resolveAllConfigs(entries: Map<string, RawEntry>): {
   const pendingSetups: PendingSetup[] = [];
 
   for (const entry of entries.values()) {
-    const { configKey, defaults, setup, dependOn, meta, ...rest } =
+    const { configKey, defaults, setup, dependOn, enforce, meta, ...rest } =
       entry.loaded;
     const config = rest as ResolvedConfig;
     config.cwd = entry.cwd;
@@ -264,9 +270,16 @@ function resolveAllConfigs(entries: Map<string, RawEntry>): {
       }
 
       for (const depName of dependOn ?? []) {
-        if (!entries.has(depName)) {
+        const depEntry = entries.get(depName);
+        if (!depEntry) {
           throw new Error(
             `Module "${entry.name}" declares dependOn: "${depName}", but no module with that name was found.`,
+          );
+        }
+
+        if (enforceRank(depEntry.loaded.enforce) > enforceRank(enforce)) {
+          throw new Error(
+            `Module "${entry.name}" (enforce: "${enforce ?? "default"}") cannot dependOn "${depName}" (enforce: "${depEntry.loaded.enforce ?? "default"}") — a module can only dependOn modules in the same or an earlier enforce group.`,
           );
         }
       }
@@ -277,6 +290,7 @@ function resolveAllConfigs(entries: Map<string, RawEntry>): {
         options,
         setup,
         dependOn: dependOn ?? [],
+        enforce,
       });
     }
 
@@ -290,13 +304,14 @@ function resolveAllConfigs(entries: Map<string, RawEntry>): {
  * Phase 3 — setup
  *
  * Every config in the graph is resolved and every module's `_options`
- * already reflects all of its dependents, so by default setups have no
- * ordering dependency on one another and run in parallel. A module can opt
- * into an explicit ordering via `dependOn`: its `setup` then waits for the
- * named modules' setups to complete first. `run` is memoized (like `load`
- * in phase 1) so a module referenced by several `dependOn` lists only runs
- * its `setup` once, and cycles (A depends on B depends on A) are caught via
- * `visiting` instead of deadlocking.
+ * already reflects all of its dependents. Setups run in three sequential
+ * waves by `enforce` (`pre`, then default, then `post`) — a later wave only
+ * starts once the previous one has fully completed. Within a wave, `run` is
+ * memoized (like `load` in phase 1) so a module referenced by several
+ * `dependOn` lists only runs its `setup` once and, absent a `dependOn`
+ * between them, runs in parallel with its wave-mates. `dependOn` on an
+ * earlier-wave module resolves instantly (already done); cycles (A depends
+ * on B depends on A) are caught via `visiting` instead of deadlocking.
  * ------------------------------------------------------------------------ */
 
 async function runSetups(pendingSetups: PendingSetup[]) {
@@ -327,7 +342,14 @@ async function runSetups(pendingSetups: PendingSetup[]) {
     return promise;
   }
 
-  await Promise.all(pendingSetups.map((p) => run(p.config._name)));
+  const waves: PendingSetup[][] = [[], [], []]; // pre, default, post
+  for (const pending of pendingSetups) {
+    waves[enforceRank(pending.enforce)]?.push(pending);
+  }
+
+  for (const wave of waves) {
+    await Promise.all(wave.map((p) => run(p.config._name)));
+  }
 }
 
 /**

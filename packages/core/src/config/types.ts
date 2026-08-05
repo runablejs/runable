@@ -142,6 +142,18 @@ export interface ModuleDefinition<
   dependOn?: string[];
 
   /**
+   * Runs this module's `setup` before (`'pre'`) or after (`'post'`) modules
+   * that declare no `enforce`, similar to Vite's plugin `enforce`. Omit for
+   * the default, middle group.
+   *
+   * Combines with `dependOn`: a module can only `dependOn` a module in the
+   * same or an earlier group (`pre` before default before `post`) — a `pre`
+   * module declaring `dependOn` on a `post` one throws while configs are
+   * loaded, instead of silently running out of order.
+   */
+  enforce?: "pre" | "post";
+
+  /**
    * Runs once the module's options are resolved (`defaults` merged with the
    * consumer's overrides). Use it to mutate/extend `config` — register
    * plugins, components dirs, globals, etc.
