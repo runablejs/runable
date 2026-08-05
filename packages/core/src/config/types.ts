@@ -26,10 +26,10 @@ export interface SyoraConfig {
   /** Directory(ies) containing global components to auto-register. */
   components?: Arrayable<ComponentDir>;
 
-  /** Files of composables to auto-import in the application. */
+  /** Directory(ies) containing composables to auto-import in the application. */
   composables?: Arrayable<ComponentDir>;
 
-  /** Files of global functions, variables, to auto-import in the application. */
+  /** Directory(ies) containing global functions/variables to auto-import in the application. */
   globals?: Arrayable<ScanDir>;
 
   /** Syora plugins to load, by name or relative path. */
@@ -110,7 +110,7 @@ export interface ModuleMeta {
 export interface ModuleDefinition<
   OptionsT extends Record<string, any> = Record<string, any>,
 > extends SyoraConfig {
-  /** Module metadata. */
+  /** Metadata about the module (name, required Syora version). */
   meta?: ModuleMeta;
 
   /**
@@ -166,31 +166,55 @@ export interface ModuleDefinition<
  * `_index` is internal bookkeeping, not part of the user-facing config.
  */
 export type ResolvedConfig = {
+  /** Absolute path to the directory containing the Vue.js application's source code. */
   appDir: string;
+  /** Resolved build output mode/format. */
   output: string;
+  /** Resolved path to the directory of static assets served as-is, or `false` if disabled. */
   publicDir: string | false;
 
+  /** Resolved directory(ies) containing global components to auto-register. */
   components: ResolvedComponentDir[];
+  /** Resolved layout files/directories. */
   layouts: ResolvedScanDir[];
+  /** Resolved directory(ies) containing global functions/variables to auto-import. */
   globals: ResolvedScanDir[];
+  /** Resolved directory(ies) containing composables to auto-import. */
   composables: ResolvedScanDir[];
+  /** Resolved routing options defining the application's pages. */
   pages: RouterOptionsRawResolved[];
+  /** Resolved Syora plugins to load. */
   plugins: ResolvedScanDir[];
+  /** Resolved global CSS files included in the application. */
   css: ResolvedScanDir[];
 
+  /** Resolved module resolution aliases (import path → actual path). */
   alias: AliasMap;
+  /** Names or relative paths of the Syora modules loaded alongside this config. */
   modules: string[];
+  /** Whether server-side rendering (SSR) is enabled. */
   ssr: boolean;
+  /** Resolved base URL the application is served from (routes/assets prefix). */
   baseUrl: string | undefined;
+  /** Whether Syora's built-in developer tools (devtools) are enabled. */
   devtools: boolean | undefined;
+  /** Resolved default HTML `<head>` metadata. */
   head: ResolvableHead | undefined;
+  /** Resolved public site URL, used to generate absolute links (SEO, sitemap...). */
   siteUrl: string | undefined;
+  /** The raw config as originally authored by the user, before defaults were applied. */
   defineConfig: SyoraConfig;
+  /** Resolved additional Vite options, merged with Syora's internal config. */
   vite: SyoraConfig["vite"];
 
   // ------------------------------------------------
 
+  /**
+   * Working directory used to resolve this config's own relative paths.
+   * @deprecated use `_cwd`
+   * */
   cwd: string;
+  /** Working directory used to resolve this config's own relative paths. */
   _cwd: string;
 
   /**
@@ -200,12 +224,16 @@ export type ResolvedConfig = {
    */
   _index: number;
 
+  /** Name of this config: the app's own name, or the module's name/path as referenced in `modules`. */
   _name: string;
 
+  /** Name of the parent config this one was loaded on behalf of, if this is a module config. */
   _parentName?: string;
 
+  /** Absolute path to the config file this was loaded from, if any. */
   _configFile?: string;
 
+  /** `true` if this config belongs to a Syora module rather than the root application. */
   _isSyoraModule?: boolean;
 
   /**
@@ -217,7 +245,9 @@ export type ResolvedConfig = {
    */
   _options?: unknown;
 
+  /** Names of the configs whose `dependOn` lists reference this one. */
   _dependents: string[];
 
+  /** This config's own `dependOn` list — the module names its `setup` must wait for. */
   _dependOn: string[];
 };

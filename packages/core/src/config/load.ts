@@ -5,9 +5,7 @@ import { loadConfig as c12Load } from "c12";
 import cloneDeep from "lodash/cloneDeep.js";
 import merge from "lodash/merge.js";
 
-import type { ComponentDir } from "@/components/types";
 import { normalizeDir, resolvePackageDir } from "@/utils";
-
 import { generateModulesOptionsDts } from "./modules-options.js";
 import { resolveConfig } from "./resolve.js";
 import type { ModuleDefinition, SyoraConfig, ResolvedConfig } from "./types.js";
@@ -88,12 +86,17 @@ export function defineModule<
  * ------------------------------------------------------------------------ */
 
 type RawEntry = {
+  /** Canonical name of this config — `meta.name` if declared, otherwise the name/path it was referenced by. */
   name: string;
+  /** Directory this config's `syora.config` file was loaded from. */
   cwd: string;
+  /** Absolute path to the config file that was loaded, if any. */
   configFile?: string;
+  /** The raw config as returned by `c12Load`, before `resolveConfig` runs on it. */
   loaded: ModuleDefinition;
   /** Names of the configs whose `modules` list references this one. Empty for the root. */
   dependents: Set<string>;
+  /** Position in discovery (completion) order — carried over to `_index` on the resolved config. */
   index: number;
 };
 
@@ -219,11 +222,15 @@ async function loadAllConfigs(
  * ------------------------------------------------------------------------ */
 
 type PendingSetup = {
+  /** The module's resolved config, passed to `setup` as its second argument. */
   config: ResolvedConfig;
+  /** The module's resolved options, passed to `setup` as its first argument. */
   options: Record<string, unknown>;
+  /** The module's `setup` hook, if it declared one. */
   setup?: ModuleDefinition["setup"];
   /** Canonical names of modules whose `setup` must run before this one's. */
   dependOn: string[];
+  /** The module's `enforce` group, used to place it in the right wave (see `enforceRank`). */
   enforce: ModuleDefinition["enforce"];
 };
 
@@ -232,6 +239,12 @@ function enforceRank(enforce: ModuleDefinition["enforce"]): number {
   return enforce === "pre" ? 0 : enforce === "post" ? 2 : 1;
 }
 
+/**
+ * Resolves every entry's config via `resolveConfig` and, for entries that
+ * are modules (i.e. have at least one dependent), merges their options and
+ * validates their `dependOn`/`enforce`. Returns the resolved configs keyed
+ * by name, plus the list of modules still needing their `setup` run.
+ */
 function resolveAllConfigs(entries: Map<string, RawEntry>): {
   resolved: Record<string, ResolvedConfig>;
   pendingSetups: PendingSetup[];
@@ -359,6 +372,7 @@ async function runSetups(pendingSetups: PendingSetup[]) {
 export async function loadConfig() {
   if (cachedConfigs) return;
 
+  // Clear any stale module directory resolutions before this fresh load.
   moduleDirCache = undefined;
 
   const entries = await loadAllConfigs();
@@ -370,7 +384,11 @@ export async function loadConfig() {
   await runSetups(pendingSetups);
 }
 
-/** Returns the resolved main app config. Throws if `loadConfig()` hasn't run yet. */
+/**
+ * Returns a resolved config by name — the root app config by default
+ * (`"__main"`), or a specific module's config. Throws if `loadConfig()`
+ * hasn't run yet.
+ */
 export function useConfig(name = "__main") {
   if (!cachedConfigs || !cachedConfigs[name]) {
     throw new Error("Syora config is not loaded. Call loadConfig() first.");
@@ -379,7 +397,10 @@ export function useConfig(name = "__main") {
   return cachedConfigs[name];
 }
 
-/** Returns the resolved all app configs. Throws if `loadConfig()` hasn't run yet. */
+/**
+ * Returns every resolved config in the graph (app + modules), sorted by
+ * load order (`_index`). Throws if `loadConfig()` hasn't run yet.
+ */
 export function useAllConfigs() {
   if (!cachedConfigs) {
     throw new Error("Syora config is not loaded. Call loadConfig() first.");
