@@ -42,8 +42,7 @@ async function initDb({
 }
 
 async function seedCollection(db: Database, collectionName: string) {
-  const raws: Record<string, string> =
-    await import("#app/content/compressed.js");
+  let raws: Record<string, string> = await import("#app/content/compressed.js");
 
   const raw = raws[collectionName];
   if (!raw) return;

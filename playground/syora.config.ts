@@ -4,7 +4,7 @@ import { join } from "node:path";
 export default defineConfig({
   // devtools: { enable: true },
 
-  modules: ["./modules/content"],
+  modules: ["@syora/content"],
 
   head: {
     title: "Syora/vue playground",

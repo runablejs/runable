@@ -1,4 +1,4 @@
-import { readFileSync } from "fs";
+import { readFileSync, realpathSync } from "node:fs";
 import { dirname, join } from "path";
 import { resolvePathSync } from "mlly";
 
@@ -35,6 +35,9 @@ interface PackageDependenciesResult {
   dependencies: DependencyInfo[];
 }
 
+import * as path from "path";
+import { createRequire } from "module";
+
 /**
  * Robustly resolves a package root directory, avoiding "exports" subpath restriction issues.
  */
@@ -45,6 +48,58 @@ export function resolvePackageDir(
   const { dir } = getPackageJson(packageName, callerPath);
 
   return dir;
+}
+
+export function getPackageJson(
+  moduleName: string | undefined,
+  callerPath: string = process.cwd(),
+) {
+  let currentDir: string;
+
+  if (moduleName) {
+    try {
+      // resolvePathSync accurately locates the entry point respecting ESM exports maps
+      const mainEntryPoint = resolvePathSync(moduleName, { url: callerPath });
+      currentDir = dirname(mainEntryPoint);
+    } catch (err) {
+      throw new Error(
+        `Could not resolve entry point for module "${moduleName}": ${(err as Error).message}`,
+      );
+    }
+  } else {
+    currentDir = callerPath;
+  }
+
+  while (true) {
+    try {
+      const packageJsonPath = join(currentDir, "package.json");
+      const pkg = JSON.parse(
+        readFileSync(packageJsonPath, "utf-8"),
+      ) as PackageJson;
+
+      // If no moduleName was requested, return the closest matching parent package.json
+      // If moduleName is provided, we verify it matches or accept the first encountered since mlly isolated the path
+      if (
+        !moduleName ||
+        pkg.name === moduleName ||
+        moduleName.startsWith(pkg.name + "/")
+      ) {
+        return { dir: currentDir, content: pkg };
+      }
+    } catch {
+      // Continue traversing upwards if package.json is missing or corrupt
+    }
+
+    const parentDir = dirname(currentDir);
+    // Break the loop if we reach the absolute root directory of the file system
+    if (parentDir === currentDir) break;
+
+    currentDir = parentDir;
+  }
+
+  throw new Error(
+    `Could not locate the root directory or valid package.json for target "${moduleName ?? callerPath}"`,
+  );
 }
 
 /**
@@ -102,56 +157,4 @@ export function getDependencyTree(
       `Failed to load or parse dependency "${dependencyName}": ${(error as Error).message}`,
     );
   }
-}
-
-export function getPackageJson(
-  moduleName: string | undefined,
-  callerPath: string = process.cwd(),
-) {
-  let currentDir: string;
-
-  if (moduleName) {
-    try {
-      // resolvePathSync accurately locates the entry point respecting ESM exports maps
-      const mainEntryPoint = resolvePathSync(moduleName, { url: callerPath });
-      currentDir = dirname(mainEntryPoint);
-    } catch (err) {
-      throw new Error(
-        `Could not resolve entry point for module "${moduleName}": ${(err as Error).message}`,
-      );
-    }
-  } else {
-    currentDir = callerPath;
-  }
-
-  while (true) {
-    try {
-      const packageJsonPath = join(currentDir, "package.json");
-      const pkg = JSON.parse(
-        readFileSync(packageJsonPath, "utf-8"),
-      ) as PackageJson;
-
-      // If no moduleName was requested, return the closest matching parent package.json
-      // If moduleName is provided, we verify it matches or accept the first encountered since mlly isolated the path
-      if (
-        !moduleName ||
-        pkg.name === moduleName ||
-        moduleName.startsWith(pkg.name + "/")
-      ) {
-        return { dir: currentDir, content: pkg };
-      }
-    } catch {
-      // Continue traversing upwards if package.json is missing or corrupt
-    }
-
-    const parentDir = dirname(currentDir);
-    // Break the loop if we reach the absolute root directory of the file system
-    if (parentDir === currentDir) break;
-
-    currentDir = parentDir;
-  }
-
-  throw new Error(
-    `Could not locate the root directory or valid package.json for target "${moduleName ?? callerPath}"`,
-  );
 }

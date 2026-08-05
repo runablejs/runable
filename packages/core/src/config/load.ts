@@ -1,16 +1,15 @@
 import { existsSync } from "node:fs";
-import { createRequire } from "node:module";
-import { dirname, join, relative, resolve } from "node:path";
+import { join, relative, resolve } from "node:path";
 
 import { loadConfig as c12Load } from "c12";
 import cloneDeep from "lodash/cloneDeep.js";
 import merge from "lodash/merge.js";
 
 import type { ComponentDir } from "@/components/types";
-import { normalizeDir } from "@/utils";
+import { normalizeDir, resolvePackageDir } from "@/utils";
 
 import { generateModulesOptionsDts } from "./modules-options.js";
-import { resolveConfig, resolveConfig_v2 } from "./resolve.js";
+import { resolveConfig } from "./resolve.js";
 import type { ModuleDefinition, SyoraConfig, ResolvedConfig } from "./types.js";
 
 /** Subset of the config safe to forward to the client bundle. */
@@ -25,15 +24,7 @@ export type ClientConfig = Pick<
  */
 let cachedConfigs: Record<string, ResolvedConfig> | undefined;
 
-/**
- * In-flight `loadAndCacheConfig` promises, keyed by module name. Lets multiple
- * modules that depend on the same shared module (a "diamond" dependency)
- * trigger it once instead of loading/merging it redundantly per parent —
- * matters once sibling modules are loaded in parallel (see below).
- */
-let inFlight: Map<string, Promise<void>> | undefined;
-
-/** Memoizes `resolveModuleDir` by name so repeated references only touch the filesystem once. */
+/** Memoizes `getModuleDir` by name so repeated references only touch the filesystem once. */
 let moduleDirCache: Map<string, string> | undefined;
 
 /**
@@ -65,7 +56,7 @@ export function defineConfig(config: SyoraConfig): SyoraConfig {
  * Builds on top of `defineConfig`: a module can declare everything a regular
  * config can (plugins, components, layouts...), plus `configKey`/`defaults`
  * to expose typed, overridable options, and a `setup` hook invoked once
- * those options are resolved (see `loadAndCacheConfig`).
+ * every config in the graph has been resolved (see `runSetups`).
  *
  * @example
  * export default defineModule<{ prefix: string }>({
@@ -85,111 +76,46 @@ export function defineModule<
   return moduleDef;
 }
 
-/** Assigns each loaded config (main + modules) an incrementing `_index`, reset per `loadConfig()` call. */
-let index = 0;
-
-/**
- * Loads and resolves a single config (main app or one module), then recurses
- * into its own `modules`. Results are merged into `cachedConfigs[name]`.
- * Deduped via `inFlight`: a second call with the same `name` while the first
- * is still running just awaits the same promise instead of redoing the work.
- */
-export async function loadAndCacheConfig({
-  cwd,
-  name = "__main",
-  parent,
-}: { cwd?: string; name?: string; parent?: ResolvedConfig } = {}) {
-  inFlight ??= new Map();
-  name = normalizeModuleName(name);
-
-  const existing = inFlight.get(name);
-  if (existing) return existing;
-
-  const promise = (async () => {
-    let { config: loaded, _configFile } = await c12Load<ModuleDefinition>({
-      configFile: "syora.config",
-      cwd,
-    });
-
-    // `configKey`/`defaults`/`setup`/`meta` only make sense for a module
-    // (i.e. `defineModule`'d config); the rest is a plain `SyoraConfig` and
-    // is resolved/merged exactly like before.
-    const { configKey, defaults, setup, meta, ...rest } = loaded ?? {};
-    const config = rest as ResolvedConfig;
-
-    name = meta?.name ?? name;
-    config.cwd = cwd ?? process.cwd();
-
-    let rConfig = resolveConfig_v2(config);
-    rConfig._name = name;
-    rConfig._configFile = _configFile;
-    rConfig._isSyoraModule = config._isSyoraModule;
-
-    cachedConfigs ??= {};
-    rConfig = merge(cloneDeep(cachedConfigs[name] ?? {}), rConfig);
-
-    if (typeof config._index !== "number") config._index = index++;
-    if (parent && !config._parentName) rConfig._parentName = parent._name;
-
-    cachedConfigs[name] = rConfig;
-
-    // Only configs loaded on behalf of a `parent` are modules — the root
-    // app config never goes through options resolution/`setup`.
-    if (parent) {
-      const key = configKey ?? meta?.name ?? name;
-      const userOptions = (parent as Record<string, unknown>)[key];
-      const resolvedDefaults =
-        typeof defaults === "function" ? defaults(rConfig) : defaults;
-
-      const options = merge(
-        cloneDeep(resolvedDefaults ?? {}),
-        cloneDeep((userOptions as object) ?? {}),
-      );
-
-      cachedConfigs[name]!._options = options;
-
-      await setup?.(options, rConfig);
-    }
-
-    await loadModulesConfigs(rConfig);
-  })();
-
-  inFlight.set(name, promise);
-  return promise;
-}
-
-/**
- * Loads every module declared in `parent.modules`. Siblings are independent
- * I/O (separate config files/package resolution), so they're loaded in
- * parallel rather than one `await` at a time.
- */
-async function loadModulesConfigs(parent: ResolvedConfig) {
-  const modules = (parent.modules ?? []).map((name) =>
-    name.startsWith(".")
-      ? normalizeDir(relative(parent.cwd, resolve(parent.cwd, name)))
-      : name,
-  );
-
-  await Promise.all(
-    modules.map(async (name) => {
-      const cwd = getModuleDir(name, parent);
-      await loadAndCacheConfig({ cwd, name, parent });
-    }),
-  );
-}
-
-/**
- * Resolves a module name to the directory `loadAndCacheConfig` should treat as its `cwd`.
- * - `./relative/path` -> resolved directly against `parent.cwd`.
- * - bare package name -> resolved via `require.resolve` against `process.cwd()`,
- *   then `dist/` is appended, since Syora modules are expected to publish their
- *   built config output there rather than raw source.
+/* ------------------------------------------------------------------------ *
+ * Phase 1 — discovery
  *
- * Synchronous (no real `await` was happening here before) and memoized by
- * name, so a module referenced by several parents only hits `require.resolve`
- * / `existsSync` once.
+ * Load every syora.config in the graph (main + modules, transitively) into
+ * a flat map, keyed by name. No resolution, no setup — just I/O plus enough
+ * bookkeeping (`dependents`) for phase 2 to merge options without re-reading
+ * any file. A module referenced by several parents (diamond dependency) is
+ * only loaded once; later references just add themselves to its dependents.
+ * ------------------------------------------------------------------------ */
+
+type RawEntry = {
+  name: string;
+  cwd: string;
+  configFile?: string;
+  loaded: ModuleDefinition;
+  /** Names of the configs whose `modules` list references this one. Empty for the root. */
+  dependents: Set<string>;
+  index: number;
+};
+
+/** Same transform `modules` entries go through before being treated as a name / passed to `getModuleDir`. */
+function resolveModuleName(name: string, dirCwd: string): string {
+  return name.startsWith(".")
+    ? normalizeDir(relative(dirCwd, resolve(dirCwd, name)))
+    : name;
+}
+
+/**
+ * Resolves a module name to the directory its `syora.config` should be
+ * loaded from.
+ * - `./relative/path` -> resolved directly against `parentCwd`.
+ * - bare package name -> resolved via `require.resolve` against
+ *   `process.cwd()`, then `dist/` is appended, since Syora modules are
+ *   expected to publish their built config output there rather than raw
+ *   source.
+ *
+ * Synchronous and memoized by name, so a module referenced by several
+ * parents only hits `require.resolve` / `existsSync` once.
  */
-function getModuleDir(name: string, parent: ResolvedConfig): string {
+function getModuleDir(name: string, parentCwd: string): string {
   moduleDirCache ??= new Map();
 
   const cached = moduleDirCache.get(name);
@@ -197,16 +123,12 @@ function getModuleDir(name: string, parent: ResolvedConfig): string {
 
   let cwd: string | undefined;
 
-  if (name.startsWith(".")) cwd = resolve(parent.cwd, name);
+  if (name.startsWith(".")) cwd = resolve(parentCwd, name);
 
   if (!cwd) {
     try {
-      const require = createRequire(import.meta.url);
-      const packageJsonPath = require.resolve(resolve(name, "package.json"), {
-        paths: [process.cwd()],
-      });
-
-      cwd = join(dirname(packageJsonPath), "dist");
+      const packageJsonPath = resolvePackageDir(name);
+      cwd = join(packageJsonPath, "dist");
     } catch {
       // Package not found in node_modules — fall through to the error below.
     }
@@ -223,19 +145,160 @@ function getModuleDir(name: string, parent: ResolvedConfig): string {
 }
 
 /**
+ * Loads the full module graph (main config + every module it transitively
+ * depends on) into a flat `name -> RawEntry` map. Siblings load in parallel
+ * via the `inFlight` map, which also serves as the sole dedup mechanism.
+ */
+async function loadAllConfigs(
+  rootCwd?: string,
+): Promise<Map<string, RawEntry>> {
+  const entries = new Map<string, RawEntry>();
+  const inFlight = new Map<string, Promise<RawEntry>>();
+  let index = 0;
+
+  async function load(
+    rawName: string,
+    cwd: string | undefined,
+    dependent?: string,
+  ): Promise<RawEntry> {
+    const name = normalizeModuleName(rawName);
+
+    let promise = inFlight.get(name);
+    if (!promise) {
+      promise = (async (): Promise<RawEntry> => {
+        const { config: loaded, _configFile: configFile } =
+          await c12Load<ModuleDefinition>({ configFile: "syora.config", cwd });
+
+        const resolvedName = loaded?.meta?.name ?? name;
+        const entryCwd = cwd ?? process.cwd();
+
+        const entry: RawEntry = {
+          name: resolvedName,
+          cwd: entryCwd,
+          configFile,
+          loaded: loaded ?? ({} as ModuleDefinition),
+          dependents: new Set(),
+          index: index++,
+        };
+
+        entries.set(resolvedName, entry);
+
+        const childModules = (entry.loaded.modules ?? []).map((childName) =>
+          resolveModuleName(childName, entryCwd),
+        );
+
+        await Promise.all(
+          childModules.map((childName) =>
+            load(childName, getModuleDir(childName, entryCwd), resolvedName),
+          ),
+        );
+
+        return entry;
+      })();
+
+      inFlight.set(name, promise);
+    }
+
+    const entry = await promise;
+    if (dependent) entry.dependents.add(dependent);
+    return entry;
+  }
+
+  await load("__main", rootCwd);
+  return entries;
+}
+
+/* ------------------------------------------------------------------------ *
+ * Phase 2 — resolution
+ *
+ * `resolveConfig` each entry (no `setup` yet). A module's `_options` is the
+ * merge of its `defaults` with what *every* dependent declared under its
+ * `configKey` — not just whichever parent happened to trigger its load, as
+ * the previous per-parent loading made it.
+ * ------------------------------------------------------------------------ */
+
+type PendingSetup = {
+  config: ResolvedConfig;
+  options: Record<string, unknown>;
+  setup?: ModuleDefinition["setup"];
+};
+
+function resolveAllConfigs(entries: Map<string, RawEntry>): {
+  resolved: Record<string, ResolvedConfig>;
+  pendingSetups: PendingSetup[];
+} {
+  const resolved: Record<string, ResolvedConfig> = {};
+  const pendingSetups: PendingSetup[] = [];
+
+  for (const entry of entries.values()) {
+    const { configKey, defaults, setup, meta, ...rest } = entry.loaded;
+    const config = rest as ResolvedConfig;
+    config.cwd = entry.cwd;
+
+    const rConfig = resolveConfig(config);
+    rConfig._name = entry.name;
+    rConfig._configFile = entry.configFile;
+    rConfig._isSyoraModule = entry.loaded._isSyoraModule as boolean;
+    rConfig._dependents = [...entry.dependents];
+    rConfig._index = entry.index;
+
+    // Only a config loaded on behalf of a dependent is a module — the root
+    // app config never goes through options resolution/`setup`.
+    if (entry.dependents.size > 0) {
+      const key = configKey ?? meta?.name ?? entry.name;
+      const resolvedDefaults =
+        typeof defaults === "function" ? defaults(rConfig) : defaults;
+
+      let options = cloneDeep(resolvedDefaults ?? {});
+      for (const dependentName of entry.dependents) {
+        const dependentOptions = (
+          entries.get(dependentName)?.loaded as
+            | Record<string, unknown>
+            | undefined
+        )?.[key];
+        options = merge(options, cloneDeep(dependentOptions ?? {}));
+      }
+
+      rConfig._options = options;
+      pendingSetups.push({ config: rConfig, options, setup });
+    }
+
+    resolved[entry.name] = rConfig;
+  }
+
+  return { resolved, pendingSetups };
+}
+
+/* ------------------------------------------------------------------------ *
+ * Phase 3 — setup
+ *
+ * Every config in the graph is resolved and every module's `_options`
+ * already reflects all of its dependents, so setups have no ordering
+ * dependency on one another and can run in parallel.
+ * ------------------------------------------------------------------------ */
+
+async function runSetups(pendingSetups: PendingSetup[]) {
+  await Promise.all(
+    pendingSetups.map(({ config, options, setup }) => setup?.(options, config)),
+  );
+}
+
+/**
  * Loads the main config and all its modules into `cachedConfigs`. Idempotent:
  * subsequent calls are a no-op once a cache already exists.
  */
 export async function loadConfig() {
   if (cachedConfigs) return;
 
-  index = 0;
-  cachedConfigs = undefined;
-  inFlight = undefined;
   moduleDirCache = undefined;
 
-  await loadAndCacheConfig();
+  const entries = await loadAllConfigs();
+  const { resolved, pendingSetups } = resolveAllConfigs(entries);
+
+  cachedConfigs = resolved;
+
   await generateModulesOptionsDts();
+  await runSetups(pendingSetups);
 }
 
 /** Returns the resolved main app config. Throws if `loadConfig()` hasn't run yet. */
@@ -257,8 +320,8 @@ export function useAllConfigs() {
 }
 
 /**
- * Returns a module's resolved options (`defaults` merged with whatever the
- * consumer provided at `configKey` — see `loadAndCacheConfig`). `OptionsT`
+ * Returns a module's resolved options (`defaults` merged with what every
+ * dependent declared at `configKey` — see `resolveAllConfigs`). `OptionsT`
  * isn't inferred from anything at runtime — nothing survives to tell us
  * which `defineModule<OptionsT>` a given module was declared with — so pass
  * it explicitly to get a typed result back instead of `unknown`.

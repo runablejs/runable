@@ -4,6 +4,8 @@ import { mergeConfig, type UserConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { unheadVueComposablesImports } from "@unhead/vue";
 import { schemaOrgAutoImports } from "@unhead/schema-org/vue";
+import reverse from "lodash/reverse.js";
+import cloneDeep from "lodash/cloneDeep.js";
 
 import { useAllConfigs } from "@/config/load.js";
 import { resolveScanDirs } from "@/utils/dir/index.js";
@@ -118,10 +120,6 @@ export function buildViteConfig(): UserConfig {
       appVue.vite({ dir: join(main.appDir, "app.vue") }),
       importMeta.vite(),
     ],
-
-    optimizeDeps: {
-      include: ["@vue/runtime-dom", "nostics"],
-    },
   };
 
   const resolveViteConfig = (config: ResolvedConfig) => {
@@ -136,7 +134,7 @@ export function buildViteConfig(): UserConfig {
     _vites = mergeConfig(_vites, config.vite ?? {}) as UserConfig;
   };
 
-  configs.forEach((config) => {
+  reverse(cloneDeep(configs)).forEach((config) => {
     resolveViteConfig(withMainOverrides(main, config));
   });
 
@@ -146,11 +144,6 @@ export function buildViteConfig(): UserConfig {
       [join(import.meta.dirname, "../app/components")],
       { defaultExtensions: ["js", "ts", "mjs", "mts", "cjs", "vue"] },
     ),
-    //   {
-    //   dirs: resolve(import.meta.dirname, "../app/components"),
-    //   pathPrefix: false,
-    //   extensions: ["ts", "js", "jsx", "tsx", "vue"],
-    // }
   );
 
   viteConfig = mergeConfig(viteConfig, {

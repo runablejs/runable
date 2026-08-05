@@ -191,6 +191,7 @@ export function resolveScanFiles(
 
       const found = fg.sync(ntry.extGlob, {
         ...ntry,
+        ignore: ntry.exclude,
         cwd: dir,
         absolute: true,
         onlyFiles: true,

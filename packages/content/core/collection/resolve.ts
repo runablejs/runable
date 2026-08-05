@@ -168,6 +168,10 @@ export async function resolveContentConfig<
       : never;
   };
 }> {
+  const outputContent = join(options.syoraConfig.output, "content");
+
+  atomicWriteFile(join(outputContent, "compressed.ts"), "");
+
   const collections = config.collections ?? ({} as TCollections);
 
   const result = {} as any;
@@ -190,8 +194,6 @@ export async function resolveContentConfig<
       types.push(`  ${key}: ResolvedDataEntry;`);
     }
   }
-
-  const outputContent = join(options.syoraConfig.output, "content");
 
   atomicWriteFile(
     join(options.syoraConfig.output, "content", "compressed.ts"),

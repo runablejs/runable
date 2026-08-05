@@ -1,4 +1,4 @@
-import { extname, isAbsolute, relative } from "node:path";
+import { basename, extname, isAbsolute, relative } from "node:path";
 
 export function slash(p: string): string {
   return p.replace(/\\/g, "/");
@@ -25,7 +25,8 @@ export function getDefaultComponentName(
   pathPrefix: boolean,
 ): string {
   const ext = extname(absPath);
-  const rel = relative(scanDir, absPath);
+  const rel =
+    absPath === scanDir ? basename(absPath) : relative(scanDir, absPath);
   const relNoExt = ext ? rel.slice(0, -ext.length) : rel;
   const segments = slash(relNoExt).split("/").filter(Boolean);
 

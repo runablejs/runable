@@ -96,6 +96,7 @@ function collectViews(lists: RouterOptionsRawResolved[], target: RouteEntry[]) {
 
       const files = fg.sync(ntry.extGlob, {
         ...ntry,
+        ignore: ntry.exclude,
         cwd: dir,
         absolute: true,
         onlyFiles: true,

@@ -5,7 +5,7 @@ import { resolveDir, resolveScanDirs } from "@/utils";
 import type { ResolvedConfig, SyoraConfig } from "./types.js";
 import { resolveComponentDirs } from "@/components/options.js";
 
-export function resolveConfig_v2(config: SyoraConfig & { cwd: string }) {
+export function resolveConfig(config: SyoraConfig & { cwd: string }) {
   let _cwd = config.cwd ?? process.cwd();
 
   let _appDir = config.appDir ?? "app";

@@ -29,6 +29,6 @@ export default defineModule<ContentConfig>({
   },
 
   async setup(options) {
-    // await initContent(options);
+    await initContent(options);
   },
 });

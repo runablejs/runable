@@ -1,7 +1,6 @@
-import { createServer, useConfig, serve } from "@syora/core";
+import { createServer, useConfig, requestNode } from "@syora/core";
 import express from "express";
 import { join } from "node:path";
-// console.log("******************************");
 
 const app = express();
 
@@ -14,8 +13,7 @@ else {
 }
 
 app.use("*all", async (req, res) => {
-  const html = await serve({ vite, url: req.originalUrl });
-  res.status(200).set({ "Content-Type": "text/html" }).end(html);
+  await requestNode({ vite, req, res });
 });
 
 app.listen(5173);

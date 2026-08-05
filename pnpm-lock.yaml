@@ -672,6 +672,9 @@ importers:
       '@syora/cli':
         specifier: workspace:*
         version: link:../packages/cli
+      '@syora/content':
+        specifier: workspace:*
+        version: link:../packages/content
       '@syora/core':
         specifier: workspace:*
         version: link:../packages/core

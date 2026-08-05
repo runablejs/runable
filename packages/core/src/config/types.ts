@@ -191,4 +191,6 @@ export type ResolvedConfig = {
    * callers get it back typed instead of `unknown`.
    */
   _options?: unknown;
+
+  _dependents: string[];
 };

@@ -98,6 +98,7 @@ function collectLayouts(lists: ResolvedScanDir[], output: string) {
 
       const files = fg.sync(ntry.extGlob, {
         ...ntry,
+        ignore: ntry.exclude,
         cwd: dir,
         absolute: true,
         onlyFiles: true,

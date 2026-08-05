@@ -6,14 +6,14 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.js"
+      "types": "./dist/syora.config.d.ts",
+      "import": "./dist/syora.config.js",
+      "require": "./dist/syora.config.js"
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/syora.config.js",
+  "module": "./dist/syora.config.js",
+  "types": "./dist/syora.config.d.ts",
   "files": [
     "dist"
   ],

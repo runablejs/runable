@@ -27,6 +27,7 @@ temp/
 .parcel-cache/
 .vite/
 *.tsbuildinfo
+.content.db
 
 # Environment variables
 .env
