@@ -1,4 +1,10 @@
-import type { Arrayable, Fallback, ResolvedScanDir, ScanDir } from "@/utils";
+import type {
+  Arrayable,
+  Fallback,
+  ResolvedScanDir,
+  ResolvedScanDirFile,
+  ScanDir,
+} from "@/utils";
 
 /**
  * Component-specific scan options, on top of the shared `ScanDir` base.
@@ -113,20 +119,7 @@ export interface AutoComponentOptions {
   verbose?: boolean;
 }
 
-/** Fully resolved version of a `ComponentDir` entry, ready to be scanned. */
-// export interface ResolvedComponentDir {
-//   dirs: string[];
-//   extGlob: string;
-//   extensions: string[];
-//   exclude: string[];
-//   pathPrefix: boolean;
-//   componentName?: (
-//     filePath: string,
-//     defaultName: string,
-//   ) => string | false | undefined;
-// }
-
-export type ResolvedComponentDir = ResolvedScanDir<ComponentScanExtra>;
+export type ResolvedComponentDir = ResolvedScanDirFile<ComponentScanExtra>;
 
 /** Fully resolved plugin options. */
 export interface ResolvedOptions {

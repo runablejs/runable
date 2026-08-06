@@ -88,6 +88,9 @@ export type ResolvedScanDir<Extra extends object = {}> = {
   exclude: string[];
 } & Extra;
 
+export type ResolvedScanDirFile<Extra extends object = {}> =
+  ResolvedScanDir<Extra> & { file: string; parent: string };
+
 /**
  * Resolves a list of `ScanDir<Extra>` entries into fully-resolved scan
  * targets: absolute dirs, extension glob, exclude patterns, and any
@@ -163,6 +166,108 @@ export function resolveScanDirs<Extra extends object>(
   }
 
   return resolveds;
+}
+
+export function resolveScanDirs_v2<Extra extends object>(
+  cwd: string,
+  dirs: Arrayable<ScanDir<Extra>>,
+  {
+    defaultExtensions,
+    fallback,
+    resolveExtra,
+  }: {
+    /** Extensions used when a dir entry doesn't specify its own. */
+    defaultExtensions: string[];
+    /** Caller-supplied defaults, overridden by any per-dir value. */
+    fallback?: Fallback<Extra>;
+    /**
+     * Computes this scan type's extra fields (e.g. `pathPrefix`,
+     * `componentName`) from the raw dir entry and the merged fallback.
+     * Kept as a callback so `resolveScanDirs` stays agnostic of what
+     * "extra" actually means for a given scan type.
+     */
+    resolveExtra?: (
+      raw: Exclude<ScanDir<Extra>, string>,
+      fallback: Fallback<Extra>,
+    ) => Extra;
+  },
+): ResolvedScanDirFile<Extra>[] {
+  resolveExtra ??= () => ({}) as Extra;
+
+  const dirList = toArray(dirs);
+  const resolveds: ResolvedScanDir<Extra>[] = [];
+
+  for (let i = 0; i < dirList.length; i++) {
+    const dir = dirList[i]!;
+    const raw = (typeof dir === "string" ? { dirs: dir } : dir) as Exclude<
+      ScanDir<Extra>,
+      string
+    >;
+
+    // `merge` skips undefined source values, so per-dir values win when
+    // set, and the caller-supplied `fallback` fills the gaps otherwise.
+    const _fallback = merge<Fallback<Extra>, Fallback<Extra>>(
+      fallback ?? ({} as Fallback<Extra>),
+      {
+        extensions: toArray(raw.extensions ?? defaultExtensions),
+        exclude: mergeExcludePatterns(raw.exclude),
+        ...resolveExtra(raw, fallback ?? ({} as Fallback<Extra>)),
+      },
+    );
+
+    const extensions = raw.extensions
+      ? toArray(raw.extensions)
+      : _fallback.extensions!;
+    const exclude = _fallback.exclude!;
+    const extra = resolveExtra(raw, _fallback);
+
+    const _dirs = toArray(raw.dirs).map((d) => resolveDir(d, cwd));
+    const extGlob =
+      extensions.length === 1 ? extensions[0] : `{${extensions.join(",")}}`;
+
+    resolveds.push({
+      dirs: _dirs,
+      extGlob: `**/*.${extGlob}`,
+      extensions,
+      exclude,
+      ...extra,
+    });
+  }
+
+  const fileReselveds: ResolvedScanDirFile<Extra>[] = [];
+
+  for (const entries of resolveds) {
+    for (const entry of entries.dirs) {
+      if (existsSync(entry) && statSync(entry).isFile()) {
+        fileReselveds.push({
+          ...entries,
+          file: entry,
+          parent: entry,
+        });
+        continue;
+      }
+
+      fileReselveds.push(
+        ...fg
+          .sync(entries.extGlob, {
+            ...entries,
+            ignore: entries.exclude,
+            cwd: entry,
+            absolute: true,
+            onlyFiles: true,
+          })
+          .map((file) => {
+            return {
+              ...entries,
+              file,
+              parent: entry,
+            };
+          }),
+      );
+    }
+  }
+
+  return fileReselveds;
 }
 
 /**

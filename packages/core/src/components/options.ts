@@ -10,7 +10,7 @@ import {
   Arrayable,
   resolveDir as _resolveDir,
   mergeExcludePatterns,
-  resolveScanDirs,
+  resolveScanDirs_v2,
   toArray,
 } from "@/utils";
 
@@ -22,12 +22,6 @@ export function resolveOptions(
   root: string,
 ): ResolvedOptions {
   mergeExcludePatterns(options.exclude);
-  const fallback: ComponentFallback = {
-    extensions: toArray(options.extensions ?? []),
-    exclude: mergeExcludePatterns(options.exclude),
-    pathPrefix: options.pathPrefix ?? true,
-    componentName: options.componentName,
-  };
 
   const rawDirs = toArray(options.dirs ?? []).map((raw) => {
     raw.pathPrefix = raw.pathPrefix ?? options.pathPrefix ?? true;
@@ -60,12 +54,22 @@ export function resolveComponentDirs(
   dirs: Arrayable<ComponentDir>,
   { fallback }: { fallback?: ComponentFallback } = {},
 ): ResolvedComponentDir[] {
-  return resolveScanDirs<ComponentScanExtra>(cwd, dirs, {
+  return resolveScanDirs_v2<ComponentScanExtra>(cwd, dirs, {
     defaultExtensions: DEFAULT_EXTENSIONS,
     fallback,
     resolveExtra: (raw, fb) => ({
       pathPrefix: raw.pathPrefix ?? fb.pathPrefix ?? true,
       componentName: raw.componentName ?? fb.componentName,
+      extensions: raw.extensions ?? fb.extensions ?? ["vue"],
     }),
   });
+
+  // return resolveScanDirs<ComponentScanExtra>(cwd, dirs, {
+  //   defaultExtensions: DEFAULT_EXTENSIONS,
+  //   fallback,
+  //   resolveExtra: (raw, fb) => ({
+  //     pathPrefix: raw.pathPrefix ?? fb.pathPrefix ?? true,
+  //     componentName: raw.componentName ?? fb.componentName,
+  //   }),
+  // });
 }

@@ -1,13 +1,13 @@
 import path from "node:path";
 import { normalizeDir, resolveScanFiles } from "@/utils/dir/index.js";
 import { createUnplugin } from "unplugin";
-import type { Arrayable, ResolvedScanDir } from "@/utils";
+import type { Arrayable, ResolvedScanDir, ResolvedScanDirFile } from "@/utils";
 
 const VIRTUAL_ID = ":css";
 const RESOLVED_VIRTUAL_ID = "\0:css";
 
 export type CssOptions = {
-  dirs: ResolvedScanDir[];
+  dirs: ResolvedScanDirFile[];
   cwd?: string;
 };
 

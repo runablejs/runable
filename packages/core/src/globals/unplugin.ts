@@ -16,11 +16,7 @@ import {
   type ExportMetadata,
 } from "../utils/get-exports.js";
 import { atomicWriteFile } from "../utils/atomic-write-file.js";
-import {
-  normalizeDir,
-  ResolvedScanDir,
-  resolveScanFiles,
-} from "../utils/dir/index.js";
+import { normalizeDir, ResolvedScanDirFile } from "../utils/dir/index.js";
 import { getPackageJson } from "@/utils/pkg.js";
 import { resolvePackageEntry } from "@/utils/pkg-resolve-entry.js";
 import type { Arrayable } from "@/utils/types.js";
@@ -36,7 +32,7 @@ type ImportsCommon = { from: string; imports: string[] };
 type ImportsMap = Record<string, string[]>;
 
 export type GlobalOptionsImports =
-  | ResolvedScanDir[]
+  | ResolvedScanDirFile[]
   | string
   | ImportsCommon
   | ImportsMap;
@@ -135,10 +131,8 @@ function resolveConfigImports(
     }
 
     if (Array.isArray(entry)) {
-      const files = resolveScanFiles(entry);
-
-      for (const file of files) {
-        Object.assign(target, getExports(file).exports);
+      for (const file of entry) {
+        Object.assign(target, getExports(file.file).exports);
       }
 
       continue;

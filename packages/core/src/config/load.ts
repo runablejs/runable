@@ -10,12 +10,6 @@ import { generateModulesOptionsDts } from "./modules-options.js";
 import { resolveConfig } from "./resolve.js";
 import type { ModuleDefinition, SyoraConfig, ResolvedConfig } from "./types.js";
 
-/** Subset of the config safe to forward to the client bundle. */
-export type ClientConfig = Pick<
-  SyoraConfig,
-  "head" | "ssr" | "siteUrl" | "baseUrl"
->;
-
 /**
  * Module-level cache of resolved configs, keyed by module name.
  * The root app config is stored under the reserved key `"__main"`.

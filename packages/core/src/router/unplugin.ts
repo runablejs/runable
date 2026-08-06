@@ -1,8 +1,6 @@
-import { dirname, extname, relative, resolve } from "node:path";
-import { existsSync, statSync } from "node:fs";
+import { extname, relative, resolve } from "node:path";
 
 import { createUnplugin } from "unplugin";
-import fg from "fast-glob";
 
 import { normalizeDir } from "../utils/dir/index.js";
 import { extractPageMeta } from "./extract-page-meta.js";
@@ -72,8 +70,9 @@ function toRouteSegment(segment: string): string {
   return segment;
 }
 
-function resolveRouteEntry(viewsDir: string, filePath: string): RouteEntry {
-  let normalized = relative(viewsDir, filePath).replaceAll("\\", "/");
+function resolveRouteEntry(filePath: string, parentDir: string): RouteEntry {
+  let normalized = normalizeDir(filePath);
+  if (filePath !== parentDir) normalized = relative(parentDir, filePath);
 
   const ext = extname(normalized);
   normalized = normalized.slice(0, -ext.length);
@@ -86,26 +85,10 @@ function resolveRouteEntry(viewsDir: string, filePath: string): RouteEntry {
 }
 
 /** Scans one `routeDirs` entry and pushes its routes into the shared accumulator. */
-function collectViews(lists: RouterOptionsRawResolved[], target: RouteEntry[]) {
-  for (const ntry of lists) {
-    for (const dir of ntry.dirs) {
-      if (existsSync(dir) && statSync(dir).isFile()) {
-        target.push(resolveRouteEntry(dirname(dir), dir));
-        continue;
-      }
-
-      const files = fg.sync(ntry.extGlob, {
-        ...ntry,
-        ignore: ntry.exclude,
-        cwd: dir,
-        absolute: true,
-        onlyFiles: true,
-      });
-
-      for (const file of files) {
-        target.push(resolveRouteEntry(dir, file));
-      }
-    }
+function collectViews(files: RouterOptionsRawResolved[], target: RouteEntry[]) {
+  for (const file of files) {
+    const entry = resolveRouteEntry(file.file, file.parent);
+    target.push(entry);
   }
 }
 

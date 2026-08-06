@@ -17,7 +17,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsdown"
+    "build": "tsdown",
+    "test": "tsx watch test.ts"
   },
   "dependencies": {
     "@babel/parser": "catalog:",
@@ -46,8 +47,10 @@
     "vue-router": "catalog:"
   },
   "devDependencies": {
+    "@types/express": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
+    "express": "catalog:",
     "tsdown": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:"

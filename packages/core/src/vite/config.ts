@@ -8,7 +8,7 @@ import reverse from "lodash/reverse.js";
 import cloneDeep from "lodash/cloneDeep.js";
 
 import { useAllConfigs } from "@/config/load.js";
-import { resolveScanDirs } from "@/utils/dir/index.js";
+import { resolveScanDirs, resolveScanDirs_v2 } from "@/utils/dir/index.js";
 
 import plugin, { type PluginOptions } from "../plugin/unplugin.js";
 import appVue from "../app-vue/unplugin.js";
@@ -84,12 +84,10 @@ export function buildViteConfig(): UserConfig {
   const _plugins: PluginOptions = {
     output: main.output,
     dirs: [
-      ...resolveScanDirs(
+      ...resolveScanDirs_v2(
         resolve(import.meta.dirname, ".."),
-        [join(import.meta.dirname, "../app/plugins")],
-        {
-          defaultExtensions: ["js", "ts", "mjs", "mts", "cjs"],
-        },
+        join(import.meta.dirname, "../app/plugins"),
+        { defaultExtensions: ["js", "ts", "mjs", "mts", "cjs"] },
       ),
     ],
   };
@@ -124,6 +122,7 @@ export function buildViteConfig(): UserConfig {
 
   const resolveViteConfig = (config: ResolvedConfig) => {
     _globals.imports.push(config.globals);
+    _globals.imports.push(config.composables);
 
     _components.dirs.push(...config.components);
     _css.dirs.push(...config.css);
@@ -139,9 +138,9 @@ export function buildViteConfig(): UserConfig {
   });
 
   _components.dirs.push(
-    ...resolveScanDirs(
+    ...resolveScanDirs_v2(
       resolve(import.meta.dirname, ".."),
-      [join(import.meta.dirname, "../app/components")],
+      join(import.meta.dirname, "../app/components"),
       { defaultExtensions: ["js", "ts", "mjs", "mts", "cjs", "vue"] },
     ),
   );

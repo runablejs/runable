@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import merge from "lodash/merge.js";
 
-import { resolveDir, resolveScanDirs } from "@/utils";
+import { resolveDir, resolveScanDirs_v2 } from "@/utils";
 import type { ResolvedConfig, SyoraConfig } from "./types.js";
 import { resolveComponentDirs } from "@/components/options.js";
 
@@ -21,32 +21,32 @@ export function resolveConfig(config: SyoraConfig & { cwd: string }) {
   const _components = resolveComponentDirs(_cwd, _comps);
 
   let _layouts = config.layouts ?? [join(_appDir, "layouts")];
-  _layouts = resolveScanDirs(_cwd, _layouts, {
+  _layouts = resolveScanDirs_v2(_cwd, _layouts, {
     defaultExtensions: ["vue", "js", "ts", "mjs", "mts", "cjs"],
   });
 
   let _globals = config.globals ?? [join(_appDir, "globals")];
-  _globals = resolveScanDirs(_cwd, _globals, {
-    defaultExtensions: ["js", "ts", "mjs", "mts"],
+  _globals = resolveScanDirs_v2(_cwd, _globals, {
+    defaultExtensions: ["js", "ts", "mjs", "mts", "cjs"],
   });
 
   let _composables = config.composables ?? [join(_appDir, "composables")];
-  _composables = resolveScanDirs(_cwd, _composables, {
+  _composables = resolveScanDirs_v2(_cwd, _composables, {
     defaultExtensions: ["js", "ts", "mjs", "mts", "cjs"],
   });
 
   let _pages = config.pages ?? [join(_appDir, "pages")];
-  _pages = resolveScanDirs(_cwd, _pages, {
+  _pages = resolveScanDirs_v2(_cwd, _pages, {
     defaultExtensions: ["vue", "js", "ts", "mjs", "mts", "cjs"],
   });
 
   let _plugins = config.plugins ?? [join(_appDir, "plugins")];
-  _plugins = resolveScanDirs(_cwd, _plugins, {
-    defaultExtensions: ["js", "ts", "mjs", "mts", "cjs"],
+  _plugins = resolveScanDirs_v2(_cwd, _plugins, {
+    defaultExtensions: ["js", "ts", "mjs", "mts"],
   });
 
   let _css = config.css ?? [];
-  _css = resolveScanDirs(_cwd, _css, {
+  _css = resolveScanDirs_v2(_cwd, _css, {
     defaultExtensions: [
       "css",
       "scss",

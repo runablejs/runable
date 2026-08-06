@@ -12,6 +12,7 @@ import {
   removeFileExtension,
   resolveDir,
   ResolvedScanDir,
+  ResolvedScanDirFile,
 } from "../utils/dir/index.js";
 
 const VIRTUAL_ID = ":plugins";
@@ -51,7 +52,7 @@ export {};
 `;
 
 export type PluginOptions = {
-  dirs: ResolvedScanDir[];
+  dirs: ResolvedScanDirFile[];
   output?: string;
 };
 
@@ -77,16 +78,12 @@ let completed = 0;
 const sharedPlugins: Record<string, PluginEntry> = {};
 let sharedOutput: string | undefined;
 
-function getPluginVariableName(filePath: string, parentDir?: string): string {
+function getPluginVariableName(filePath: string, parentDir: string): string {
   filePath = removeFileExtension(filePath);
-  if (parentDir) filePath = relative(parentDir, filePath);
 
-  if (parentDir) relative(parentDir, filePath);
-  else basename(filePath);
+  if (filePath !== parentDir) filePath = relative(parentDir, filePath);
 
-  const baseName = parentDir
-    ? relative(parentDir, filePath)
-    : basename(filePath);
+  const baseName = basename(filePath);
 
   return camelCase(baseName) + "Plugin";
 }
@@ -107,57 +104,13 @@ function matchesEnvironment(
   return isSsr ? environment === "server" : environment === "client";
 }
 
-function collectPlugins(lists: ResolvedScanDir[]) {
-  for (const ntry of lists) {
-    for (const dir of ntry.dirs) {
-      if (existsSync(dir) && statSync(dir).isFile()) {
-        const varName = getPluginVariableName(dir);
-
-        sharedPlugins[varName] = {
-          filePath: dir,
-          environment: getPluginEnvironment(dir),
-        };
-
-        continue;
-      }
-
-      const files = fg.sync(ntry.extGlob, {
-        ...ntry,
-        ignore: ntry.exclude,
-        cwd: dir,
-        absolute: true,
-        onlyFiles: true,
-      });
-
-      for (const file of files) {
-        const varName = getPluginVariableName(file, dir);
-
-        sharedPlugins[varName] = {
-          filePath: file,
-          environment: getPluginEnvironment(file),
-        };
-      }
-    }
-  }
-}
-
-function collectPlugins0(parentDir: string) {
-  parentDir = resolveDir(parentDir);
-  if (!existsSync(parentDir)) return;
-
-  const files = getChildren(parentDir, {
-    recursive: true,
-    onlyFile: true,
-    endWith: /\.(ts|js)$/,
-  });
-
+function collectPlugins(files: ResolvedScanDirFile[]) {
   for (const file of files) {
-    if (file.path.endsWith(".d.ts")) continue;
+    const varName = getPluginVariableName(file.file, file.parent);
 
-    const varName = getPluginVariableName(parentDir, file.path);
     sharedPlugins[varName] = {
-      filePath: file.path,
-      environment: getPluginEnvironment(file.path),
+      filePath: file.file,
+      environment: getPluginEnvironment(file.file),
     };
   }
 }

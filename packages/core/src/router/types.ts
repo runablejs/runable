@@ -1,4 +1,4 @@
-import { ResolvedScanDir, ScanDir } from "@/utils";
+import { ResolvedScanDirFile, ScanDir } from "@/utils";
 
 /**
  * Router-specific scan options, on top of the shared `ScanDir` base.
@@ -12,4 +12,4 @@ type RouterScanExtra = {
  */
 export type RouterOptionsRaw = ScanDir<RouterScanExtra>;
 
-export type RouterOptionsRawResolved = ResolvedScanDir<RouterScanExtra>;
+export type RouterOptionsRawResolved = ResolvedScanDirFile<RouterScanExtra>;

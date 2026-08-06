@@ -6,7 +6,12 @@ import type {
   RouterOptionsRaw,
   RouterOptionsRawResolved,
 } from "@/router/types.js";
-import type { AliasMap, ResolvedScanDir, ScanDir, Arrayable } from "@/utils";
+import type {
+  AliasMap,
+  ScanDir,
+  Arrayable,
+  ResolvedScanDirFile,
+} from "@/utils";
 
 /** Shape of a `syora.config.*` file, as authored by the user. */
 export interface SyoraConfig {
@@ -176,17 +181,17 @@ export type ResolvedConfig = {
   /** Resolved directory(ies) containing global components to auto-register. */
   components: ResolvedComponentDir[];
   /** Resolved layout files/directories. */
-  layouts: ResolvedScanDir[];
+  layouts: ResolvedScanDirFile[];
   /** Resolved directory(ies) containing global functions/variables to auto-import. */
-  globals: ResolvedScanDir[];
+  globals: ResolvedScanDirFile[];
   /** Resolved directory(ies) containing composables to auto-import. */
-  composables: ResolvedScanDir[];
+  composables: ResolvedScanDirFile[];
   /** Resolved routing options defining the application's pages. */
   pages: RouterOptionsRawResolved[];
   /** Resolved Syora plugins to load. */
-  plugins: ResolvedScanDir[];
+  plugins: ResolvedScanDirFile[];
   /** Resolved global CSS files included in the application. */
-  css: ResolvedScanDir[];
+  css: ResolvedScanDirFile[];
 
   /** Resolved module resolution aliases (import path → actual path). */
   alias: AliasMap;
@@ -211,7 +216,7 @@ export type ResolvedConfig = {
 
   /**
    * Working directory used to resolve this config's own relative paths.
-   * @deprecated use `_cwd`
+   * @deprecated use **_cwd**
    * */
   cwd: string;
   /** Working directory used to resolve this config's own relative paths. */
@@ -251,3 +256,9 @@ export type ResolvedConfig = {
   /** This config's own `dependOn` list — the module names its `setup` must wait for. */
   _dependOn: string[];
 };
+
+/** Subset of the config safe to forward to the client bundle. */
+export type ClientConfig = Pick<
+  SyoraConfig,
+  "head" | "ssr" | "siteUrl" | "baseUrl"
+>;
