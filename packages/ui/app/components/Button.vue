@@ -7,7 +7,7 @@ import config from "#app/ui/config.js";
 import type { ComponentConfig } from "../types/tv";
 import theme from "./button.variant";
 
-type Button = ComponentConfig<typeof theme, typeof config, "accordion">;
+type Button = ComponentConfig<typeof theme, {}, "accordion">;
 
 interface ButtonProps {
   label?: string;
@@ -16,7 +16,7 @@ interface ButtonProps {
 
   color?: Button["variants"]["color"];
   size?: Button["variants"]["size"];
-  square?: Button["variants"]["square"];
+  square?: boolean;
   variant?: Button["variants"]["variant"];
 
   ui?: Button["slots"];
@@ -27,7 +27,12 @@ interface ButtonProps {
 const props = withDefaults(defineProps<ButtonProps>(), {});
 
 const ui = computed(() =>
-  tv({ ...theme, extend: tv(config.ui?.button ?? {}) })(),
+  tv({ ...theme, extend: tv(config.ui?.button ?? {}) })({
+    color: props.color,
+    size: props.size,
+    square: props.square,
+    variant: props.variant,
+  }),
 );
 </script>
 

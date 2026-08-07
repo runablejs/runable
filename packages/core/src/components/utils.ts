@@ -23,6 +23,7 @@ export function getDefaultComponentName(
   absPath: string,
   scanDir: string,
   pathPrefix: boolean,
+  prefix?: string,
 ): string {
   const ext = extname(absPath);
   const rel =
@@ -39,6 +40,9 @@ export function getDefaultComponentName(
   }
 
   const parts = pathPrefix ? segments : [segments[segments.length - 1]!];
+
+  if (prefix) parts.unshift(prefix);
+
   return parts.map(segmentToPascalCase).join("");
 }
 

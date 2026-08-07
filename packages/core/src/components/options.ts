@@ -61,6 +61,7 @@ export function resolveComponentDirs(
       pathPrefix: raw.pathPrefix ?? fb.pathPrefix ?? true,
       componentName: raw.componentName ?? fb.componentName,
       extensions: raw.extensions ?? fb.extensions ?? ["vue"],
+      prefix: raw.prefix ?? fb.prefix,
     }),
   });
 

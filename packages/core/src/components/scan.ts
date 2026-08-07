@@ -8,14 +8,22 @@ export async function scanComponents(
   const map = new Map<string, ComponentInfo>();
 
   for (const dirConfig of options.dirs) {
-    const { dirs, extensions, pathPrefix, componentName, file, parent } =
-      dirConfig;
+    const {
+      dirs,
+      extensions,
+      pathPrefix,
+      componentName,
+      file,
+      parent,
+      prefix,
+    } = dirConfig;
 
     const absPath = slash(file);
     const defaultName = getDefaultComponentName(
       absPath,
       parent,
       pathPrefix ?? true,
+      prefix,
     );
 
     if (!defaultName) continue;

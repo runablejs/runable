@@ -1,7 +1,9 @@
-<script setup lang="ts">
-import Button from "../components/Button.vue";
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <Button> Lorem ipsum dolor sit </Button>
+  <div class="p-5">
+    <UButton color="neutral" class="cursor-pointer">
+      Lorem ipsum dolor sit
+    </UButton>
+  </div>
 </template>

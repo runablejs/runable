@@ -18,6 +18,8 @@ export type ComponentScanExtra = {
    */
   pathPrefix?: boolean;
 
+  prefix?: string;
+
   /**
    * Renaming function: receives the absolute path of the component file
    * and the default PascalCase name computed from that path, and must
@@ -77,6 +79,8 @@ export interface AutoComponentOptions {
    * @default true
    */
   pathPrefix?: boolean;
+
+  prefix?: string;
 
   /**
    * Renaming function: receives the absolute path of the component file

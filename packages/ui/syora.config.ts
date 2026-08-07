@@ -8,6 +8,7 @@ export default defineModule<SyoraUIConfig>({
     dirs: "app/components",
     pathPrefix: false,
     extensions: ["vue"],
+    prefix: "u",
   },
 
   css: "./app/css/main.css",
