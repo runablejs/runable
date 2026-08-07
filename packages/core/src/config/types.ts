@@ -61,7 +61,7 @@ export interface SyoraConfig {
   vite?: Omit<
     UserConfig,
     "ssr" | "appType" | "server" | "root" | "base" | "publicDir" | "syoraConfig"
-  > & { server: Omit<UserConfig["server"], "middlewareMode"> };
+  > & { server?: Omit<UserConfig["server"], "middlewareMode"> };
 
   /** Directory of static assets served as-is. */
   publicDir?: UserConfig["publicDir"];

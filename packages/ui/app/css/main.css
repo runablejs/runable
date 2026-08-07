@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@source "./**/*.{js,ts,jsx,tsx,vue}";
+@source "../.output/ui/**/*.{css}";
+
+@import "#app/ui/tokens/colors.css";
+@import "#app/ui/tokens/grid.css";
+@import "#app/ui/tokens/layout.css";
+@import "#app/ui/tokens/motion.css";
+@import "#app/ui/tokens/radius.css";
+@import "#app/ui/tokens/shadows.css";
+@import "#app/ui/tokens/colors.css";
+@import "#app/ui/tokens/spacing.css";
+@import "#app/ui/tokens/typography.css";
+@import "#app/ui/tokens/border.css";

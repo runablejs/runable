@@ -1,5 +1,5 @@
 import config from ":config";
-import type { ClientConfig } from "../../config/load.js";
+import { ClientConfig } from "@/config";
 
 export function useConfig(): ClientConfig {
   return config;
