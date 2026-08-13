@@ -1,10 +1,11 @@
+import { existsSync, statSync } from "node:fs";
+
 import fg from "fast-glob";
 import merge from "lodash/merge.js";
 
 import { toArray } from "../to-array.js";
 import { Arrayable } from "../types.js";
 import { resolveDir } from "./index.js";
-import { existsSync, statSync } from "node:fs";
 
 /**
  * Exclude patterns shared by every Syora directory scanner.
@@ -69,7 +70,7 @@ export type ScanDirObject<Extra extends object = {}> = {
 
   /**
    * Globs to exclude from the scan.
-   * @default ['**\/node_modules/**', '**\/.git/**']
+   * @default ['**\/node_modules/**', '**\/-*.**',  **\/.git/**', ]
    */
   exclude?: string[];
 } & Extra;

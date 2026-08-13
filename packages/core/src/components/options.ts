@@ -64,13 +64,4 @@ export function resolveComponentDirs(
       prefix: raw.prefix ?? fb.prefix,
     }),
   });
-
-  // return resolveScanDirs<ComponentScanExtra>(cwd, dirs, {
-  //   defaultExtensions: DEFAULT_EXTENSIONS,
-  //   fallback,
-  //   resolveExtra: (raw, fb) => ({
-  //     pathPrefix: raw.pathPrefix ?? fb.pathPrefix ?? true,
-  //     componentName: raw.componentName ?? fb.componentName,
-  //   }),
-  // });
 }

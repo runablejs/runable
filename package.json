@@ -4,7 +4,10 @@
   "type": "module",
   "scripts": {
     "build": "pnpm --filter './packages/**' build",
-    "play:dev": "pnpm --filter syora-playground dev"
+    "play:dev": "pnpm --filter syora-playground dev",
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview"
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.0",
@@ -17,7 +20,8 @@
     "globals": "^17.7.0",
     "jiti": "^2.7.0",
     "typescript": "^5.7.2",
-    "typescript-eslint": "^8.63.0"
+    "typescript-eslint": "^8.63.0",
+    "vitepress": "2.0.0-alpha.19"
   },
   "packageManager": "pnpm@11.10.0",
   "devEngines": {
