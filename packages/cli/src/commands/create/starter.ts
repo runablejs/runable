@@ -1,8 +1,9 @@
-import { consola } from "consola";
-import { dirname, resolve } from "node:path";
 import { cp, mkdir, stat } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import * as p from "@clack/prompts";
+import { consola } from "consola";
 
 import {
   exitOnCancel,
@@ -12,7 +13,6 @@ import {
   askInstallDeps,
   installDependenciesIfWanted,
 } from "./shared.js";
-import { fileURLToPath } from "node:url";
 
 export interface StarterProjectAnswers {
   projectName: string;
@@ -21,10 +21,16 @@ export interface StarterProjectAnswers {
   installDeps: boolean;
 }
 
+/**
+ * Copies the `framework` starter template into `targetDir`, prompting to
+ * overwrite if the target directory already exists.
+ */
 export async function copyStarterTemplate(
   framework: string,
   targetDir: string,
 ): Promise<void> {
+  // Starters are shipped as static folders alongside the built CLI, so this
+  // is resolved relative to this compiled file rather than the source layout.
   const __dirname = dirname(fileURLToPath(import.meta.url));
   const templateDir = resolve(__dirname, `../../../starters/${framework}`);
 
@@ -33,6 +39,7 @@ export async function copyStarterTemplate(
     await stat(templateDir);
     templateExists = true;
   } catch {
+    // Surface a clearer error than the raw ENOENT from `stat`.
     throw new Error(
       `Starter template not found: ${templateDir}\n` +
         `Make sure "starters/${framework}" is shipped alongside the CLI build.`,
@@ -49,6 +56,7 @@ export async function copyStarterTemplate(
     targetExists = false;
   }
 
+  // Don't silently clobber an existing directory.
   if (targetExists) {
     const shouldOverwrite = await p.confirm({
       message: `Directory "${targetDir}" already exists. Overwrite?`,
@@ -66,6 +74,7 @@ export async function copyStarterTemplate(
   consola.success(`Starter template copied to ${targetDir}`);
 }
 
+/** Prompts for the project name, restricted to lowercase letters, numbers, and hyphens. */
 async function askProjectName(): Promise<string> {
   const name = await p.text({
     message: "Project name?",
@@ -80,6 +89,7 @@ async function askProjectName(): Promise<string> {
   return exitOnCancel(name).trim();
 }
 
+/** Prints a human-readable recap of the collected answers before scaffolding runs. */
 function printSummary(answers: StarterProjectAnswers): void {
   consola.success("Configuration collected:");
   consola.info(`  Project name:     ${answers.projectName}`);
@@ -88,6 +98,11 @@ function printSummary(answers: StarterProjectAnswers): void {
   consola.info(`  installDeps:      ${answers.installDeps ? "yes" : "no"}`);
 }
 
+/**
+ * Runs the "start with a starter" flow: collects the project name,
+ * framework, and package manager, scaffolds a new directory from the
+ * matching starter template, then installs dependencies if requested.
+ */
 export async function handleStarterProject() {
   consola.start("Mode: Start with a starter");
 

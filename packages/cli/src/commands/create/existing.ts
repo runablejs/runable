@@ -6,10 +6,12 @@ import {
   afterAnswer,
 } from "./shared.js";
 
+/** Answers collected for the "add to an existing project" flow: the shared answers plus the selected backend framework. */
 export interface ExistingProjectAnswers extends BaseProjectAnswers {
   framework: string;
 }
 
+/** Prints a human-readable recap of the collected answers before scaffolding runs. */
 function printSummary(answers: ExistingProjectAnswers): void {
   consola.success("Configuration collected:");
   consola.info(`  Framework:        ${answers.framework}`);
@@ -21,6 +23,7 @@ function printSummary(answers: ExistingProjectAnswers): void {
   consola.info(`  installDeps:      ${answers.installDeps ? "yes" : "no"}`);
 }
 
+/** Runs the "add to an existing project" flow: collects the shared answers, then wires up the project via `afterAnswer`. */
 export async function handleExistingProject() {
   consola.start("Mode: Add to an existing project");
 

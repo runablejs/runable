@@ -1,11 +1,11 @@
-import { defineCommand } from "citty";
 import * as p from "@clack/prompts";
+import { defineCommand } from "citty";
 import { consola } from "consola";
 
 import { handleExistingProject } from "./existing.js";
 import { handleModuleProject } from "./module.js";
-import { handleStarterProject } from "./starter.js";
 import { frameworks } from "./shared.js";
+import { handleStarterProject } from "./starter.js";
 
 export default defineCommand({
   meta: {
@@ -43,6 +43,8 @@ export default defineCommand({
       process.exit(0);
     }
 
+    // Each handler prompts through its own flow and resolves with at least
+    // a `framework` key, used below to link the relevant docs.
     let answer;
 
     switch (projectType) {
@@ -62,6 +64,8 @@ export default defineCommand({
 
     const framework = frameworks.find((f) => f.value === answer.framework);
 
+    // Not every flow ends up with a framework (e.g. a Syora module has none)
+    // — only print the framework-specific docs link when one was chosen.
     if (framework) {
       consola.info(
         `\n Documentation: https://syora.com/docs/integrations/${framework.value}`,

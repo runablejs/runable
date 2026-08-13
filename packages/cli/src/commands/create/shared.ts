@@ -1,13 +1,14 @@
+import { existsSync } from "node:fs";
 import { cp, stat, mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import * as p from "@clack/prompts";
 import { consola } from "consola";
-import { installDependencies, detectPackageManager } from "nypm";
 import { parseModule, generateCode, builders } from "magicast";
-import { existsSync } from "node:fs";
+import { installDependencies, detectPackageManager } from "nypm";
 
+/** Backend frameworks offered in the "existing project" and "starter" flows, with a docs link shown after creation. */
 export const frameworks = [
   { value: "express", label: "Express", docs: "https://expressjs.com/" },
   { value: "fastify", label: "Fastify", docs: "https://fastify.dev/" },
@@ -18,6 +19,7 @@ export const frameworks = [
   { value: "other", label: "Other (I will configure it myself)" },
 ];
 
+/** Package managers offered when asking how to install dependencies. */
 export const packageManagers = [
   { value: "npm", label: "npm" },
   { value: "pnpm", label: "pnpm" },
@@ -25,6 +27,7 @@ export const packageManagers = [
   { value: "bun", label: "bun" },
 ];
 
+/** Answers shared by all three creation flows (existing project, starter, module). */
 export interface BaseProjectAnswers {
   appDir: string;
   outputDir: string;
@@ -34,6 +37,7 @@ export interface BaseProjectAnswers {
   installDeps: boolean;
 }
 
+/** Unwraps a clack prompt result, exiting the process if the user cancelled (Ctrl+C) instead of returning the cancellation symbol. */
 export function exitOnCancel<T>(value: T | symbol): T {
   if (p.isCancel(value)) {
     p.cancel("Operation cancelled.");
@@ -42,6 +46,7 @@ export function exitOnCancel<T>(value: T | symbol): T {
   return value as T;
 }
 
+/** Prompts the user to pick their backend framework from `frameworks`. */
 export async function askFramework(): Promise<string> {
   const framework = await p.select({
     message: "Which backend framework are you using?",
@@ -50,6 +55,11 @@ export async function askFramework(): Promise<string> {
   return exitOnCancel(framework);
 }
 
+/**
+ * Whether to generate a `server.ts` entry file for `framework`. Returns
+ * `false` without prompting when no server-entry template ships for that
+ * framework (e.g. "other").
+ */
 export async function askCreateServerEntry(
   framework: string,
 ): Promise<boolean> {
@@ -68,6 +78,11 @@ export async function askCreateServerEntry(
   return exitOnCancel(shouldCreate);
 }
 
+/**
+ * Copies the `framework` server-entry template to `targetDir/server.ts`,
+ * prompting to overwrite if it already exists. No-op when
+ * `createServerEntry` is false (see `askCreateServerEntry`).
+ */
 export async function copyServerEntry(
   createServerEntry: boolean,
   framework: string,
@@ -106,6 +121,9 @@ export async function copyServerEntry(
   consola.success(`Created server.ts at ${targetPath}`);
 }
 
+// Below: one text prompt per project directory, each falling back to
+// Syora's own default (shown as the placeholder) when left blank.
+
 export async function askAppDir(): Promise<string> {
   const appDir = await p.text({
     message: "Where will your Vue application source code be located? (appDir)",
@@ -138,6 +156,7 @@ export async function askPublicDir(): Promise<string> {
   return exitOnCancel(publicDir).trim() || "public";
 }
 
+/** Prompts for a package manager, pre-selecting and flagging whichever one `detectPackageManager` finds in the current directory (e.g. from a lockfile). */
 export async function askPackageManager(): Promise<string> {
   const detected = await detectPackageManager(process.cwd()).catch(() => null);
   const pm = await p.select({
@@ -159,6 +178,10 @@ export async function askInstallDeps(): Promise<boolean> {
   return exitOnCancel(shouldInstall);
 }
 
+/**
+ * Copies the default Vue app template into `targetDir`, prompting to
+ * overwrite if it already exists.
+ */
 export async function copyAppTemplate(targetDir: string): Promise<void> {
   const __dirname = dirname(fileURLToPath(import.meta.url));
   const templateDir = resolve(__dirname, "../../../templates/default/app");
@@ -201,6 +224,13 @@ export async function copyAppTemplate(targetDir: string): Promise<void> {
   consola.success(`App template copied to ${targetDir}`);
 }
 
+/**
+ * Adds Syora's runtime/dev dependencies and build scripts to the
+ * `package.json` in the current directory, without touching anything
+ * already declared there. No-op (with a warning) if no `package.json` is
+ * found — used for the "existing project" flow, see `createPackageJson`
+ * for the module-scaffolding equivalent.
+ */
 export async function updatePackageJson(): Promise<void> {
   const pkgPath = resolve(process.cwd(), "package.json");
   let pkg: Record<string, any>;
@@ -243,7 +273,18 @@ export async function updatePackageJson(): Promise<void> {
   consola.success("Updated package.json with Syora dependencies and scripts");
 }
 
+/**
+ * Builds an in-memory `syora.config.ts` module (via magicast) whose default
+ * export is `identifier({ ...config })`. Going through an AST instead of
+ * `JSON.stringify` lets `config` values be more than plain JSON — in
+ * particular, a function is emitted as real source code (see `valueToNode`)
+ * instead of being dropped or stringified.
+ */
 function buildSyoraConfig(identifier: string, config: Record<string, unknown>) {
+  // Recursively turns a config value into something magicast can splice
+  // into the AST: primitives, arrays and plain objects pass through as-is;
+  // a function is turned into raw source via `.toString()` so it's emitted
+  // as actual code in the generated file rather than lost to JSON.
   const valueToNode = (value: unknown): unknown => {
     if (value === null) {
       return null;
@@ -282,11 +323,18 @@ function buildSyoraConfig(identifier: string, config: Record<string, unknown>) {
     `import { ${identifier} } from "@syora/core";\n\nexport default ${identifier}({});`,
   );
 
+  // Replace the placeholder `{}` argument with the real, resolved config.
   mod.exports.default.$args[0] = configObject;
 
   return mod;
 }
 
+/**
+ * Generates and writes `syora.config.ts` at `cwd`, calling `identifier(config)`
+ * as its default export — `"defineConfig"` for a regular project,
+ * `"defineModule"` for a Syora module (see `afterAnswer`). Prompts to
+ * overwrite if the file already exists.
+ */
 export async function writeSyoraConfig(
   config: Record<string, unknown>,
   {
@@ -325,6 +373,11 @@ export async function writeSyoraConfig(
   consola.success("Created syora.config.ts");
 }
 
+/**
+ * Scaffolds a minimal `package.json` for a new Syora module at `targetDir`,
+ * prompting to overwrite if one already exists. Used by the module flow
+ * instead of `updatePackageJson`, since there's no existing file to merge into.
+ */
 export async function createPackageJson(
   targetDir: string,
   moduleName: string,
@@ -385,6 +438,7 @@ export async function createPackageJson(
   consola.success(`Created package.json for module "${moduleName}"`);
 }
 
+/** Installs dependencies with `packageManager` in `cwd`, unless `installDeps` is false. */
 export async function installDependenciesIfWanted(
   packageManager: string,
   installDeps: boolean,
@@ -411,6 +465,11 @@ export async function installDependenciesIfWanted(
   }
 }
 
+/**
+ * Runs the prompts shared by the "existing project" and "module" flows and
+ * returns the collected answers. `_config` is the subset later handed
+ * as-is to `writeSyoraConfig` — keep its shape in sync with `SyoraConfig`.
+ */
 export async function handleSharedAnswers() {
   const framework = await askFramework();
   consola.info(
@@ -446,6 +505,13 @@ export async function handleSharedAnswers() {
   return answers;
 }
 
+/**
+ * Finishes scaffolding a project/module from `handleSharedAnswers`'s
+ * result: copies the app template, generates `syora.config.ts`, writes or
+ * updates `package.json` (`createPackageJson` for a module — `moduleName`
+ * is then required — or `updatePackageJson` for a regular project), copies
+ * the server entry if requested, then installs dependencies.
+ */
 export async function afterAnswer(
   cwd: string,
   answers: Awaited<ReturnType<typeof handleSharedAnswers>>,
