@@ -15,7 +15,6 @@
     "@nestjs/core": "catalog:",
     "@nestjs/platform-express": "catalog:",
     "@syora/cli": "workspace:*",
-    "@syora/content": "workspace:*",
     "@syora/core": "workspace:*",
     "express": "catalog:",
     "fastify": "catalog:",
