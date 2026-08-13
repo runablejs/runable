@@ -1,7 +1,7 @@
 {
   "name": "@syora/core",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0-alpha.1",
+  "private": false,
   "type": "module",
   "exports": {
     ".": {
@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "build": "tsdown",
-    "test": "tsx watch test.ts"
+    "prepublish": "pnpm build"
   },
   "dependencies": {
     "@babel/parser": "catalog:",
@@ -47,12 +47,9 @@
     "vue-router": "catalog:"
   },
   "devDependencies": {
-    "@types/express": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
-    "express": "catalog:",
     "tsdown": "catalog:",
-    "tsx": "catalog:",
     "typescript": "catalog:"
   },
   "engines": {

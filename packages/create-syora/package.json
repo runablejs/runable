@@ -1,0 +1,15 @@
+{
+  "name": "create-syora",
+  "version": "1.0.0-alpha.1",
+  "description": "Create a Syora project",
+  "type": "module",
+  "bin": {
+    "create-syora": "./bin/create-syora.mjs"
+  },
+  "dependencies": {
+    "@syora/cli": "workspace:^"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

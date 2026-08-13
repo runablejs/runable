@@ -1,6 +1,6 @@
 {
   "name": "@syora/cli",
-  "version": "0.0.0",
+  "version": "1.0.0.alpha.1",
   "private": false,
   "license": "MIT",
   "type": "module",
@@ -22,11 +22,12 @@
   ],
   "scripts": {
     "build": "tsdown",
+    "prepublish": "pnpm build",
     "syora": "tsx src/index.ts"
   },
   "dependencies": {
     "@clack/prompts": "^1.5.1",
-    "@syora/core": "workspace:*",
+    "@syora/core": "workspace:^",
     "consola": "^3.4.2",
     "dayjs": "^1.11.21",
     "esbuild": "^0.28.0",
