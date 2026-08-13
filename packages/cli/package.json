@@ -42,13 +42,8 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@eslint/json": "^2.0.1",
-    "@eslint/markdown": "^8.0.3",
     "@types/node": "^22.19.19",
     "citty": "^0.2.2",
-    "eslint": "^10.7.0",
-    "globals": "^17.7.0",
     "pkg": "^5.8.1",
     "tsdown": "^0.22.14",
     "tsx": "^4.21.0",
