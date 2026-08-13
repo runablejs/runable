@@ -170,7 +170,7 @@ export function resolveScanDirs<Extra extends object>(
 
 export function resolveScanDirs_v2<Extra extends object>(
   cwd: string,
-  dirs: Arrayable<ScanDir<Extra>>,
+  dirs: Arrayable<ScanDir<Extra> | ResolvedScanDirFile<Extra>>,
   {
     defaultExtensions,
     fallback,
@@ -199,10 +199,20 @@ export function resolveScanDirs_v2<Extra extends object>(
 
   for (let i = 0; i < dirList.length; i++) {
     const dir = dirList[i]!;
+
     const raw = (typeof dir === "string" ? { dirs: dir } : dir) as Exclude<
-      ScanDir<Extra>,
+      ScanDir<Extra> | ResolvedScanDirFile<Extra>,
       string
     >;
+
+    if ("file" in raw) {
+      raw.file = resolveDir(raw.file, cwd);
+      raw.parent = resolveDir(raw.parent, cwd);
+
+      resolveds.push(raw);
+
+      continue;
+    }
 
     // `merge` skips undefined source values, so per-dir values win when
     // set, and the caller-supplied `fallback` fills the gaps otherwise.

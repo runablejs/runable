@@ -32,7 +32,7 @@ export interface SyoraConfig {
   components?: Arrayable<ComponentDir>;
 
   /** Directory(ies) containing composables to auto-import in the application. */
-  composables?: Arrayable<ComponentDir>;
+  composables?: Arrayable<ScanDir>;
 
   /** Directory(ies) containing global functions/variables to auto-import in the application. */
   globals?: Arrayable<ScanDir>;
