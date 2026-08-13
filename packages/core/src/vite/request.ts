@@ -1,4 +1,4 @@
-import { resolve } from "node:path";
+import { join, resolve } from "node:path";
 import { Readable } from "node:stream";
 import type {
   IncomingMessage,
@@ -30,18 +30,6 @@ export type RequestResult =
       status?: 301 | 302 | 307 | 308;
     };
 
-// const serverEntries = import.meta.glob<{
-//   render: (typeof import("../entry/switcher.js"))["render"] extends infer T
-//     ? T
-//     : never;
-// }>("/.output/server/switcher-*.js");
-
-// const clientTemplates = import.meta.glob("/.output/client/index.html", {
-//   eager: true,
-//   query: "?raw",
-//   import: "default",
-// }) as Record<string, string>;
-
 // ---------------------------------------------------------------------------
 // Core, runtime-agnostic: ne dépend d'aucune API réseau, juste d'une URL.
 // ---------------------------------------------------------------------------
@@ -67,28 +55,31 @@ async function viteRequest({
       );
       template = await vite.transformIndexHtml(url, template);
     } else {
-      template = "";
+      const manifest = (await import(
+        join(config.distdir, "manifest.js")
+      )) as Record<string, string>;
+
       // // --- Prod : tout est déjà en mémoire, embarqué au build ---
-      // const templatePath = Object.keys(clientTemplates)[0];
-      // if (!templatePath) {
-      //   throw new Error(
-      //     `No client template found matching "/dist/client/index.html". ` +
-      //       `Check that the client build ran before the server build, and ` +
-      //       `that the glob pattern matches your actual dist layout.`,
-      //   );
-      // }
-      // template = clientTemplates[templatePath]!;
+      const templateContent = manifest.html;
+      if (!templateContent) {
+        throw new Error(
+          `No client template found matching "/dist/client/index.html". ` +
+            `Check that the client build ran before the server build, and ` +
+            `that the glob pattern matches your actual dist layout.`,
+        );
+      }
 
-      // const entryLoader = Object.values(serverEntries)[0];
-      // if (!entryLoader) {
-      //   throw new Error(
-      //     `No server entry found matching "/dist/server/switcher-*.js". ` +
-      //       `Check that the server build ran and produced a switcher-*.js file.`,
-      //   );
-      // }
+      template = templateContent;
 
-      // const mod = await entryLoader();
-      // render = (mod as { render: typeof render }).render;
+      const entryLoader = manifest.switcher;
+      if (!entryLoader) {
+        throw new Error(
+          `No server entry found matching "/dist/server/switcher-*.js". ` +
+            `Check that the server build ran and produced a switcher-*.js file.`,
+        );
+      }
+
+      render = (await import(entryLoader)).render;
     }
 
     if (!config.ssr) {

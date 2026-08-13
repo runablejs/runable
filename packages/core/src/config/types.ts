@@ -51,6 +51,8 @@ export interface SyoraConfig {
   /** Build output mode/format. */
   output?: string;
 
+  distdir?: string;
+
   /** Base URL the application is served from (routes/assets prefix). */
   baseUrl?: string;
 
@@ -175,6 +177,7 @@ export type ResolvedConfig = {
   appDir: string;
   /** Resolved build output mode/format. */
   output: string;
+  distdir: string;
   /** Resolved path to the directory of static assets served as-is, or `false` if disabled. */
   publicDir: string | false;
 

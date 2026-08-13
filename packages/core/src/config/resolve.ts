@@ -22,6 +22,9 @@ export function resolveConfig(config: SyoraConfig & { cwd: string }) {
   let _output = config.output ?? ".app";
   _output = resolveDir(_output, _cwd);
 
+  let _distdir = config.distdir ?? ".output";
+  _distdir = resolveDir(_distdir, _cwd);
+
   // `publicDir: false` disables the public dir — leave it as-is instead of resolving it.
   let _publicDir = config.publicDir ?? "public";
   if (typeof _publicDir === "string") _publicDir = resolveDir(_publicDir, _cwd);
@@ -82,6 +85,7 @@ export function resolveConfig(config: SyoraConfig & { cwd: string }) {
 
     appDir: _appDir,
     output: _output,
+    distdir: _distdir,
     publicDir: _publicDir,
 
     components: _components,
