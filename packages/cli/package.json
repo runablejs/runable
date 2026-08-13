@@ -23,7 +23,9 @@
   "scripts": {
     "build": "tsdown",
     "prepublish": "pnpm build",
-    "syora": "tsx src/index.ts"
+    "syora": "tsx src/index.ts",
+    "app:build": "syora build",
+    "app:prepare": "syora prepare"
   },
   "dependencies": {
     "@clack/prompts": "^1.5.1",
@@ -33,12 +35,15 @@
     "esbuild": "^0.28.0",
     "giget": "^3.2.0",
     "lodash": "^4.18.1",
+    "magicast": "^0.5.4",
     "nypm": "^0.6.6",
     "pkg-types": "^2.3.1",
     "std-env": "^4.1.0",
     "tinyclip": "^0.1.14",
     "tinyexec": "^1.2.4",
     "tsx": "^4.22.4",
+    "vue": "^3.5.0",
+    "vue-router": "^4.5.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {

@@ -5,7 +5,7 @@ const version = "0.1.1";
 const description = "Syora CLI";
 
 const commands = {
-  // create: () => import('./commands/create').then((m) => m.default),
+  create: () => import("./commands/create").then((m) => m.default),
   // dev: () => import('./commands/dev').then((m) => m.default),
   prepare: () => import("./commands/prepare").then((m) => m.default),
   build: () => import("./commands/build").then((m) => m.default),
