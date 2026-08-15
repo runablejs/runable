@@ -182,15 +182,15 @@ export function toWebResponse(result: RequestResult): globalThis.Response {
 // Adaptateur Node (Express, Koa, Fastify via .raw, Adonis, Nest-Express, h3 Node)
 // ---------------------------------------------------------------------------
 export async function requestNode({
-  vite,
+  syoraApp,
   req,
   res,
 }: {
-  vite?: ViteDevServer | null;
+  syoraApp?: ViteDevServer | null;
   req: IncomingMessage;
   res: ServerResponse;
 }): Promise<void> {
-  const result = await viteRequest({ vite, url: req.url! });
+  const result = await viteRequest({ vite: syoraApp, url: req.url! });
   sendRequestResult(result, res);
 }
 
@@ -199,12 +199,12 @@ export async function requestNode({
 // Hono, SvelteKit, Remix, h3 hors-Node...) — zéro dépendance Node.
 // ---------------------------------------------------------------------------
 export async function requestWeb({
-  vite,
+  syoraApp,
   req,
 }: {
-  vite?: ViteDevServer | null;
+  syoraApp?: ViteDevServer | null;
   req: globalThis.Request;
 }): Promise<globalThis.Response> {
-  const result = await viteRequest({ vite, url: req.url });
+  const result = await viteRequest({ vite: syoraApp, url: req.url });
   return toWebResponse(result);
 }

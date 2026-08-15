@@ -1,5 +1,8 @@
-// docs/.vitepress/config.ts
 import { defineConfig } from "vitepress";
+import {
+  groupIconMdPlugin,
+  groupIconVitePlugin,
+} from "vitepress-plugin-group-icons";
 
 export default defineConfig({
   srcDir: "docs/fr",
@@ -149,5 +152,15 @@ export default defineConfig({
       message: "Released under the MIT License.",
       copyright: "Copyright © 2026 Syora Contributors",
     },
+  },
+
+  markdown: {
+    config(md) {
+      md.use(groupIconMdPlugin);
+    },
+  },
+
+  vite: {
+    plugins: [groupIconVitePlugin()],
   },
 });

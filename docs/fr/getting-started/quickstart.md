@@ -7,8 +7,6 @@ description: Votre première page Syora en 60 secondes.
 
 Votre projet est installé. Créons votre première page et comprenons le cycle de vie d'une requête.
 
----
-
 ## Étape 1 : Votre première page
 
 Créez le fichier `app/pages/index.vue` :
@@ -33,8 +31,6 @@ Rendez-vous sur `http://localhost:5173`. Vous voyez votre page. C'est tout.
 Le fichier `app/pages/index.vue` est automatiquement mappé sur `/`. Syora génère les routes `vue-router` pour vous.
 :::
 
----
-
 ## Étape 2 : Une page dynamique
 
 Créez `app/pages/hello/[name].vue` :
@@ -54,8 +50,6 @@ const route = useRoute();
 ```
 
 Accédez à `http://localhost:5173/hello/Alice`. Le paramètre `name` est extrait de l'URL automatiquement.
-
----
 
 ## Étape 3 : Un layout
 
@@ -89,10 +83,7 @@ Dans une page spécifique :
 definePageMeta({ layout: "admin" });
 </script>
 ```
-
 :::
-
----
 
 ## Étape 4 : Récupérer des données
 
@@ -145,8 +136,6 @@ const { data: users, pending } = await useAsyncData("users", () =>
 4. **Client** : Le navigateur reçoit le HTML complet — pas de spinner
 5. **Client** : Vue réhydrate les données depuis le script — aucune requête supplémentaire
 
----
-
 ## Étape 5 : Un composable auto-importé
 
 Créez `app/composables/useCounter.ts` :
@@ -179,8 +168,6 @@ const { count, increment } = useCounter(10);
 
 Syora scanne `app/composables/` au démarrage et rend `useCounter` disponible globalement.
 
----
-
 ## Récapitulatif
 
 En 5 étapes, vous avez :
@@ -192,8 +179,6 @@ En 5 étapes, vous avez :
 | 3     | Les layouts — `app/layouts/default.vue`        |
 | 4     | Le data fetching avec SSR — `useAsyncData`     |
 | 5     | Les auto-imports — `app/composables/`          |
-
----
 
 ::: tip Prochaine étape
 Plongez dans les concepts fondamentaux : [Core Concepts](../concepts.md).

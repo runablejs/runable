@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["../packages/core/src/*"],
+      "~/*": ["./app/*"]
+    }
+  },
+  "include": ["./**/*.ts", "syora.config.ts"],
+  "exclude": ["dist", "node_modules"]
+}

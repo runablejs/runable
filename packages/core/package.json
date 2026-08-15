@@ -41,6 +41,7 @@
     "ofetch": "catalog:",
     "syt": "catalog:",
     "unhead": "catalog:",
+    "unplugin": "^3.3.0",
     "unplugin-vue": "catalog:",
     "vite": "catalog:",
     "vue": "catalog:",

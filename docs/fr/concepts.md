@@ -7,8 +7,6 @@ description: Les 5 concepts fondamentaux de Syora, expliqués en 5 minutes.
 
 Syora repose sur **5 idées simples**. Si vous les comprenez, vous maîtrisez 80 % du framework.
 
----
-
 ## 1. Backend-Agnostic : Votre serveur, votre choix
 
 **Le concept :** Syora est un framework **Vue**, pas un framework **serveur**. Il ne fournit pas de runtime HTTP — il s'attend à ce que **vous** le fournissiez.
@@ -28,7 +26,7 @@ import express from "express";
 import { createServer, requestNode } from "@syora/core";
 
 const app = express();
-const vite = await createServer(); // Syora prépare l'app Vue
+const vueApp = await createServer(); // Syora prépare l'app Vue
 
 // Votre backend gère les routes API
 app.get("/api/users", (req, res) => {
@@ -36,7 +34,7 @@ app.get("/api/users", (req, res) => {
 });
 
 // Syora gère les pages Vue
-app.use("*all", (req, res) => requestNode({ vite, req, res }));
+app.use("*all", (req, res) => requestNode({ app: vueApp, req, res }));
 
 app.listen(3000);
 ```
