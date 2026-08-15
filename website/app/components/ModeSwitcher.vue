@@ -7,7 +7,7 @@ import { UseColorMode } from "@vueuse/components";
     <UButton
       variant="ghost"
       size="icon"
-      class="group/toggle extend-touch-target size-8"
+      class="group/toggle extend-touch-target size-8 rounded-none"
       title="Toggle theme"
       @click="color.mode = color.mode === 'dark' ? 'light' : 'dark'"
     >

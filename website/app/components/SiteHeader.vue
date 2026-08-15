@@ -53,7 +53,8 @@ const navigationLinks = [
           class="flex items-center bg-accent text-accent-foreground h-full px-2"
         >
           <RouterLink to="/" class="flex items-center gap-1">
-            <Logo class="size-7" /> Syora
+            <Logo class="size-7" />
+            <span class="font-bold">Syora</span>
           </RouterLink>
         </div>
       </div>

@@ -12,11 +12,12 @@ import HeroSection from "~/components/landing/Hero.vue";
 // import ArchitectureSection from "~/components/landing/TheCompromise.vue";
 import WhySyoraSection from "~/components/landing/WhySyora.vue";
 import CapabilitiesSection from "~/components/landing/Capabilities.vue";
+import RuntimesSection from "~/components/landing/Runtimes.vue";
 // import QuickStartSection from "~/components/landing/QuickStart.vue";
-// import ManifestoSection from "~/components/landing/TheManifesto.vue";
+import QuickstartSection from "~/components/landing/Quickstart.vue";
 
 // ─── Navigator ───
-// import SectionNavigator from "./SectionNavigator.vue";
+import SectionNavigator from "~/components/landing/SectionNavigator.vue";
 
 // ─── Scroll progress ───
 const scrollProgress = ref(0);
@@ -131,6 +132,14 @@ onMounted(() => {
 
     <div id="section-capabilities" data-nav-section>
       <CapabilitiesSection />
+    </div>
+
+    <div id="section-runtimes" data-nav-section>
+      <RuntimesSection />
+    </div>
+
+    <div id="section-quickstart" data-nav-section>
+      <QuickstartSection />
     </div>
 
     <!-- 

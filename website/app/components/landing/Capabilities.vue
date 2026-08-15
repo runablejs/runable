@@ -120,7 +120,7 @@ const capabilities = [
 
     <div class="mx-auto max-w-7xl px-10 py-32 md:py-40">
       <p class="font-mono text-mono-sm text-tertiary tracking-[0.08em] mb-8">
-        04 — Capabilities
+        03 — Capabilities
       </p>
 
       <h2
@@ -186,7 +186,7 @@ const capabilities = [
           </p>
           <a
             href="#docs"
-            class="inline-flex items-center gap-2 font-mono text-mono transition-colors duration-instant ease-default"
+            class="inline-flex items-center gap-2 font-mono text-mono transition-colors duration-instant ease-default bg-accent text-accent-foreground px-2"
           >
             <span>Read the documentation</span>
             <svg

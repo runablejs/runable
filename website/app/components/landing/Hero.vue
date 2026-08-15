@@ -36,7 +36,7 @@ onMounted(() => {
     ></div>
     <!-- Contenu central -->
     <div class="flex-1 flex flex-col items-center justify-center px-10">
-      <div class="max-w-4xl mx-auto text-center">
+      <div class="max-w-6xl mx-auto text-center">
         <!-- Titre -->
         <h1
           id="hero-heading"
@@ -51,8 +51,9 @@ onMounted(() => {
           The Vue framework that brings the
           <em class="font-display italic text-accent font-bold">Nuxt</em>
           developer experience to
-          <em class="font-display italic text-accent font-bold">any</em>
-          backend.
+          <em class="font-display italic text-accent font-bold"
+            >any backend.</em
+          >
         </h1>
 
         <!-- Sous-titre -->
@@ -81,7 +82,7 @@ onMounted(() => {
           "
         >
           <UButton variant="default" size="lg"> Why Syora ? </UButton>
-          <UButton variant="secondary" size="lg"> Get Started </UButton>
+          <UButton variant="outline" size="lg"> Get Started </UButton>
         </div>
       </div>
     </div>
