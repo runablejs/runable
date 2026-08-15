@@ -17,6 +17,7 @@ import {
 const DEFAULT_EXTENSIONS = ["vue"];
 const DEFAULT_DTS = "components.d.ts";
 
+/** @deprecated */
 export function resolveOptions(
   options: AutoComponentOptions,
   root: string,
@@ -42,7 +43,7 @@ export function resolveOptions(
     root,
     dirs: rawDirs,
     dts:
-      options.dts === true || typeof options.dts === "undefined"
+      options.dts || typeof options.dts === "undefined"
         ? DEFAULT_DTS
         : options.dts,
     verbose: options.verbose ?? false,

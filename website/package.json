@@ -28,8 +28,8 @@
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.3.3",
     "unimport": "^6.4.0",
-    "unplugin-vue-router": "^0.19.2",
-    "v-content": "../",
+    "unist-util-visit": "^5.1.0",
+    "v-content": "^1.1.1",
     "vee-validate": "^4.15.1",
     "vue": "^3.5.40",
     "vue-input-otp": "^0.4.0",
@@ -39,6 +39,7 @@
   "devDependencies": {
     "@tsconfig/node24": "^24.0.4",
     "@types/express": "catalog:",
+    "@types/hast": "^3.0.5",
     "@types/node": "^24.13.3",
     "@vue/tsconfig": "catalog:",
     "npm-run-all2": "^9.0.2",

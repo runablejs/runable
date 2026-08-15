@@ -1,7 +1,6 @@
 import type {
   Arrayable,
   Fallback,
-  ResolvedScanDir,
   ResolvedScanDirFile,
   ScanDir,
 } from "@/utils";
@@ -117,7 +116,7 @@ export interface AutoComponentOptions {
    * resolved lazily per-file, not known ahead of time).
    * @default 'components.d.ts'
    */
-  dts?: boolean | string;
+  dts?: false | string;
 
   /** Enables debug logging to the console. @default false */
   verbose?: boolean;

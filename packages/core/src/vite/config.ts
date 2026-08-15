@@ -147,9 +147,9 @@ export function buildViteConfig(): UserConfig {
 
   viteConfig = mergeConfig(viteConfig, {
     plugins: [
+      css.vite(_css),
       globals.vite(_globals),
       components.vite(_components),
-      css.vite(_css),
       layout.vite(_layouts),
       router.vite(_pages),
       plugin.vite(_plugins),

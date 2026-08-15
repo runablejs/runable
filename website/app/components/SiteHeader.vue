@@ -1,6 +1,4 @@
 <script setup lang="ts">
-// import { LucideHome, LucideInbox, LucideSearch, LucideZap } from "lucide-vue-next";
-
 import GithubLink from "./GithubLink.vue";
 import ModeSwitcher from "./ModeSwitcher.vue";
 import Logo from "./navbar-components/Logo.vue";
@@ -18,26 +16,26 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 const navigationLinks = [
   {
     label: "Why Syora ?",
-    href: "/docs/why-syora",
+    to: "/docs/why-syora",
     activeMatch: "^/(why-syora|vs-nuxt|concepts)",
   },
   {
     label: "Getting Started",
-    href: "/docs/getting-started/installation",
+    to: "/docs/getting-started/installation",
     activeMatch: "^/getting-started/",
   },
-  { label: "Guide", href: "/docs/guide/routing", activeMatch: "^/guide/" },
+  { label: "Guide", to: "/docs/guide/routing", activeMatch: "^/guide/" },
   {
     label: "Integrations",
-    href: "/docs/integrations/",
+    to: "/docs/integrations/",
     activeMatch: "^/integrations/",
   },
   {
     label: "Cookbook",
-    href: "/docs/cookbook/authentication",
+    to: "/docs/cookbook/authentication",
     activeMatch: "^/cookbook/",
   },
-  { label: "API", href: "/docs/api/composables", activeMatch: "^/api/" },
+  { label: "API", to: "/docs/api/composables", activeMatch: "^/api/" },
 ];
 </script>
 
@@ -66,12 +64,12 @@ const navigationLinks = [
             v-for="(link, index) in navigationLinks"
             :key="index"
           >
-            <NavigationMenuLink
+            <RouterLink
               v-bind="link"
               class="py-1.5 whitespace-nowrap rounded-none"
             >
               {{ link.label }}
-            </NavigationMenuLink>
+            </RouterLink>
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
@@ -92,7 +90,9 @@ const navigationLinks = [
         </div>
 
         <GithubLink class="rounded-none" />
-        <ModeSwitcher class="rounded-none" />
+        <ClientOnly>
+          <ModeSwitcher class="rounded-none" />
+        </ClientOnly>
       </div>
 
       <!-- Mobile menu trigger -->
