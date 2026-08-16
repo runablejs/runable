@@ -324,7 +324,6 @@ function generateRouterCode(
   const nameMap = buildRouteNameMap(routeEntries);
   const tree = buildRouteTree(routeEntries);
   const vueRoutes = buildVueRoutes(tree, nameMap);
-
   const routes = serializeRoutes(vueRoutes, dynamic, imports);
 
   return template

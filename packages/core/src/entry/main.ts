@@ -1,7 +1,7 @@
 import * as vue from "vue";
 import merge from "lodash/merge";
 
-import { routerPlugin } from "../router/plugin.js";
+import router from "../router/plugin.js";
 import { pluginPlugin } from "../plugin/index.js";
 
 import { appContextPlugin } from "../context/plugin.js";
@@ -14,6 +14,8 @@ import {
 import { createHead as createHeadServer } from "@unhead/vue/server";
 import { UnheadSchemaOrg } from "@unhead/schema-org/vue";
 import { layoutPlugin } from "../layout/plugin.js";
+import { useConfig } from "@/app/composables/config.js";
+// import { setupGlobalErrorHandlers } from "@/services/errorCapture.js";
 
 export async function createApp(isSsr = false) {
   const config = useConfig();
@@ -55,7 +57,10 @@ export async function createApp(isSsr = false) {
   }
 
   app.use(appContextPlugin);
-  app.use(routerPlugin);
+
+  // setupGlobalErrorHandlers();
+
+  app.use(router);
   app.use(layoutPlugin);
   app.use(pluginPlugin);
   app.use(createAsyncData());

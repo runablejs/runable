@@ -9,7 +9,8 @@ import { useRouter } from "@/app/composables/router.js";
 export async function render() {
   const { app } = await createApp();
 
-  await useRouter().isReady();
+  const router = useRouter();
+  await router.isReady();
 
   const raw = (window as any).__ASYNC_DATA__;
   if (raw) {

@@ -6,7 +6,7 @@ import { parse as parseSFC } from "vue/compiler-sfc";
 export function extractPageMeta(
   filePath: string,
 ): Record<string, unknown> | undefined {
-  if (!filePath.endsWith(".vue")) return undefined;
+  // if (!filePath.endsWith(".vue")) return undefined;
 
   const source = readFileSync(filePath, "utf-8");
   const { descriptor } = parseSFC(source, { filename: filePath });

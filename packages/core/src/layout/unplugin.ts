@@ -37,8 +37,8 @@ type ExtractComponentProps<T> = T extends new (...args: any[]) => { $props: infe
   ? Omit<P, keyof VNodeProps | keyof AllowedComponentProps | keyof ComponentCustomProps>
   : Record<string, any>;
 
-declare module '{{page_meta_helper_path}}' {
-  export interface PageMeta {
+declare module 'vue-router' {
+  export interface RouteMeta {
     /**
      * Define layout behavior with strict TypeScript verification and props validation:
      * - \`false\`: Disables the layout.
@@ -114,12 +114,8 @@ function generateDts(output: string) {
     .join("\n");
 
   const layoutUnionType = layoutNames.map((name) => `"${name}"`).join(" | ");
-  const pageMetaHelperPath = normalizeDir(
-    path.relative(output, path.resolve(import.meta.dirname, "../router/types")),
-  );
 
   const dtsContent = dtsTemplate
-    .replaceAll("{{page_meta_helper_path}}", pageMetaHelperPath)
     .replaceAll("{{imports}}", imports)
     .replaceAll("{{layout_union_type}}", layoutUnionType)
     .replaceAll("{{layout_config_union}}", layoutConfigUnion);

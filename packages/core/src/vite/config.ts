@@ -2,16 +2,21 @@ import { join, resolve } from "node:path";
 
 import { mergeConfig, type UserConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+
 import { unheadVueComposablesImports } from "@unhead/vue";
 import { schemaOrgAutoImports } from "@unhead/schema-org/vue";
 import reverse from "lodash/reverse.js";
 import cloneDeep from "lodash/cloneDeep.js";
 
 import { useAllConfigs } from "@/config/load.js";
-import { resolveScanDirs, resolveScanDirs_v2 } from "@/utils/dir/index.js";
+import { resolveScanDirs_v2 } from "@/utils/dir/index.js";
 
 import plugin, { type PluginOptions } from "../plugin/unplugin.js";
 import appVue from "../app-vue/unplugin.js";
+import routerMeta from "../router/meta/unplugin.js";
+import routeMiddleWare, {
+  RouterMiddlewaresOptions,
+} from "../router/middleware/unplugin.js";
 import layout, { type LayoutOptions } from "../layout/unplugin.js";
 import components, {
   type AutoComponentOptions,
@@ -21,12 +26,13 @@ import configPlugin from "../config/unplugin.js";
 import css, { type CssOptions } from "../css/unplugin.js";
 import importMeta from "../import-meta/unplugin.js";
 import runtime from "../runtime/unplugin.js";
-import router, { type PagesOptions } from "../router/unplugin.js";
 import globals, {
   type GlobalConfig,
   type GlobalOptionsImports,
 } from "../globals/unplugin.js";
 import { ResolvedConfig } from "@/config/types.js";
+import { buildRoutes } from "@/router/builder.js";
+import { PagesOptions } from "@/router/pages.js";
 
 declare module "vite" {
   interface UserConfig {
@@ -79,7 +85,19 @@ export function buildViteConfig(): UserConfig {
 
   const _layouts: LayoutOptions = { output: main.output, dirs: [] };
 
-  const _pages: PagesOptions = { output: main.output, dirs: [] };
+  const _pages: Required<PagesOptions> = { output: main.output, dirs: [] };
+  const _middlewares: RouterMiddlewaresOptions = {
+    output: main.output,
+    dirs: [],
+  };
+
+  _pages.dirs.push(
+    ...resolveScanDirs_v2(
+      resolve(import.meta.dirname, ".."),
+      join(import.meta.dirname, "../app/pages"),
+      { defaultExtensions: ["vue"] },
+    ),
+  );
 
   const _plugins: PluginOptions = {
     output: main.output,
@@ -101,7 +119,7 @@ export function buildViteConfig(): UserConfig {
     },
     appType: "custom",
     ssr: {
-      // noExternal: process.env.NODE_ENV === "production" ? [] : ["vue-router"],
+      noExternal: process.env.NODE_ENV === "development" ? ["vue-router"] : [],
     },
     root: process.cwd(),
     syoraConfig: main,
@@ -128,6 +146,7 @@ export function buildViteConfig(): UserConfig {
     _css.dirs.push(...config.css);
     _layouts.dirs.push(...config.layouts);
     _pages.dirs.push(...config.pages);
+    _middlewares.dirs.push(...config.middlewares);
     _plugins.dirs.push(...config.plugins);
 
     _vites = mergeConfig(_vites, config.vite ?? {}) as UserConfig;
@@ -151,12 +170,16 @@ export function buildViteConfig(): UserConfig {
       globals.vite(_globals),
       components.vite(_components),
       layout.vite(_layouts),
-      router.vite(_pages),
+      // router.vite(_pages),
+
+      routeMiddleWare.vite(_middlewares),
       plugin.vite(_plugins),
     ],
   }) as UserConfig;
 
   viteConfig = mergeConfig(viteConfig, _vites) as UserConfig;
+
+  viteConfig.plugins?.unshift(routerMeta.vite(_pages), buildRoutes(_pages));
 
   return viteConfig;
 }

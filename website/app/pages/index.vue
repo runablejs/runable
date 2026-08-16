@@ -1,9 +1,3 @@
-<!--
-  Syora Landing Page — Version avec Section Navigator
-  =====================================================
-  Assemblage : Header + 6 Sections (wrappers avec ID) + Navigator + Footer
--->
-
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 

@@ -19,7 +19,7 @@
     "libReplacement": false,
     "skipLibCheck": true,
 
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
 
     "types": [],
 
@@ -30,5 +30,13 @@
       "#app/*": ["./.app/*"]
     }
   },
-  "include": ["./app/**/*", "./.app/**/*.d.ts"]
+
+  "vueCompilerOptions": {
+    "plugins": [
+      "vue-router/volar/sfc-route-blocks",
+      "vue-router/volar/sfc-typed-router"
+    ]
+  },
+
+  "include": [".app/**/*.d.ts", "app/**/*"]
 }

@@ -1,5 +1,5 @@
 import type { App as VueApp, ComponentCustomProperties } from "vue";
-import type { HookSystem, OnHooks } from "./hook.js";
+import type { HookSystem } from "./hook.js";
 
 declare module "vue" {
   interface AppContext extends HookSystem {}

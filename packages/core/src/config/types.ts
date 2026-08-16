@@ -25,6 +25,8 @@ export interface SyoraConfig {
   /** Routing options defining the application's pages. */
   pages?: RouterOptionsRaw[];
 
+  middlewares?: Arrayable<ComponentDir>;
+
   /** Paths to layout files/directories. */
   layouts?: Arrayable<ComponentDir>;
 
@@ -191,6 +193,7 @@ export type ResolvedConfig = {
   composables: ResolvedScanDirFile[];
   /** Resolved routing options defining the application's pages. */
   pages: RouterOptionsRawResolved[];
+  middlewares: ResolvedScanDirFile[];
   /** Resolved Syora plugins to load. */
   plugins: ResolvedScanDirFile[];
   /** Resolved global CSS files included in the application. */

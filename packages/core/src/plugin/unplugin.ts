@@ -1,17 +1,12 @@
-import { existsSync, statSync } from "node:fs";
 import { basename, relative, resolve } from "node:path";
 
 import camelCase from "lodash/camelCase.js";
-import fg from "fast-glob";
 import { createUnplugin } from "unplugin";
 
-import { getChildren } from "../utils/get-children.js";
 import { atomicWriteFile } from "../utils/atomic-write-file.js";
 import {
   normalizeDir,
   removeFileExtension,
-  resolveDir,
-  ResolvedScanDir,
   ResolvedScanDirFile,
 } from "../utils/dir/index.js";
 

@@ -54,6 +54,11 @@ export function resolveConfig(config: SyoraConfig & { cwd: string }) {
     defaultExtensions: ["vue", "js", "ts", "mjs", "mts", "cjs"],
   });
 
+  let _middlewares = config.globals ?? [join(_appDir, "middlewares")];
+  _middlewares = resolveScanDirs_v2(_cwd, _middlewares, {
+    defaultExtensions: ["js", "ts", "mjs", "mts", "cjs"],
+  });
+
   let _plugins = config.plugins ?? [join(_appDir, "plugins")];
   _plugins = resolveScanDirs_v2(_cwd, _plugins, {
     defaultExtensions: ["js", "ts", "mjs", "mts"],
@@ -93,6 +98,7 @@ export function resolveConfig(config: SyoraConfig & { cwd: string }) {
     globals: _globals,
     composables: _composables,
     pages: _pages,
+    middlewares: _middlewares,
     plugins: _plugins,
     css: _css,
 

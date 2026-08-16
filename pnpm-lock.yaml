@@ -507,7 +507,7 @@ importers:
         version: 3.3.1(esbuild@0.28.2)(rolldown@1.2.3)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0))
       unimport:
         specifier: ^6.4.0
-        version: 6.4.0(esbuild@0.28.2)(oxc-parser@0.106.0)(rolldown@1.2.3)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0))
+        version: 6.4.0(esbuild@0.28.2)(oxc-parser@0.106.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3))(rolldown@1.2.3)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0))
       unplugin:
         specifier: ^3.3.0
         version: 3.3.0(esbuild@0.28.2)(rolldown@1.2.3)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0))
@@ -686,13 +686,13 @@ importers:
         version: 4.3.3
       unimport:
         specifier: ^6.4.0
-        version: 6.4.0(esbuild@0.28.2)(oxc-parser@0.106.0)(rolldown@1.2.3)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0))
+        version: 6.4.0(esbuild@0.28.2)(oxc-parser@0.106.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3))(rolldown@1.2.3)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0))
       unist-util-visit:
         specifier: ^5.1.0
         version: 5.1.0
       v-content:
-        specifier: ^1.1.1
-        version: 1.1.1(@vue/compiler-sfc@3.5.41)(esbuild@0.28.2)(oxc-parser@0.106.0)(rolldown@1.2.3)(typescript@6.0.3)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0))
+        specifier: ^1.1.2
+        version: 1.1.2(@vue/compiler-sfc@3.5.41)(esbuild@0.28.2)(oxc-parser@0.106.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3))(rolldown@1.2.3)(typescript@6.0.3)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0))
       vee-validate:
         specifier: ^4.15.1
         version: 4.15.1(vue@3.5.41(typescript@6.0.3))
@@ -702,6 +702,9 @@ importers:
       vue-input-otp:
         specifier: ^0.4.0
         version: 0.4.0(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3))
+      vue-router:
+        specifier: 'catalog:'
+        version: 5.2.0(@vue/compiler-sfc@3.5.41)(esbuild@0.28.2)(rolldown@1.2.3)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0))(vue@3.5.41(typescript@6.0.3))
       vue-sonner:
         specifier: ^2.0.9
         version: 2.0.9
@@ -5143,8 +5146,8 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  v-content@1.1.1:
-    resolution: {integrity: sha512-nwAN68J/zQyG9IoFSzxCFSSrrA5YzXcMrXv/n9Wfmf8sgJCWeFb3BAAjX+FH7FAuH/kEk58Tqqazwea2T4JRUw==}
+  v-content@1.1.2:
+    resolution: {integrity: sha512-mmwnw/8BgpYTEY4dp8+0wWAiVxJIxH7SNgihh9lVj51iroqozUwwnS9SgD61Awtsy52qf1+GHlAjJXv4iRKhpg==}
     engines: {node: '>=20.0.0', npm: '>=10.0.0'}
     peerDependencies:
       better-sqlite3: ^13.0.2
@@ -10212,7 +10215,7 @@ snapshots:
       trough: 2.2.0
       vfile: 6.0.3
 
-  unimport@6.4.0(esbuild@0.28.2)(oxc-parser@0.106.0)(rolldown@1.2.3)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0)):
+  unimport@6.4.0(esbuild@0.28.2)(oxc-parser@0.106.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3))(rolldown@1.2.3)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0)):
     dependencies:
       acorn: 8.18.0
       escape-string-regexp: 5.0.0
@@ -10336,7 +10339,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  v-content@1.1.1(@vue/compiler-sfc@3.5.41)(esbuild@0.28.2)(oxc-parser@0.106.0)(rolldown@1.2.3)(typescript@6.0.3)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0)):
+  v-content@1.1.2(@vue/compiler-sfc@3.5.41)(esbuild@0.28.2)(oxc-parser@0.106.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3))(rolldown@1.2.3)(typescript@6.0.3)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0)):
     dependencies:
       '@shikijs/rehype': 4.4.3
       '@shikijs/transformers': 4.4.3
@@ -10365,7 +10368,7 @@ snapshots:
       remark-toc: 9.0.0
       to-vfile: 8.0.0
       unified: 11.0.5
-      unimport: 6.4.0(esbuild@0.28.2)(oxc-parser@0.106.0)(rolldown@1.2.3)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0))
+      unimport: 6.4.0(esbuild@0.28.2)(oxc-parser@0.106.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3))(rolldown@1.2.3)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0))
       unist-util-visit: 5.1.0
       unplugin: 3.3.0(esbuild@0.28.2)(rolldown@1.2.3)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0))
       vfile: 6.0.3

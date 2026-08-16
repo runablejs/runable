@@ -4,6 +4,19 @@ declare module ":router" {
   export const routes: RouteRecordRaw[];
 }
 
+declare module ":router-middlewares" {
+  import type { VueRouterMiddleware } from "../src/router/middleware/index.js";
+
+  export interface RouterMiddlewareDefinition {
+    name: string;
+    isGlobal: boolean;
+    middleware: () => Promise<{ default: VueRouterMiddleware[] }>;
+  }
+
+  export const middlewares: RouterMiddlewareDefinition[];
+  export default middlewares;
+}
+
 declare module ":globals" {}
 
 declare module ":plugins" {
