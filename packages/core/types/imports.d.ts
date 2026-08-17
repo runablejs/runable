@@ -53,3 +53,10 @@ declare module ":runtime" {
   import type { RuntimeValues } from "../src/runtime/types";
   export const values: RuntimeValues;
 }
+
+declare module ":components" {
+  import type { Plugin } from "vue";
+
+  const plugin: Plugin;
+  export default plugin;
+}

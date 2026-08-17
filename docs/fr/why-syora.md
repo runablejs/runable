@@ -26,30 +26,83 @@ Face à ce besoin d'infrastructure spécifique, les développeurs se retrouvent 
 
 ### Option 1 : Le retour au "Vue pur"
 
-::: warning Vous choisissez la liberté du serveur...
-...mais vous renoncez à l'expérience développeur (DX) exceptionnelle de Nuxt :
+::u-tip
+---
+variant: warning
+title: Vous choisissez la liberté du serveur...
+::
+---
 
-- ❌ Routage automatique basé sur les fichiers
-- ❌ Layouts déclaratifs
-- ❌ Auto-imports de composables et composants
-- ❌ `useAsyncData` et son hydratation SSR
-- ❌ Système de modules et de plugins
-- ❌ Middlewares de route
+<div class="py-3">
+  <div class="flex flex-wrap items-center gap-2">
+    <u-icon name="tabler:circle-x" class="size-6 text-destructive"></u-icon>
+    <span>Routage automatique basé sur les fichiers</span>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <u-icon name="tabler:circle-x" class="size-6 text-destructive"></u-icon>
+    <span>Layouts déclaratifs</span>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <u-icon name="tabler:circle-x" class="size-6 text-destructive"></u-icon>
+    <span>Auto-imports de composables et composants</span>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <u-icon name="tabler:circle-x" class="size-6 text-destructive"></u-icon>
+    <span>`useAsyncData` et son hydratation SSR</span>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <u-icon name="tabler:circle-x" class="size-6 text-destructive"></u-icon>
+    <span>Système de modules et de plugins</span>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <u-icon name="tabler:circle-x" class="size-6 text-destructive"></u-icon>
+    <span>Middlewares de route</span>
+  </div>
+</div>
 
 **Résultat** : vous recodez Nuxt morceau par morceau, ou vous vivez sans.
-:::
+::
 
 ### Option 2 : Les projets séparés (Headless)
 
-::: warning Vous développez votre backend idéal d'un côté...
+::u-tip
+---
+variant: warning
+title: Vous développez votre backend idéal d'un côté...
+::
+---
+
 ...et un frontend Nuxt de l'autre.
 
 **Résultat** :
-- Architecture lourde avec deux codebases
-- Complexité de déploiement doublée
-- Duplication des logiques (validation, types, auth)
-- Context switching permanent entre les équipes
-:::
+
+<div class="py-3">
+  <div class="flex flex-wrap items-center gap-2">
+    <u-icon name="tabler:circle-x" class="size-6 text-destructive"></u-icon>
+    <span>Architecture lourde avec deux codebases</span>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <u-icon name="tabler:circle-x" class="size-6 text-destructive"></u-icon>
+    <span>Complexité de déploiement doublée</span>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <u-icon name="tabler:circle-x" class="size-6 text-destructive"></u-icon>
+    <span>Duplication des logiques (validation, types, auth)</span>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <u-icon name="tabler:circle-x" class="size-6 text-destructive"></u-icon>
+    <span>Context switching permanent entre les équipes</span>
+  </div>
+</div>
+::
 
 ## Syora supprime ce compromis
 
@@ -57,16 +110,16 @@ Face à ce besoin d'infrastructure spécifique, les développeurs se retrouvent 
 
 Vous conservez :
 
-| Ce que Nuxt fait bien | Ce que Syora vous apporte |
-|----------------------|---------------------------|
-| Routage automatique | ✅ `pages/` avec conventions filesystem |
-| Layouts | ✅ `layouts/default.vue`, sélection dynamique |
-| Auto-imports | ✅ Composables, composants, globals |
-| Data fetching | ✅ `useAsyncData` avec cache, SSR, hydration |
-| SSR | ✅ Rendu serveur complet + sérialisation |
-| Modules | ✅ `defineModule()` avec typage généré |
-| Plugins | ✅ `defineVuePlugin()` avec lifecycle hooks |
-| Middlewares | ✅ Route guards intégrés |
+| Ce que Nuxt fait bien | Ce que Syora vous apporte                     |
+| --------------------- | --------------------------------------------- |
+| Routage automatique   | <u-icon name="tabler:circle-check-filled" class="size-5 text-success"></u-icon> `pages/` avec conventions filesystem       |
+| Layouts               | <u-icon name="tabler:circle-check-filled" class="size-5 text-success"></u-icon> `layouts/default.vue`, sélection dynamique |
+| Auto-imports          | <u-icon name="tabler:circle-check-filled" class="size-5 text-success"></u-icon> Composables, composants, globals           |
+| Data fetching         | <u-icon name="tabler:circle-check-filled" class="size-5 text-success"></u-icon> `useAsyncData` avec cache, SSR, hydration  |
+| SSR                   | <u-icon name="tabler:circle-check-filled" class="size-5 text-success"></u-icon> Rendu serveur complet + sérialisation      |
+| Modules               | <u-icon name="tabler:circle-check-filled" class="size-5 text-success"></u-icon> `defineModule()` avec typage généré        |
+| Plugins               | <u-icon name="tabler:circle-check-filled" class="size-5 text-success"></u-icon> `defineVuePlugin()` avec lifecycle hooks   |
+| Middlewares           | <u-icon name="tabler:circle-check-filled" class="size-5 text-success"></u-icon> Route guards intégrés                      |
 
 **La seule différence ?** Vous êtes libre d'exécuter l'application sur le serveur de votre choix.
 
@@ -76,16 +129,16 @@ Que votre architecture repose sur **Fastify**, **NestJS**, **AdonisJS**, **Expre
 
 ```ts
 // Express : 10 lignes
-import { createServer, requestNode } from '@syora/core'
-import express from 'express'
+import { createServer, requestNode } from "@syora/core";
+import express from "express";
 
-const app = express()
-const vite = await createServer()
+const app = express();
+const vite = await createServer();
 
-app.use(vite?.middlewares ?? express.static('./dist/client'))
-app.use('*all', (req, res) => requestNode({ vite, req, res }))
+app.use(vite?.middlewares ?? express.static("./dist/client"));
+app.use("*all", (req, res) => requestNode({ vite, req, res }));
 
-app.listen(5173)
+app.listen(5173);
 ```
 
 Syora ne remplace pas votre backend. Il s'installe **à côté**, comme une couche Vue qui sait dialoguer avec n'importe quel serveur HTTP.
@@ -95,28 +148,26 @@ Syora ne remplace pas votre backend. Il s'installe **à côté**, comme une couc
 > **Choisissez votre backend pour ses qualités intrinsèques, sans jamais renoncer au confort de développement de Nuxt.**
 
 Vous gardez :
+
 - Votre architecture backend
 - Vos conventions métier
 - Vos performances et vos optimisations serveur
 
 Vous gagnez :
+
 - La DX Nuxt (routing, layouts, auto-imports, SSR)
 - Un projet unique, pas deux
 - Un déploiement simplifié
 
----
-
 ## Quand choisir quoi ?
 
-| Votre situation | Le bon choix |
-|----------------|-------------|
-| Projet from scratch, batteries included | **Nuxt** — tout est intégré |
-| Backend déjà existant (NestJS, Fastify, Adonis...) | **Syora** — intégration sans migration |
-| Besoin de contrôler le runtime serveur | **Syora** — zéro lock-in |
-| Architecture API-first, frontend léger | **Vue + Vite** — pas besoin de framework app |
-| Application enterprise avec IoC / DI | **Syora** — conserve votre container |
-
----
+| Votre situation                                    | Le bon choix                                 |
+| -------------------------------------------------- | -------------------------------------------- |
+| Projet from scratch, batteries included            | **Nuxt** — tout est intégré                  |
+| Backend déjà existant (NestJS, Fastify, Adonis...) | **Syora** — intégration sans migration       |
+| Besoin de contrôler le runtime serveur             | **Syora** — zéro lock-in                     |
+| Architecture API-first, frontend léger             | **Vue + Vite** — pas besoin de framework app |
+| Application enterprise avec IoC / DI               | **Syora** — conserve votre container         |
 
 ## Prêt à essayer ?
 

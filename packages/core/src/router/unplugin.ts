@@ -3,7 +3,7 @@ import { extname, relative, resolve } from "node:path";
 import { createUnplugin } from "unplugin";
 
 import { normalizeDir } from "../utils/dir/index.js";
-import { extractPageMeta } from "./extract-page-meta.js";
+import { extractPageMeta } from "./extract-page-meta-old.js";
 import { atomicWriteFile } from "../utils/atomic-write-file.js";
 import merge from "lodash/merge.js";
 import type { RouterOptionsRawResolved } from "./types.js";

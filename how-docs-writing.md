@@ -25,27 +25,14 @@ docs/
 │   ├── configuration.md
 │   └── concepts.md
 │
-├── structure/               ← Architecture d'un projet Syora
-|  ├── app/                    ← Votre application Vue (source)
-|  │   ├── pages/              ← Routes automatiques (filesystem routing)
-|  │   ├── layouts/            ← Dispositions d'interface réutilisables
-|  │   ├── components/         ← Composants Vue auto-importés
-|  │   ├── composables/        ← Composables Vue auto-importés
-|  │   ├── plugins/            ← Plugins Vue / Syora
-|  │   ├── middlewares/        ← Middlewares de navigation
-|  │   └── css/                ← Styles globaux et configurations CSS
-|  ├── public/                 ← Assets statiques (servis directement à la racine)
-|  ├── .env                    ← Variables d'environnement
-|  ├── .gitignore              ← Fichiers et dossiers ignorés par Git
-|  ├── syora.config.ts         ← Configuration principale de Syora
-|  ├── server.ts               ← Point d'entrée de votre serveur (Express, Fastify, Hono...)
-|  ├── package.json            ← Dépendances, scripts et métadonnées du projet
-|  ├── tsconfig.json           ← Configuration TypeScript principale
-|  ├── tsconfig.app.json       ← Configuration TypeScript pour le frontend (app/)
-|  ├── tsconfig.node.json      ← Configuration TypeScript pour le serveur Node.js
-|  ├── .app/                   ← Généré : fichiers virtuels et d'aides préparés par Syora
-|  ├── .output/                ← Généré : build final de production
-|  └── node_modules/ 
+├── structure/               ← Architecture du projet
+│   ├── index.md
+│   ├── app.md
+│   ├── pages.md
+│   ├── components.md
+│   ├── layouts.md
+│   ├── server.md
+│   └── public.md
 │
 ├── guide/                   ← Concepts fondamentaux
 │   ├── routing.md
@@ -82,7 +69,7 @@ docs/
 | Bloc | Public cible | Objectif |
 | --- | --- | --- |
 | **Getting Started** | Nouvel arrivant | Comprendre la philosophie, installer, configurer et lancer le projet |
-| **Structure** | Développeur projet | Maîtriser l'organisation des dossiers et fichiers d'un projet Syora |
+| **Structure** | Développeur projet | Maîtriser l'organisation des dossiers et les conventions de nommage |
 | **Guide** | Utilisateur quotidien | Maîtriser chaque feature fondamentale de Syora |
 | **Integrations** | Développeur backend | Connecter Syora à SON serveur existant ou favori |
 | **API** | Développeur avancé | Référence rapide des signatures, typages et configurations |
@@ -215,7 +202,7 @@ await app.listen({ port: 3000 });
 * Le label d'onglet est entre crochets après la langue : ````ts [Express]`
 * **Toujours** laisser une ligne vide entre `::u-code-group` et le premier block.
 * **Toujours** laisser une ligne vide entre le dernier block et `::`.
-* Les labels doivent être respectés strictement : `Express`, `Fastify`, `NestJS`, `Koa`, `AdonisJS`, `Hono`, `Bun`, `Deno`.
+* Les labels doivent être respectés strictly : `Express`, `Fastify`, `NestJS`, `Koa`, `AdonisJS`, `Hono`, `Bun`, `Deno`.
 
 ### 3. `u-icon` — Icônes inline
 
@@ -363,7 +350,7 @@ Utilisez des tableaux markdown standard pour les comparaisons et récapitulatifs
 ### Liens
 
 * **Liens internes :** utilisez des chemins relatifs avec balises HTML `<a href="./quickstart.md">Quick Start</a>`.
-* **Liens externes :** utilisez des URLs absolues `<a href="[https://vuejs.org](https://vuejs.org)" target="_blank">Vue</a>`.
+* **Liens externes :** utilisez des URLs absolues `<a href="[https://vuejs.org](https://vuejs.org)">Vue</a>`.
 * **Jamais** de liens markdown `[texte](url)` pour les liens internes, afin de garantir la cohérence avec le routing de v-content.
 
 ### Code
@@ -505,4 +492,5 @@ Avant de soumettre un commit pour une nouvelle page ou une modification majeure,
 | Icônes Tabler | [https://tabler-icons.io](https://tabler-icons.io) |
 | shadcn-vue | [https://www.shadcn-vue.com](https://www.shadcn-vue.com) |
 | v-content | Documentation interne du moteur de contenu |
-| Dépôt Syora | [https://github.com/syorajs/syora](https://github.com/syorajs/syora) |
+| Dépôt Syora | [https://github.com/syorajs/syora](https://www.google.com/search?q=https://github.com/syorajs/syora) |
+

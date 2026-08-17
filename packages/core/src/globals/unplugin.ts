@@ -163,25 +163,31 @@ export default createUnplugin<GlobalConfig>((config) => {
       name: "syora:globals",
       enforce: "pre",
 
-      async buildStart() {
-        unimport = createUnimport({
-          imports: resolveConfigImports(config),
-        });
+      vite: {
+        async buildStart() {
+          unimport = createUnimport({
+            imports: resolveConfigImports(config),
+          });
 
-        const dts = await unimport.generateTypeDeclarations({
-          resolvePath: (r) => {
-            if (!existsSync(r.from)) {
-              const imports = resolvePackageImport(r.from);
-              if (!imports) return r.from;
+          const dts = await unimport.generateTypeDeclarations({
+            resolvePath: (r) => {
+              if (!existsSync(r.from)) {
+                const imports = resolvePackageImport(r.from);
+                if (!imports) return r.from;
 
-              return normalizeDir(relative(config.output, imports.file));
-            }
+                return normalizeDir(relative(config.output, imports.file));
+              }
 
-            return normalizeDir(relative(config.output, r.from));
-          },
-        });
+              return normalizeDir(relative(config.output, r.from));
+            },
+          });
 
-        atomicWriteFile(resolve(config.output, "globals.d.ts"), dts);
+          (await unimport.getImports()).map((i) => {
+            this.addWatchFile(i.from);
+          });
+
+          atomicWriteFile(resolve(config.output, "globals.d.ts"), dts);
+        },
       },
     },
 

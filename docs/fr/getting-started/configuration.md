@@ -434,6 +434,11 @@ export default defineConfig({
 
 ---
 
-::: tip Types générés
+::tip
+---
+Types générés
+---
+
 Après avoir modifié `syora.config.ts`, exécutez `syora prepare` pour régénérer les types auto-importés et les options de modules.
-:::
+
+::

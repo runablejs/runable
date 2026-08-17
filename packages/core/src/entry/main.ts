@@ -2,6 +2,8 @@ import * as vue from "vue";
 import merge from "lodash/merge";
 
 import router from "../router/plugin.js";
+import components from ":components";
+
 import { pluginPlugin } from "../plugin/index.js";
 
 import { appContextPlugin } from "../context/plugin.js";
@@ -65,6 +67,7 @@ export async function createApp(isSsr = false) {
   app.use(pluginPlugin);
   app.use(createAsyncData());
   app.use(head);
+  app.use(components);
 
   return { app, head };
 }

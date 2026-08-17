@@ -13,7 +13,6 @@ import { resolveScanDirs_v2 } from "@/utils/dir/index.js";
 
 import plugin, { type PluginOptions } from "../plugin/unplugin.js";
 import appVue from "../app-vue/unplugin.js";
-import routerMeta from "../router/meta/unplugin.js";
 import routeMiddleWare, {
   RouterMiddlewaresOptions,
 } from "../router/middleware/unplugin.js";
@@ -179,7 +178,7 @@ export function buildViteConfig(): UserConfig {
 
   viteConfig = mergeConfig(viteConfig, _vites) as UserConfig;
 
-  viteConfig.plugins?.unshift(routerMeta.vite(_pages), buildRoutes(_pages));
+  viteConfig.plugins?.unshift(buildRoutes(_pages));
 
   return viteConfig;
 }

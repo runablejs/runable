@@ -155,7 +155,7 @@
 }
 
 @utility container-wrapper {
-  @apply mx-auto w-full 3xl:fixed:max-w-[calc(var(--breakpoint-2xl)+2rem)];
+  @apply mx-auto w-full px-2 3xl:fixed:max-w-[calc(var(--breakpoint-2xl)+2rem)];
 }
 
 /* --preset a2QcktOa

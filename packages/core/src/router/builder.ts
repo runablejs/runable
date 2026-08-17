@@ -5,7 +5,7 @@ import merge from "lodash/merge.js";
 import kebabCase from "lodash/kebabCase.js";
 
 import { PagesOptions } from "./pages.js";
-import { extractPageMeta } from "./extract-page-meta-3.js";
+import { extractPageMeta } from "./extract-page-meta.js";
 
 export function buildRoutes(options: Required<PagesOptions>) {
   return VueRouter({

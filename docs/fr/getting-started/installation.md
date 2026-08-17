@@ -7,7 +7,7 @@ description: Créez ou intégrez Syora en une seule commande.
 
 Ouvrez un terminal (si vous utilisez [Visual Studio Code](https://code.visualstudio.com), vous pouvez ouvrir un [terminal intégré](https://code.visualstudio.com/docs/terminal/basics)) et utilisez la commande suivante pour créer un nouveau projet de démarrage :
 
-::: code-group
+::u-code-group
 ```bash [npm]
 npm create syora@latest
 ```
@@ -27,7 +27,7 @@ bun create syora@latest
 ```bash [deno]
 deno -A npm:create-syora@latest
 ```
-:::
+::
 
 ```
 ✔ What do you want to create?
@@ -50,7 +50,7 @@ deno -A npm:create-syora@latest
 
 Connectez Syora à votre serveur existant. Si l'assistant a généré un `server.ts`, modifiez-le pour y intégrer vos routes API existantes.
 
-::: code-group
+::u-code-group
 
 ```ts [Express]
 // server.ts (généré par l'assistant — à compléter)
@@ -184,13 +184,15 @@ Bun.serve({
 
 ```
 
+::
 
+::u-tip
+---
+title: Vos routes API ne bougent pas
+---
 
-:::
-
-::: tip Vos routes API ne bougent pas
 L'intégration Syora est **additive**. Vous ne migrez rien. Syora ne capture que les requêtes qui ne correspondent pas à vos API existantes.
-:::
+::
 
 ## Vérifier l'installation
 
@@ -218,4 +220,4 @@ Rendez-vous sur [`http://localhost:3000`](http://localhost:3000). Vous voyez vot
 
 ## Prochaine étape
 
-Votre projet est prêt. Créons votre première page interactive : [Quick Start](./quickstart.md).
+Votre projet est prêt. Créons votre première page interactive : [Quick Start](/docs/getting-started/quickstart.md).

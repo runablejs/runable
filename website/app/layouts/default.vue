@@ -16,8 +16,9 @@ import SiteHeader from "../components/SiteHeader.vue";
     class="group/layout relative z-10 flex min-h-svh flex-col bg-background has-data-[slot=designer]:h-svh has-data-[slot=designer]:overflow-hidden"
   >
     <SiteHeader />
-
-    <slot />
+    <main class="flex min-h-0 flex-1 flex-col">
+      <slot />
+    </main>
 
     <!-- <SiteFooter /> -->
   </div>

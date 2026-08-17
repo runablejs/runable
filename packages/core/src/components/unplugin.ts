@@ -8,6 +8,9 @@ import { getDefaultComponentName, slash } from "./utils.js";
 import { injectComponents, normalizeName } from "./inject.js";
 import { dirname, relative, resolve } from "node:path";
 
+const VIRTUAL_ID = ":components";
+const RESOLVED_VIRTUAL_ID = "\0" + VIRTUAL_ID;
+
 export async function scanComponents(
   options: AutoComponentOptions,
 ): Promise<Map<string, ComponentInfo>> {
@@ -116,6 +119,36 @@ export {}
         if (id.includes("node_modules")) return;
 
         return injectComponents(code, id, components);
+      },
+    },
+
+    {
+      name: "syora:components:virtual",
+
+      resolveId(id: string) {
+        if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
+      },
+
+      load(id: string) {
+        if (id !== RESOLVED_VIRTUAL_ID) return;
+
+        const imports = [...components.values()]
+          .map((c, i) => `import __c${i} from ${JSON.stringify(c.path)}`)
+          .join("\n");
+
+        const registrations = [...components.values()]
+          .map((c, i) => `  app.component(${JSON.stringify(c.name)}, __c${i})`)
+          .join("\n");
+
+        return `
+${imports}
+
+export default {
+  install(app) {
+${registrations}
+  }
+}
+`;
       },
     },
   ];

@@ -4,7 +4,12 @@ import tailwindcss from "@tailwindcss/vite";
 import vContent from "v-content/vite";
 
 import { defineConfig } from "../packages/core/src/index.js";
-import { defineCollection, type Plugin } from "v-content";
+import {
+  defineCollection,
+  rehypeList,
+  rehypeTable,
+  type Plugin,
+} from "v-content";
 
 import { Element } from "hast";
 import { visit } from "unist-util-visit";
@@ -22,6 +27,28 @@ const rehypeUCode: Plugin = function () {
         properties: {},
         children: [node],
       };
+    });
+  };
+};
+
+const rehypeLink: Plugin = function () {
+  return (tree) => {
+    visit(tree, "element", (node: Element) => {
+      if (node.tagName !== "a") return;
+
+      node.tagName = "u-prose-link";
+    });
+  };
+};
+
+const rehypeCode: Plugin = function () {
+  return (tree) => {
+    visit(tree, "element", (node: Element, index, parent?: Element) => {
+      if (node.tagName !== "code") return;
+
+      const isBlock = parent?.type === "element" && parent.tagName === "pre";
+      if (isBlock) return;
+      node.tagName = "u-prose-code";
     });
   };
 };
@@ -51,23 +78,30 @@ export default defineConfig({
     plugins: [
       tailwindcss(),
 
-      // vContent({
-      //   root: resolve(import.meta.dirname, "../docs/fr"),
-      //   output: resolve(import.meta.dirname, ".app/content"),
+      vContent({
+        root: resolve(import.meta.dirname, "../docs/fr"),
+        output: resolve(import.meta.dirname, ".app/content"),
 
-      //   plugins: [rehypeUCode],
-      //   collections: {
-      //     docs: defineCollection({
-      //       type: "page",
-      //       source: {
-      //         include: "**/*.md",
-      //         exclude: "**/*.draft.md",
-      //         // prefix: "/docs",
-      //       },
-      //       // schema: docSchema,
-      //     }),
-      //   },
-      // }),
+        plugins: [
+          [rehypeUCode],
+          [rehypeLink],
+          [rehypeCode],
+          [rehypeTable, { extractData: true, componentName: "u-prose-table" }],
+          [rehypeList, { extractData: true, componentName: "u-prose-list" }],
+        ],
+
+        collections: {
+          docs: defineCollection({
+            type: "page",
+            source: {
+              include: "**/*.md",
+              exclude: "**/*.draft.md",
+              // prefix: "/docs",
+            },
+            // schema: docSchema,
+          }),
+        },
+      }),
     ],
   },
 });

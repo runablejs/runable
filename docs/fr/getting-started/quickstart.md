@@ -27,9 +27,14 @@ const message = "Hello Syora";
 
 Rendez-vous sur `http://localhost:5173`. Vous voyez votre page. C'est tout.
 
-::: tip Pas de routeur à configurer
+::u-tip 
+---
+title:Pas de routeur à configurer
+---
+
 Le fichier `app/pages/index.vue` est automatiquement mappé sur `/`. Syora génère les routes `vue-router` pour vous.
-:::
+
+::
 
 ## Étape 2 : Une page dynamique
 
@@ -75,7 +80,11 @@ Créez `app/layouts/default.vue` :
 
 Toutes les pages utilisent automatiquement le layout `default`. Le `<slot />` est remplacé par le contenu de la page.
 
-::: tip Changer de layout
+::u-tip
+---
+Changer de layout
+---
+
 Dans une page spécifique :
 
 ```vue
@@ -83,7 +92,7 @@ Dans une page spécifique :
 definePageMeta({ layout: "admin" });
 </script>
 ```
-:::
+::
 
 ## Étape 4 : Récupérer des données
 
@@ -180,6 +189,6 @@ En 5 étapes, vous avez :
 | 4     | Le data fetching avec SSR — `useAsyncData`     |
 | 5     | Les auto-imports — `app/composables/`          |
 
-::: tip Prochaine étape
+## Prochaine étape
+
 Plongez dans les concepts fondamentaux : [Core Concepts](../concepts.md).
-:::
