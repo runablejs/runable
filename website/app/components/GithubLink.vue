@@ -1,7 +1,5 @@
 <script setup lang="ts">
-const github = {
-  repo: "syorajs/syora",
-};
+const { github } = useAppConfig();
 </script>
 
 <template>

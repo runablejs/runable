@@ -56,7 +56,7 @@ const columnHelper = createColumnHelper<DataTableFeatures, TableRow>();
 
 const columns = columnHelper.columns(
   data.value.columns.map((column) =>
-    columnHelper.accessor(column.key, { header: column.label ?? "-" }),
+    columnHelper.accessor(column.key, { header: column.label }),
   ),
 );
 
@@ -84,9 +84,7 @@ const table = useTable({
             <span
               v-if="
                 header.column.columnDef.header &&
-                !header.column.columnDef.header
-                  .toString()
-                  .startsWith('___hide_')
+                !header.id.startsWith('___hide_')
               "
               class="flex flex-wrap items-center gap-1"
             >

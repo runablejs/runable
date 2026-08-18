@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
 import { cn } from "~/lib/utils";
+import { useSidebar } from "./ui/sidebar/utils.ts";
+import { useI18n } from "vue-i18n";
 
 // const props = defineProps<{
 //   tree: ContentNavigationItem
@@ -11,17 +13,26 @@ const props = defineProps<{
 }>();
 
 const { nav } = useAppConfig();
-const route = useRouter();
+const { toggleSidebar } = useSidebar();
+const router = useRouter();
+const localePath = useLocalePath();
+const { locale } = useI18n();
 
 const active = computed(() => {
-  return nav.find((s) => route.currentRoute.value.path.startsWith(s.href))
-    ?.name;
+  const path = router.currentRoute.value.path
+    .replace(/\/+$/, "")
+    .replace(new RegExp(`/${locale.value}`), "");
+
+  return nav.find((item) => {
+    const blockPath = `/docs/${item.code}`;
+    return path === blockPath || path.startsWith(`${blockPath}/`);
+  })?.name;
 });
 </script>
 
 <template>
   <div
-    class="px-4 md:px-6 border-y bg-background sticky top-0 z-100 h-(--header-height) w-full"
+    class="px-4 md:px-6 border-y bg-background sticky top-0 z-100 h-(--header-height) w-full overflow-x-auto overflow-y-hidden scrollbar-none"
   >
     <div
       aria-hidden="true"
@@ -33,12 +44,26 @@ const active = computed(() => {
     ></div>
 
     <div class="flex h-full items-center justify-between gap-4 relative">
+      <div class="md:hidden h-full">
+        <UButton
+          data-sidebar="trigger"
+          data-slot="sidebar-trigger"
+          variant="ghost"
+          size="icon"
+          class="rounded-none"
+          @click="toggleSidebar"
+        >
+          <UIcon name="tabler:list-tree" />
+          <span class="sr-only">Toggle Sidebar</span>
+        </UButton>
+      </div>
+
       <!-- Middle area -->
       <nav
-        class="h-full flex items-center gap-2"
+        class="h-full hidden lg:flex items-center gap-2"
         :class="cn('items-center gap-0', props.class)"
       >
-        <RouterLink
+        <SyoraLink
           v-for="{ name, href, icon } in nav"
           :key="name"
           :class="{
@@ -46,12 +71,12 @@ const active = computed(() => {
             'border-b-transparent text-muted-foreground': active !== name,
           }"
           variant="ghost"
-          :to="href"
-          class="px-1.5 hover:text-primary hover:border-b-primary h-full justify-center rounded-none border-b-2 font-medium text-sm flex items-center gap-2"
+          :to="localePath(href)"
+          class="px-1.5 hover:text-primary hover:border-b-primary h-full justify-center rounded-none border-b-2 font-medium text-sm flex items-center gap-2 whitespace-nowrap"
         >
           <UIcon :name="icon" class="size-4" />
           {{ name }}
-        </RouterLink>
+        </SyoraLink>
       </nav>
     </div>
   </div>

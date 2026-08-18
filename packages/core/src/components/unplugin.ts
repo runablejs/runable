@@ -4,7 +4,11 @@ import { createUnplugin } from "unplugin";
 
 import type { ComponentInfo, AutoComponentOptions } from "./types.js";
 import { atomicWriteFile, toArray } from "@/utils/index.js";
-import { getDefaultComponentName, slash } from "./utils.js";
+import {
+  getDefaultComponentName,
+  getExplicitComponentName,
+  slash,
+} from "./utils.js";
 import { injectComponents, normalizeName } from "./inject.js";
 import { dirname, relative, resolve } from "node:path";
 
@@ -31,20 +35,22 @@ export async function scanComponents(
 
     if (!defaultName) continue;
 
-    let name: string | false | undefined = defaultName;
+    const declaredName = await getExplicitComponentName(absPath);
+    let name: string | false | undefined = declaredName ?? defaultName;
 
     if (componentName) {
       try {
-        name = componentName(absPath, defaultName);
+        const configuredName = componentName(absPath, defaultName);
+        if (configuredName !== undefined) name = configuredName;
       } catch (err) {
         console.log(
           `[syora:components] componentName() threw for "${absPath}": ${(err as Error).message}`,
         );
-        name = defaultName;
+        name = declaredName ?? defaultName;
       }
     }
     if (name === false) continue;
-    if (name === undefined) name = defaultName;
+    if (name === undefined) name = declaredName ?? defaultName;
 
     const previous = map.get(normalizeName(name));
     if (previous && previous.path !== absPath) {
@@ -71,7 +77,9 @@ export default createUnplugin<AutoComponentOptions>((options) => {
 
     components.forEach((component) => {
       const rPath = relative(dirname(outFile), component.path);
-      lines.push(`${component.name}: typeof import('${rPath}')['default'];`);
+      lines.push(
+        `${JSON.stringify(component.name)}: typeof import('${rPath}')['default'];`,
+      );
     });
 
     const content = `
@@ -105,7 +113,10 @@ export {}
       },
 
       async watchChange(id) {
-        if (shouldRescan(id)) await scanComponents(options);
+        if (shouldRescan(id)) {
+          components = await scanComponents(options);
+          generatedDts();
+        }
       },
     },
 

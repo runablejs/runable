@@ -13,7 +13,7 @@ export type SyoraApp = {
   _route: RouteLocationNormalizedLoaded;
 };
 
-export function createSyoraApp(options: { vueApp: VueApp }) {
+export function createSyoraContext(options: { vueApp: VueApp }) {
   const syoraApp: SyoraApp = {
     vueApp: options.vueApp,
     _id: "syora-app",

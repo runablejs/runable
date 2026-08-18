@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+const localePath = useLocalePath();
 
 const metaRef = ref<HTMLElement | null>(null);
 const titleRef = ref<HTMLElement | null>(null);
@@ -48,12 +52,12 @@ onMounted(() => {
               transform 300ms ease-out;
           "
         >
-          The Vue framework that brings the
+          {{ t("landing.hero.title.beforeNuxt") }}
           <em class="font-display italic text-accent font-bold">Nuxt</em>
-          developer experience to
-          <em class="font-display italic text-accent font-bold"
-            >any backend.</em
-          >
+          {{ t("landing.hero.title.afterNuxt") }}
+          <em class="font-display italic text-accent font-bold">
+            {{ t("landing.hero.title.backend") }}
+          </em>
         </h1>
 
         <!-- Sous-titre -->
@@ -66,9 +70,7 @@ onMounted(() => {
               transform 300ms ease-out;
           "
         >
-          File-system routing, auto-imports, layouts, SSR, and more — without
-          imposing a specific server runtime. Run on Fastify, Express, Hono,
-          Deno, or any HTTP server you choose.
+          {{ t("landing.hero.subtitle") }}
         </p>
 
         <!-- CTAs -->
@@ -81,8 +83,17 @@ onMounted(() => {
               transform 200ms ease-out;
           "
         >
-          <UButton variant="default" size="lg"> Why Syora ? </UButton>
-          <UButton variant="outline" size="lg"> Get Started </UButton>
+          <UButton variant="default" size="lg" as-child>
+            <SyoraLink :to="localePath('/docs/getting-started/why-syora')">
+              {{ t("landing.hero.whySyora") }}
+            </SyoraLink>
+          </UButton>
+
+          <UButton variant="outline" size="lg" as-child>
+            <SyoraLink :to="localePath('/docs/getting-started/installation')">
+              {{ t("landing.hero.getStarted") }}
+            </SyoraLink>
+          </UButton>
         </div>
       </div>
     </div>

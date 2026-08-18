@@ -11,12 +11,12 @@ npm install serve-static
 ## `app/vite.ts` — instance Vite partagée (singleton)
 
 ```typescript
-import { createServer, useConfig } from "../../../src";
+import { createSyoraApp, useConfig } from "../../../src";
 
-let vitePromise: ReturnType<typeof createServer> | null = null;
+let vitePromise: ReturnType<typeof createSyoraApp> | null = null;
 
 export function getVite() {
-  if (!vitePromise) vitePromise = createServer();
+  if (!vitePromise) vitePromise = createSyoraApp();
   return vitePromise;
 }
 
@@ -95,7 +95,7 @@ Contrairement à Fastify (`middie` gère ça nativement) ou Express (`next()` re
 Équivalent de `req.originalUrl` en Express : le `true` inclut la query string dans l'URL retournée.
 
 **5. Singleton `getVite()`**
-Comme le middleware et la route ont chacun besoin de l'instance Vite, je la centralise dans `app/vite.ts` plutôt que de rappeler `createServer()` à deux endroits (ce qui créerait deux serveurs Vite dev distincts).
+Comme le middleware et la route ont chacun besoin de l'instance Vite, je la centralise dans `app/vite.ts` plutôt que de rappeler `createSyoraApp()` à deux endroits (ce qui créerait deux serveurs Vite dev distincts).
 
 ---
 

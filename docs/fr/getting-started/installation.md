@@ -55,7 +55,7 @@ Connectez Syora à votre serveur existant. Si l'assistant a généré un `server
 ```ts [Express]
 // server.ts (généré par l'assistant — à compléter)
 import express from "express";
-import { createServer, requestNode } from "@syora/core";
+import { createSyoraApp, requestNode } from "@syora/core";
 
 const app = express();
 
@@ -65,7 +65,7 @@ app.get("/api/users", (req, res) => {
 });
 
 // ← Syora gère tout le reste
-const vite = await createServer();
+const vite = await createSyoraApp();
 if (vite) app.use(vite.middlewares);
 
 app.use("*all", async (req, res) => {
@@ -79,7 +79,7 @@ app.listen(3000);
 // server.ts
 import Fastify from "fastify";
 import middie from "@fastify/middie";
-import { createServer, serve } from "@syora/core";
+import { createSyoraApp, serve } from "@syora/core";
 
 const app = Fastify();
 
@@ -89,7 +89,7 @@ app.get("/api/users", async () => {
 });
 
 // ← Syora
-const vite = await createServer();
+const vite = await createSyoraApp();
 await app.register(middie);
 if (vite) app.use(vite.middlewares);
 
@@ -104,10 +104,10 @@ await app.listen({ port: 3000 });
 ```ts [NestJS]
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
-import { createServer, requestNode } from "@syora/core";
+import { createSyoraApp, requestNode } from "@syora/core";
 
 const app = await NestFactory.create(AppModule);
-const vite = await createServer();
+const vite = await createSyoraApp();
 
 // Vos controllers NestJS gèrent /api/*
 // Syora gère le reste
@@ -123,10 +123,10 @@ await app.listen(3000);
 import Koa from "koa";
 import c2k from "koa-connect";
 import serveStatic from "koa-static";
-import { createServer, requestNode } from "@syora/core";
+import { createSyoraApp, requestNode } from "@syora/core";
 
 const app = new Koa();
-const vite = await createServer();
+const vite = await createSyoraApp();
 
 // Middleware Vite dev server
 if (vite) app.use(c2k(vite.middlewares));
@@ -145,9 +145,9 @@ app.listen(3000);
 ```ts [AdonisJS]
 // start/routes.ts
 import router from "@adonisjs/core/services/router";
-import { createServer, requestNode } from "@syora/core";
+import { createSyoraApp, requestNode } from "@syora/core";
 
-const vite = await createServer();
+const vite = await createSyoraApp();
 
 // Vos routes API AdonisJS
 router.get("/api/users", async () => {
@@ -165,9 +165,9 @@ router.get("*", async ({ request, response }) => {
 ```
 
 ```ts [Bun]
-import { createServer, requestWeb } from "@syora/core";
+import { createSyoraApp, requestWeb } from "@syora/core";
 
-const vite = await createServer();
+const vite = await createSyoraApp();
 
 Bun.serve({
 	port: 3000,

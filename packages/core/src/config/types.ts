@@ -11,6 +11,7 @@ import type {
   ScanDir,
   Arrayable,
   ResolvedScanDirFile,
+  Promisable,
 } from "@/utils";
 
 /** Shape of a `syora.config.*` file, as authored by the user. */
@@ -93,7 +94,7 @@ export interface SyoraConfig {
    * `{ myModule: { foo: 'bar' } }`. Not meant to be typed manually — modules
    * declare the shape of their own options via `defineModule`'s `OptionsT`.
    */
-  [key: string]: unknown;
+  // [key: string]: unknown;
 }
 
 // --- Modules ------------------------------------------------------------
@@ -167,7 +168,10 @@ export interface ModuleDefinition<
    * consumer's overrides). Use it to mutate/extend `config` — register
    * plugins, components dirs, globals, etc.
    */
-  setup?: (options: OptionsT, config: ResolvedConfig) => void | Promise<void>;
+  setup?: (
+    options: OptionsT,
+    config: ResolvedConfig,
+  ) => Promisable<void | Partial<Pick<ResolvedConfig, "_runtime">>>;
 }
 
 /**
@@ -261,6 +265,11 @@ export type ResolvedConfig = {
 
   /** This config's own `dependOn` list — the module names its `setup` must wait for. */
   _dependOn: string[];
+
+  _runtime: {
+    public: Record<string, any>;
+    [key: string]: any;
+  };
 };
 
 /** Subset of the config safe to forward to the client bundle. */

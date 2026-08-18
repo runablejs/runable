@@ -40,10 +40,13 @@ export function writeTsConfig() {
   const { output, appDir, alias } = useConfig();
 
   Object.entries(alias ?? {}).forEach(([key, value]) => {
-    tsconfig.app.addAlias(key, normalizeDir(relative(process.cwd(), value)));
+    if (key === "#build") return;
+
+    tsconfig.app.addAlias(key, normalizeDir(relative(output, value)));
   });
 
-  tsconfig.app.addAlias("#app/*", "./*");
+  tsconfig.app.addAlias("#build", "./");
+  tsconfig.app.addAlias("#build/*", "./*");
 
   tsconfig.app.setCompilerOption(
     "tsBuildInfoFile",

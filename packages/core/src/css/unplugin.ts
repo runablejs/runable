@@ -27,6 +27,7 @@ export default createUnplugin((config: CssOptions) => {
     enforce: "pre",
 
     buildStart() {
+      sharedCssFiles.clear();
       const files = resolveScanFiles(dirs);
       for (const file of files) sharedCssFiles.add(file);
       // file.startsWith(".") ? path.resolve(cwd, file) : file,

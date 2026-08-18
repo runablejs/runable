@@ -64,10 +64,7 @@ type LayoutEntry = { parent: string; file: string; dtsImportPath: string };
  * each module) so `:layouts` and `layouts.d.ts` include every config's
  * layouts, not just whichever instance's `buildStart`/`load` happens to win.
  */
-let total = 0;
-let completed = 0;
 const sharedLayouts: Record<string, LayoutEntry> = {};
-let sharedOutput: string | undefined;
 
 function getLayoutName(filePath: string, parentDir: string): string {
   filePath = removeFileExtension(filePath);
@@ -135,20 +132,15 @@ function generateVirtualCode(): string {
 }
 
 export default createUnplugin((config?: LayoutOptions) => {
-  total++;
-
   return {
     name: "syora:vue-layouts",
     enforce: "pre",
 
     buildStart() {
       const { output = process.cwd(), dirs = [] } = config ?? {};
-      sharedOutput ??= output;
-
+      for (const key of Object.keys(sharedLayouts)) delete sharedLayouts[key];
       collectLayouts(dirs, output);
-
-      completed++;
-      if (completed === total) generateDts(sharedOutput);
+      generateDts(output);
     },
 
     resolveId(id) {

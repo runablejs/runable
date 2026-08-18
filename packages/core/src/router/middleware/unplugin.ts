@@ -82,6 +82,8 @@ export {};
     name: "syora:router-middlewares",
 
     buildStart() {
+      middlewares.splice(0, middlewares.length);
+
       for (const dir of options.dirs) {
         const { name, isGlobal } = resolveMiddleware(dir.file, dir.parent);
         middlewares.push({ name, isGlobal, file: dir.file });

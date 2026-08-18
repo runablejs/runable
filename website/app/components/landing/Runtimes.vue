@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const gridRef = ref<HTMLElement | null>(null);
 const runtimeHeadings = ref<HTMLElement | null>(null);
@@ -48,12 +51,12 @@ const runtimeServers = [
     name: "Hono",
     icon: "simple-icons:hono",
   },
-  {
-    ref: "RT.07",
-    name: "Nitro",
-    icon: "unjs:nitro",
-    code: "nitro",
-  },
+  // {
+  //   ref: "RT.07",
+  //   name: "Nitro",
+  //   icon: "unjs:nitro",
+  //   code: "nitro",
+  // },
   {
     ref: "RT.08",
     name: "AdonisJS",
@@ -81,7 +84,7 @@ const runtimeServers = [
 
     <div class="mx-auto max-w-7xl px-10 py-32 md:py-40">
       <p class="font-mono text-mono-sm text-tertiary tracking-[0.08em] mb-8">
-        04 — Runtimes
+        {{ t("landing.runtimes.eyebrow") }}
       </p>
 
       <h2
@@ -94,8 +97,8 @@ const runtimeServers = [
             transform 300ms ease-out;
         "
       >
-        Run on anything.<br class="hidden md:block" />
-        Deploy anywhere.
+        {{ t("landing.runtimes.title.first") }}<br class="hidden md:block" />
+        {{ t("landing.runtimes.title.second") }}
       </h2>
 
       <div
@@ -125,7 +128,7 @@ const runtimeServers = [
           <div
             class="mb-4 text-neutral group-hover:text-accent transition-colors duration-fast ease-default"
           >
-            <svg
+            <!-- <svg
               v-if="rt.code === 'nitro'"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 32 32"
@@ -136,10 +139,9 @@ const runtimeServers = [
                 d="M28.173 5.616C22.438-1.107 12.34-1.907 5.617 3.828s-7.524 15.834-1.789 22.557s15.834 7.523 22.557 1.788s7.523-15.834 1.788-22.557m-7.97 8.398c.616 0 1.01.668.7 1.202l-.089.153l-6.038 9.935a.62.62 0 0 1-.529.297h-.576a.604.604 0 0 1-.585-.755l1.638-6.335a.8.8 0 0 0-.774-1h-2.517a.8.8 0 0 1-.774-1l2.472-9.565a.74.74 0 0 1 .716-.544q.061 0 .107.002h2.535a.8.8 0 0 1 .793.908l-.016.114l-.966 5.653a.8.8 0 0 0 .788.935z"
                 clip-rule="evenodd"
               />
-            </svg>
+            </svg> -->
 
             <UIcon
-              v-else
               :name="rt.icon"
               class="w-10 h-10 mx-auto"
               aria-hidden="true"
@@ -152,8 +154,8 @@ const runtimeServers = [
         </article>
       </div>
 
-      <p class="mt-7 mx-auto max-w-3xl text-center">
-        And any other runtime capable of handling HTTP requests.
+      <p class="mt-7 max-w-3xl">
+        {{ t("landing.runtimes.footer") }}
       </p>
     </div>
 

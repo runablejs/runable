@@ -118,23 +118,27 @@ export function sendRequestResult(
   res: ServerResponse,
 ): void {
   if ("redirect" in result) {
-    res.statusCode = result.status ?? 302;
-    res.setHeader("Location", result.redirect);
+    if (!res.headersSent) {
+      res.statusCode = result.status ?? 302;
+      res.setHeader("Location", result.redirect);
+    }
     res.end();
     return;
   }
 
   const { content, type, status, headers } = result;
 
-  res.statusCode = status ?? 200;
+  if (!res.headersSent) {
+    res.statusCode = status ?? 200;
 
-  if (type && !res.hasHeader("content-type")) {
-    res.setHeader("Content-Type", type);
-  }
+    if (type && !res.hasHeader("content-type")) {
+      res.setHeader("Content-Type", type);
+    }
 
-  if (headers) {
-    for (const [key, value] of Object.entries(headers)) {
-      res.setHeader(key, value!);
+    if (headers) {
+      for (const [key, value] of Object.entries(headers)) {
+        res.setHeader(key, value!);
+      }
     }
   }
 

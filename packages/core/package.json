@@ -8,6 +8,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.js"
+    },
+    "./adapters": {
+      "types": "./dist/adapters/index.d.ts",
+      "import": "./dist/adapters/index.js",
+      "require": "./dist/adapters/index.js"
     }
   },
   "main": "./dist/index.js",
@@ -49,8 +54,18 @@
     "vue-router": "catalog:"
   },
   "devDependencies": {
+    "@adonisjs/core": "^7.3.5",
+    "@nestjs/common": "catalog:",
+    "@nestjs/core": "catalog:",
+    "@nestjs/platform-express": "catalog:",
+    "@types/express": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
+    "express": "catalog:",
+    "fastify": "catalog:",
+    "hono": "catalog:",
+    "koa": "catalog:",
+    "@types/koa": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },

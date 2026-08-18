@@ -44,10 +44,10 @@ Ajoutez la couche Vue à votre backend existant. Vos routes API ne bougent pas.
 
 ```ts [Express]
 import express from "express";
-import { createServer, requestNode } from "@syora/core";
+import { createSyoraApp, requestNode } from "@syora/core";
 
 const app = express();
-const vite = await createServer();
+const vite = await createSyoraApp();
 
 app.get("/api/users", (req, res) => res.json([{ id: 1, name: "Alice" }]));
 app.use("*all", (req, res) => requestNode({ vite, req, res }));
@@ -57,10 +57,10 @@ app.listen(3000);
 
 ```ts [Fastify]
 import Fastify from "fastify";
-import { createServer, serve } from "@syora/core";
+import { createSyoraApp, serve } from "@syora/core";
 
 const app = Fastify();
-const vite = await createServer();
+const vite = await createSyoraApp();
 
 app.get("/api/users", async () => [{ id: 1, name: "Alice" }]);
 app.all("*", async (req, reply) => {
@@ -73,10 +73,10 @@ await app.listen({ port: 3000 });
 
 ```ts [NestJS]
 import { NestFactory } from "@nestjs/core";
-import { createServer, requestNode } from "@syora/core";
+import { createSyoraApp, requestNode } from "@syora/core";
 
 const app = await NestFactory.create(AppModule);
-const vite = await createServer();
+const vite = await createSyoraApp();
 
 app.use("*", async (req, res, next) => {
   if (req.path.startsWith("/api")) return next();
@@ -123,4 +123,3 @@ npm create syora@latest
 ```
 
 [Commencer l'installation →](/getting-started/installation)
-

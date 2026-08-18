@@ -1,15 +1,15 @@
-import { ref } from "vue";
+import { inject } from "vue";
 
-const errorCode = ref<number | null>(null);
+import { APP_ERROR_STATE_KEY } from "../../error/symbols.js";
 
 export function useAppError() {
-  function setError(code: number) {
-    errorCode.value = code;
+  const state = inject(APP_ERROR_STATE_KEY);
+
+  if (!state) {
+    throw new Error(
+      "useAppError() must be called after Syora's error capture plugin has been installed.",
+    );
   }
 
-  function clearError() {
-    errorCode.value = null;
-  }
-
-  return { errorCode, setError, clearError };
+  return state;
 }

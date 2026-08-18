@@ -129,11 +129,11 @@ Que votre architecture repose sur **Fastify**, **NestJS**, **AdonisJS**, **Expre
 
 ```ts
 // Express : 10 lignes
-import { createServer, requestNode } from "@syora/core";
+import { createSyoraApp, requestNode } from "@syora/core";
 import express from "express";
 
 const app = express();
-const vite = await createServer();
+const vite = await createSyoraApp();
 
 app.use(vite?.middlewares ?? express.static("./dist/client"));
 app.use("*all", (req, res) => requestNode({ vite, req, res }));

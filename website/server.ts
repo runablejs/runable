@@ -1,17 +1,22 @@
-import express from "express";
-import { createServer, requestNode } from "../packages/core/src/index.js";
+// import Express from "express";
+import { hono } from "../packages/core/src/index.js";
 
-const app = express();
+// const app = Express();
 
-app.get("/api/users", (req, res) => {
-  res.json([{ id: 1, name: "Alice" }]);
+// app.use(express());
+
+// app.listen(3000);
+
+// server.ts
+import { Hono } from "hono";
+import { serve } from "@hono/node-server";
+
+const app = new Hono();
+
+app.use("*", hono());
+
+app.get("/api/health", (context) => {
+  return context.json({ status: "ok" });
 });
 
-const syoraApp = await createServer();
-if (syoraApp) app.use(syoraApp.middlewares);
-
-app.use("*all", async (req, res) => {
-  await requestNode({ syoraApp, req, res });
-});
-
-app.listen(3000);
+serve({ fetch: app.fetch, port: 3000 });

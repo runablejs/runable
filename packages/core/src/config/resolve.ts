@@ -18,7 +18,7 @@ export function resolveConfig(config: SyoraConfig & { cwd: string }) {
   let _appDir = config.appDir ?? "app";
   _appDir = resolveDir(_appDir, _cwd);
 
-  // Also the target of the `#app` alias set up below.
+  // Also the target of the `#build` alias set up below.
   let _output = config.output ?? ".app";
   _output = resolveDir(_output, _cwd);
 
@@ -54,7 +54,7 @@ export function resolveConfig(config: SyoraConfig & { cwd: string }) {
     defaultExtensions: ["vue", "js", "ts", "mjs", "mts", "cjs"],
   });
 
-  let _middlewares = config.globals ?? [join(_appDir, "middlewares")];
+  let _middlewares = config.middlewares ?? [join(_appDir, "middlewares")];
   _middlewares = resolveScanDirs_v2(_cwd, _middlewares, {
     defaultExtensions: ["js", "ts", "mjs", "mts", "cjs"],
   });
@@ -80,9 +80,9 @@ export function resolveConfig(config: SyoraConfig & { cwd: string }) {
     ],
   });
 
-  // Expose the resolved output dir under `#app` so runtime code can import
+  // Expose the resolved output dir under `#build` so runtime code can import
   // from it regardless of what `output` was configured to.
-  let _alias = merge(config.alias ?? {}, { "#app": _output });
+  let _alias = merge(config.alias ?? {}, { "#build": _output });
 
   return {
     cwd: _cwd,
@@ -111,6 +111,8 @@ export function resolveConfig(config: SyoraConfig & { cwd: string }) {
     head: config.head,
     siteUrl: config.siteUrl,
     vite: config.vite,
+
+    _runtime: { public: {} },
 
     // Keep the raw, pre-resolution config around (mirrors `defineConfig` on `ResolvedConfig`).
     defineConfig: config,

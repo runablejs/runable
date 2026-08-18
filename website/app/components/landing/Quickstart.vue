@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const ctaHeadingRef = ref<HTMLElement | null>(null);
 const ctaContentRef = ref<HTMLElement | null>(null);
@@ -9,6 +12,7 @@ const { reveal, revealChildren } = useScrollReveal({
   rootMargin: "0px 0px -40px 0px",
   y: 16,
 });
+const localePath = useLocalePath();
 
 onMounted(() => {
   reveal(ctaHeadingRef.value);
@@ -33,7 +37,7 @@ onMounted(() => {
               transform 300ms ease-out;
           "
         >
-          06 — Get Started
+          {{ t("landing.quickstart.eyebrow") }}
         </p>
 
         <!-- <h2
@@ -61,14 +65,12 @@ onMounted(() => {
           "
         >
           <p class="font-body text-body leading-relaxed max-w-xl">
-            Start with the CLI, read the documentation, or explore the
-            ecosystem. No lock-in, no backend dependency — just Vue, TypeScript,
-            and the runtime of your choice.
+            {{ t("landing.quickstart.description") }}
           </p>
 
           <div class="flex flex-col sm:flex-row items-center gap-4 mt-4">
-            <a
-              href="#install"
+            <SyoraLink
+              :to="localePath('/docs/getting-started/installation')"
               class="group inline-flex items-center gap-3 font-mono text-mono bg-neutral text-inverse px-8 py-4 rounded-md transition-all duration-fast ease-default hover:bg-neutral/90 hover:-translate-y-px"
             >
               <span>npm create syora@latest</span>
@@ -77,7 +79,7 @@ onMounted(() => {
                 name="tabler:arrow-right"
                 class="transition-transform duration-fast ease-default group-hover:translate-x-0.5 size-3.5"
               />
-            </a>
+            </SyoraLink>
 
             <a
               href="https://github.com/syorajs/syora"
@@ -87,12 +89,12 @@ onMounted(() => {
             >
               <UIcon name="simple-icons:github" class="size-5" />
 
-              <span>View on GitHub</span>
+              <span>{{ t("landing.quickstart.viewOnGitHub") }}</span>
             </a>
           </div>
 
           <p class="font-body text-caption text-tertiary mt-2">
-            MIT License · TypeScript · Vue 3
+            {{ t("landing.quickstart.meta") }}
           </p>
         </div>
       </div>

@@ -6,6 +6,7 @@ import { transformHtmlTemplate } from "@unhead/vue/server";
 import { loadConfig } from "@/config/load.js";
 import { dehydrateAsyncData } from "@/async-data/ssr.js";
 import { serializeState } from "@/async-data/serialize.js";
+import { getAppErrorState } from "@/error/plugin.js";
 
 export async function render(ssrContext: SSRContext) {
   await loadConfig();
@@ -20,8 +21,23 @@ export async function render(ssrContext: SSRContext) {
   await router.push(pathname + search + hash);
   await router.isReady();
 
-  const ctx = {};
-  let html = await renderToString(app, ctx);
+  let html: string;
+
+  try {
+    html = await renderToString(app, {});
+  } catch (error) {
+    const errorState = getAppErrorState(app);
+    if (!errorState) throw error;
+
+    errorState.showError(error, {
+      source: "vue",
+      info: "server-render",
+    });
+
+    // Render again: SyoraApp now selects the error component instead of
+    // the component tree that failed during the first pass.
+    html = await renderToString(app, {});
+  }
 
   // Extract + serialize the async-data cache for this request
   const asyncDataState = dehydrateAsyncData(app);

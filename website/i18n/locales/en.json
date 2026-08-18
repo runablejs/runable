@@ -1,0 +1,94 @@
+{
+  "common": {
+    "search": "Search",
+    "documentation": "Documentation",
+    "onThisPage": "On this page",
+    "loadingDocumentation": "Loading documentation",
+    "language": "Language",
+    "changeLanguage": "Change language"
+  },
+  "landing": {
+    "navigation": {
+      "ariaLabel": "Page sections",
+      "hero": "Hero",
+      "why": "Why Syora",
+      "capabilities": "Capabilities",
+      "runtimes": "Runtimes",
+      "quickstart": "Quick Start"
+    },
+    "hero": {
+      "title": {
+        "beforeNuxt": "The Vue framework that brings the",
+        "afterNuxt": "developer experience to",
+        "backend": "any backend."
+      },
+      "subtitle": "File-system routing, auto-imports, layouts, SSR, and more — without imposing a specific server runtime. Run on Fastify, Express, Hono, Deno, or any HTTP server you choose.",
+      "whySyora": "Why Syora?",
+      "getStarted": "Get Started"
+    },
+    "why": {
+      "eyebrow": "02 — Why Syora",
+      "title": "The compromise nobody asked for.",
+      "lead": "Today, choosing Nuxt means adopting Nitro as your server runtime. For most projects, this coupling makes sense. But when you need a specialized backend framework, it becomes a real constraint.",
+      "body": "Frameworks like Fastify, NestJS, AdonisJS, or Koa offer rich, battle-tested ecosystems: advanced dependency injection, modular architecture, mature plugin systems, and robust conventions already adopted by enterprises. When you need this kind of infrastructure, developers are stuck between two unsatisfying options.",
+      "optionA": {
+        "label": "Option A",
+        "title": "Back to Vanilla Vue",
+        "description": "You choose server freedom, but you give up the exceptional Nuxt developer experience: file-system routing, auto-imports, useAsyncData, modules, middlewares, and more."
+      },
+      "optionB": {
+        "label": "Option B",
+        "title": "Split Projects (Headless)",
+        "description": "You build your ideal backend on one side and a Nuxt frontend on the other — at the cost of heavy architecture, increased deployment complexity, and duplicated logic."
+      },
+      "solution": {
+        "label": "The Third Way",
+        "title": "Syora eliminates this compromise.",
+        "first": {
+          "before": "Syora brings the",
+          "emphasis": "entire Nuxt developer experience",
+          "after": "directly to Vue.js, while remaining strictly independent of the server. You keep file-system routing, layouts, middlewares, async hydration, Server-Side Rendering (SSR), and auto-imports."
+        },
+        "second": "The only difference? You are free to run your application on the server of your choice. Whether your architecture relies on Fastify, NestJS, AdonisJS, Express, Koa, Hono, or any other technology capable of handling HTTP requests, Syora integrates naturally.",
+        "third": "Choose your backend for its intrinsic qualities, without ever giving up the development comfort of Nuxt."
+      }
+    },
+    "capabilities": {
+      "eyebrow": "03 — Capabilities",
+      "title": {
+        "first": "Everything you expect from Nuxt.",
+        "second": "None of the lock-in."
+      },
+      "items": {
+        "routing": { "title": "File-system based routing", "description": "Automatic route discovery based on your file structure. No configuration required." },
+        "autoImports": { "title": "Auto-imports", "description": "Components and composables imported automatically without explicit declarations." },
+        "layouts": { "title": "Layouts", "description": "Define page layouts that wrap your routes with shared structure and navigation." },
+        "middlewares": { "title": "Route middlewares", "description": "Protect, redirect, or transform navigation with per-route or global middlewares." },
+        "dataFetching": { "title": "Asynchronous data fetching", "description": "Fetch data before rendering with built-in async hooks and suspense handling." },
+        "ssr": { "title": "Server-Side Rendering", "description": "Full SSR support out of the box. Render on the server, hydrate on the client." },
+        "hydration": { "title": "Hydration", "description": "Seamless client-side takeover of server-rendered markup with Vue hydration." },
+        "modules": { "title": "Module system", "description": "Extend Syora with modules. Install, configure, and compose functionality." },
+        "plugins": { "title": "Plugin system", "description": "Hook into every stage of the application lifecycle with a powerful plugin API." },
+        "metadata": { "title": "Page metadata", "description": "Manage titles, descriptions, Open Graph, and SEO metadata per route." },
+        "runtimePresets": { "title": "Runtime presets", "description": "Pre-configured setups for common server environments and deployment targets." },
+        "backendIndependent": { "title": "No backend dependency", "description": "Run on Fastify, Express, Hono, Deno, Bun, Node HTTP, or any custom server." },
+        "vue": { "title": "Powered by Vue", "description": "Built on Vue reactivity, Composition API, and the entire Vue ecosystem." },
+        "typescript": { "title": "Type-safe with TypeScript", "description": "Write type-safe applications with generated types, full TypeScript support, and automatic configuration." },
+        "seo": { "title": "SEO and metadata", "description": "Build SEO-friendly applications with full control over page metadata and search engine optimization." }
+      },
+      "summary": "{count} capabilities. Zero backend lock-in. One developer experience.",
+      "readDocumentation": "Read the documentation"
+    },
+    "runtimes": {
+      "eyebrow": "04 — Runtimes",
+      "title": { "first": "Run on anything.", "second": "Deploy anywhere." },
+      "footer": "And any other runtime capable of handling HTTP requests."
+    },
+    "quickstart": {
+      "eyebrow": "06 — Get Started",
+      "description": "Start with the CLI, read the documentation, or explore the ecosystem. No lock-in, no backend dependency — just Vue, TypeScript, and the runtime of your choice.",
+      "viewOnGitHub": "View on GitHub",
+      "meta": "MIT License · TypeScript · Vue 3"
+    }
+  }
+}

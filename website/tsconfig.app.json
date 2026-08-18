@@ -26,8 +26,8 @@
     "paths": {
       "@/*": ["../packages/core/src/*"],
       "~/*": ["./app/*"],
-      "#app": ["./.app"],
-      "#app/*": ["./.app/*"]
+      "#build": ["./.app"],
+      "#build/*": ["./.app/*"]
     }
   },
 
@@ -38,5 +38,10 @@
     ]
   },
 
-  "include": [".app/**/*.d.ts", "app/**/*"]
+  "include": [
+    ".app/**/*.d.ts",
+    "app/**/*",
+    "modules/i18n/app/**/*",
+    "syora.config.ts"
+  ]
 }

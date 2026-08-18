@@ -17,7 +17,7 @@ import { createHead as createHeadServer } from "@unhead/vue/server";
 import { UnheadSchemaOrg } from "@unhead/schema-org/vue";
 import { layoutPlugin } from "../layout/plugin.js";
 import { useConfig } from "@/app/composables/config.js";
-// import { setupGlobalErrorHandlers } from "@/services/errorCapture.js";
+import { createErrorCapture } from "../error/plugin.js";
 
 export async function createApp(isSsr = false) {
   const config = useConfig();
@@ -59,10 +59,8 @@ export async function createApp(isSsr = false) {
   }
 
   app.use(appContextPlugin);
-
-  // setupGlobalErrorHandlers();
-
   app.use(router);
+  app.use(createErrorCapture());
   app.use(layoutPlugin);
   app.use(pluginPlugin);
   app.use(createAsyncData());

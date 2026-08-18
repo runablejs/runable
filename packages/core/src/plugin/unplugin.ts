@@ -68,10 +68,7 @@ interface PluginEntry {
  * each module) so `:plugins` and `plugins.d.ts` include every config's
  * plugins, not just whichever instance's `buildStart`/`load` happens to win.
  */
-let total = 0;
-let completed = 0;
 const sharedPlugins: Record<string, PluginEntry> = {};
-let sharedOutput: string | undefined;
 
 function getPluginVariableName(filePath: string, parentDir: string): string {
   filePath = removeFileExtension(filePath);
@@ -170,20 +167,15 @@ function generateVirtualCode(isSsr: boolean): string {
 }
 
 export default createUnplugin((config?: PluginOptions) => {
-  total++;
-
   return {
     name: "syora:vue-plugins",
     enforce: "pre",
 
     buildStart() {
       const { dirs = [], output = process.cwd() } = config ?? {};
-      sharedOutput ??= output;
-
+      for (const key of Object.keys(sharedPlugins)) delete sharedPlugins[key];
       collectPlugins(dirs);
-
-      completed++;
-      if (completed === total) generateDtsFile(sharedOutput);
+      generateDtsFile(output);
     },
 
     resolveId(id) {

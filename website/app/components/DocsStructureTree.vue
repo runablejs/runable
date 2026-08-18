@@ -5,11 +5,13 @@ interface TreeNode {
   code: string;
   name: string;
   icon: string;
+  href: string;
   iconOpen?: string;
   children?: TreeNode[];
 }
 
 const { nav } = useAppConfig();
+const localePath = useLocalePath();
 
 const items: TreeNode[] =
   nav.find((n) => n.code === "structure")?.children ?? [];
@@ -47,7 +49,7 @@ onMounted(() => {
 <template>
   <TreeRoot
     v-slot="{ flattenItems }"
-    :items="items"
+    :items
     :get-key="(item) => item.code"
     :get-children="(item) => item.children"
     :default-expanded="allItemCodes"
@@ -58,20 +60,24 @@ onMounted(() => {
       :key="item._id"
       v-slot="{ isExpanded }"
       v-bind="item.bind"
-      class="relative rounded-none flex cursor-pointer items-center gap-2 rounded-md py-1.5 outline-none data-[selected]:bg-accent/10 hover:bg-accent/10 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
-      :style="{ paddingLeft: `${item.level * 1.5}rem` }"
+      :style="{ marginLeft: `${(item.level - 1) * 0.6}rem` }"
+      as-child
+      class="relative rounded-none flex cursor-pointer items-center gap-2 h-6 outline-none data-selected:border-accent hover:bg-border hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
+      :class="{ 'pl-3 border-l': item.parentItem }"
       @toggle="(e) => e.preventDefault()"
     >
-      <UIcon
-        :name="
-          item.hasChildren && isExpanded && item.value.iconOpen
-            ? item.value.iconOpen
-            : item.value.icon
-        "
-        class="text-muted-foreground pointer-events-none size-4 shrink-0"
-      />
+      <SyoraLink :to="localePath(item.value.href)" class="py-4">
+        <UIcon
+          :name="
+            item.hasChildren && isExpanded && item.value.iconOpen
+              ? item.value.iconOpen
+              : item.value.icon
+          "
+          class="text-muted-foreground pointer-events-none size-4 shrink-0"
+        />
 
-      <span class="truncate">{{ item.value.name }}</span>
+        <span class="truncate">{{ item.value.name }}</span>
+      </SyoraLink>
     </TreeItem>
   </TreeRoot>
 </template>

@@ -24,10 +24,10 @@ Imaginez un restaurant :
 
 ```ts [Express]
 import express from "express";
-import { createServer, requestNode } from "@syora/core";
+import { createSyoraApp, requestNode } from "@syora/core";
 
 const app = express();
-const vite = await createServer();
+const vite = await createSyoraApp();
 
 app.get("/api/users", (req, res) => {
   res.json([{ id: 1, name: "Alice" }]);
@@ -40,10 +40,10 @@ app.listen(3000);
 
 ```ts [Fastify]
 import Fastify from "fastify";
-import { createServer, serve } from "@syora/core";
+import { createSyoraApp, serve } from "@syora/core";
 
 const app = Fastify();
-const vite = await createServer();
+const vite = await createSyoraApp();
 
 app.get("/api/users", async () => [{ id: 1, name: "Alice" }]);
 

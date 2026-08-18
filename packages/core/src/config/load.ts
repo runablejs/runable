@@ -342,7 +342,14 @@ async function runSetups(pendingSetups: PendingSetup[]) {
 
     const promise = (async () => {
       await Promise.all(pending.dependOn.map(run));
-      await pending.setup?.(pending.options, pending.config);
+      const _config = await pending.setup?.(
+        pending.options,
+        cachedConfigs?.__main ?? pending.config,
+      );
+
+      if (_config && cachedConfigs?.__main) {
+        merge(cachedConfigs.__main._runtime, _config._runtime);
+      }
     })();
 
     done.set(name, promise);

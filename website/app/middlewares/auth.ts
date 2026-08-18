@@ -1,3 +1,3 @@
 export default defineVueMiddleware(() => {
-  console.log("+++++++++");
+  console.log("+++++++++*/**");
 });

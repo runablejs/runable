@@ -7,9 +7,9 @@ import SiteBody from "./components/SiteBody.vue";
   <SiteBody>
     <ConfigProvider>
       <TooltipProvider>
-        <Layout>
-          <RouterView />
-        </Layout>
+        <SyoraLayout>
+          <SyoraPage />
+        </SyoraLayout>
       </TooltipProvider>
     </ConfigProvider>
   </SiteBody>

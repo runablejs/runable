@@ -8,15 +8,26 @@ const RESOLVED_VIRTUAL_ID = "\0:app-vue";
 
 type RouterConfig = {
   dir?: string;
+  errorDir?: string;
 };
 
-async function generateCode({ dir }: RouterConfig = {}) {
+function generateComponentExport(
+  name: "app" | "error",
+  dir: string | undefined,
+): string[] {
   if (dir) dir = resolveDir(dir);
-  if (!dir || !existsSync(dir)) return "export const app = false";
+  if (!dir || !existsSync(dir)) return [`export const ${name} = false;`];
 
   return [
-    `import app from '${normalizeDir(relative(process.cwd(), dir))}';`,
-    "export  { app };",
+    `import ${name}Component from '${normalizeDir(relative(process.cwd(), dir))}';`,
+    `export const ${name} = ${name}Component;`,
+  ];
+}
+
+async function generateCode({ dir, errorDir }: RouterConfig = {}) {
+  return [
+    ...generateComponentExport("app", dir),
+    ...generateComponentExport("error", errorDir),
   ].join("\n");
 }
 

@@ -9,8 +9,9 @@ import {
   loadRuntimeEnv,
   normalizeDir,
   type LoadEnvResult,
-} from "@/utils";
+} from "@/utils/index.js";
 import merge from "lodash/merge.js";
+import { useConfig } from "@/config/index.js";
 
 interface SyoraEnvPluginOptions {
   output?: string;
@@ -53,9 +54,11 @@ function generateDts(envs: LoadEnvResult["types"], output: string) {
 interface RuntimeEnv {
   public: {
 ${publicLines || "    // no public variables"}
+    [key:string]: unknown
   }
 
 ${privateLines || "  // no private variables (server-only)"}
+  [key:string]: unknown
 }
 
 declare module '${normalizeDir(relative(output, resolve(import.meta.dirname, "types.js")))}' {
@@ -147,11 +150,17 @@ export default createUnplugin((options: SyoraEnvPluginOptions = {}) => {
       load(id, options) {
         if (id !== RESOLVED_VIRTUAL_ID) return;
 
+        const runtime = useConfig()._runtime;
+
+        const scopedRuntime = options?.ssr
+          ? runtime
+          : { public: runtime.public };
+
         const scopedEnv = options?.ssr
           ? merge(envs.runtime.private, { public: envs.runtime.public })
           : { public: envs.runtime.public };
 
-        return `export const values = ${JSON.stringify(scopedEnv)} `;
+        return `export const values = ${JSON.stringify(merge(scopedRuntime, scopedEnv))} `;
       },
 
       transform(code, id, options) {

@@ -33,6 +33,7 @@ declare module ":app-vue" {
 
   const component: DefineComponent<{}, {}, any>;
   export const app: Component | false;
+  export const error: Component | false;
 }
 
 declare module ":layouts" {

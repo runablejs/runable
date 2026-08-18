@@ -58,7 +58,7 @@ async function copyCode() {
 
     <!-- Shiki -->
     <div
-      class="[&>pre]:m-0 [&>pre]:p-5 [&>pre]:overflow-x-auto [&>pre]:rounded-none [&>pre]:border-0"
+      class="[&>pre]:m-0 [&>pre]:p-5 [&>pre]:rounded-none [&>pre]:border-0 [&>pre]:overflow-x-auto [&>pre]:w-0 [&>pre]:min-w-full"
     >
       <slot />
     </div>

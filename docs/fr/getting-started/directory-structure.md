@@ -1,482 +1,146 @@
 ---
-title: Guide de rédaction de la documentation
-description: Comment écrire et structurer la documentation Syora — conventions, outils et bonnes pratiques.
+title: Pourquoi Syora ?
+description: Retrouvez une expérience proche de Nuxt dans Vue tout en conservant le backend et le serveur HTTP de votre choix.
 ---
 
-# Guide de rédaction de la documentation
+# Pourquoi Syora ?
 
-Ce document est le **point d'entrée obligatoire** pour toute personne (développeur humain ou IA) souhaitant écrire ou modifier une page de la documentation Syora.
+Syora apporte à Vue les conventions attendues d'un framework full-stack, sans vous imposer un runtime serveur particulier.
 
-Il décrit l'architecture, la stack technique, les composants disponibles et les conventions de style.
+## Le problème
 
----
+Vue et Vite forment une base simple et flexible. Dès qu'une application grandit, vous devez toutefois choisir, intégrer et maintenir plusieurs briques :
 
-## Architecture globale : les 5 blocs
-
-La documentation est structurée en **5 blocs thématiques** :
-
-```text
-docs/
-├── getting-started/       ← Embarquement, vision & concepts
-│   ├── why-syora.md
-│   ├── installation.md
-│   ├── quickstart.md
-│   ├── vs-nuxt.md
-│   ├── configuration.md
-│   └── concepts.md
-│
-├── structure/               ← Architecture d'un projet Syora
-|  ├── app/                    ← Votre application Vue (source)
-|  │   ├── pages/              ← Routes automatiques (filesystem routing)
-|  │   ├── layouts/            ← Dispositions d'interface réutilisables
-|  │   ├── components/         ← Composants Vue auto-importés
-|  │   ├── composables/        ← Composables Vue auto-importés
-|  │   ├── plugins/            ← Plugins Vue / Syora
-|  │   ├── middlewares/        ← Middlewares de navigation
-|  │   └── css/                ← Styles globaux et configurations CSS
-|  ├── public/                 ← Assets statiques (servis directement à la racine)
-|  ├── .env                    ← Variables d'environnement
-|  ├── .gitignore              ← Fichiers et dossiers ignorés par Git
-|  ├── syora.config.ts         ← Configuration principale de Syora
-|  ├── server.ts               ← Point d'entrée de votre serveur (Express, Fastify, Hono...)
-|  ├── package.json            ← Dépendances, scripts et métadonnées du projet
-|  ├── tsconfig.json           ← Configuration TypeScript principale
-|  ├── tsconfig.app.json       ← Configuration TypeScript pour le frontend (app/)
-|  ├── tsconfig.node.json      ← Configuration TypeScript pour le serveur Node.js
-|  ├── .app/                   ← Généré : fichiers virtuels et d'aides préparés par Syora
-|  ├── .output/                ← Généré : build final de production
-|  └── node_modules/ 
-│
-├── guide/                   ← Concepts fondamentaux
-│   ├── routing.md
-│   ├── middlewares.md
-│   ├── auto-imports.md
-│   ├── data-fetching.md
-│   ├── ssr.md
-│   ├── plugins.md
-│   └── modules.md
-│
-├── integrations/            ← Connexion aux backends
-│   ├── index.md
-│   ├── express.md
-│   ├── fastify.md
-│   ├── hono.md
-│   ├── koa.md
-│   ├── nestjs.md
-│   ├── adonisjs.md
-│   ├── h3.md
-│   ├── bun.md
-│   ├── deno.md
-│   └── custom.md
-│
-└── api/                     ← Référence technique
-    ├── composables.md
-    ├── config.md
-    ├── server.md
-    ├── modules.md
-    ├── plugins.md
-    └── cli.md
-
-```
-
-| Bloc | Public cible | Objectif |
-| --- | --- | --- |
-| **Getting Started** | Nouvel arrivant | Comprendre la philosophie, installer, configurer et lancer le projet |
-| **Structure** | Développeur projet | Maîtriser l'organisation des dossiers et fichiers d'un projet Syora |
-| **Guide** | Utilisateur quotidien | Maîtriser chaque feature fondamentale de Syora |
-| **Integrations** | Développeur backend | Connecter Syora à SON serveur existant ou favori |
-| **API** | Développeur avancé | Référence rapide des signatures, typages et configurations |
-
----
-
-## Stack technique
-
-La documentation utilise **v-content** (moteur de contenu Vue) avec les composants de **shadcn-vue**.
-
-### Composants disponibles
-
-| Composant | Usage | Syntaxe |
-| --- | --- | --- |
-| `u-tip` | Encadrés info / warning / success | `::u-tip` avec YAML frontmatter |
-| `u-code-group` | Groupes de code avec onglets | `::u-code-group` + blocks labellisés |
-| `u-icon` | Icônes Tabler | `<u-icon name="tabler:..." class="...">` |
-| `div` + classes Tailwind | Listes stylisées, alignements | `<div class="flex flex-wrap items-center gap-2">` |
-
-**Note :** Les composants shadcn-vue standards (boutons, tableaux, cards, etc.) sont également disponibles mais rarement utilisés dans la doc — on privilégie le markdown natif pour la portabilité et la simplicité.
-
----
-
-## Syntaxe des composants
-
-### 1. `u-tip` — Encadrés contextuels
-
-Utilisé pour les infos, warnings, astuces. **Toujours** avec un YAML frontmatter.
-
-```markdown
-::u-tip
----
-variant: info        # info | warning | success | destructive
-title: Titre optionnel
----
-
-Contenu markdown ici. **Gras**, `code`, <a href="./lien">liens</a> supportés.
-
-::
-
-```
-
-**Règles :**
-
-* `variant` est **obligatoire**.
-* `title` est optionnel — si omis, pas de titre d'encadré.
-* Le contenu supporte le markdown complet.
-* Les liens internes utilisent des chemins relatifs : `<a href="./quickstart.md">`.
-* **Ne jamais** imbriquer un `u-tip` dans un autre.
-
-**Exemples par variant :**
-
-```markdown
-::u-tip
----
-variant: info
-title: Pourquoi c'est puissant
----
-
-Vous pouvez changer de backend demain sans toucher une ligne de votre application Vue.
-
-::
-
-```
-
-```markdown
-::u-tip
----
-variant: warning
-title: Vos routes API ne bougent pas
----
-
-L'intégration Syora est **additive**. Vous ne migrez rien.
-
-::
-
-```
-
-```markdown
-::u-tip
----
-variant: success
-title: Installation terminée
----
-
-Votre projet est prêt. Passez à <a href="./quickstart.md">Quick Start</a>.
-
-::
-
-```
-
-### 2. `u-code-group` — Groupes de code avec onglets
-
-Utilisé pour montrer le même exemple dans plusieurs langages ou frameworks backends.
-
-```markdown
-::u-code-group
-
-` ` `ts [Express]
-import express from "express";
-import { createServer, requestNode } from "@syora/core";
-
-const app = express();
-const vite = await createServer();
-app.use("*all", (req, res) => requestNode({ vite, req, res }));
-app.listen(3000);
-` ` `
-
-` ` `ts [Fastify]
-import Fastify from "fastify";
-import { createServer, serve } from "@syora/core";
-
-const app = Fastify();
-const vite = await createServer();
-app.all("*", async (req, reply) => {
-  const html = await serve({ vite, url: req.raw.url ?? req.url });
-  reply.type("text/html").send(html);
-});
-await app.listen({ port: 3000 });
-` ` `
-
-::
-
-```
-
-*(Note : supprimez les espaces dans les backticks lors de la rédaction)*
-
-**Règles :**
-
-* Le label d'onglet est entre crochets après la langue : ````ts [Express]`
-* **Toujours** laisser une ligne vide entre `::u-code-group` et le premier block.
-* **Toujours** laisser une ligne vide entre le dernier block et `::`.
-* Les labels doivent être respectés strictement : `Express`, `Fastify`, `NestJS`, `Koa`, `AdonisJS`, `Hono`, `Bun`, `Deno`.
-
-### 3. `u-icon` — Icônes inline
-
-Utilisé dans les tableaux et les listes stylisées pour remplacer les emojis ou les caractères bruts (✅/❌).
-
-```html
-<u-icon name="tabler:circle-check-filled" class="size-5 text-success"></u-icon>
-<u-icon name="tabler:circle-x" class="size-5 text-destructive"></u-icon>
-<u-icon name="tabler:circle-1-filled" class="size-5 text-muted-foreground"></u-icon>
-<u-icon name="tabler:info-circle" class="size-5 text-info"></u-icon>
-
-```
-
-**Classes de taille disponibles :** `size-4`, `size-5`, `size-6`
-
-**Classes de couleur disponibles :**
-
-* `text-success` — vert (validation, disponible)
-* `text-destructive` — rouge (erreur, indisponible)
-* `text-muted-foreground` — gris (numérotation, étapes)
-* `text-info` — bleu (information)
-* `text-warning` — orange (attention)
-
-### 4. Listes stylisées avec Tailwind
-
-Pour les listes avec icônes (checklist, étapes numérotées), utiliser des `div` avec les classes utilitaires plutôt que des listes markdown standard.
-
-**Checklist avec icônes :**
-
-```html
-<div class="py-3 space-y-2">
-  <div class="flex flex-wrap items-center gap-2">
-    <u-icon name="tabler:circle-check-filled" class="size-5 text-success"></u-icon>
-    <span>Vous avez déjà un <strong>backend en production</strong></span>
-  </div>
-  <div class="flex flex-wrap items-center gap-2">
-    <u-icon name="tabler:circle-check-filled" class="size-5 text-success"></u-icon>
-    <span>Vous voulez <strong>un seul projet</strong></span>
-  </div>
-</div>
-
-```
-
-**Étapes numérotées :**
-
-```html
 <div class="py-3 space-y-2">
   <div class="flex flex-wrap items-center gap-2">
     <u-icon name="tabler:circle-1-filled" class="size-5 text-muted-foreground"></u-icon>
-    <span><strong>Copiez</strong> le template <code>app/</code></span>
+    <span>un routeur et des conventions pour organiser les pages ;</span>
   </div>
   <div class="flex flex-wrap items-center gap-2">
     <u-icon name="tabler:circle-2-filled" class="size-5 text-muted-foreground"></u-icon>
-    <span><strong>Générez</strong> <code>syora.config.ts</code></span>
+    <span>des layouts, des middlewares et des auto-imports ;</span>
+  </div>
+  <div class="flex flex-wrap items-center gap-2">
+    <u-icon name="tabler:circle-3-filled" class="size-5 text-muted-foreground"></u-icon>
+    <span>le rendu serveur, l'hydratation et le chargement des données ;</span>
+  </div>
+  <div class="flex flex-wrap items-center gap-2">
+    <u-icon name="tabler:circle-4-filled" class="size-5 text-muted-foreground"></u-icon>
+    <span>un système de plugins et de modules réutilisables.</span>
   </div>
 </div>
 
+Nuxt fournit déjà cette expérience. Il s'appuie cependant sur Nitro pour exécuter la partie serveur. Ce choix convient à de nombreux projets, mais pas à ceux qui doivent conserver Express, Fastify, NestJS, AdonisJS, Koa, Hono ou un serveur HTTP interne.
+
+Sans solution intermédiaire, vous devez généralement choisir entre deux architectures :
+
+| Choix | Avantage | Contrepartie |
+| --- | --- | --- |
+| Vue et Vite seuls | Contrôle complet du serveur | Les conventions et fonctionnalités doivent être assemblées manuellement |
+| Backend et frontend Nuxt séparés | Expérience Nuxt complète | Deux applications à développer, connecter et déployer |
+
+## Ce que change Syora
+
+Syora place une couche applicative Vue dans votre serveur existant. Votre backend continue de gérer HTTP, les routes API, l'authentification et la logique métier. Syora prend en charge le rendu de l'interface.
+
+```text
+Requête HTTP
+    │
+    ▼
+Votre backend ──────► Routes API et logique métier
+    │
+    └───────────────► Syora ──► Application Vue
 ```
 
-**Règles :**
-
-* `py-3` pour l'espacement vertical du conteneur.
-* `space-y-2` pour l'espacement entre les items.
-* `flex flex-wrap items-center gap-2` pour aligner parfaitement l'icône et le texte.
-* `flex-wrap` est **obligatoire** pour prévenir les débordements sur mobile.
-
----
-
-## Conventions de style
-
-### Langue
-
-* **La documentation est rédigée en français.**
-* Les termes techniques restent en anglais : `defineConfig`, `useAsyncData`, `ssr`, `middleware`, `composable`...
-* Les noms de fichiers, de fonctions, et de dossiers restent en anglais : `app/pages/index.vue`, `syora.config.ts`.
-
-### Ton
-
-* **Direct et technique :** jamais de langue de bois ou de jargon superflu.
-* **Honnête sur les limites :** si une feature n'est pas encore disponible (ex: SSG statique), le dire clairement.
-* **Pédagogique par couches :** concept → analogie → code → résultat.
-* **Comparaisons objectives :** quand une autre technologie est plus adaptée pour un cas d'usage précis, l'assumer.
-
-### Structure d'une page
-
-Chaque page suit ce squelette logique :
-
-```markdown
----
-title: Titre de la page
-description: Une phrase de description pour le SEO.
----
-
-# Titre de la page
-
-## Introduction (1-2 phrases)
-
-## Concept (l'idée en une phrase)
-
-### Analogie ou contexte
-
-### Code d'exemple
-
-::u-tip
----
-variant: info
-title: Astuce ou précision
----
-
-Contenu.
-
-::
-
-## Récapitulatif (tableau ou liste)
-
-::u-tip
----
-variant: info
-title: Prochaine étape
----
-
-Lien vers la page suivante.
-
-::
-
-```
-
-### Tableaux
-
-Utilisez des tableaux markdown standard pour les comparaisons et récapitulatifs.
-
-```markdown
-| Colonne A | Colonne B | Colonne C |
-|---|---|---|
-| Valeur 1  | Valeur 2  | <u-icon name="tabler:circle-check-filled" class="size-4 text-success"></u-icon> |
-
-```
-
-**Règles :**
-
-* Alignez les pipes `|` pour la lisibilité du fichier brut.
-* Utilisez `text-success` / `text-destructive` pour les indicateurs binaires.
-* Gardez le contenu des cellules concis (pas de paragraphes longs).
-
-### Liens
-
-* **Liens internes :** utilisez des chemins relatifs avec balises HTML `<a href="./quickstart.md">Quick Start</a>`.
-* **Liens externes :** utilisez des URLs absolues `<a href="[https://vuejs.org](https://vuejs.org)" target="_blank">Vue</a>`.
-* **Jamais** de liens markdown `[texte](url)` pour les liens internes, afin de garantir la cohérence avec le routing de v-content.
-
-### Code
-
-* **Langage du block :** `ts` pour TypeScript, `vue` pour les SFC, `bash` pour les commandes terminal.
-* **Commentaires :** utilisez `// ←` pour indiquer visuellement ce qui est nouveau ou important.
-* **Chemins :** indiquez toujours le fichier en commentaire à la première ligne `// server.ts`.
+Concrètement, votre serveur transmet à Syora les requêtes destinées au frontend :
 
 ```ts
 // server.ts
-import express from "express";
+import Express from "express";
+import { express } from "@syora/core";
 
-// ← Vos routes API existantes restent inchangées
-app.get("/api/users", (req, res) => {
-  res.json([{ id: 1, name: "Alice" }]);
+const server = Express();
+
+// Votre backend reste responsable de ses routes API.
+server.get("/api/health", (_req, res) => {
+  res.json({ status: "ok" });
 });
 
+// L'adaptateur initialise Syora et rend les autres requêtes avec Vue.
+server.use(express());
+
+server.listen(3000);
 ```
-
----
-
-## Frontmatter obligatoire
-
-Chaque fichier markdown doit s'ouvrir avec ce frontmatter :
-
-```yaml
----
-title: Titre de la page
-description: Description concise pour le SEO (150 caractères max).
----
-
-```
-
-**Règles :**
-
-* `title` : court, descriptif, sans mentionner "Syora" à moins que ce ne soit indispensable au contexte.
-* `description` : une phrase complète, sans syntaxe markdown, 150 caractères max.
-
----
-
-## Exemple de page complète
-
-Voici une page type qui respecte scrupuleusement toutes les conventions :
-
-```markdown
----
-title: Routing
-description: Comprendre le filesystem routing de Syora — conventions, paramètres dynamiques et routes catch-all.
----
-
-# Routing
-
-Syora génère automatiquement les routes de votre application à partir des fichiers placés dans `app/pages/`.
-
-## La convention
-
-Un fichier = une route. Zéro configuration.
-
-` ` `text
-app/pages/
-├── index.vue              →  /
-├── about.vue              →  /about
-└── blog/
-    ├── index.vue          →  /blog
-    └── [slug].vue         →  /blog/:slug
-` ` `
-
-| Fichier | Route | Paramètres disponibles |
-|---|---|---|
-| `index.vue` | `/` | — |
-| `[id].vue` | `/:id` | `route.params.id` |
-| `[...slug].vue` | `/:slug(.*)` | `route.params.slug[]` |
-
-## Paramètres dynamiques
-
-` ` `vue
-<!-- app/pages/blog/[slug].vue -->
-<script setup>
-const route = useRoute();
-// route.params.slug contient l'identifiant dynamique
-</script>
-
-<template>
-  <h1>Article : {{ route.params.slug }}</h1>
-</template>
-` ` `
 
 ::u-tip
 ---
 variant: info
-title: Métadonnées de page
+title: Une intégration additive
 ---
 
-Définissez les métadonnées de structure directement dans le SFC :
-
-` ` `vue
-<script setup>
-definePageMeta({
-  layout: "blog",
-  middleware: "auth"
-});
-</script>
-` ` `
+Vous n'avez pas besoin de réécrire votre backend. Ajoutez Syora à l'endroit où votre serveur doit rendre l'application Vue.
 
 ::
 
-## Récapitulatif
+## Ce que Syora fournit
 
-| Convention | Route finale | Cas d'usage |
-|---|---|---|
-| `index.vue` | `/` | Page d'accueil ou racine d'un dossier |
-| `[id].vue` | `/:id` | Paramètre unique ciblé |
-| `[...slug].vue` | `/:slug(.*)` | Route catch-all (ex: 404 custom) |
+| Fonctionnalité | Convention ou API |
+| --- | --- |
+| Routing basé sur les fichiers | `app/pages/` |
+| Layouts | `app/layouts/` |
+| Composants et composables auto-importés | `app/components/` et `app/composables/` |
+| Middlewares de navigation | `app/middlewares/` et `definePageMeta()` |
+| Chargement de données | `useAsyncData()` |
+| SSR et hydratation | Rendu serveur et restauration du cache côté client |
+| Plugins applicatifs | `defineVuePlugin()` |
+| Modules configurables | `defineModule()` |
+
+Cette séparation vous permet de choisir le backend pour ses capacités propres sans reconstruire toute l'expérience développeur du frontend.
+
+## Quand choisir Syora ?
+
+Syora est adapté si :
+
+<div class="py-3 space-y-2">
+  <div class="flex flex-wrap items-center gap-2">
+    <u-icon name="tabler:circle-check-filled" class="size-5 text-success"></u-icon>
+    <span>vous avez déjà un <strong>backend en production</strong> ;</span>
+  </div>
+  <div class="flex flex-wrap items-center gap-2">
+    <u-icon name="tabler:circle-check-filled" class="size-5 text-success"></u-icon>
+    <span>votre équipe dépend des conventions, plugins ou outils de ce backend ;</span>
+  </div>
+  <div class="flex flex-wrap items-center gap-2">
+    <u-icon name="tabler:circle-check-filled" class="size-5 text-success"></u-icon>
+    <span>vous voulez le SSR et une organisation proche de Nuxt dans la même application ;</span>
+  </div>
+  <div class="flex flex-wrap items-center gap-2">
+    <u-icon name="tabler:circle-check-filled" class="size-5 text-success"></u-icon>
+    <span>vous devez garder le contrôle du cycle de vie et du déploiement du serveur.</span>
+  </div>
+</div>
+
+Un autre choix peut être plus simple dans les cas suivants :
+
+| Besoin | Choix à envisager |
+| --- | --- |
+| Une solution intégrée avec son propre runtime serveur | Nuxt |
+| Une SPA légère sans SSR ni conventions supplémentaires | Vue et Vite |
+| Un frontend totalement indépendant du backend | Deux applications séparées |
+
+::u-tip
+---
+variant: warning
+title: Projet en version alpha
+---
+
+Syora est actuellement en version alpha. Vérifiez la disponibilité des fonctionnalités dont votre application dépend avant de l'utiliser en production.
+
+::
+
+## À retenir
+
+Syora ne remplace pas votre backend. Il lui ajoute une application Vue structurée, rendue côté serveur ou côté client, avec des conventions prêtes à l'emploi.
 
 ::u-tip
 ---
@@ -484,25 +148,6 @@ variant: info
 title: Prochaine étape
 ---
 
-Apprenez à structurer l'interface de vos pages avec : <a href="../structure/layouts.md">Les Layouts</a>.
+Installez les dépendances nécessaires dans <a href="./installation.md">Installation</a>.
 
 ::
-
-```
-
----
-
-## Checklist avant validation
-
-Avant de soumettre un commit pour une nouvelle page ou une modification majeure, vérifiez ces points :
-
----
-
-## Ressources
-
-| Ressource | Lien |
-| --- | --- |
-| Icônes Tabler | [https://tabler-icons.io](https://tabler-icons.io) |
-| shadcn-vue | [https://www.shadcn-vue.com](https://www.shadcn-vue.com) |
-| v-content | Documentation interne du moteur de contenu |
-| Dépôt Syora | [https://github.com/syorajs/syora](https://github.com/syorajs/syora) |
