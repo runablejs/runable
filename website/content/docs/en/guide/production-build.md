@@ -49,7 +49,7 @@ Your `server.ts` does not change:
 
 ```ts
 import Express from "express";
-import { express } from "@syora/core";
+import { express } from "@syora/core/adapters/express";
 
 const server = Express();
 

@@ -15,7 +15,7 @@ pnpm add -D @types/koa
 ```ts
 // server.ts
 import Koa from "koa";
-import { koa } from "@syora/core";
+import { koa } from "@syora/core/adapters/koa";
 
 const app = new Koa();
 

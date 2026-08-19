@@ -101,7 +101,7 @@ You do not need to declare the `/` route. Syora creates it from `index.vue`.
 ```ts
 // server.ts
 import Express from "express";
-import { express } from "@syora/core";
+import { express } from "@syora/core/adapters/express";
 
 const server = Express();
 

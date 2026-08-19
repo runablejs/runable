@@ -67,7 +67,7 @@ With Syora, you own the HTTP entry point:
 
 ```ts
 // server.ts
-import { express } from "@syora/core";
+import { express } from "@syora/core/adapters/express";
 
 server.get("/api/users", usersController);
 server.use(express());

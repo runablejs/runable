@@ -55,7 +55,7 @@ Concrètement, votre serveur transmet à Syora les requêtes destinées au front
 ```ts
 // server.ts
 import Express from "express";
-import { express } from "@syora/core";
+import { express } from "@syora/core/adapters/express";
 
 const server = Express();
 

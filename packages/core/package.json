@@ -9,10 +9,45 @@
       "import": "./dist/index.js",
       "require": "./dist/index.js"
     },
-    "./adapters": {
-      "types": "./dist/adapters/index.d.ts",
-      "import": "./dist/adapters/index.js",
-      "require": "./dist/adapters/index.js"
+    "./adapters/adonis": {
+      "types": "./dist/adapters/adonis.d.ts",
+      "import": "./dist/adapters/adonis.js",
+      "require": "./dist/adapters/adonis.js"
+    },
+    "./adapters/bun": {
+      "types": "./dist/adapters/bun.d.ts",
+      "import": "./dist/adapters/bun.js",
+      "require": "./dist/adapters/bun.js"
+    },
+    "./adapters/deno": {
+      "types": "./dist/adapters/deno.d.ts",
+      "import": "./dist/adapters/deno.js",
+      "require": "./dist/adapters/deno.js"
+    },
+    "./adapters/express": {
+      "types": "./dist/adapters/express.d.ts",
+      "import": "./dist/adapters/express.js",
+      "require": "./dist/adapters/express.js"
+    },
+    "./adapters/fastify": {
+      "types": "./dist/adapters/fastify.d.ts",
+      "import": "./dist/adapters/fastify.js",
+      "require": "./dist/adapters/fastify.js"
+    },
+    "./adapters/hono": {
+      "types": "./dist/adapters/hono.d.ts",
+      "import": "./dist/adapters/hono.js",
+      "require": "./dist/adapters/hono.js"
+    },
+    "./adapters/koa": {
+      "types": "./dist/adapters/koa.d.ts",
+      "import": "./dist/adapters/koa.js",
+      "require": "./dist/adapters/koa.js"
+    },
+    "./adapters/nestjs": {
+      "types": "./dist/adapters/nestjs.d.ts",
+      "import": "./dist/adapters/nestjs.js",
+      "require": "./dist/adapters/nestjs.js"
     }
   },
   "main": "./dist/index.js",

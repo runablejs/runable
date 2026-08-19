@@ -7,7 +7,7 @@ description: Use Syora's Fetch API adapter with Deno.serve().
 
 ```ts
 // server.ts
-import { deno } from "@syora/core";
+import { deno } from "@syora/core/adapters/deno";
 
 Deno.serve({ port: 3000 }, deno());
 ```

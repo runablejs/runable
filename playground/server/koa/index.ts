@@ -1,4 +1,4 @@
-import { koa } from "@syora/core";
+import { koa } from "@syora/core/adapters/koa";
 import Koa from "koa";
 
 const app = new Koa();
