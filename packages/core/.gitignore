@@ -14,7 +14,7 @@ pids
 
 # Build output
 dist/
-build/
+/build/
 coverage/
 .tmp/
 temp/
