@@ -54,9 +54,10 @@ export default createUnplugin<RouterMiddlewaresOptions>((options) => {
   }
 
   function generateDts() {
-    const names = middlewares
-      .map((middleware) => `"${middleware.name}"`)
-      .join("\n    |");
+    const names =
+      middlewares
+        .map((middleware) => `"${middleware.name}"`)
+        .join("\n    |") || "never";
 
     const code = `/* eslint-disable */
 /* prettier-ignore */
