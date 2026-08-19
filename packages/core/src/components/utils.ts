@@ -76,6 +76,18 @@ function extractNameFromScript(source: string, setup: boolean): string | undefin
       const name = getNameProperty(getOptionsObject(statement.declaration));
       if (name) return name;
     }
+
+    // Bundled JavaScript commonly rewrites
+    // `export default defineComponent(...)` to a variable followed by a named
+    // export (`var component_default = defineComponent(...); export { ... }`).
+    // Read the options from that variable as well so built-in components keep
+    // their declared public name after Syora itself has been built.
+    if (!setup && statement.type === "VariableDeclaration") {
+      for (const declaration of statement.declarations) {
+        const name = getNameProperty(getOptionsObject(declaration.init));
+        if (name) return name;
+      }
+    }
   }
 }
 

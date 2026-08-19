@@ -8,6 +8,10 @@ import { useConfig } from "@/config/index.js";
 import { atomicWriteFile, normalizeDir } from "@/utils/index.js";
 import { buildViteConfig, getIndexHtml } from "../index.js";
 
+function toPublicAssetPath(fileName: string): string {
+  return `/${normalizeDir(fileName).replace(/^\.\//, "")}`;
+}
+
 /**
  * Runs a production build: bundles the client (and the server, when SSR is
  * enabled) with Vite, generates `client/index.html`, and writes a
@@ -83,9 +87,7 @@ export async function buildProduction() {
     }
 
     let htmlContent = getIndexHtml(
-      normalizeDir(
-        relative(distdir, join(distdir, generatedMainFile.fileName)),
-      ),
+      toPublicAssetPath(generatedMainFile.fileName),
     );
 
     // Inline a <link> for every emitted CSS asset — Vite doesn't inject
@@ -93,7 +95,7 @@ export async function buildProduction() {
     for (const file of result.output) {
       if (!file.fileName.endsWith(".css")) continue;
 
-      const cssLink = `<link rel="stylesheet" href="${normalizeDir(join(process.cwd(), file.fileName))}">`;
+      const cssLink = `<link rel="stylesheet" href="${toPublicAssetPath(file.fileName)}">`;
       css.push(cssLink);
     }
 

@@ -3,7 +3,7 @@ import { join, resolve } from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import vContent from "v-content/vite";
 
-import { defineConfig } from "../packages/core/src/index.js";
+import { defineConfig } from "@syora/core";
 import {
   defineCollection,
   rehypeList,

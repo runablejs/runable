@@ -20,70 +20,85 @@ onMounted(() => {
 <template>
   <section
     aria-labelledby="hero-heading"
-    class="relative w-full min-h-screen flex flex-col transition-colors duration-base ease-smooth"
+    class="relative isolate flex min-h-[calc(100svh-var(--header-height))] w-full overflow-hidden border-b border-border"
   >
+    <div aria-hidden="true" class="absolute inset-0 -z-20 bg-background" />
+
     <div
       aria-hidden="true"
-      class="absolute inset-0 opacity-55 dark:opacity-30 dark:filter dark:invert"
+      class="absolute inset-0 -z-10 opacity-10"
       style="
-        background-image: url(https://template-nextjs-clean.sanity.build/images/tile-1-black.png);
-        background-size: 5px;
+        background-image:
+          linear-gradient(to right, currentColor 1px, transparent 1px),
+          linear-gradient(to bottom, currentColor 1px, transparent 1px);
+        background-size: 64px 64px;
+        mask-image: linear-gradient(to bottom, black, transparent 90%);
       "
-    ></div>
+    />
     <div
       aria-hidden="true"
-      class="bg-linear-to-b from-background w-full h-full absolute top-0"
-    ></div>
-    <!-- Contenu central -->
-    <div class="flex-1 flex flex-col items-center justify-center px-10">
-      <div class="max-w-6xl mx-auto text-center">
-        <!-- Titre -->
+      class="absolute -right-40 top-12 -z-10 size-160 rounded-full bg-accent/10 blur-3xl"
+    />
+
+    <div
+      class="mx-auto grid w-full max-w-7xl flex-1 items-center gap-16 px-6 py-16 sm:px-10 lg:grid-cols-[1.12fr_0.88fr] lg:px-12 lg:py-20"
+    >
+      <div>
+        <div
+          ref="metaRef"
+          class="sr-hidden mb-5 px-3 py-1 flex items-center gap-3 font-mono text-xs uppercase tracking-[0.18em] bg-accent text-accent-foreground w-max"
+          style="
+            transition:
+              opacity 250ms ease-out,
+              transform 250ms ease-out;
+          "
+        >
+          <span>Vue framework · Runtime agnostic</span>
+        </div>
+
         <h1
           id="hero-heading"
           ref="titleRef"
-          class="font-display text-hero text- leading-tight tracking-tight sr-hidden"
+          class="sr-hidden max-w-4xl font-display text-5xl font-bold leading-[1.02] tracking-[-0.045em] sm:text-6xl xl:text-7xl"
           style="
             transition:
               opacity 300ms ease-out,
               transform 300ms ease-out;
           "
         >
-          The Vue framework that brings the
-          <em class="font-display italic text-accent font-bold">Nuxt</em>
-          developer experience to
-          <em class="font-display italic text-accent font-bold">
-            any backend.
-          </em>
+          Build the Vue app you want.
+          <em class="font-display italic text-accent"
+            >Keep the backend you chose.</em
+          >
         </h1>
 
-        <!-- Sous-titre -->
         <p
           ref="subtitleRef"
-          class="font-body text- leading-relaxed mt-8 max-w-2xl mx-auto sr-hidden"
+          class="sr-hidden mt-8 max-w-2xl border-accent font-body text-lg leading-relaxed text-muted-foreground"
           style="
             transition:
               opacity 300ms ease-out,
               transform 300ms ease-out;
           "
         >
-          File-system routing, auto-imports, layouts, SSR, and more — without
-          imposing a specific server runtime. Run on Fastify, Express, Hono,
-          Deno, or any HTTP server you choose.
+          Syora is a Vue framework for teams that want the conventions and
+          developer experience of a meta-framework without adopting a specific
+          server runtime.
         </p>
 
-        <!-- CTAs -->
         <div
           ref="ctasRef"
-          class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 sr-hidden"
+          class="sr-hidden mt-10 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center"
           style="
             transition:
-              opacity 200ms ease-out,
-              transform 200ms ease-out;
+              opacity 250ms ease-out,
+              transform 250ms ease-out;
           "
         >
           <UButton variant="default" size="lg" as-child>
-            <SyoraLink to="/docs/getting-started/why-syora">
+            <SyoraLink to="/why-syora">
               Why Syora?
+              <UIcon name="tabler:arrow-right" class="size-4" />
             </SyoraLink>
           </UButton>
 
@@ -94,11 +109,96 @@ onMounted(() => {
           </UButton>
         </div>
       </div>
+
+      <div class="relative hidden lg:block">
+        <div
+          aria-hidden="true"
+          class="absolute -inset-6 border border-dashed border-border"
+        />
+        <div
+          aria-hidden="true"
+          class="absolute -left-6 -top-6 size-3 bg-accent"
+        />
+        <div
+          aria-hidden="true"
+          class="absolute -bottom-6 -right-6 size-3 bg-accent"
+        />
+
+        <div
+          class="relative overflow-hidden border border-border bg-background shadow-2xl shadow-black/10 dark:shadow-black/40"
+        >
+          <div
+            class="flex h-11 items-center justify-between border-b border-border bg-muted/60 px-4"
+          >
+            <div class="flex gap-1.5" aria-hidden="true">
+              <span class="size-2.5 rounded-full bg-muted-foreground/25" />
+              <span class="size-2.5 rounded-full bg-muted-foreground/25" />
+              <span class="size-2.5 rounded-full bg-accent" />
+            </div>
+            <span
+              class="font-mono text-[10px] uppercase tracking-widest text-muted-foreground"
+              >server.ts</span
+            >
+          </div>
+
+          <pre
+            class="overflow-x-auto p-6 font-mono text-[13px] leading-7"
+          ><code><span class="text-muted-foreground">import</span> Express <span class="text-muted-foreground">from</span> <span class="text-accent">"express"</span>;
+<span class="text-muted-foreground">import</span> { express } <span class="text-muted-foreground">from</span>
+  <span class="text-accent">"@syora/core/adapters/express"</span>;
+
+<span class="text-muted-foreground">const</span> server = Express();
+
+server.get(<span class="text-accent">"/api/health"</span>, apiHealth);
+server.use(express());
+
+server.listen(<span class="text-accent">3000</span>);</code></pre>
+
+          <div class="grid grid-cols-3 border-t border-border bg-muted/30">
+            <div class="border-r border-border p-4">
+              <p
+                class="font-mono text-[9px] uppercase tracking-widest text-muted-foreground"
+              >
+                Frontend
+              </p>
+              <p class="mt-1 text-sm font-medium">Vue 3</p>
+            </div>
+            <div class="border-r border-border p-4">
+              <p
+                class="font-mono text-[9px] uppercase tracking-widest text-muted-foreground"
+              >
+                Rendering
+              </p>
+              <p class="mt-1 text-sm font-medium">SSR + CSR</p>
+            </div>
+            <div class="p-4">
+              <p
+                class="font-mono text-[9px] uppercase tracking-widest text-muted-foreground"
+              >
+                Backend
+              </p>
+              <p class="mt-1 text-sm font-medium text-accent">Your choice</p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="absolute -bottom-10 -left-12 flex items-center gap-3 border border-border bg-background px-4 py-3 shadow-lg"
+        >
+          <span class="relative flex size-2">
+            <span
+              class="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-60"
+            />
+            <span class="relative inline-flex size-2 rounded-full bg-accent" />
+          </span>
+          <span class="font-mono text-xs">Ready on any runtime</span>
+        </div>
+      </div>
     </div>
 
-    <!-- Séparateur -->
-    <!-- <div class="w-full px-page-sm md:px-page-md lg:px-page pb-0">
-      <div class="w-full border-b border-default" aria-hidden="true" />
-    </div> -->
+    <div
+      class="absolute bottom-0 right-0 hidden h-1 w-1/3 bg-accent sm:block"
+      aria-hidden="true"
+    />
   </section>
 </template>

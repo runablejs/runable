@@ -9,7 +9,7 @@ import MobileNav from "./MobileNav.vue";
 const navigationLinks = [
   {
     label: "Why Syora?",
-    to: "/docs/getting-started/why-syora",
+    to: "/why-syora",
     icon: "tabler:sparkles",
   },
   {

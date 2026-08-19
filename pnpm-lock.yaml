@@ -726,6 +726,9 @@ importers:
       '@internationalized/date':
         specifier: ^3.12.3
         version: 3.12.3
+      '@syora/core':
+        specifier: workspace:^
+        version: link:../packages/core
       '@tabler/icons-vue':
         specifier: ^3.46.0
         version: 3.46.0(vue@3.5.41(typescript@6.0.3))
@@ -811,6 +814,9 @@ importers:
         specifier: 3.25.76
         version: 3.25.76
     devDependencies:
+      '@syora/cli':
+        specifier: workspace:^
+        version: link:../packages/cli
       '@tsconfig/node24':
         specifier: ^24.0.4
         version: 24.0.4

@@ -1,0 +1,12 @@
+[build]
+  command = "pnpm --filter @syora/core build && pnpm --filter @syora/cli build && pnpm --filter syora-website build"
+  publish = "website/.output/client"
+
+[build.environment]
+  NODE_VERSION = "24.12.0"
+  PNPM_VERSION = "11.10.0"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

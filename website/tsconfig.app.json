@@ -38,9 +38,5 @@
     ]
   },
 
-  "include": [
-    ".app/**/*.d.ts",
-    "app/**/*",
-    "syora.config.ts"
-  ]
+  "include": [".app/**/*.d.ts", "app/**/*", "syora.config.ts"]
 }

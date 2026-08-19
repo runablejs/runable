@@ -23,6 +23,7 @@ temp/
 
 # Cache
 .cache/
+.netlify/
 .eslintcache
 .parcel-cache/
 .vite/
