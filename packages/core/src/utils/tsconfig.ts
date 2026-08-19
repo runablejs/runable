@@ -1,67 +1,93 @@
 import { join, relative, resolve } from "node:path";
 import { getPackageJson } from "./pkg";
 import { normalizeDir } from "./dir";
-import { useConfig } from "../config/load";
+import { useAllConfigs, useConfig } from "../config/load";
 import uniq from "lodash/uniq.js";
 import assign from "lodash/assign.js";
 import { atomicWriteFile } from "./atomic-write-file";
 import { resolvePackageEntry } from "./pkg-resolve-entry";
 import { TsConfigBuilder } from "syt";
 
-export const tsconfig = {
-  app: new TsConfigBuilder()
-    .esModuleInterop()
-    .skipLibCheck()
-    .setTarget("ESNext")
-    .allowJs()
+function createAppTsConfig() {
+  return new TsConfigBuilder()
+    .noEmit()
+    .setModule("ESNext")
+    .setModuleResolution("Bundler")
     .resolveJsonModule()
+    .setCompilerOption("allowImportingTsExtensions", true)
     .setModuleDetection("force")
-    .isolatedModules()
-    .verbatimModuleSyntax()
-    .setCompilerOption("allowArbitraryExtensions", true)
-    .strict()
-    .setCompilerOption("noUncheckedIndexedAccess", true)
-    .forceConsistentCasingInFileNames()
-    .setCompilerOption("noImplicitOverride", true)
-    .setModule("Preserve")
-    .addLib(["ESNext", "dom", "dom.iterable", "webworker"])
     .setJsx("preserve")
     .setCompilerOption("jsxImportSource", "vue")
-    .setModuleResolution("Bundler")
-    .useDefineForClassFields()
     .setCompilerOption("noImplicitThis", true)
-    .allowSyntheticDefaultImports()
-    .noEmit()
-    .composite()
-    .declaration(),
+    .strict()
+    .verbatimModuleSyntax()
+    .useDefineForClassFields()
+    .esModuleInterop()
+    .forceConsistentCasingInFileNames()
+    .setCompilerOption("libReplacement", false)
+    .skipLibCheck()
+    .setLib(["ESNext", "DOM", "DOM.Iterable"])
+    .setTypes([]);
+}
+
+export const tsconfig = {
+  app: createAppTsConfig(),
 };
 
 export function writeTsConfig() {
   const { output, appDir, alias } = useConfig();
+  const appTsConfig = createAppTsConfig();
+
+  tsconfig.app = appTsConfig;
 
   Object.entries(alias ?? {}).forEach(([key, value]) => {
     if (key === "#build") return;
 
-    tsconfig.app.addAlias(key, normalizeDir(relative(output, value)));
+    appTsConfig.addAlias(key, normalizeDir(relative(process.cwd(), value)));
   });
 
-  tsconfig.app.addAlias("#build", "./");
-  tsconfig.app.addAlias("#build/*", "./*");
+  const relativeOutput = normalizeDir(relative(process.cwd(), output));
+  const buildDir = relativeOutput.startsWith(".")
+    ? relativeOutput
+    : `./${relativeOutput}`;
 
-  tsconfig.app.setCompilerOption(
-    "tsBuildInfoFile",
-    normalizeDir(
-      relative(
-        output,
-        resolve(process.cwd(), "node_modules/.tmp/tsconfig.app.tsbuildinfo"),
-      ),
+  appTsConfig.addAlias("#build", buildDir);
+  appTsConfig.addAlias("#build/*", `${buildDir}/*`);
+
+  appTsConfig.addInclude(`${relativeOutput.replace(/^\.\//, "")}/**/*.d.ts`);
+  appTsConfig.addInclude(
+    normalizeDir(join(relative(process.cwd(), appDir), "**/*")).replace(
+      /^\.\//,
+      "",
     ),
   );
+  appTsConfig.addInclude("syora.config.ts");
 
-  tsconfig.app.addInclude(normalizeDir(join(relative(output, appDir), "**/*")));
-  tsconfig.app.addInclude("./**/*.d.ts");
+  for (const config of useAllConfigs()) {
+    if (!config._isSyoraModule) continue;
 
-  tsconfig.app.write(join(output, "tsconfig.app.json"));
+    const moduleAppDir = normalizeDir(relative(process.cwd(), config.appDir));
+    const include = moduleAppDir.startsWith(".")
+      ? moduleAppDir
+      : `./${moduleAppDir}`;
+
+    appTsConfig.addInclude(`${include}/**/*`);
+  }
+
+  const obj = appTsConfig.toObject();
+  Object.assign(obj, {
+    vueCompilerOptions: {
+      plugins: [
+        "vue-router/volar/sfc-route-blocks",
+        "vue-router/volar/sfc-typed-router",
+      ],
+    },
+  });
+
+  atomicWriteFile(
+    join(output, "tsconfig.app.json"),
+    JSON.stringify(obj, null, 2),
+  );
 }
 
 /** @deprecated use writeTsConfig */
