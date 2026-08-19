@@ -50,32 +50,29 @@ export function inferEnvValue(value: string): EnvValue {
   return value;
 }
 
-export function inferEnvType(value: any): string {
+export function inferEnvType(value: unknown): string {
   if (value === undefined) return "undefined";
+  if (value === null) return "null";
 
-  const trimmed = JSON.stringify(value).trim();
+  if (Array.isArray(value)) {
+    if (value.length === 0) return "unknown[]";
 
-  // null
-  if (trimmed.toLowerCase() === "null") return "null";
-
-  // boolean
-  if (["true", "false"].includes(trimmed.toLowerCase())) return "boolean";
-
-  // number
-  if (/^-?\d+(\.\d+)?$/.test(trimmed)) return "number";
-
-  // JSON (array/object)
-  if (
-    (trimmed.startsWith("{") && trimmed.endsWith("}")) ||
-    (trimmed.startsWith("[") && trimmed.endsWith("]"))
-  ) {
-    try {
-      return JSON.parse(trimmed);
-    } catch {
-      return "any";
-    }
+    const elementTypes = [...new Set(value.map(inferEnvType))];
+    return `Array<${elementTypes.join(" | ")}>`;
   }
 
-  // string
-  return "string";
+  if (typeof value === "object") {
+    const properties = Object.entries(value);
+    if (properties.length === 0) return "Record<string, unknown>";
+
+    return `{ ${properties
+      .map(([key, property]) => `${JSON.stringify(key)}: ${inferEnvType(property)};`)
+      .join(" ")} }`;
+  }
+
+  if (["string", "number", "boolean"].includes(typeof value)) {
+    return typeof value;
+  }
+
+  return "unknown";
 }
