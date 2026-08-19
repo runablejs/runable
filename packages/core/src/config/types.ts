@@ -242,6 +242,9 @@ export type ResolvedConfig = {
   /** Name of this config: the app's own name, or the module's name/path as referenced in `modules`. */
   _name: string;
 
+  /** Key under which the parent config provides this module's options. */
+  _configKey?: string;
+
   /** Name of the parent config this one was loaded on behalf of, if this is a module config. */
   _parentName?: string;
 

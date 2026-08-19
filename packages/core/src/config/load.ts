@@ -301,6 +301,7 @@ function resolveAllConfigs(entries: Map<string, RawEntry>): {
     // app config never goes through options resolution/`setup`.
     if (entry.dependents.size > 0) {
       const key = configKey ?? meta?.name ?? entry.name;
+      rConfig._configKey = key;
       const resolvedDefaults =
         typeof defaults === "function" ? defaults(rConfig) : defaults;
 
