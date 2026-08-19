@@ -199,7 +199,8 @@ async function loadAllConfigs(
         const { config: loaded, _configFile: configFile } =
           await c12Load<ModuleDefinition>({ configFile: "syora.config", cwd });
 
-        const resolvedName = loaded?.meta?.name ?? name;
+        const resolvedName =
+          rawName === "__main" ? "__main" : (loaded?.meta?.name ?? name);
         const entryCwd = cwd ?? process.cwd();
 
         const entry: RawEntry = {
