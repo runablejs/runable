@@ -64,7 +64,7 @@
     "@babel/parser": "catalog:",
     "@babel/traverse": "catalog:",
     "@babel/types": "catalog:",
-    "@tsdown/css": "^0.22.14",
+    "@tsdown/css": "catalog:",
     "@unhead/schema-org": "catalog:",
     "@unhead/vue": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
@@ -80,16 +80,19 @@
     "mlly": "catalog:",
     "ofetch": "catalog:",
     "syt": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
     "unhead": "catalog:",
-    "unimport": "^6.4.0",
-    "unplugin": "^3.3.0",
+    "unimport": "catalog:",
+    "unplugin": "catalog:",
     "unplugin-vue": "catalog:",
     "vite": "catalog:",
     "vue": "catalog:",
-    "vue-router": "catalog:"
+    "vue-router": "catalog:",
+    "vue-tsc": "catalog:"
   },
   "devDependencies": {
-    "@adonisjs/core": "^7.3.5",
+    "@adonisjs/core": "catalog:",
     "@nestjs/common": "catalog:",
     "@nestjs/core": "catalog:",
     "@nestjs/platform-express": "catalog:",
@@ -100,9 +103,7 @@
     "fastify": "catalog:",
     "hono": "catalog:",
     "koa": "catalog:",
-    "@types/koa": "catalog:",
-    "tsdown": "catalog:",
-    "typescript": "catalog:"
+    "@types/koa": "catalog:"
   },
   "engines": {
     "node": "^22.18.0 || >=24.12.0"
