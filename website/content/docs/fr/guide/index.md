@@ -11,10 +11,10 @@ Commencez ici pour organiser la navigation et l'affichage de vos pages.
 
 | Besoin | Page |
 | --- | --- |
-| Transformer des fichiers Vue en routes | <a href="./routing.md">Routing</a> |
-| Partager une structure entre plusieurs pages | <a href="./layouts.md">Layouts</a> |
-| Contrôler une navigation | <a href="./middlewares.md">Middlewares</a> |
-| Afficher et réinitialiser une erreur | <a href="./error-handling.md">Gestion des erreurs</a> |
+| Transformer des fichiers Vue en routes | <a href="/docs/guide/routing.md">Routing</a> |
+| Partager une structure entre plusieurs pages | <a href="/docs/guide/layouts.md">Layouts</a> |
+| Contrôler une navigation | <a href="/docs/guide/middlewares.md">Middlewares</a> |
+| Afficher et réinitialiser une erreur | <a href="/docs/guide/error-handling.md">Gestion des erreurs</a> |
 
 ## Charger et rendre
 
@@ -22,9 +22,9 @@ Ces pages couvrent les données, le SSR et les métadonnées HTML.
 
 | Besoin | Page |
 | --- | --- |
-| Charger des données avec cache et hydratation | <a href="./data-fetching.md">Data Fetching</a> |
-| Choisir entre SSR et CSR | <a href="./rendering-modes.md">SSR et CSR</a> |
-| Définir le titre, le SEO et les données structurées | <a href="./head-and-seo.md">Head et SEO</a> |
+| Charger des données avec cache et hydratation | <a href="/docs/guide/data-fetching.md">Data Fetching</a> |
+| Choisir entre SSR et CSR | <a href="/docs/guide/rendering-modes.md">SSR et CSR</a> |
+| Définir le titre, le SEO et les données structurées | <a href="/docs/guide/head-and-seo.md">Head et SEO</a> |
 
 ## Étendre Syora
 
@@ -32,13 +32,13 @@ Utilisez les auto-imports pour le code applicatif, les plugins pour initialiser 
 
 | Portée | Solution |
 | --- | --- |
-| Une fonction ou un composant réutilisable | <a href="./auto-imports.md">Auto-imports</a> |
-| Une initialisation liée à l'application Vue | <a href="./plugins.md">Plugins</a> |
-| Une fonctionnalité configurable et distribuable | <a href="./modules.md">Modules</a> |
+| Une fonction ou un composant réutilisable | <a href="/docs/guide/auto-imports.md">Auto-imports</a> |
+| Une initialisation liée à l'application Vue | <a href="/docs/guide/plugins.md">Plugins</a> |
+| Une fonctionnalité configurable et distribuable | <a href="/docs/guide/modules.md">Modules</a> |
 
 ## Configurer et livrer
 
-Terminez par la <a href="./runtime-config.md">configuration runtime</a>, les <a href="./css-and-assets.md">styles et assets</a>, puis le <a href="./production-build.md">build de production</a>.
+Terminez par la <a href="/docs/guide/runtime-config.md">configuration runtime</a>, les <a href="/docs/guide/css-and-assets.md">styles et assets</a>, puis le <a href="/docs/guide/production-build.md">build de production</a>.
 
 ::u-tip
 ---

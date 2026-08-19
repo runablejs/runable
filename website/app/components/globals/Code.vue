@@ -28,11 +28,11 @@ async function copyCode() {
 <template>
   <div
     ref="root"
-    class="group w-full relative my-6 overflow-hidden rounded-md border border-border/50 dark:bg-muted bg-muted"
+    class="group w-full relative my-6 overflow-hidden rounded-md border border-border bg-code"
   >
     <!-- Header -->
     <div
-      class="flex items-center justify-between gap-1 border-b border-border/50 px- h-8"
+      class="flex items-center justify-between gap-1 border-b border-border px- h-8"
     >
       <span
         v-if="language"

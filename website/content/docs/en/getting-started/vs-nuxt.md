@@ -117,6 +117,6 @@ variant: info
 title: Next step
 ---
 
-Customize directories, SSR, and Vite in <a href="./configuration.md">Configuration</a>.
+Customize directories, SSR, and Vite in <a href="/docs/getting-started/configuration.md">Configuration</a>.
 
 ::

@@ -8,6 +8,20 @@ import { toArray } from "@/utils/to-array.js";
 
 const route = useRouter().currentRoute;
 
+watch(
+  () => route.value,
+  () => {
+    if (route.value.name === "docs") {
+      navigateTo({
+        name: "docs-slugs",
+        params: { slugs: "getting-started/installation" },
+        replace: true,
+      });
+    }
+  },
+  { immediate: true },
+);
+
 const slugs = computed(() => {
   const params = route.value.params as { slugs: string | string[] };
   const slugs = toArray(params.slugs);

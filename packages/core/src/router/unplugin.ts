@@ -138,18 +138,23 @@ function mergeMeta(
   return merge({}, parent, own);
 }
 
-/** Strips the routing syntax off a segment to get a plain name token,
- * e.g. ":id" -> "id", ":id?" -> "id", ":cat*" -> "cat", "users" -> "users". */
+/** Converts a route segment into an alphanumeric PascalCase token,
+ * e.g. ":user-id?" -> "UserId", "blog-posts" -> "BlogPosts". */
 function toNameSegment(segment: string): string {
-  return segment.replace(/^:/, "").replace(/[?*]$/, "");
+  return segment
+    .replace(/^:/, "")
+    .replace(/[?*]$/, "")
+    .split(/[^a-zA-Z0-9]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join("");
 }
 
-/** Derives a route `name` from a file's segments, appending "index" for
- * index files, e.g. pages/users/[id]/index.vue -> "users-id-index". */
+/** Derives an alphanumeric route `name` from a file's segments,
+ * e.g. pages/users/[id].vue -> "UsersId". */
 function computeRouteName(entry: RouteEntry): string {
   const parts = entry.segments.map(toNameSegment);
-  if (entry.isIndex) parts.push("index");
-  return parts.join("-") || "index";
+  return parts.join("") || "Root";
 }
 
 /** Maps each source file to its computed route name. Built once per pass

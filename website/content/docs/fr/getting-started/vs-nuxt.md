@@ -141,6 +141,6 @@ variant: info
 title: Prochaine étape
 ---
 
-Personnalisez les dossiers, le SSR et Vite dans <a href="./configuration.md">Configuration</a>.
+Personnalisez les dossiers, le SSR et Vite dans <a href="/docs/getting-started/configuration.md">Configuration</a>.
 
 ::

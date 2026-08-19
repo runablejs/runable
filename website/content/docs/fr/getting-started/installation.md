@@ -161,6 +161,6 @@ variant: success
 title: Installation terminée
 ---
 
-Construisez maintenant une petite application avec <a href="./quickstart.md">Quick Start</a>.
+Construisez maintenant une petite application avec <a href="/docs/getting-started/quickstart.md">Quick Start</a>.
 
 ::

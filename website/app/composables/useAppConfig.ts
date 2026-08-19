@@ -6,13 +6,13 @@ export function useAppConfig() {
 
     nav: [
       {
-        name: "Get started",
+        name: "Getting Started",
         code: "getting-started",
         href: "/docs/getting-started/why-syora",
         icon: "tabler:rocket",
         children: [
           {
-            name: "Pourquoi Syora",
+            name: "Why Syora",
             code: "why-syora",
             href: "/docs/getting-started/why-syora",
             icon: "tabler:sparkles",
@@ -237,7 +237,7 @@ export function useAppConfig() {
       },
 
       {
-        name: "Intégrations",
+        name: "Integrations",
         code: "integrations",
         href: "/docs/integrations",
         icon: "tabler:tabs",
@@ -312,7 +312,7 @@ export function useAppConfig() {
         icon: "tabler:notebook",
         children: [
           {
-            name: "Construire l'interface",
+            name: "Build the Interface",
             code: "application",
             href: "/docs/guide/routing",
             icon: "tabler:layout-dashboard",
@@ -336,7 +336,7 @@ export function useAppConfig() {
                 icon: "tabler:shield-half",
               },
               {
-                name: "Gestion des erreurs",
+                name: "Error Handling",
                 code: "error-handling",
                 href: "/docs/guide/error-handling",
                 icon: "tabler:alert-triangle",
@@ -344,7 +344,7 @@ export function useAppConfig() {
             ],
           },
           {
-            name: "Charger et rendre",
+            name: "Load and Render",
             code: "rendering",
             href: "/docs/guide/data-fetching",
             icon: "tabler:server-bolt",
@@ -356,13 +356,13 @@ export function useAppConfig() {
                 icon: "tabler:cloud-download",
               },
               {
-                name: "SSR et CSR",
+                name: "SSR and CSR",
                 code: "rendering-modes",
                 href: "/docs/guide/rendering-modes",
                 icon: "tabler:server-2",
               },
               {
-                name: "Head et SEO",
+                name: "Head and SEO",
                 code: "head-and-seo",
                 href: "/docs/guide/head-and-seo",
                 icon: "tabler:seo",
@@ -370,7 +370,7 @@ export function useAppConfig() {
             ],
           },
           {
-            name: "Étendre Syora",
+            name: "Extend Syora",
             code: "extending",
             href: "/docs/guide/auto-imports",
             icon: "tabler:blocks",
@@ -396,25 +396,25 @@ export function useAppConfig() {
             ],
           },
           {
-            name: "Configurer et livrer",
+            name: "Configure and Ship",
             code: "delivery",
             href: "/docs/guide/runtime-config",
             icon: "tabler:package-export",
             children: [
               {
-                name: "Configuration runtime",
+                name: "Runtime Configuration",
                 code: "runtime-config",
                 href: "/docs/guide/runtime-config",
                 icon: "tabler:variable",
               },
               {
-                name: "CSS et assets",
+                name: "CSS and Assets",
                 code: "css-and-assets",
                 href: "/docs/guide/css-and-assets",
                 icon: "tabler:palette",
               },
               {
-                name: "Build de production",
+                name: "Production Build",
                 code: "production-build",
                 href: "/docs/guide/production-build",
                 icon: "tabler:rocket",

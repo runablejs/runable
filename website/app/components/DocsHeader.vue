@@ -2,18 +2,19 @@
 import type { HTMLAttributes } from "vue";
 import { cn } from "~/lib/utils";
 import { useSidebar } from "./ui/sidebar/utils.ts";
-
-// const props = defineProps<{
-//   tree: ContentNavigationItem
-// }>()
+import Logo from "./navbar-components/Logo.vue";
+import ModeSwitcher from "./ModeSwitcher.vue";
+import GithubLink from "./GithubLink.vue";
 
 const props = defineProps<{
   class?: HTMLAttributes["class"];
 }>();
 
+const header = ref<HTMLDivElement | null>(null);
+const showExtra = ref(false);
+const router = useRouter();
 const { nav } = useAppConfig();
 const { toggleSidebar } = useSidebar();
-const router = useRouter();
 
 const active = computed(() => {
   const path = router.currentRoute.value.path.replace(/\/+$/, "");
@@ -23,10 +24,26 @@ const active = computed(() => {
     return path === blockPath || path.startsWith(`${blockPath}/`);
   })?.name;
 });
+
+function onScroll() {
+  if (!header.value) return;
+
+  showExtra.value = header.value.getBoundingClientRect().top <= 0;
+}
+
+onMounted(() => {
+  onScroll();
+  window.addEventListener("scroll", onScroll);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("scroll", onScroll);
+});
 </script>
 
 <template>
   <div
+    ref="header"
     class="px-4 md:px-6 border-y bg-background sticky top-0 z-100 h-(--header-height) w-full overflow-x-auto overflow-y-hidden scrollbar-none"
   >
     <div
@@ -38,24 +55,34 @@ const active = computed(() => {
       "
     ></div>
 
-    <div class="flex h-full items-center justify-between gap-4 relative">
-      <div class="md:hidden h-full">
-        <UButton
-          data-sidebar="trigger"
-          data-slot="sidebar-trigger"
-          variant="ghost"
-          size="icon"
-          class="rounded-none"
-          @click="toggleSidebar"
+    <div class="flex h-full items-center gap-1 relative">
+      <RouterLink
+        v-if="showExtra"
+        to="/"
+        class="flex items-center gap-2 h-full overflow-hidden"
+      >
+        <div
+          class="flex items-center bg-accent text-accent-foreground h-full px-1 aspect-square"
         >
-          <UIcon name="tabler:list-tree" />
-          <span class="sr-only">Toggle Sidebar</span>
-        </UButton>
-      </div>
+          <Logo class="size-7 h-9/12" />
+        </div>
+      </RouterLink>
+
+      <UButton
+        data-sidebar="trigger"
+        data-slot="sidebar-trigger"
+        variant="ghost"
+        size="icon"
+        class="rounded-none md:hidden"
+        @click="toggleSidebar"
+      >
+        <UIcon name="tabler:list-tree" class="rotate-180 size-5" />
+        <span class="sr-only">Toggle Sidebar</span>
+      </UButton>
 
       <!-- Middle area -->
       <nav
-        class="h-full hidden lg:flex items-center gap-2"
+        class="h-full max-md:hidden flex items-center gap-2"
         :class="cn('items-center gap-0', props.class)"
       >
         <SyoraLink
@@ -73,6 +100,17 @@ const active = computed(() => {
           {{ name }}
         </SyoraLink>
       </nav>
+
+      <!-- Right side -->
+      <div class="flex flex-1 items-center justify-end gap- ml-auto">
+        <template v-if="showExtra">
+          <ClientOnly>
+            <ModeSwitcher class="rounded-none" />
+          </ClientOnly>
+
+          <GithubLink class="rounded-none" />
+        </template>
+      </div>
     </div>
   </div>
 </template>

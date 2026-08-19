@@ -1,11 +1,4 @@
-// import Express from "express";
-import { hono } from "../packages/core/src/index.js";
-
-// const app = Express();
-
-// app.use(express());
-
-// app.listen(3000);
+import { hono } from "../packages/core/src/adapters/hono.js";
 
 // server.ts
 import { Hono } from "hono";

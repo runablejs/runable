@@ -122,6 +122,6 @@ variant: info
 title: Next step
 ---
 
-Install the required dependencies in <a href="./installation.md">Installation</a>.
+Install the required dependencies in <a href="/docs/getting-started/installation.md">Installation</a>.
 
 ::

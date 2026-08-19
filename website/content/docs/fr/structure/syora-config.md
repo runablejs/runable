@@ -41,5 +41,5 @@ export default defineConfig({
 });
 ```
 
-Consultez la page <a href="../getting-started/configuration.md">Configuration</a> pour le détail des options.
+Consultez la page <a href="/docs/getting-started/configuration.md">Configuration</a> pour le détail des options.
 

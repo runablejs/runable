@@ -236,6 +236,6 @@ variant: info
 title: Prochaine étape
 ---
 
-Comprenez comment ces options deviennent une application dans <a href="./concepts.md">Concepts</a>.
+Comprenez comment ces options deviennent une application dans <a href="/docs/getting-started/concepts.md">Concepts</a>.
 
 ::

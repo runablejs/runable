@@ -38,12 +38,12 @@ async function copyCode() {
 
 <template>
   <div
-    class="u-code-group w-full group my-6 overflow-hidden rounded-md border border-border/50 dark:bg-muted/12 bg-muted/70"
+    class="u-code-group w-full group my-6 overflow-hidden rounded-md border border-border bg-code"
   >
     <!-- Tabs -->
     <div
       v-if="hasMultiple"
-      class="flex items-center gap-1 border-b border-border/50 px-2 h-8"
+      class="flex items-center gap-1 border-b border-border px-2 h-8"
     >
       <button
         v-for="tab in tabs"

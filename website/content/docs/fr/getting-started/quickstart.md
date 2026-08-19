@@ -5,7 +5,7 @@ description: Créez une application Syora avec deux pages, un layout, une route 
 
 Construisez une petite application qui combine routing automatique, layout partagé et chargement de données SSR.
 
-Cette page part du projet Express créé dans <a href="./installation.md">Installation</a>.
+Cette page part du projet Express créé dans <a href="/docs/getting-started/installation.md">Installation</a>.
 
 ## Ajouter une route API
 
@@ -158,6 +158,6 @@ variant: info
 title: Prochaine étape
 ---
 
-Comparez ce modèle à celui de Nuxt dans <a href="./vs-nuxt.md">Syora vs Nuxt</a>.
+Comparez ce modèle à celui de Nuxt dans <a href="/docs/getting-started/vs-nuxt.md">Syora vs Nuxt</a>.
 
 ::

@@ -22,11 +22,24 @@ export const onBeforeRouteUpdate = (guard: NavigationGuard): void => {
   onScopeDispose(unsubscribe);
 };
 
-export const navigateTo = (
+export interface NavigateToOptions {
+  /** Replace the current history entry instead of adding a new one. */
+  replace?: boolean;
+}
+
+export function navigateTo(
   to: RouteLocationRaw | undefined | null,
-  //   options?: NavigateToOptions,
-):
-  | Promise<void | NavigationFailure | false>
-  | false
-  | void
-  | RouteLocationRaw => {};
+  options: NavigateToOptions = {},
+): Promise<void | NavigationFailure> | undefined {
+  if (to == null) return;
+
+  const router = useRouter();
+
+  if (!router) {
+    throw new Error(
+      "navigateTo() requires a Vue Router instance installed by Syora.",
+    );
+  }
+
+  return options.replace ? router.replace(to) : router.push(to);
+}

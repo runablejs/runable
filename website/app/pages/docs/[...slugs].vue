@@ -167,7 +167,9 @@ const { data: page, pending } = useAsyncData(
           </div> -->
         </div>
 
-        <MDC :value="page.html" />
+        <div class="v-content space-y-3">
+          <MDC :value="page.html" />
+        </div>
         <!-- <MDC
           :value="page.html"
           class="w-full flex-1 *:data-[slot=alert]:first:mt-0"

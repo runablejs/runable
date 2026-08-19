@@ -1,20 +1,29 @@
 ---
 title: navigateTo
-description: Current state of the navigateTo navigation helper.
+description: Navigate to another route from a component, composable, or plugin.
 ---
 
 ```ts
 function navigateTo(
   to: RouteLocationRaw | undefined | null,
-): Promise<void | NavigationFailure | false> | false | void | RouteLocationRaw
+  options?: { replace?: boolean },
+): Promise<void | NavigationFailure> | undefined
 ```
 
-::u-tip
----
-variant: warning
-title: Implementation pending
----
+By default, `navigateTo()` adds an entry to the browser history with `router.push()`:
 
-The function currently exposes its public signature but does not trigger navigation. Use `useRouter().push()` or `useRouter().replace()` until this API is complete.
+```ts
+await navigateTo("/projects");
+await navigateTo({
+  name: "project-details",
+  params: { id: "42" },
+});
+```
 
-::
+Set `replace` to avoid keeping the current URL in the history:
+
+```ts
+await navigateTo("/login", { replace: true });
+```
+
+Passing `null` or `undefined` does nothing and returns `undefined`. Navigation failures and errors are returned or rejected by Vue Router, so callers can handle them normally.

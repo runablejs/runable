@@ -146,6 +146,6 @@ variant: info
 title: Prochaine étape
 ---
 
-Installez les dépendances nécessaires dans <a href="./installation.md">Installation</a>.
+Installez les dépendances nécessaires dans <a href="/docs/getting-started/installation.md">Installation</a>.
 
 ::
