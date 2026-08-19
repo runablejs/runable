@@ -6,6 +6,7 @@ import { loadEnv, type ResolvedConfig } from "vite";
 import { join, relative, resolve } from "node:path";
 import {
   atomicWriteFile,
+  inferEnvValue,
   loadRuntimeEnv,
   normalizeDir,
   type LoadEnvResult,
@@ -221,7 +222,17 @@ export default createUnplugin((options: SyoraEnvPluginOptions = {}) => {
             // resolves to `undefined` at runtime instead of leaking data.
             if (value === undefined) return;
 
-            s.overwrite(path.node.start!, path.node.end!, value);
+            const inferredValue = inferEnvValue(value);
+            const serializedValue =
+              inferredValue === undefined
+                ? "undefined"
+                : JSON.stringify(inferredValue);
+
+            s.overwrite(
+              path.node.start!,
+              path.node.end!,
+              serializedValue,
+            );
             touched = true;
           },
         });

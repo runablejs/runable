@@ -51,13 +51,12 @@ export function inferEnvValue(value: string): EnvValue {
 }
 
 export function inferEnvType(value: any): string {
+  if (value === undefined) return "undefined";
+
   const trimmed = JSON.stringify(value).trim();
 
   // null
   if (trimmed.toLowerCase() === "null") return "null";
-
-  // undefined
-  if (trimmed.toLowerCase() === "undefined") return "undefined";
 
   // boolean
   if (["true", "false"].includes(trimmed.toLowerCase())) return "boolean";
