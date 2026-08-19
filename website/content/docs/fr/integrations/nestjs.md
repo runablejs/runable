@@ -16,7 +16,7 @@ pnpm add @syora/core vue vue-router @nestjs/common @nestjs/core @nestjs/platform
 ```ts
 // main.ts
 import { NestFactory } from "@nestjs/core";
-import { nestjs } from "@syora/core";
+import { nestjs } from "@syora/core/adapters/nestjs";
 import { AppModule } from "./app.module.js";
 
 const app = await NestFactory.create(AppModule);

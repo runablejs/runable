@@ -17,7 +17,7 @@ Add `@hono/node-server` when running Hono on Node.js.
 // server.ts
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
-import { hono } from "@syora/core";
+import { hono } from "@syora/core/adapters/hono";
 
 const app = new Hono();
 

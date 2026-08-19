@@ -15,7 +15,7 @@ pnpm add -D @types/express
 ```ts
 // server.ts
 import Express from "express";
-import { express } from "@syora/core";
+import { express } from "@syora/core/adapters/express";
 
 const app = Express();
 

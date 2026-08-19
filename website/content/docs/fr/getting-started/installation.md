@@ -101,7 +101,7 @@ Vous n'avez pas besoin de déclarer la route `/`. Syora la crée à partir de `i
 ```ts
 // server.ts
 import Express from "express";
-import { express } from "@syora/core";
+import { express } from "@syora/core/adapters/express";
 
 const server = Express();
 

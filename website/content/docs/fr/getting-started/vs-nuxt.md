@@ -91,7 +91,7 @@ Avec Syora, le point d'entrée HTTP vous appartient :
 
 ```ts
 // server.ts
-import { express } from "@syora/core";
+import { express } from "@syora/core/adapters/express";
 
 server.get("/api/users", usersController);
 server.use(express());

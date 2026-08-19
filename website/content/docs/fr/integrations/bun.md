@@ -13,7 +13,7 @@ bun add @syora/core vue vue-router
 
 ```ts
 // server.ts
-import { bun } from "@syora/core";
+import { bun } from "@syora/core/adapters/bun";
 
 Bun.serve({
   port: 3000,

@@ -14,7 +14,7 @@ pnpm add @syora/core vue vue-router @adonisjs/core
 ```ts
 // start/routes.ts
 import router from "@adonisjs/core/services/router";
-import { adonis } from "@syora/core";
+import { adonis } from "@syora/core/adapters/adonis";
 
 router.get("/api/health", async () => ({ status: "ok" }));
 

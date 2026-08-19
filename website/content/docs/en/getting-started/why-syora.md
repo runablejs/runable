@@ -43,7 +43,7 @@ Your server forwards frontend requests to Syora:
 ```ts
 // server.ts
 import Express from "express";
-import { express } from "@syora/core";
+import { express } from "@syora/core/adapters/express";
 
 const server = Express();
 

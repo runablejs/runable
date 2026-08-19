@@ -1,6 +1,6 @@
 import { serve as server, type HttpBindings } from "@hono/node-server";
 import { Hono } from "hono";
-import { hono } from "@syora/core";
+import { hono } from "@syora/core/adapters/hono";
 
 const app = new Hono<{ Bindings: HttpBindings }>();
 

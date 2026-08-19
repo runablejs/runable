@@ -21,7 +21,7 @@ Syora does not automatically start your application server. You create the serve
 
 ```ts
 // server.ts
-import { express } from "@syora/core";
+import { express } from "@syora/core/adapters/express";
 
 server.get("/api/orders", ordersController);
 server.use(express());
@@ -54,7 +54,7 @@ Always place the adapter after API routes or as the router's final fallback.
 
 ```ts [Express]
 import Express from "express";
-import { express } from "@syora/core";
+import { express } from "@syora/core/adapters/express";
 
 const app = Express();
 app.use(express());
@@ -63,7 +63,7 @@ app.listen(3000);
 
 ```ts [Fastify]
 import Fastify from "fastify";
-import { fastify } from "@syora/core";
+import { fastify } from "@syora/core/adapters/fastify";
 
 const app = Fastify();
 await app.register(fastify());
@@ -72,7 +72,7 @@ await app.listen({ port: 3000 });
 
 ```ts [Hono]
 import { Hono } from "hono";
-import { hono } from "@syora/core";
+import { hono } from "@syora/core/adapters/hono";
 
 const app = new Hono();
 app.use("*", hono());
@@ -82,7 +82,7 @@ export default app;
 
 ```ts [Koa]
 import Koa from "koa";
-import { koa } from "@syora/core";
+import { koa } from "@syora/core/adapters/koa";
 
 const app = new Koa();
 app.use(koa());
@@ -91,7 +91,7 @@ app.listen(3000);
 
 ```ts [NestJS]
 import { NestFactory } from "@nestjs/core";
-import { nestjs } from "@syora/core";
+import { nestjs } from "@syora/core/adapters/nestjs";
 import { AppModule } from "./app.module.js";
 
 const app = await NestFactory.create(AppModule);
@@ -101,19 +101,19 @@ await app.listen(3000);
 
 ```ts [AdonisJS]
 import router from "@adonisjs/core/services/router";
-import { adonis } from "@syora/core";
+import { adonis } from "@syora/core/adapters/adonis";
 
 router.any("*", adonis());
 ```
 
 ```ts [Bun]
-import { bun } from "@syora/core";
+import { bun } from "@syora/core/adapters/bun";
 
 Bun.serve({ port: 3000, fetch: bun() });
 ```
 
 ```ts [Deno]
-import { deno } from "@syora/core";
+import { deno } from "@syora/core/adapters/deno";
 
 Deno.serve({ port: 3000 }, deno());
 ```

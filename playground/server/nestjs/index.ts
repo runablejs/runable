@@ -1,7 +1,7 @@
 import { NestFactory } from "@nestjs/core";
 import type { NestExpressApplication } from "@nestjs/platform-express";
 import { Module } from "@nestjs/common";
-import { nestjs } from "@syora/core";
+import { nestjs } from "@syora/core/adapters/nestjs";
 
 @Module({})
 class AppModule {}

@@ -1,4 +1,4 @@
-import { express } from "@syora/core";
+import { express } from "@syora/core/adapters/express";
 import Express from "express";
 
 const app = Express();

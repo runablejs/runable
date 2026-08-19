@@ -14,7 +14,7 @@ pnpm add @syora/core vue vue-router fastify
 ```ts
 // server.ts
 import Fastify from "fastify";
-import { fastify } from "@syora/core";
+import { fastify } from "@syora/core/adapters/fastify";
 
 const app = Fastify();
 
