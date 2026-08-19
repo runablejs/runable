@@ -155,7 +155,36 @@ async function loadAllConfigs(
 ): Promise<Map<string, RawEntry>> {
   const entries = new Map<string, RawEntry>();
   const inFlight = new Map<string, Promise<RawEntry>>();
+  const dependencies = new Map<string, Set<string>>();
   let index = 0;
+
+  function findDependencyPath(
+    from: string,
+    target: string,
+    visited = new Set<string>(),
+  ): string[] | undefined {
+    if (from === target) return [from];
+    if (visited.has(from)) return;
+    visited.add(from);
+
+    for (const dependency of dependencies.get(from) ?? []) {
+      const path = findDependencyPath(dependency, target, visited);
+      if (path) return [from, ...path];
+    }
+  }
+
+  function addDependency(from: string, to: string) {
+    const moduleDependencies = dependencies.get(from) ?? new Set<string>();
+    moduleDependencies.add(to);
+    dependencies.set(from, moduleDependencies);
+
+    const pathToParent = findDependencyPath(to, from);
+    if (pathToParent) {
+      throw new Error(
+        `Circular module dependency detected: ${[from, ...pathToParent].join(" -> ")}.`,
+      );
+    }
+  }
 
   async function load(
     rawName: string,
@@ -187,6 +216,10 @@ async function loadAllConfigs(
         const childModules = (entry.loaded.modules ?? []).map((childName) =>
           resolveModuleName(childName, entryCwd),
         );
+
+        for (const childName of childModules) {
+          addDependency(name, normalizeModuleName(childName));
+        }
 
         await Promise.all(
           childModules.map((childName) =>
