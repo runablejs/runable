@@ -77,59 +77,64 @@ const { data: articles, pending } = useAsyncData("blog:index", () =>
 
     <div
       v-else-if="articles?.length"
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"
+      class="flex flex-col gap-8 lg:gap-y-16 sm:grid sm:grid-cols-2 mb-12 md:grid-cols-2 lg:grid-cols-3"
     >
-      <SyoraLink
+      <article
         v-for="article in articles"
         :key="article.path"
-        :to="`/blog${article.path}`"
+        class="group relative dark:bg-muted/20 border border-border rounded-md overflow-hidden h-full"
       >
-        <article
-          class="group relative dark:bg-muted/20 border border-border rounded-md overflow-hidden"
+        <SyoraLink
+          :to="`/blog${article.path}`"
           style="
             transition:
               opacity 200ms ease-out,
               transform 200ms ease-out,
               border-color 150ms ease-out;
           "
+          class="focus:outline-none absolute inset-0"
         >
+        </SyoraLink>
+
+        <div
+          v-if="article.meta.cover"
+          class="relative overflow-hidden aspect-video w-full pointer-events-none"
+        >
+          <img
+            width="437"
+            height="246"
+            data-nuxt-img=""
+            :alt="article.meta.title"
+            :src="article.meta.cover"
+            data-slot="image"
+            class="object-cover object-top w-full h-full transform transition-transform duration-200 group-hover/blog-post:scale-110"
+          />
+        </div>
+        <div class="relative p-7 pointer-events-none flex flex-col h-full">
           <div
-            v-if="article.meta.cover"
-            class="relative overflow-hidden aspect-video w-full pointer-events-none"
-          >
-            <img
-              width="437"
-              height="246"
-              data-nuxt-img=""
-              :alt="article.meta.title"
-              :src="article.meta.cover"
-              data-slot="image"
-              class="object-cover object-top w-full h-full transform transition-transform duration-200 group-hover/blog-post:scale-110"
-            />
-          </div>
-          <div class="relative p-7">
-            <div
-              class="absolute left-0 top-8 w-0.75 h-10 bg-accent dark:bg-accent rounded-r-md transition-transform duration-fast ease-default group-hover:scale-y-110 origin-top"
-              aria-hidden="true"
-            />
+            class="absolute left-0 top-8 w-0.75 h-10 bg-accent dark:bg-accent rounded-r-md"
+            aria-hidden="true"
+          />
+          <div class="text-sm mb-2">
             {{ formatArticleDate(article) }}
-            <h3 class="font-display text-h4 text-neutral mb-">
-              {{ article.meta.title ?? article.path }}
-            </h3>
-
-            <p
-              v-if="article.meta.description"
-              class="font-body text-small text- leading-relaxed mt-1"
-            >
-              {{ article.meta.description }}
-            </p>
-
-            <div class="mt-5">
-              <BlogAuthors :page="article" split />
-            </div>
           </div>
-        </article>
-      </SyoraLink>
+
+          <h3 class="font-display text-h4 text-neutral mb-">
+            {{ article.meta.title ?? article.path }}
+          </h3>
+
+          <p
+            v-if="article.meta.description"
+            class="font-body text-small text- leading-relaxed mt-2"
+          >
+            {{ article.meta.description }}
+          </p>
+
+          <div class="pt-5 mt-auto">
+            <BlogAuthors :page="article" split />
+          </div>
+        </div>
+      </article>
     </div>
 
     <p v-else class="border-y py-6 text-sm text-muted-foreground">

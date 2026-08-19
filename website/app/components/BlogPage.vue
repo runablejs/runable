@@ -59,7 +59,7 @@ const props = defineProps<{
   <article
     v-else-if="page"
     data-slot="blog"
-    class="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-8 px-4 py-10 text-[1.05rem] text-foreground sm:text-[15px] lg:py-16"
+    class="mx-auto w-full max-w-4xl flex flex-1 flex-col gap-8 px-4 py-10 text-[1.05rem] text-foreground sm:text-[15px] lg:py-16"
   >
     <Breadcrumb>
       <BreadcrumbList>
