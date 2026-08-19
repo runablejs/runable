@@ -56,3 +56,5 @@ dist-ssr/
 # Certificates
 *.pem
 *.key
+
+bugs

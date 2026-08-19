@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useI18n } from "vue-i18n";
-
-const { t } = useI18n();
 
 const titleRef = ref<HTMLElement | null>(null);
 const leadRef = ref<HTMLElement | null>(null);
@@ -35,7 +32,7 @@ onMounted(() => {
         <!-- Numérotation -->
 
         <p class="font-mono text-mono-sm uppercase tracking-[0.08em] mb-8">
-          {{ t("landing.why.eyebrow") }}
+          02 — Why Syora
         </p>
 
         <!-- Titre -->
@@ -49,7 +46,7 @@ onMounted(() => {
               transform 300ms ease-out;
           "
         >
-          {{ t("landing.why.title") }}
+          The compromise nobody asked for.
         </h2>
 
         <!-- Lead -->
@@ -62,7 +59,9 @@ onMounted(() => {
               transform 300ms ease-out;
           "
         >
-          {{ t("landing.why.lead") }}
+          Today, choosing Nuxt means adopting Nitro as your server runtime. For
+          most projects, this coupling makes sense. But when you need a
+          specialized backend framework, it becomes a real constraint.
         </p>
 
         <!-- ═══════════════════════════════════════════════════
@@ -77,7 +76,11 @@ onMounted(() => {
                 transform 300ms ease-out;
             "
           >
-            {{ t("landing.why.body") }}
+            Frameworks like Fastify, NestJS, AdonisJS, or Koa offer rich,
+            battle-tested ecosystems: advanced dependency injection, modular
+            architecture, mature plugin systems, and robust conventions already
+            adopted by enterprises. When you need this kind of infrastructure,
+            developers are stuck between two unsatisfying options.
           </p>
         </div>
 
@@ -104,13 +107,15 @@ onMounted(() => {
             <p
               class="font-mono text-mono-sm text-destructive uppercase tracking-widest mb-4"
             >
-              {{ t("landing.why.optionA.label") }}
+              Option A
             </p>
             <h3 class="font-display text-h3 mb-3">
-              {{ t("landing.why.optionA.title") }}
+              Back to Vanilla Vue
             </h3>
             <p class="font-body text-small text- leading-relaxed">
-              {{ t("landing.why.optionA.description") }}
+              You choose server freedom, but you give up the exceptional Nuxt
+              developer experience: file-system routing, auto-imports,
+              useAsyncData, modules, middlewares, and more.
             </p>
           </div>
 
@@ -125,13 +130,15 @@ onMounted(() => {
             <p
               class="font-mono text-mono-sm text-destructive uppercase tracking-widest mb-4"
             >
-              {{ t("landing.why.optionB.label") }}
+              Option B
             </p>
             <h3 class="font-display text-h3 mb-3">
-              {{ t("landing.why.optionB.title") }}
+              Split Projects (Headless)
             </h3>
             <p class="font-body text-small text- leading-relaxed">
-              {{ t("landing.why.optionB.description") }}
+              You build your ideal backend on one side and a Nuxt frontend on
+              the other — at the cost of heavy architecture, increased
+              deployment complexity, and duplicated logic.
             </p>
           </div>
         </div>
@@ -165,24 +172,31 @@ onMounted(() => {
           <p
             class="font-mono text-mono-sm text-green-600 uppercase tracking-widest mb-4"
           >
-            {{ t("landing.why.solution.label") }}
+            The Third Way
           </p>
           <h3 class="font-display text-h3 mb-4">
-            {{ t("landing.why.solution.title") }}
+            Syora eliminates this compromise.
           </h3>
           <div class="space-y-4 max-w-165.5">
             <p class="font-body text-body text- leading-relaxed">
-              {{ t("landing.why.solution.first.before") }}
+              Syora brings the
               <strong class="font-medium">
-                {{ t("landing.why.solution.first.emphasis") }}
+                entire Nuxt developer experience
               </strong>
-              {{ t("landing.why.solution.first.after") }}
+              directly to Vue.js, while remaining strictly independent of the
+              server. You keep file-system routing, layouts, middlewares, async
+              hydration, Server-Side Rendering (SSR), and auto-imports.
             </p>
             <p class="font-body text-body text- leading-relaxed">
-              {{ t("landing.why.solution.second") }}
+              The only difference? You are free to run your application on the
+              server of your choice. Whether your architecture relies on
+              Fastify, NestJS, AdonisJS, Express, Koa, Hono, or any other
+              technology capable of handling HTTP requests, Syora integrates
+              naturally.
             </p>
             <p class="font-body text-body leading-relaxed font-medium">
-              {{ t("landing.why.solution.third") }}
+              Choose your backend for its intrinsic qualities, without ever
+              giving up the development comfort of Nuxt.
             </p>
           </div>
         </div>

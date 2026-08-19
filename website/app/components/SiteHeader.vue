@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import GithubLink from "./GithubLink.vue";
-import LanguageSwitcher from "./LanguageSwitcher.vue";
 import ModeSwitcher from "./ModeSwitcher.vue";
 import Logo from "./navbar-components/Logo.vue";
 import { Button } from "./ui/button";
@@ -12,8 +11,6 @@ import {
   NavigationMenuList,
 } from "./ui/navigation-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-
-const localePath = useLocalePath();
 
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
@@ -50,10 +47,7 @@ const navigationLinks = [
       <!-- Left side -->
       <div class="flex flex-1 items-center gap-2 h-full">
         <!-- Logo -->
-        <RouterLink
-          :to="localePath('/')"
-          class="flex items-center gap-2 h-full"
-        >
+        <RouterLink to="/" class="flex items-center gap-2 h-full">
           <div
             class="flex items-center bg-accent text-accent-foreground h-full px-1 aspect-square"
           >
@@ -95,7 +89,6 @@ const navigationLinks = [
           </div>
         </div>
 
-        <LanguageSwitcher />
         <ClientOnly>
           <ModeSwitcher class="rounded-none" />
         </ClientOnly>

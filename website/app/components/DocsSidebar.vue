@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
 import DocsStructureTree from "./DocsStructureTree.vue";
 import {
   Sidebar,
@@ -16,8 +15,6 @@ const props = defineProps<{ blockCode: string }>();
 
 const { nav } = useAppConfig();
 const router = useRouter();
-const localePath = useLocalePath();
-const { locale } = useI18n();
 
 const isStructure = computed(() => {
   return props.blockCode === "structure";
@@ -28,9 +25,7 @@ const trees = computed(() => {
 });
 
 function isActive(href: string) {
-  const path = router.currentRoute.value.path
-    .replace(/\/+$/, "")
-    .replace(new RegExp(`/${locale.value}`), "");
+  const path = router.currentRoute.value.path.replace(/\/+$/, "");
 
   return path === href || path.startsWith(`${href}/`);
 }
@@ -70,7 +65,7 @@ function isActive(href: string) {
                     class="relative h-6 px-1 w-fit rounded-none overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md data-[active=true]:border-accent data-[active=true]:bg-accent 3xl:fixed:w-full 3xl:fixed:max-w-48"
                   >
                     <!-- :is-active="isActive(item.href)" -->
-                    <SyoraLink :to="localePath(item.href)">
+                    <SyoraLink :to="item.href">
                       <span
                         class="absolute inset-0 flex w-(--sidebar-menu-width) bg-transparent"
                       />
@@ -91,7 +86,7 @@ function isActive(href: string) {
                 class="relative h-6 px-1 w-fit rounded-none overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md data-[active=true]:border-accent data-[active=true]:bg-accent 3xl:fixed:w-full 3xl:fixed:max-w-48"
               >
                 <!-- :is-active="isActive(item.href)" -->
-                <SyoraLink :to="localePath(tree.href)">
+                <SyoraLink :to="tree.href">
                   <span
                     class="absolute inset-0 flex w-(--sidebar-menu-width) bg-transparent"
                   />

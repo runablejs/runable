@@ -41,7 +41,6 @@
   "include": [
     ".app/**/*.d.ts",
     "app/**/*",
-    "modules/i18n/app/**/*",
     "syora.config.ts"
   ]
 }

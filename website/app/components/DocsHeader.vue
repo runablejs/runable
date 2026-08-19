@@ -2,7 +2,6 @@
 import type { HTMLAttributes } from "vue";
 import { cn } from "~/lib/utils";
 import { useSidebar } from "./ui/sidebar/utils.ts";
-import { useI18n } from "vue-i18n";
 
 // const props = defineProps<{
 //   tree: ContentNavigationItem
@@ -15,13 +14,9 @@ const props = defineProps<{
 const { nav } = useAppConfig();
 const { toggleSidebar } = useSidebar();
 const router = useRouter();
-const localePath = useLocalePath();
-const { locale } = useI18n();
 
 const active = computed(() => {
-  const path = router.currentRoute.value.path
-    .replace(/\/+$/, "")
-    .replace(new RegExp(`/${locale.value}`), "");
+  const path = router.currentRoute.value.path.replace(/\/+$/, "");
 
   return nav.find((item) => {
     const blockPath = `/docs/${item.code}`;
@@ -71,7 +66,7 @@ const active = computed(() => {
             'border-b-transparent text-muted-foreground': active !== name,
           }"
           variant="ghost"
-          :to="localePath(href)"
+          :to="href"
           class="px-1.5 hover:text-primary hover:border-b-primary h-full justify-center rounded-none border-b-2 font-medium text-sm flex items-center gap-2 whitespace-nowrap"
         >
           <UIcon :name="icon" class="size-4" />

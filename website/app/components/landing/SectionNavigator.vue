@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from "vue";
-import { useI18n } from "vue-i18n";
-
-const { t } = useI18n();
+import { ref, onMounted, onUnmounted } from "vue";
 
 interface NavSection {
   id: string;
@@ -10,16 +7,16 @@ interface NavSection {
   label: string;
 }
 
-const sections = computed<NavSection[]>(() => [
-  { id: "section-hero", num: "01", label: t("landing.navigation.hero") },
-  { id: "section-why", num: "02", label: t("landing.navigation.why") },
-  { id: "section-capabilities", num: "03", label: t("landing.navigation.capabilities") },
-  { id: "section-runtimes", num: "04", label: t("landing.navigation.runtimes") },
-  { id: "section-quickstart", num: "05", label: t("landing.navigation.quickstart") },
+const sections: NavSection[] = [
+  { id: "section-hero", num: "01", label: "Hero" },
+  { id: "section-why", num: "02", label: "Why Syora" },
+  { id: "section-capabilities", num: "03", label: "Capabilities" },
+  { id: "section-runtimes", num: "04", label: "Runtimes" },
+  { id: "section-quickstart", num: "05", label: "Quick Start" },
   // { id: "section-themanifesto", num: "06", label: "Manifesto" },
-]);
+];
 
-const activeId = ref<string>(sections.value[0].id);
+const activeId = ref<string>(sections[0].id);
 let observer: IntersectionObserver | null = null;
 
 function scrollToSection(id: string) {
@@ -30,7 +27,7 @@ function scrollToSection(id: string) {
 }
 
 onMounted(() => {
-  const elements = sections.value
+  const elements = sections
     .map((s) => document.getElementById(s.id))
     .filter(Boolean) as HTMLElement[];
 
@@ -65,7 +62,7 @@ onUnmounted(() => {
   <!-- Desktop uniquement — légende verticale discrète -->
   <nav
     class="hidden xl:flex fixed left-[3vw] top-1/2 -translate-y-1/2 flex-col gap-3 z-300"
-    :aria-label="t('landing.navigation.ariaLabel')"
+    aria-label="Page sections"
   >
     <button
       v-for="section in sections"

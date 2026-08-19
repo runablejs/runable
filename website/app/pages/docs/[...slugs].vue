@@ -1,16 +1,10 @@
 <script setup lang="ts">
-import { Tree, TreeItem, TreeItemLabel } from "~/components/ui/tree";
 import MDC from "v-content/components/MDC.js";
-import SidebarProvider from "~/components/ui/sidebar/SidebarProvider.vue";
-import DocsSidebar from "~/components/DocsSidebar.vue";
-import DocsHeader from "~/components/DocsHeader.vue";
 import { toArray } from "@/utils/to-array.js";
 import DocsToc from "~/components/DocsToc.vue";
-import { useI18n } from "vue-i18n";
 import { Skeleton } from "~/components/ui/skeleton";
 
 const route = useRoute();
-const { t } = useI18n();
 
 const slugs = computed(() => {
   const params = route.params as { slugs: string | string[] };
@@ -55,7 +49,7 @@ const { data: page, pending } = useAsyncData(
     aria-busy="true"
     aria-live="polite"
   >
-    <span class="sr-only">{{ t("common.loadingDocumentation") }}</span>
+    <span class="sr-only">Loading documentation</span>
 
     <div class="flex min-w-0 flex-1 flex-col">
       <div class="h-(--top-spacing) shrink-0" />
@@ -171,13 +165,6 @@ const { data: page, pending } = useAsyncData(
               </NuxtLink>
             </Badge>
           </div> -->
-        </div>
-
-        <div>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque autem
-          repellat, unde libero rem error, aspernatur maiores hic optio quae
-          temporibus consectetur deserunt doloribus numquam. Nobis iusto minima
-          aliquid veritatis!
         </div>
 
         <MDC :value="page.html" />

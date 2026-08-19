@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import type { ResolvedPageEntry } from "v-content";
-import { useI18n } from "vue-i18n";
 
 const props = defineProps<{ page: ResolvedPageEntry }>();
-const { t } = useI18n();
 const activeId = ref<string>("");
 
 let observer: IntersectionObserver | null = null;
@@ -111,7 +109,7 @@ onBeforeUnmount(() => {
 <template>
   <nav v-if="page.toc.length" aria-label="Sommaire de la page">
     <p class="mb-4 text-sm font-medium text-foreground">
-      {{ t("common.onThisPage") }}
+      On this page
     </p>
 
     <ul class="mt-4 space-y-2">

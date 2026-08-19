@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useI18n } from "vue-i18n";
-
-const { t } = useI18n();
 
 const gridRef = ref<HTMLElement | null>(null);
 const runtimeHeadings = ref<HTMLElement | null>(null);
@@ -84,7 +81,7 @@ const runtimeServers = [
 
     <div class="mx-auto max-w-7xl px-10 py-32 md:py-40">
       <p class="font-mono text-mono-sm text-tertiary tracking-[0.08em] mb-8">
-        {{ t("landing.runtimes.eyebrow") }}
+        04 — Runtimes
       </p>
 
       <h2
@@ -97,8 +94,8 @@ const runtimeServers = [
             transform 300ms ease-out;
         "
       >
-        {{ t("landing.runtimes.title.first") }}<br class="hidden md:block" />
-        {{ t("landing.runtimes.title.second") }}
+        Run on anything.<br class="hidden md:block" />
+        Deploy anywhere.
       </h2>
 
       <div
@@ -155,7 +152,7 @@ const runtimeServers = [
       </div>
 
       <p class="mt-7 max-w-3xl">
-        {{ t("landing.runtimes.footer") }}
+        And any other runtime capable of handling HTTP requests.
       </p>
     </div>
 

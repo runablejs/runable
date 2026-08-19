@@ -53,9 +53,17 @@ const rehypeCode: Plugin = function () {
   };
 };
 
-export default defineConfig({
-  modules: ["./modules/i18n"],
+function defineDocsCollection(directory: string) {
+  return defineCollection({
+    type: "page",
+    source: {
+      include: `${directory}/**/*.md`,
+      exclude: "**/*.draft.md",
+    },
+  });
+}
 
+export default defineConfig({
   head: {
     title: "Syora",
 
@@ -81,7 +89,7 @@ export default defineConfig({
       tailwindcss(),
 
       vContent({
-        root: resolve(import.meta.dirname, "../docs_v2"),
+        root: resolve(import.meta.dirname, "./content/docs/en"),
         output: resolve(import.meta.dirname, ".app/content"),
 
         plugins: [
@@ -93,57 +101,13 @@ export default defineConfig({
         ],
 
         collections: {
-          gettingStarted: defineCollection({
-            type: "page",
-            source: {
-              include: "getting-started/**/*.md",
-              exclude: "**/*.draft.md",
-            },
-          }),
-
-          structure: defineCollection({
-            type: "page",
-            source: {
-              include: "structure/**/*.md",
-              exclude: "**/*.draft.md",
-            },
-          }),
-
-          guide: defineCollection({
-            type: "page",
-            source: {
-              include: "guide/**/*.md",
-              exclude: "**/*.draft.md",
-            },
-          }),
-
-          integrations: defineCollection({
-            type: "page",
-            source: {
-              include: "integrations/**/*.md",
-              exclude: "**/*.draft.md",
-            },
-          }),
-
-          api: defineCollection({
-            type: "page",
-            source: {
-              include: "api/**/*.md",
-              exclude: "**/*.draft.md",
-            },
-          }),
+          gettingStarted: defineDocsCollection("getting-started"),
+          structure: defineDocsCollection("structure"),
+          guide: defineDocsCollection("guide"),
+          integrations: defineDocsCollection("integrations"),
+          api: defineDocsCollection("api"),
         },
       }),
     ],
-  },
-
-  i18n: {
-    locales: [
-      { code: "fr", name: "Français", file: "fr.json" },
-      { code: "en", name: "English", file: "en.json" },
-    ],
-    defaultLocale: "fr",
-    strategy: "prefix_and_default",
-    persistence: "cookie",
   },
 });

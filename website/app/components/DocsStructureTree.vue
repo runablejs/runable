@@ -11,7 +11,6 @@ interface TreeNode {
 }
 
 const { nav } = useAppConfig();
-const localePath = useLocalePath();
 
 const items: TreeNode[] =
   nav.find((n) => n.code === "structure")?.children ?? [];
@@ -66,7 +65,7 @@ onMounted(() => {
       :class="{ 'pl-3 border-l': item.parentItem }"
       @toggle="(e) => e.preventDefault()"
     >
-      <SyoraLink :to="localePath(item.value.href)" class="py-4">
+      <SyoraLink :to="item.value.href" class="py-4">
         <UIcon
           :name="
             item.hasChildren && isExpanded && item.value.iconOpen

@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from "vue";
-import { useI18n } from "vue-i18n";
-
-const { t } = useI18n();
+import { ref, onMounted } from "vue";
 
 const titleRef = ref<HTMLElement | null>(null);
 const gridRef = ref<HTMLElement | null>(null);
@@ -13,7 +10,6 @@ const { reveal, revealChildren } = useScrollReveal({
   rootMargin: "0px 0px -40px 0px",
   y: 16,
 });
-const localePath = useLocalePath();
 
 onMounted(() => {
   reveal(titleRef.value);
@@ -21,83 +17,83 @@ onMounted(() => {
   reveal(footerRef.value);
 });
 
-const capabilities = computed(() => [
+const capabilities = [
   {
     ref: "FT.01",
-    title: t("landing.capabilities.items.routing.title"),
-    description: t("landing.capabilities.items.routing.description"),
+    title: "File-system based routing",
+    description: "Automatic route discovery based on your file structure. No configuration required.",
   },
   {
     ref: "FT.02",
-    title: t("landing.capabilities.items.autoImports.title"),
-    description: t("landing.capabilities.items.autoImports.description"),
+    title: "Auto-imports",
+    description: "Components and composables imported automatically without explicit declarations.",
   },
   {
     ref: "FT.03",
-    title: t("landing.capabilities.items.layouts.title"),
-    description: t("landing.capabilities.items.layouts.description"),
+    title: "Layouts",
+    description: "Define page layouts that wrap your routes with shared structure and navigation.",
   },
   {
     ref: "FT.04",
-    title: t("landing.capabilities.items.middlewares.title"),
-    description: t("landing.capabilities.items.middlewares.description"),
+    title: "Route middlewares",
+    description: "Protect, redirect, or transform navigation with per-route or global middlewares.",
   },
   {
     ref: "FT.05",
-    title: t("landing.capabilities.items.dataFetching.title"),
-    description: t("landing.capabilities.items.dataFetching.description"),
+    title: "Asynchronous data fetching",
+    description: "Fetch data before rendering with built-in async hooks and suspense handling.",
   },
   {
     ref: "FT.06",
-    title: t("landing.capabilities.items.ssr.title"),
-    description: t("landing.capabilities.items.ssr.description"),
+    title: "Server-Side Rendering",
+    description: "Full SSR support out of the box. Render on the server, hydrate on the client.",
   },
   {
     ref: "FT.07",
-    title: t("landing.capabilities.items.hydration.title"),
-    description: t("landing.capabilities.items.hydration.description"),
+    title: "Hydration",
+    description: "Seamless client-side takeover of server-rendered markup with Vue hydration.",
   },
   {
     ref: "FT.08",
-    title: t("landing.capabilities.items.modules.title"),
-    description: t("landing.capabilities.items.modules.description"),
+    title: "Module system",
+    description: "Extend Syora with modules. Install, configure, and compose functionality.",
   },
   {
     ref: "FT.09",
-    title: t("landing.capabilities.items.plugins.title"),
-    description: t("landing.capabilities.items.plugins.description"),
+    title: "Plugin system",
+    description: "Hook into every stage of the application lifecycle with a powerful plugin API.",
   },
   {
     ref: "FT.10",
-    title: t("landing.capabilities.items.metadata.title"),
-    description: t("landing.capabilities.items.metadata.description"),
+    title: "Page metadata",
+    description: "Manage titles, descriptions, Open Graph, and SEO metadata per route.",
   },
   {
     ref: "FT.11",
-    title: t("landing.capabilities.items.runtimePresets.title"),
-    description: t("landing.capabilities.items.runtimePresets.description"),
+    title: "Runtime presets",
+    description: "Pre-configured setups for common server environments and deployment targets.",
   },
   {
     ref: "FT.12",
-    title: t("landing.capabilities.items.backendIndependent.title"),
-    description: t("landing.capabilities.items.backendIndependent.description"),
+    title: "No backend dependency",
+    description: "Run on Fastify, Express, Hono, Deno, Bun, Node HTTP, or any custom server.",
   },
   {
     ref: "FT.13",
-    title: t("landing.capabilities.items.vue.title"),
-    description: t("landing.capabilities.items.vue.description"),
+    title: "Powered by Vue",
+    description: "Built on Vue reactivity, Composition API, and the entire Vue ecosystem.",
   },
   {
     ref: "FT.14",
-    title: t("landing.capabilities.items.typescript.title"),
-    description: t("landing.capabilities.items.typescript.description"),
+    title: "Type-safe with TypeScript",
+    description: "Write type-safe applications with generated types, full TypeScript support, and automatic configuration.",
   },
   {
     ref: "FT.15",
-    title: t("landing.capabilities.items.seo.title"),
-    description: t("landing.capabilities.items.seo.description"),
+    title: "SEO and metadata",
+    description: "Build SEO-friendly applications with full control over page metadata and search engine optimization.",
   },
-]);
+];
 </script>
 
 <template>
@@ -109,7 +105,7 @@ const capabilities = computed(() => [
 
     <div class="mx-auto max-w-7xl px-10 py-32 md:py-40">
       <p class="font-mono text-mono-sm text-tertiary tracking-[0.08em] mb-8">
-        {{ t("landing.capabilities.eyebrow") }}
+        03 — Capabilities
       </p>
 
       <h2
@@ -122,9 +118,8 @@ const capabilities = computed(() => [
             transform 300ms ease-out;
         "
       >
-        {{ t("landing.capabilities.title.first")
-        }}<br class="hidden md:block" />
-        {{ t("landing.capabilities.title.second") }}
+        Everything you expect from Nuxt.<br class="hidden md:block" />
+        None of the lock-in.
       </h2>
 
       <div
@@ -171,16 +166,15 @@ const capabilities = computed(() => [
           class="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
         >
           <p class="font-body text-caption">
-            {{
-              t("landing.capabilities.summary", { count: capabilities.length })
-            }}
+            {{ capabilities.length }} capabilities. Zero backend lock-in. One
+            developer experience.
           </p>
 
           <SyoraLink
-            :to="localePath('/docs/getting-started/installation')"
+            to="/docs/getting-started/installation"
             class="inline-flex items-center gap-2 font-mono text-mono transition-colors duration-instant ease-default bg-accent text-accent-foreground px-2"
           >
-            <span>{{ t("landing.capabilities.readDocumentation") }}</span>
+            <span>Read the documentation</span>
             <svg
               width="12"
               height="12"
