@@ -360,7 +360,10 @@ function writeDts(
 
   const props = [...entries.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([configKey, typeText]) => `    ${configKey}?: ${typeText};`)
+    .map(
+      ([configKey, typeText]) =>
+        `    ${JSON.stringify(configKey)}?: ${typeText};`,
+    )
     .join("\n");
 
   const configTypePath = normalizeDir(
