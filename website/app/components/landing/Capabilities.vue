@@ -21,77 +21,92 @@ const capabilities = [
   {
     ref: "FT.01",
     title: "File-system based routing",
-    description: "Automatic route discovery based on your file structure. No configuration required.",
+    description:
+      "Automatic route discovery based on your file structure. No configuration required.",
   },
   {
     ref: "FT.02",
     title: "Auto-imports",
-    description: "Components and composables imported automatically without explicit declarations.",
+    description:
+      "Components and composables imported automatically without explicit declarations.",
   },
   {
     ref: "FT.03",
     title: "Layouts",
-    description: "Define page layouts that wrap your routes with shared structure and navigation.",
+    description:
+      "Define page layouts that wrap your routes with shared structure and navigation.",
   },
   {
     ref: "FT.04",
     title: "Route middlewares",
-    description: "Protect, redirect, or transform navigation with per-route or global middlewares.",
+    description:
+      "Protect, redirect, or transform navigation with per-route or global middlewares.",
   },
   {
     ref: "FT.05",
     title: "Asynchronous data fetching",
-    description: "Fetch data before rendering with built-in async hooks and suspense handling.",
+    description:
+      "Fetch data before rendering with built-in async hooks and suspense handling.",
   },
   {
     ref: "FT.06",
     title: "Server-Side Rendering",
-    description: "Full SSR support out of the box. Render on the server, hydrate on the client.",
+    description:
+      "Full SSR support out of the box. Render on the server, hydrate on the client.",
   },
   {
     ref: "FT.07",
     title: "Hydration",
-    description: "Seamless client-side takeover of server-rendered markup with Vue hydration.",
+    description:
+      "Seamless client-side takeover of server-rendered markup with Vue hydration.",
   },
   {
     ref: "FT.08",
     title: "Module system",
-    description: "Extend Syora with modules. Install, configure, and compose functionality.",
+    description:
+      "Extend Syora with modules. Install, configure, and compose functionality.",
   },
   {
     ref: "FT.09",
     title: "Plugin system",
-    description: "Hook into every stage of the application lifecycle with a powerful plugin API.",
+    description:
+      "Hook into every stage of the application lifecycle with a powerful plugin API.",
   },
   {
     ref: "FT.10",
     title: "Page metadata",
-    description: "Manage titles, descriptions, Open Graph, and SEO metadata per route.",
+    description:
+      "Manage titles, descriptions, Open Graph, and SEO metadata per route.",
   },
   {
     ref: "FT.11",
     title: "Runtime presets",
-    description: "Pre-configured setups for common server environments and deployment targets.",
+    description:
+      "Pre-configured setups for common server environments and deployment targets.",
   },
   {
     ref: "FT.12",
     title: "No backend dependency",
-    description: "Run on Fastify, Express, Hono, Deno, Bun, Node HTTP, or any custom server.",
+    description:
+      "Run on Fastify, Express, Hono, Deno, Bun, Node HTTP, or any custom server.",
   },
   {
     ref: "FT.13",
     title: "Powered by Vue",
-    description: "Built on Vue reactivity, Composition API, and the entire Vue ecosystem.",
+    description:
+      "Built on Vue reactivity, Composition API, and the entire Vue ecosystem.",
   },
   {
     ref: "FT.14",
     title: "Type-safe with TypeScript",
-    description: "Write type-safe applications with generated types, full TypeScript support, and automatic configuration.",
+    description:
+      "Write type-safe applications with generated types, full TypeScript support, and automatic configuration.",
   },
   {
     ref: "FT.15",
     title: "SEO and metadata",
-    description: "Build SEO-friendly applications with full control over page metadata and search engine optimization.",
+    description:
+      "Build SEO-friendly applications with full control over page metadata and search engine optimization.",
   },
 ];
 </script>
@@ -129,7 +144,7 @@ const capabilities = [
         <article
           v-for="cap in capabilities"
           :key="cap.ref"
-          class="group relative bg- dark:bg-muted/20 border border-border rounded-md p-8 transition-all duration-fast ease-default hover:border-strong hover:-translate-y-px sr-"
+          class="group relative bg- dark:bg-muted/20 border border-border rounded-md p-8 transition-all duration-fast ease-default hover:border-strong hover:-translate-y-px sr-hidden"
           style="
             transition:
               opacity 200ms ease-out,

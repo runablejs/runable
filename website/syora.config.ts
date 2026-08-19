@@ -53,12 +53,35 @@ const rehypeCode: Plugin = function () {
   };
 };
 
-function defineDocsCollection(directory: string) {
+function defineDocsCollection(locale: string, directory: string) {
   return defineCollection({
     type: "page",
     source: {
       include: `${directory}/**/*.md`,
       exclude: "**/*.draft.md",
+      cwd: `docs/${locale}`,
+    },
+  });
+}
+
+function defineBlogCollection(locale: string) {
+  return defineCollection({
+    type: "page",
+    source: {
+      include: `**/*.md`,
+      exclude: "**/*.draft.md",
+      cwd: `blog/${locale}`,
+    },
+  });
+}
+
+function defineAuthorsCollection() {
+  return defineCollection({
+    type: "data",
+    source: {
+      include: "**/*.{json,yaml,yml}",
+      exclude: "**/*.draft.{json,yaml,yml}",
+      cwd: "authors",
     },
   });
 }
@@ -89,7 +112,7 @@ export default defineConfig({
       tailwindcss(),
 
       vContent({
-        root: resolve(import.meta.dirname, "./content/docs/en"),
+        root: resolve(import.meta.dirname, "./content"),
         output: resolve(import.meta.dirname, ".app/content"),
 
         plugins: [
@@ -101,11 +124,14 @@ export default defineConfig({
         ],
 
         collections: {
-          gettingStarted: defineDocsCollection("getting-started"),
-          structure: defineDocsCollection("structure"),
-          guide: defineDocsCollection("guide"),
-          integrations: defineDocsCollection("integrations"),
-          api: defineDocsCollection("api"),
+          gettingStarted: defineDocsCollection("en", "getting-started"),
+          structure: defineDocsCollection("en", "structure"),
+          guide: defineDocsCollection("en", "guide"),
+          integrations: defineDocsCollection("en", "integrations"),
+          api: defineDocsCollection("en", "api"),
+
+          blog: defineBlogCollection("en"),
+          authors: defineAuthorsCollection(),
         },
       }),
     ],

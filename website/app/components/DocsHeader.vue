@@ -46,14 +46,14 @@ onBeforeUnmount(() => {
     ref="header"
     class="px-4 md:px-6 border-y bg-background sticky top-0 z-100 h-(--header-height) w-full overflow-x-auto overflow-y-hidden scrollbar-none"
   >
-    <div
+    <!-- <div
       aria-hidden="true"
       class="absolute inset-0 opacity-10 dark:opacity-30 dark:filter dark:invert"
       style="
         background-image: url(https://template-nextjs-clean.sanity.build/images/tile-1-black.png);
         background-size: 5px;
       "
-    ></div>
+    ></div> -->
 
     <div class="flex h-full items-center gap-1 relative">
       <RouterLink
@@ -89,12 +89,12 @@ onBeforeUnmount(() => {
           v-for="{ name, href, icon } in nav"
           :key="name"
           :class="{
-            'border-b-primary': active === name,
+            'bg-border': active === name,
             'border-b-transparent text-muted-foreground': active !== name,
           }"
           variant="ghost"
           :to="href"
-          class="px-1.5 hover:text-primary hover:border-b-primary h-full justify-center rounded-none border-b-2 font-medium text-sm flex items-center gap-2 whitespace-nowrap"
+          class="px-1.5 hover:text-primary hover:bg-border h-full justify-center rounded-none font-medium text-sm flex items-center gap-2 whitespace-nowrap"
         >
           <UIcon :name="icon" class="size-4" />
           {{ name }}
