@@ -1,21 +1,18 @@
 import "./types.js";
 
-import type { App, Plugin } from "vue";
+import type { App } from "vue";
 import { plugins } from ":plugins";
 import type { VuePluginObject } from "./types.js";
 import { useApp } from "../app/composables/context.js";
 import { registerHooks } from "@/context/hook.js";
 
-export const pluginPlugin: Plugin = {
-  install(app) {
-    // 1. Sort the plugins properly respecting 'enforce' and 'dependsOn'
-    const sortedPlugins = resolvePluginOrder(plugins);
+export async function installPlugins(app: App) {
+  const sortedPlugins = resolvePluginOrder(plugins);
 
-    for (const plugin of sortedPlugins) {
-      app.use(register(plugin));
-    }
-  },
-};
+  for (const plugin of sortedPlugins) {
+    await register(app, plugin);
+  }
+}
 
 /**
  * Resolves the execution order of plugins using a topological sort.
@@ -95,33 +92,27 @@ function resolvePluginOrder(plugins: VuePluginObject[]): VuePluginObject[] {
   ];
 }
 
-function register(plugin: VuePluginObject) {
-  const usePlugin: Plugin = {
-    async install(app: App) {
-      if (plugin.hooks) {
-        const appCtx = useApp();
-        registerHooks(appCtx, plugin.hooks);
-      }
+async function register(app: App, plugin: VuePluginObject) {
+  if (plugin.hooks) {
+    const appCtx = useApp();
+    registerHooks(appCtx, plugin.hooks);
+  }
 
-      if (!plugin.setup) return;
+  if (!plugin.setup) return;
 
-      const result = await plugin.setup(app);
+  const result = await plugin.setup(app);
 
-      if (result && typeof result === "object" && result.provide) {
-        const provides = result.provide;
+  if (result && typeof result === "object" && result.provide) {
+    const provides = result.provide;
 
-        for (const [key, value] of Object.entries(provides)) {
-          app.provide(key, value);
-          app.config.globalProperties[`$${key}`] = value;
-        }
+    for (const [key, value] of Object.entries(provides)) {
+      app.provide(key, value);
+      app.config.globalProperties[`$${key}`] = value;
+    }
 
-        const symbols = Object.getOwnPropertySymbols(provides);
-        for (const sym of symbols) {
-          app.provide(sym, provides[sym as unknown as string]);
-        }
-      }
-    },
-  };
-
-  return usePlugin;
+    const symbols = Object.getOwnPropertySymbols(provides);
+    for (const sym of symbols) {
+      app.provide(sym, provides[sym as unknown as string]);
+    }
+  }
 }
