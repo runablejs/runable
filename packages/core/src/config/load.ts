@@ -387,8 +387,15 @@ export async function loadConfig() {
 
   cachedConfigs = resolved;
 
-  await generateModulesOptionsDts();
-  await runSetups(pendingSetups);
+  try {
+    await generateModulesOptionsDts();
+    await runSetups(pendingSetups);
+  } catch (error) {
+    cachedConfigs = undefined;
+    moduleDirCache = undefined;
+    moduleNameAliases = undefined;
+    throw error;
+  }
 }
 
 /**
