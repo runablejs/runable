@@ -4,7 +4,7 @@ import merge from "lodash/merge";
 import router from "../router/plugin.js";
 import components from ":components";
 
-import { pluginPlugin } from "../plugin/index.js";
+import { installPlugins } from "../plugin/index.js";
 
 import { appContextPlugin } from "../context/plugin.js";
 import { createAsyncData } from "../async-data/plugin.js";
@@ -62,7 +62,7 @@ export async function createApp(isSsr = false) {
   app.use(router);
   app.use(createErrorCapture());
   app.use(layoutPlugin);
-  app.use(pluginPlugin);
+  await installPlugins(app);
   app.use(createAsyncData());
   app.use(head);
   app.use(components);
