@@ -20,6 +20,23 @@ catalog:
   "@babel/traverse": ^8.0.4
   "@babel/types": ^8.0.4
 
+  "@clack/prompts": ^1.5.1
+  consola: ^3.4.2
+  dayjs: ^1.11.21
+  esbuild: ^0.28.0
+  giget: ^3.2.0
+  magicast: ^0.5.4
+  nypm: ^0.6.6
+  pkg-types: ^2.3.1
+  std-env: ^4.1.0
+  tinyclip: ^0.1.14
+  tinyexec: ^1.2.4
+  zod: ^4.4.3
+
+  citty: ^0.2.2
+  pkg: ^5.8.1
+  typescript-eslint: ^8.65.0
+
   c12: 4.0.0-beta.5
   mlly: ^1.8.2
   ofetch: ^1.5.1
@@ -44,6 +61,7 @@ catalog:
   "@nestjs/common": ^11.1.28
   "@nestjs/core": ^11.1.28
   "@nestjs/platform-express": ^11.1.28
+  "@adonisjs/core": ^7.3.5
 
   typescript: ~6.0.3
   "@types/node": ^24.13.3
@@ -51,6 +69,7 @@ catalog:
   "@types/estree": ^1.0.9
 
   tsdown: ^0.22.14
+  "@tsdown/css": ^0.22.14
   tsx: ^4.23.12
   npm-run-all2: ^9.0.2
 
@@ -65,6 +84,8 @@ catalog:
   sirv: ^3.0.2
   srvx: ^0.12.4
   syt: ^0.2.0
+  unimport: ^6.4.0
+  unplugin: ^3.3.0
 
 allowBuilds:
   "@swc/core": true
