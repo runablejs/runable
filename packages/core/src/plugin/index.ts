@@ -19,6 +19,28 @@ export async function installPlugins(app: App) {
  * It respects both `enforce` priority buckets and explicit `dependsOn` declarations.
  */
 function resolvePluginOrder(plugins: VuePluginObject[]): VuePluginObject[] {
+  const enforceRank = (plugin: VuePluginObject) =>
+    plugin.enforce === "pre" ? 0 : plugin.enforce === "post" ? 2 : 1;
+
+  const pluginsByName = new Map(
+    plugins.flatMap((plugin) =>
+      plugin.name ? ([[plugin.name, plugin]] as const) : [],
+    ),
+  );
+
+  for (const plugin of plugins) {
+    for (const dependencyName of plugin.dependsOn ?? []) {
+      const dependency = pluginsByName.get(dependencyName);
+      if (!dependency || enforceRank(dependency) <= enforceRank(plugin)) {
+        continue;
+      }
+
+      throw new Error(
+        `[Syora] Plugin "${plugin.name ?? "anonymous"}" (enforce: "${plugin.enforce ?? "default"}") cannot depend on "${dependencyName}" (enforce: "${dependency.enforce ?? "default"}") because a plugin can only depend on plugins in the same or an earlier enforce group.`,
+      );
+    }
+  }
+
   // We first group plugins by their enforce category to keep pre/normal/post separation
   const pre = plugins.filter((p) => p.enforce === "pre");
   const normal = plugins.filter((p) => !p.enforce);
