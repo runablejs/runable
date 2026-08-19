@@ -19,6 +19,9 @@ let cachedConfigs: Record<string, ResolvedConfig> | undefined;
 /** Memoizes `getModuleDir` by name so repeated references only touch the filesystem once. */
 let moduleDirCache: Map<string, string> | undefined;
 
+/** Maps every declared module reference to the canonical name used in `cachedConfigs`. */
+let moduleNameAliases: Map<string, string> | undefined;
+
 /**
  * Falls back to a clean camelCase identifier when `name` is a filesystem
  * path (a local module declared as `"./modules/my-module"`, stored as
@@ -198,6 +201,8 @@ async function loadAllConfigs(
     }
 
     const entry = await promise;
+    moduleNameAliases?.set(normalizeDir(rawName), entry.name);
+    moduleNameAliases?.set(normalizeModuleName(rawName), entry.name);
     if (dependent) entry.dependents.add(dependent);
     return entry;
   }
@@ -375,6 +380,7 @@ export async function loadConfig() {
 
   // Clear any stale module directory resolutions before this fresh load.
   moduleDirCache = undefined;
+  moduleNameAliases = new Map();
 
   const entries = await loadAllConfigs();
   const { resolved, pendingSetups } = resolveAllConfigs(entries);
@@ -431,7 +437,12 @@ export function getModuleOptions<
     throw new Error("Syora config is not loaded. Call loadConfig() first.");
   }
 
-  const config = cachedConfigs[name];
+  const resolvedName = resolveModuleName(name, process.cwd());
+  const canonicalName =
+    moduleNameAliases?.get(normalizeDir(resolvedName)) ??
+    moduleNameAliases?.get(normalizeModuleName(resolvedName)) ??
+    normalizeModuleName(resolvedName);
+  const config = cachedConfigs[canonicalName];
   if (!config) {
     throw new Error(`Syora module "${name}" is not loaded.`);
   }
