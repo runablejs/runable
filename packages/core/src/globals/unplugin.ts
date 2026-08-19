@@ -12,6 +12,7 @@ import { getPackageJson } from "@/utils/pkg.js";
 import { resolvePackageEntry } from "@/utils/pkg-resolve-entry.js";
 import type { Arrayable } from "@/utils/types.js";
 import { toArray } from "@/utils/to-array.js";
+import { isTypeDeclaration } from "@/utils/is-type-declaration.js";
 
 // -----------------------------------------------------------------------
 // Config types
@@ -46,7 +47,11 @@ const JS_EXTENSIONS = [".js", ".ts", ".mjs", ".mts"] as const;
 function resolveFile(file: string): string | undefined {
   for (const ext of JS_EXTENSIONS) {
     const candidate = file.endsWith(ext) ? file : `${file}${ext}`;
-    if (existsSync(candidate) && statSync(candidate).isFile()) {
+    if (
+      !isTypeDeclaration(candidate) &&
+      existsSync(candidate) &&
+      statSync(candidate).isFile()
+    ) {
       return candidate;
     }
   }
@@ -109,6 +114,8 @@ function resolveConfigImports(config: GlobalConfig | undefined): Import[] {
         });
 
         for (const file of files) {
+          if (isTypeDeclaration(file.path)) continue;
+
           imports.push(
             ...Object.values(getExports(file.path).exports).map((exp) => ({
               name: exp.name,
@@ -123,6 +130,8 @@ function resolveConfigImports(config: GlobalConfig | undefined): Import[] {
 
     if (Array.isArray(entry)) {
       for (const file of entry) {
+        if (isTypeDeclaration(file.file)) continue;
+
         imports.push(
           ...Object.values(getExports(file.file).exports).map((exp) => ({
             name: exp.name,
