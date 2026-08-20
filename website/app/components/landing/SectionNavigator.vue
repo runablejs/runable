@@ -12,7 +12,8 @@ const sections: NavSection[] = [
   { id: "section-why", num: "02", label: "Why Syora" },
   { id: "section-capabilities", num: "03", label: "Capabilities" },
   { id: "section-runtimes", num: "04", label: "Runtimes" },
-  { id: "section-quickstart", num: "05", label: "Quick Start" },
+  { id: "section-sponsors", num: "05", label: "Sponsors" },
+  { id: "section-quickstart", num: "06", label: "Quick Start" },
   // { id: "section-themanifesto", num: "06", label: "Manifesto" },
 ];
 

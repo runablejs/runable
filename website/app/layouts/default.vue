@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import SiteHeader from "../components/SiteHeader.vue";
+import SiteFooter from "../components/SiteFooter.vue";
 
 // useSeoMeta({
 //   title: siteConfig.name,
@@ -20,6 +21,6 @@ import SiteHeader from "../components/SiteHeader.vue";
       <slot />
     </main>
 
-    <!-- <SiteFooter /> -->
+    <SiteFooter />
   </div>
 </template>

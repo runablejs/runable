@@ -1,5 +1,5 @@
 <template>
-  <!-- <svg
+  <svg
     version="1.0"
     xmlns="http://www.w3.org/2000/svg"
     class="rotate-15"
@@ -155,9 +155,9 @@ l-53 6 -15 -35z m410 -187 c44 -5 134 -17 200 -26 66 -9 138 -16 160 -15 22 0
 618 20 3 3 18 3 32 0 14 -3 221 -7 460 -10z"
       />
     </g>
-  </svg> -->
+  </svg>
 
-  <svg
+  <!-- <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
     height="24"
@@ -172,5 +172,5 @@ l-53 6 -15 -35z m410 -187 c44 -5 134 -17 200 -26 66 -9 138 -16 160 -15 22 0
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <path d="M3 11.5l4.5 4.5h9l-9 -9l-4.5 4.5" />
     <path d="M16.5 16l4.5 -4.5l-4.5 -4.5l-4.5 4.5" />
-  </svg>
+  </svg> -->
 </template>

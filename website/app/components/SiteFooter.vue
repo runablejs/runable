@@ -1,0 +1,144 @@
+<script setup lang="ts">
+import Logo from "./navbar-components/Logo.vue";
+
+const footerLinks = [
+  {
+    title: "Product",
+    links: [
+      { label: "Why Syora", to: "/why-syora" },
+      { label: "Documentation", to: "/docs" },
+      { label: "Installation", to: "/docs/getting-started/installation" },
+      { label: "Integrations", to: "/docs/integrations" },
+    ],
+  },
+  {
+    title: "Project",
+    links: [
+      { label: "About", to: "/about" },
+      { label: "Blog", to: "/blog" },
+      { label: "Changelog", to: "/changelog" },
+      { label: "Sponsor", href: "https://github.com/sponsors/domutala" },
+    ],
+  },
+  {
+    title: "Community",
+    links: [
+      { label: "GitHub", href: "https://github.com/syorajs/syora" },
+      { label: "Issues", href: "https://github.com/syorajs/syora/issues" },
+      {
+        label: "Discussions",
+        href: "https://github.com/syorajs/syora/discussions",
+      },
+      {
+        label: "Bluesky",
+        href: "https://bsky.app/profile/domutala.bsky.social",
+      },
+    ],
+  },
+];
+
+const year = new Date().getFullYear();
+</script>
+
+<template>
+  <footer class="border-t border-border bg-muted/20 dark:bg-muted/5">
+    <div class="mx-auto max-w-7xl px-6 sm:px-10 lg:px-12">
+      <div class="grid gap-14 py-16 lg:grid-cols-[1.2fr_1.8fr] lg:py-20">
+        <div class="max-w-md">
+          <SyoraLink to="/" class="inline-flex items-center gap-3">
+            <span
+              class="flex size-11 items-center justify-center bg-accent text-accent-foreground"
+            >
+              <Logo class="size-7" />
+            </span>
+            <span class="font-display text-2xl font-semibold">Syora</span>
+          </SyoraLink>
+
+          <p class="mt-6 text-base leading-relaxed text-muted-foreground">
+            The Vue framework that brings productive conventions to any backend.
+          </p>
+
+          <div class="mt-8 flex items-center gap-2">
+            <a
+              href="https://github.com/syorajs/syora"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Syora on GitHub"
+              class="flex size-10 items-center justify-center rounded-md border border-border bg-background text-muted-foreground transition-colors hover:border-strong hover:text-foreground"
+            >
+              <UIcon name="simple-icons:github" class="size-4" />
+            </a>
+            <a
+              href="https://github.com/sponsors/domutala"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Sponsor Syora"
+              class="flex size-10 items-center justify-center rounded-md border border-border bg-background text-muted-foreground transition-colors hover:border-accent hover:text-accent"
+            >
+              <UIcon name="simple-icons:githubsponsors" class="size-4" />
+            </a>
+            <a
+              href="https://bsky.app/profile/domutala.bsky.social"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Syora on Bluesky"
+              class="flex size-10 items-center justify-center rounded-md border border-border bg-background text-muted-foreground transition-colors hover:border-strong hover:text-foreground"
+            >
+              <UIcon name="simple-icons:bluesky" class="size-4" />
+            </a>
+          </div>
+        </div>
+
+        <nav
+          class="grid grid-cols-2 gap-10 sm:grid-cols-3"
+          aria-label="Footer navigation"
+        >
+          <div v-for="group in footerLinks" :key="group.title">
+            <h2
+              class="font-mono text-xs uppercase tracking-[0.18em] text-foreground"
+            >
+              {{ group.title }}
+            </h2>
+            <ul class="mt-5 space-y-3">
+              <li v-for="link in group.links" :key="link.label">
+                <a
+                  v-if="link.href"
+                  :href="link.href"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="group inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-accent"
+                >
+                  {{ link.label }}
+                  <UIcon
+                    name="tabler:arrow-up-right"
+                    class="size-3 opacity-0 transition-opacity group-hover:opacity-100"
+                  />
+                </a>
+                <SyoraLink
+                  v-else
+                  :to="link.to!"
+                  class="text-sm text-muted-foreground transition-colors hover:text-accent"
+                >
+                  {{ link.label }}
+                </SyoraLink>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+
+      <div
+        class="flex flex-col gap-4 border-t border-border py-6 font-mono text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
+      >
+        <p>© {{ year }} Syora. Released under the MIT License.</p>
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+          <span class="inline-flex items-center gap-2">
+            <span class="size-1.5 rounded-full bg-accent" />
+            Open source
+          </span>
+          <span>Built with Vue and Syora</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+</template>

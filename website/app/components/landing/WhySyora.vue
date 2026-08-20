@@ -38,10 +38,11 @@ onMounted(() => {
 
       <div class="space-y-6 text-lg leading-relaxed text-muted-foreground">
         <p data-reveal class="sr-hidden">
-          Vue gives developers a flexible foundation. Meta-frameworks make that
-          foundation faster to use, but they often arrive with a server stack
-          already chosen for you. That works until your project needs Fastify,
-          NestJS, AdonisJS, Express, Hono, or an existing backend.
+          Vue gives developers a flexible foundation. Meta-frameworks like Nuxt
+          make that foundation faster to use, but they often arrive with a
+          server stack already chosen for you. That works until your project
+          needs Fastify, NestJS, AdonisJS, Express, Hono, or an existing
+          backend.
         </p>
         <p data-reveal class="sr-hidden text-foreground">
           Syora separates the application experience from the HTTP runtime. You

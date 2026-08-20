@@ -20,7 +20,7 @@ onMounted(() => {
 <template>
   <section
     aria-labelledby="hero-heading"
-    class="relative isolate flex min-h-[calc(100svh-var(--header-height))] w-full overflow-hidden border-b border-border"
+    class="relative isolate flex min-h-[calc(100svh-var(--header-height))] w-full overflow-hidden"
   >
     <div aria-hidden="true" class="absolute inset-0 -z-20 bg-background" />
 

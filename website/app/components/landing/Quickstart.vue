@@ -23,7 +23,7 @@ onMounted(() => {
   >
     <!-- <div class="w-full h-px bg-border-default" aria-hidden="true" /> -->
 
-    <div class="mx-auto max-w-7xl px-10 pb-30">
+    <div class="mx-auto max-w-7xl px-10 py-30">
       <div class="max-w-3xl mx-auto text-center">
         <p
           class="font-mono text-mono-sm text-tertiary tracking-[0.08em] mb-8"
@@ -97,7 +97,5 @@ onMounted(() => {
         </div>
       </div>
     </div>
-
-    <div class="w-full h-px border-t border-default" aria-hidden="true" />
   </section>
 </template>

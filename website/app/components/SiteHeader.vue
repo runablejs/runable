@@ -47,7 +47,7 @@ const active = computed(() => {
 
 <template>
   <header
-    class="px-4 md:px-6 backdrop-blur-sm bg-background sticky top-0 z-50 h-(--header-height)"
+    class="px-4 md:px-6 backdrop-blur-sm bg-background sticky top-0 z-50 h-(--header-height) border-b"
   >
     <div class="flex h-full items-center justify-between gap-4">
       <!-- Left side -->

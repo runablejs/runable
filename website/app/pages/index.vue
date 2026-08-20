@@ -7,6 +7,7 @@ import HeroSection from "~/components/landing/Hero.vue";
 import WhySyoraSection from "~/components/landing/WhySyora.vue";
 import CapabilitiesSection from "~/components/landing/Capabilities.vue";
 import RuntimesSection from "~/components/landing/Runtimes.vue";
+import SponsorsSection from "~/components/landing/Sponsors.vue";
 // import QuickStartSection from "~/components/landing/QuickStart.vue";
 import QuickstartSection from "~/components/landing/Quickstart.vue";
 
@@ -130,6 +131,10 @@ onMounted(() => {
 
     <div id="section-runtimes" data-nav-section>
       <RuntimesSection />
+    </div>
+
+    <div id="section-sponsors" data-nav-section>
+      <SponsorsSection />
     </div>
 
     <div id="section-quickstart" data-nav-section>

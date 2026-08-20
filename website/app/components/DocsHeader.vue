@@ -44,7 +44,7 @@ onBeforeUnmount(() => {
 <template>
   <div
     ref="header"
-    class="px-4 md:px-6 border-y bg-background sticky top-0 z-100 h-(--header-height) w-full overflow-x-auto overflow-y-hidden scrollbar-none"
+    class="px-4 md:px-6 border-b bg-background sticky top-0 z-100 h-(--header-height) w-full overflow-x-auto overflow-y-hidden scrollbar-none"
   >
     <!-- <div
       aria-hidden="true"
