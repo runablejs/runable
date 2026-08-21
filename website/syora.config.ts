@@ -89,7 +89,6 @@ function defineAuthorsCollection() {
 export default defineConfig({
   head: {
     title: "Syora",
-
     link: [{ rel: "icon", href: "/favicon.svg" }],
   },
 

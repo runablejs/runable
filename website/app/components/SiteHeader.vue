@@ -53,13 +53,16 @@ const active = computed(() => {
       <!-- Left side -->
       <div class="flex flex-1 items-center gap-2 h-full">
         <!-- Logo -->
-        <RouterLink to="/" class="flex items-center gap-2 h-full">
+        <RouterLink
+          to="/"
+          class="flex items-center gap-2 h-full hover:bg-accent hover:text-accent-foreground pr-3"
+        >
           <div
             class="flex items-center bg-accent text-accent-foreground h-full px-1 aspect-square"
           >
             <Logo class="size-7 h-9/12" />
           </div>
-          <span class="font- text-lg">Syora</span>
+          <span class="font-bold text-lg">Syora</span>
         </RouterLink>
       </div>
 
