@@ -1,4 +1,4 @@
-import { Arrayable } from "./types";
+import type { Arrayable } from "./types.js";
 
 export function toArray<T>(value: Arrayable<T>): T[] {
   if (value === undefined || value === null) return [];

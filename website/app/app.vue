@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ConfigProvider, TooltipProvider } from "reka-ui";
 import SiteBody from "./components/SiteBody.vue";
+import { Toaster } from "~/components/ui/sonner";
 </script>
 
 <template>
@@ -8,16 +9,17 @@ import SiteBody from "./components/SiteBody.vue";
     <ConfigProvider>
       <TooltipProvider>
         <SyoraLayout>
-          <!-- <div class="dark bg-muted text-foreground px-4 py-1">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Placeat
-            magni aliquam ducimus perferendis expedita. Error dolores
-            voluptatibus dolorum ea perspiciatis, placeat consequuntur.
-            Dignissimos nemo natus cum voluptatibus accusantium amet id.
-          </div> -->
+          <div
+            class="border-b text-foredeground px-4 py-1 text-center bg-background"
+          >
+            Syora is currently in alpha. APIs may evolve as we refine the
+            framework toward its first stable release.
+          </div>
 
           <SyoraPage />
         </SyoraLayout>
       </TooltipProvider>
     </ConfigProvider>
+    <Toaster :expand="true" />
   </SiteBody>
 </template>

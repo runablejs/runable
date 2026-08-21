@@ -6,6 +6,7 @@
 @import "tailwindcss";
 /* @plugin "tailwindcss-animate"; */
 @import "tw-animate-css";
+@import "vue-sonner/style.css";
 @import "./shiki.css";
 @import "./animations.css";
 @import "./typography.css";

@@ -49,7 +49,9 @@ const year = new Date().getFullYear();
             <span
               class="flex size-11 items-center justify-center bg-accent text-accent-foreground"
             >
-              <Logo class="size-7" />
+              <div class="size-7">
+                <Logo />
+              </div>
             </span>
             <span class="font-display text-2xl font-semibold">Syora</span>
           </SyoraLink>

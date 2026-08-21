@@ -1,17 +1,46 @@
-import { getCurrentInstance } from "vue";
-import { type AppContext, globalAppContext } from "../../context/context.js";
-import merge from "lodash/merge.js";
+import {
+  type AppContext,
+  tryUseVueApp,
+  useVueApp,
+} from "../../context/context.js";
 
-export function useApp(): AppContext {
-  const instance = getCurrentInstance();
+function wrapApp(app: AppContext) {
+  return new Proxy(app, {
+    get(target, key, receiver) {
+      const globalProps = target.config.globalProperties as Record<
+        PropertyKey,
+        unknown
+      >;
 
-  const app = instance?.appContext.app ?? globalAppContext;
+      if (key in globalProps) {
+        const value = globalProps[key];
+        return typeof value === "function" ? value.bind(globalProps) : value;
+      }
 
-  if (!app) {
-    throw new Error(
-      "useApp() must be called within a component’s setup() method, or after the app context plugin has been installed.",
-    );
-  }
+      const value = Reflect.get(target, key, receiver);
+      return typeof value === "function" ? value.bind(target) : value;
+    },
+    has(target, key) {
+      return key in target.config.globalProperties || key in target;
+    },
+  });
+}
 
-  return merge(app, app.config.globalProperties) as AppContext;
+export function tryUseApp() {
+  const app = tryUseVueApp();
+
+  if (app) return wrapApp(app);
+  return app;
+}
+
+export function useApp() {
+  const app = useVueApp();
+
+  //   if (!app) {
+  //     throw new Error(
+  //       "useApp() must be called within a component’s setup() method, or after the app context plugin has been installed.",
+  //     );
+  //   }
+
+  return wrapApp(app);
 }

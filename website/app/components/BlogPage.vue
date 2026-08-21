@@ -3,19 +3,12 @@ import MDC from "v-content/components/MDC.js";
 import { Skeleton } from "./ui/skeleton";
 import {
   Breadcrumb,
-  BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "./ui/breadcrumb";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
 
 import type { ResolvedPageEntry } from "v-content";
 import BlogAuthors from "./BlogAuthors.vue";

@@ -1,4 +1,4 @@
-import { hono } from "@syora/core/adapters/hono";
+import { hono } from "@/adapters/hono";
 
 // server.ts
 import { Hono } from "hono";

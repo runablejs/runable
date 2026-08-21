@@ -97,13 +97,14 @@
     "@nestjs/core": "catalog:",
     "@nestjs/platform-express": "catalog:",
     "@types/express": "catalog:",
+    "@types/koa": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "express": "catalog:",
     "fastify": "catalog:",
     "hono": "catalog:",
     "koa": "catalog:",
-    "@types/koa": "catalog:"
+    "unctx": "^3.0.1"
   },
   "engines": {
     "node": "^22.18.0 || >=24.12.0"

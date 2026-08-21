@@ -18,6 +18,7 @@ import { UnheadSchemaOrg } from "@unhead/schema-org/vue";
 import { layoutPlugin } from "../layout/plugin.js";
 import { useConfig } from "@/app/composables/config.js";
 import { createErrorCapture } from "../error/plugin.js";
+import { setAppCtx } from "@/context/context.js";
 
 export async function createApp(isSsr = false) {
   const config = useConfig();
@@ -57,6 +58,8 @@ export async function createApp(isSsr = false) {
     app = vue.createApp(App);
     head = createHeadClient(headOptions);
   }
+
+  setAppCtx(app);
 
   app.use(appContextPlugin);
   app.use(router);

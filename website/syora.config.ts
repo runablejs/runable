@@ -3,7 +3,7 @@ import { join, resolve } from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import vContent from "v-content/vite";
 
-import { defineConfig } from "@syora/core";
+import { defineConfig } from "@/index.js";
 import {
   defineCollection,
   rehypeList,
@@ -135,5 +135,31 @@ export default defineConfig({
         },
       }),
     ],
+
+    server: {
+      headers: {
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+      },
+    },
+
+    preview: {
+      headers: {
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+      },
+    },
+
+    build: {
+      commonjsOptions: {
+        transformMixedEsModules: true,
+      },
+    },
+
+    worker: { format: "es" },
+
+    optimizeDeps: {
+      exclude: ["@sqlite.org/sqlite-wasm"],
+    },
   },
 });

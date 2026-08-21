@@ -6,9 +6,11 @@ const route = useRoute();
 
 const slugs = computed(() => {
   const params = route.params as { slugs: string | string[] };
+  const slugs = toArray(params.slugs);
 
-  return toArray(params.slugs)
-    .flatMap((slug) => slug.split("/"))
+  return slugs
+    .map((slug) => slug.split("/"))
+    .flat()
     .filter(Boolean);
 });
 
