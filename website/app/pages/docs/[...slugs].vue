@@ -35,10 +35,15 @@ function queryPage() {
   }
 }
 
-const { data: page, pending } = useAsyncData(
+const { data: page, pending } = await useAsyncData(
   `docs:${slugs.value.join("/")}`,
   queryPage,
 );
+
+useHead({
+  title: page.value?.meta.title,
+  meta: [{ name: "description", content: page.value?.meta.description }],
+});
 </script>
 
 <template>

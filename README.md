@@ -1,4 +1,4 @@
-<p dir="auto"><a href="https://nuxt.com" rel="nofollow"><img width="830" height="213" src="https://github.com/runablejs/runable/raw/dev/.github/assets/cover.png" alt="Nuxt banner" style="max-width: 100%; height: auto; max-height: 213px;"></a></p>
+<p dir="auto"><a href="https://runable.netlify.app" rel="nofollow"><img width="830" height="213" src="https://github.com/runablejs/runable/raw/dev/.github/assets/cover.png" alt="Nuxt banner" style="max-width: 100%; height: auto; max-height: 213px;"></a></p>
 
 # Runable
 

@@ -20,6 +20,17 @@ const goodFit = [
   "You want SSR and framework conventions without a prescribed runtime.",
   "You want the frontend and backend to remain one coherent application.",
 ];
+
+useHead({
+  title: "Why Runable",
+  meta: [
+    {
+      name: "description",
+      content:
+        "Runable gives Vue applications the structure of a meta-framework while leaving HTTP, APIs, and infrastructure in your hands.",
+    },
+  ],
+});
 </script>
 
 <template>

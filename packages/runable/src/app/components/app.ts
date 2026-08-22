@@ -1,4 +1,4 @@
-import { defineComponent, h } from "vue";
+import { defineComponent, h, Suspense } from "vue";
 import { app, error as errorPage } from ":app-vue";
 import Layout from "./layout.js";
 import Page from "./page.js";
@@ -12,15 +12,19 @@ export default defineComponent({
     const { error, clearError } = useAppError();
 
     return () => {
-      if (error.value) {
-        return h(errorPage || ErrorDisplay, {
-          error: error.value,
-          onClear: clearError,
-        });
-      }
+      return h(Suspense, null, {
+        default: () => {
+          if (error.value) {
+            return h(errorPage || ErrorDisplay, {
+              error: error.value,
+              onClear: clearError,
+            });
+          }
 
-      if (app) return h(app);
-      return h(Layout, null, { default: () => h(Page) });
+          return app ? h(app) : h(Layout, null, { default: () => h(Page) });
+        },
+        fallback: () => null,
+      });
     };
   },
 });

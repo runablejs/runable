@@ -85,6 +85,17 @@ function toneClass(tone: string) {
   if (tone === "accent") return "bg-accent/10 text-accent";
   return "bg-muted text-muted-foreground";
 }
+
+useHead({
+  title: "Changelog",
+  meta: [
+    {
+      name: "description",
+      content:
+        "New features, improvements, fixes, and the decisions shaping the framework.",
+    },
+  ],
+});
 </script>
 
 <template>

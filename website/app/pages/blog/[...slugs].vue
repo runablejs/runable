@@ -19,7 +19,7 @@ const contentPath = computed(() => {
   return `/${slugs.value.join("/")}`.replace(/\.md$/, "");
 });
 
-const { data: page, pending } = useAsyncData(
+const { data: page, pending } = await useAsyncData(
   `blog:${slugs.value.join("/")}`,
   () => queryCollection("blog").path(contentPath.value).first(),
 );

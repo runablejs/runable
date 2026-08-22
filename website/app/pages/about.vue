@@ -29,6 +29,17 @@ const values = [
     icon: "tabler:world",
   },
 ];
+
+useHead({
+  title: "About",
+  meta: [
+    {
+      name: "description",
+      content:
+        "An independent open-source project exploring how productive Vue conventions can work with any backend.",
+    },
+  ],
+});
 </script>
 
 <template>

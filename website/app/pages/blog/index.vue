@@ -23,6 +23,17 @@ function formatArticleDate(article: ResolvedPageEntry) {
 const { data: articles, pending } = useAsyncData("blog:index", () =>
   queryCollection("blog").all(),
 );
+
+useHead({
+  title: "Blog",
+  meta: [
+    {
+      name: "description",
+      content:
+        "Product updates, technical deep dives, and practical notes from the people building Runable.",
+    },
+  ],
+});
 </script>
 
 <template>

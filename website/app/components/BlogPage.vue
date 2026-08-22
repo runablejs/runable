@@ -21,10 +21,10 @@ const props = defineProps<{
 watch(
   () => props.page,
   () => {
-    // useHead({
-    //   title: props.page?.meta.title,
-    //   meta: [{ name: "description", content: props.page?.meta.description }],
-    // });
+    useHead({
+      title: props.page?.meta.title,
+      meta: [{ name: "description", content: props.page?.meta.description }],
+    });
   },
   { immediate: true },
 );

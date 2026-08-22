@@ -27,6 +27,17 @@ function onScroll() {
 onMounted(() => {
   window.addEventListener("scroll", onScroll, { passive: true });
 });
+
+useHead({
+  title: "Build the Vue app you want, keep the backend you chose",
+  meta: [
+    {
+      name: "description",
+      content:
+        "Runable is a Vue framework for teams that want the conventions and developer experience of a meta-framework without adopting a specific server runtime.",
+    },
+  ],
+});
 </script>
 
 <template>

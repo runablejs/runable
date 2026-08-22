@@ -98,6 +98,16 @@ const year = new Date().getFullYear();
             >
               <UIcon name="simple-icons:linkedin" class="size-4" />
             </a>
+
+            <a
+              href="https://discord.gg/34DJfyQUu"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Sponsor Runable"
+              class="flex size-8 items-center justify-center border border-border bg-background text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            >
+              <UIcon name="simple-icons:discord" class="size-4" />
+            </a>
           </div>
         </div>
 
