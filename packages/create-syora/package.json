@@ -2,9 +2,24 @@
   "name": "create-runable",
   "version": "1.0.0-alpha.1",
   "description": "Create a Runable project",
+  "private": false,
+  "license": "MIT",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/runablejs/runable.git",
+    "directory": "packages/create-syora"
+  },
+  "homepage": "https://github.com/runablejs/runable#readme",
+  "bugs": {
+    "url": "https://github.com/runablejs/runable/issues"
+  },
   "bin": {
     "create-runable": "./bin/create-runable.mjs"
+  },
+  "files": ["bin"],
+  "engines": {
+    "node": ">=20.0.0"
   },
   "dependencies": {
     "@runablejs/cli": "workspace:^"

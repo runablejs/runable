@@ -2,43 +2,167 @@ name: Release
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+# Reset permissions at the workflow level; each job declares exactly what it
+# needs below. Publishing to npm via Trusted Publishing (OIDC) never uses a
+# stored NPM_TOKEN.
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  release:
+  # Inspects .changeset/*.md on `main` and decides what to do next:
+  #  - "version"  → there are pending changesets, open/update the release PR
+  #  - "publish"  → no pending changesets, the release PR was just merged
+  #  - "none"     → nothing to do
+  select-mode:
+    name: Select release mode
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
-      id-token: write
+      contents: read
+    outputs:
+      mode: ${{ steps.select-mode.outputs.mode }}
+      publish-plan-artifact-id: ${{ steps.select-mode.outputs.publish-plan-artifact-id }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
-          fetch-depth: 0
+          persist-credentials: false
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
-          registry-url: "https://registry.npmjs.org"
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Create Release Pull Request or Publish
-        id: changesets
-        uses: changesets/action@v1
+      - name: Select Changesets mode
+        id: select-mode
+        uses: changesets/action/select-mode@v2
+
+  # Case 1: changesets exist — bump versions, update CHANGELOGs, update
+  # internal `workspace:*` ranges, refresh the lockfile, and open/update the
+  # "chore(release): version packages" pull request.
+  version:
+    name: Open/update the release pull request
+    if: needs.select-mode.outputs.mode == 'version'
+    needs: select-mode
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
         with:
-          publish: pnpm release
-          version: pnpm version-packages
-          commit: "chore: version packages"
-          title: "chore: version packages"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Version packages
+        uses: changesets/action/version@v2
+        with:
+          script: pnpm version-packages
+          commit-message: "chore(release): version packages"
+          pr-title: "chore(release): version packages"
+
+  # Case 2, step 1: the release PR was just merged (no changesets left) —
+  # build every publishable package and pack it into a tarball. This job
+  # never gets npm credentials, only the job below does.
+  pack:
+    name: Build and pack publishable packages
+    if: needs.select-mode.outputs.mode == 'publish'
+    needs: select-mode
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      pack-dir-artifact-id: ${{ steps.pack.outputs.pack-dir-artifact-id }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          # This job's output is what gets published — never restore a
+          # dependency cache into the job that produces the shipped artifact.
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Pack packages
+        id: pack
+        uses: changesets/action/pack@v2
+        with:
+          publish-plan-artifact-id: ${{ needs.select-mode.outputs.publish-plan-artifact-id }}
+
+  # Case 2, step 2: publish the tarballs produced by `pack` to npm using
+  # Trusted Publishing (OIDC) — no NPM_TOKEN. Also tags each published
+  # package (`<name>@<version>`) and creates the matching GitHub Release.
+  publish:
+    name: Publish to npm
+    needs: pack
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      # Required for npm Trusted Publishing (OIDC).
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # npm Trusted Publishing (OIDC) requires npm CLI >= 11.5.1, newer than
+      # what may ship with Node 22. Upgraded explicitly and predictably so
+      # publishing never silently falls back to a failed auth attempt.
+      - name: Ensure npm supports Trusted Publishing (OIDC)
+        run: npm install -g npm@latest
+
+      - name: Publish packages
+        uses: changesets/action/publish@v2
+        with:
+          pack-dir-artifact-id: ${{ needs.pack.outputs.pack-dir-artifact-id }}
+          create-github-releases: true

@@ -2,6 +2,16 @@
   "name": "runable",
   "version": "1.0.0-alpha.3",
   "private": false,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/runablejs/runable.git",
+    "directory": "packages/runable"
+  },
+  "homepage": "https://github.com/runablejs/runable#readme",
+  "bugs": {
+    "url": "https://github.com/runablejs/runable/issues"
+  },
   "type": "module",
   "exports": {
     ".": {
@@ -58,7 +68,8 @@
   ],
   "scripts": {
     "build": "tsdown",
-    "prepublish": "pnpm build"
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json",
+    "prepublishOnly": "pnpm build"
   },
   "dependencies": {
     "@babel/parser": "catalog:",
