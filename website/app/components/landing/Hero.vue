@@ -144,8 +144,7 @@ onMounted(() => {
           <pre
             class="overflow-x-auto p-6 font-mono text-[13px] leading-7"
           ><code><span class="text-muted-foreground">import</span> Express <span class="text-muted-foreground">from</span> <span class="text-accent">"express"</span>;
-<span class="text-muted-foreground">import</span> { express } <span class="text-muted-foreground">from</span>
-  <span class="text-accent">"runable/adapters/express"</span>;
+<span class="text-muted-foreground">import</span> { express } <span class="text-muted-foreground">from</span> <span class="text-accent">"runable/adapters/express"</span>;
 
 <span class="text-muted-foreground">const</span> server = Express();
 
