@@ -31,7 +31,7 @@ const footerLinks = [
       },
       {
         label: "Bluesky",
-        href: "https://bsky.app/profile/domutala.bsky.social",
+        href: "https://bsky.app/profile/runablejs.bsky.social",
       },
     ],
   },
@@ -66,27 +66,37 @@ const year = new Date().getFullYear();
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Runable on GitHub"
-              class="flex size-10 items-center justify-center rounded-md border border-border bg-background text-muted-foreground transition-colors hover:border-strong hover:text-foreground"
+              class="flex size-8 items-center justify-center border border-border bg-background text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
             >
               <UIcon name="simple-icons:github" class="size-4" />
             </a>
+
             <a
-              href="https://github.com/sponsors/domutala"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Sponsor Runable"
-              class="flex size-10 items-center justify-center rounded-md border border-border bg-background text-muted-foreground transition-colors hover:border-accent hover:text-accent"
-            >
-              <UIcon name="simple-icons:githubsponsors" class="size-4" />
-            </a>
-            <a
-              href="https://bsky.app/profile/domutala.bsky.social"
+              href="https://bsky.app/profile/runablejs.bsky.social"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Runable on Bluesky"
-              class="flex size-10 items-center justify-center rounded-md border border-border bg-background text-muted-foreground transition-colors hover:border-strong hover:text-foreground"
+              class="flex size-8 items-center justify-center border border-border bg-background text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
             >
               <UIcon name="simple-icons:bluesky" class="size-4" />
+            </a>
+            <a
+              href="https://x.com/runablejs"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Sponsor Runable"
+              class="flex size-8 items-center justify-center border border-border bg-background text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            >
+              <UIcon name="simple-icons:x" class="size-4" />
+            </a>
+            <a
+              href="https://linkedin.com/company/runablejs"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Sponsor Runable"
+              class="flex size-8 items-center justify-center border border-border bg-background text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            >
+              <UIcon name="simple-icons:linkedin" class="size-4" />
             </a>
           </div>
         </div>

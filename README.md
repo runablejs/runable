@@ -1,5 +1,7 @@
 # Runable
 
+https://github.com/runablejs/runable/raw/dev/.github/assets/cover.svg
+
 ### Build the Vue app you want. Keep the backend you chose.
 
 Runable brings the developer experience of a Vue meta-framework to **any backend**.

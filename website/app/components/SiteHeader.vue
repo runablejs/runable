@@ -53,7 +53,7 @@ const active = computed(() => {
       <!-- Left side -->
       <div class="flex flex-1 items-center gap-2 h-full">
         <!-- Logo -->
-        <RouterLink
+        <!-- <RouterLink
           to="/"
           class="flex items-center gap-2 h-full hover:bg-accent hover:text-accent-foreground pr-3"
         >
@@ -62,6 +62,14 @@ const active = computed(() => {
           >
             <Logo class="size-7 h-9/12" />
           </div>
+          <span class="font-bold text-lg">Runable</span>
+        </RouterLink> -->
+
+        <RouterLink
+          to="/"
+          class="flex items-center gap-2 h-full hover:bg-accent hover:text-accent-foreground pr-3"
+        >
+          <Logo class="size-7 h-9/12" />
           <span class="font-bold text-lg">Runable</span>
         </RouterLink>
       </div>
