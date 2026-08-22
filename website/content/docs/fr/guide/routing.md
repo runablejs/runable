@@ -3,7 +3,7 @@ title: Routing
 description: Créez les routes de votre application à partir des fichiers du dossier app/pages.
 ---
 
-Syora transforme les composants de `app/pages/` en routes Vue Router. Ajoutez, déplacez ou supprimez un fichier : la table de routes suit automatiquement.
+Runable transforme les composants de `app/pages/` en routes Vue Router. Ajoutez, déplacez ou supprimez un fichier : la table de routes suit automatiquement.
 
 ## Créer des routes
 
@@ -59,11 +59,11 @@ Les métadonnées des routes parentes sont transmises aux enfants. Une valeur d�
 
 ## Naviguer
 
-Utilisez `SyoraLink` dans le template ou `navigateTo()` dans le script :
+Utilisez `RunableLink` dans le template ou `navigateTo()` dans le script :
 
 ```vue
 <template>
-  <SyoraLink to="/projects">Voir les projets</SyoraLink>
+  <RunableLink to="/projects">Voir les projets</RunableLink>
 </template>
 ```
 
@@ -75,14 +75,14 @@ Pour accéder directement à Vue Router, utilisez `useRoute()` et `useRouter()`.
 
 ## Afficher les pages imbriquées
 
-Placez `SyoraPage` dans une page parente pour afficher sa route enfant :
+Placez `RunablePage` dans une page parente pour afficher sa route enfant :
 
 ```vue
 <!-- app/pages/projects.vue -->
 <template>
   <section>
     <h1>Projets</h1>
-    <SyoraPage />
+    <RunablePage />
   </section>
 </template>
 ```

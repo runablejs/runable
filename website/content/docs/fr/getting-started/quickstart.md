@@ -1,6 +1,6 @@
 ---
 title: Quick Start
-description: Créez une application Syora avec deux pages, un layout, une route API et des données rendues côté serveur.
+description: Créez une application Runable avec deux pages, un layout, une route API et des données rendues côté serveur.
 ---
 
 Construisez une petite application qui combine routing automatique, layout partagé et chargement de données SSR.
@@ -14,7 +14,7 @@ Remplacez `server.ts` par cet exemple :
 ```ts
 // server.ts
 import Express from "express";
-import { express } from "@syora/core/adapters/express";
+import { express } from "runable/adapters/express";
 
 const server = Express();
 
@@ -32,7 +32,7 @@ server.listen(3000, () => {
 });
 ```
 
-Votre API reste une route Express normale. Syora ne la déplace pas dans le frontend.
+Votre API reste une route Express normale. Runable ne la déplace pas dans le frontend.
 
 ## Créer un layout
 
@@ -118,7 +118,7 @@ const { data: projects, pending, error, refresh } = await useAsyncData(
 </template>
 ```
 
-`useAsyncData()` exécute le fetch pendant le rendu serveur. Syora place ensuite le résultat dans le HTML et restaure le cache côté client. Le navigateur ne relance donc pas immédiatement la même requête pendant l'hydratation.
+`useAsyncData()` exécute le fetch pendant le rendu serveur. Runable place ensuite le résultat dans le HTML et restaure le cache côté client. Le navigateur ne relance donc pas immédiatement la même requête pendant l'hydratation.
 
 ::u-tip
 ---
@@ -144,7 +144,7 @@ Ajoutez un fichier dans `app/pages/` pour créer une route. Vous n'avez aucun ta
 
 ## Ce que vous venez d'utiliser
 
-| Besoin | Solution Syora |
+| Besoin | Solution Runable |
 | --- | --- |
 | Afficher plusieurs écrans | Routing basé sur `app/pages/` |
 | Partager la navigation | Layout `default.vue` |
@@ -158,6 +158,6 @@ variant: info
 title: Prochaine étape
 ---
 
-Comparez ce modèle à celui de Nuxt dans <a href="/docs/getting-started/vs-nuxt.md">Syora vs Nuxt</a>.
+Comparez ce modèle à celui de Nuxt dans <a href="/docs/getting-started/vs-nuxt.md">Runable vs Nuxt</a>.
 
 ::

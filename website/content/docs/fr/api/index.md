@@ -1,6 +1,6 @@
 ---
 title: API
-description: Référence des composants, composables et fonctions globales fournis par Syora.
+description: Référence des composants, composables et fonctions globales fournis par Runable.
 ---
 
 Cette section décrit les API disponibles automatiquement dans l'application Vue.
@@ -11,7 +11,7 @@ Cette section décrit les API disponibles automatiquement dans l'application Vue
 | Composables | Données, routeur, configuration, head et Schema.org |
 | Globals | Fetch, métadonnées de page, middlewares, plugins et API Vue |
 
-Les composants et fonctions documentés ici sont auto-importés. Ajoutez un import explicite seulement lorsque vous les utilisez hors du code applicatif analysé par Syora.
+Les composants et fonctions documentés ici sont auto-importés. Ajoutez un import explicite seulement lorsque vous les utilisez hors du code applicatif analysé par Runable.
 
 ::u-tip
 ---

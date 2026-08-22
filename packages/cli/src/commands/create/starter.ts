@@ -78,7 +78,7 @@ export async function copyStarterTemplate(
 async function askProjectName(): Promise<string> {
   const name = await p.text({
     message: "Project name?",
-    placeholder: "my-syora-app",
+    placeholder: "my-runable-app",
     validate(value) {
       if (!value) return "Project name is required.";
       if (!/^[a-z0-9-]+$/.test(value)) {

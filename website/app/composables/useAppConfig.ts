@@ -1,20 +1,20 @@
 export function useAppConfig() {
   return {
     github: {
-      repo: "syorajs/syora",
+      repo: "runablejs/runable",
     },
 
     nav: [
       {
         name: "Getting Started",
         code: "getting-started",
-        href: "/docs/getting-started/why-syora",
+        href: "/docs/getting-started/why-runable",
         icon: "tabler:rocket",
         children: [
           {
-            name: "Why Syora",
-            code: "why-syora",
-            href: "/docs/getting-started/why-syora",
+            name: "Why Runable",
+            code: "why-runable",
+            href: "/docs/getting-started/why-runable",
             icon: "tabler:sparkles",
           },
           {
@@ -30,7 +30,7 @@ export function useAppConfig() {
             icon: "tabler:bolt",
           },
           {
-            name: "Syora vs Nuxt",
+            name: "Runable vs Nuxt",
             code: "vs-nuxt",
             href: "/docs/getting-started/vs-nuxt",
             icon: "tabler:git-compare",
@@ -200,9 +200,9 @@ export function useAppConfig() {
             icon: "vscode-icons:file-type-git",
           },
           {
-            code: "syora-config",
-            name: "syora.config.ts",
-            href: "/docs/structure/syora-config",
+            code: "runable-config",
+            name: "runable.config.ts",
+            href: "/docs/structure/runable-config",
             icon: "vscode-icons:file-type-light-config",
           },
           {
@@ -370,7 +370,7 @@ export function useAppConfig() {
             ],
           },
           {
-            name: "Extend Syora",
+            name: "Extend Runable",
             code: "extending",
             href: "/docs/guide/auto-imports",
             icon: "tabler:blocks",
@@ -437,21 +437,21 @@ export function useAppConfig() {
             icon: "tabler:components",
             children: [
               {
-                name: "SyoraPage",
-                code: "syora-page",
-                href: "/docs/api/components/syora-page",
+                name: "RunablePage",
+                code: "runable-page",
+                href: "/docs/api/components/runable-page",
                 icon: "tabler:file",
               },
               {
-                name: "SyoraLink",
-                code: "syora-link",
-                href: "/docs/api/components/syora-link",
+                name: "RunableLink",
+                code: "runable-link",
+                href: "/docs/api/components/runable-link",
                 icon: "tabler:link",
               },
               {
-                name: "SyoraLayout",
-                code: "syora-layout",
-                href: "/docs/api/components/syora-layout",
+                name: "RunableLayout",
+                code: "runable-layout",
+                href: "/docs/api/components/runable-layout",
                 icon: "tabler:layout",
               },
               {

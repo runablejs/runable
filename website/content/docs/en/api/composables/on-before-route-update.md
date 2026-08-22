@@ -15,4 +15,4 @@ onBeforeRouteUpdate((to, from) => {
 });
 ```
 
-In the current implementation, Syora registers the guard with `router.beforeEach()` and removes it with `onScopeDispose()`. It is therefore a global guard whose lifetime follows the calling scope.
+In the current implementation, Runable registers the guard with `router.beforeEach()` and removes it with `onScopeDispose()`. It is therefore a global guard whose lifetime follows the calling scope.

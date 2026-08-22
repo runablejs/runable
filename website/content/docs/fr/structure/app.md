@@ -3,7 +3,7 @@ title: app
 description: Organisez les sources de votre application Vue dans le dossier app.
 ---
 
-Le dossier `app/` contient l'application Vue. Syora analyse ses sous-dossiers conventionnels et génère les registres nécessaires.
+Le dossier `app/` contient l'application Vue. Runable analyse ses sous-dossiers conventionnels et génère les registres nécessaires.
 
 ```text
 app/
@@ -24,7 +24,7 @@ Tous ces éléments sont facultatifs. Une application minimale peut contenir uni
 ## Utiliser un autre nom
 
 ```ts
-// syora.config.ts
+// runable.config.ts
 export default defineConfig({
   appDir: "frontend",
 });

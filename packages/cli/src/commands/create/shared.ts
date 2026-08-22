@@ -122,7 +122,7 @@ export async function copyServerEntry(
 }
 
 // Below: one text prompt per project directory, each falling back to
-// Syora's own default (shown as the placeholder) when left blank.
+// Runable's own default (shown as the placeholder) when left blank.
 
 export async function askAppDir(): Promise<string> {
   const appDir = await p.text({
@@ -225,7 +225,7 @@ export async function copyAppTemplate(targetDir: string): Promise<void> {
 }
 
 /**
- * Adds Syora's runtime/dev dependencies and build scripts to the
+ * Adds Runable's runtime/dev dependencies and build scripts to the
  * `package.json` in the current directory, without touching anything
  * already declared there. No-op (with a warning) if no `package.json` is
  * found — used for the "existing project" flow, see `createPackageJson`
@@ -248,8 +248,8 @@ export async function updatePackageJson(): Promise<void> {
   pkg.devDependencies = pkg.devDependencies || {};
   pkg.scripts = pkg.scripts || {};
 
-  if (!pkg.dependencies["@syora/core"]) {
-    pkg.dependencies["@syora/core"] = "latest";
+  if (!pkg.dependencies["runable"]) {
+    pkg.dependencies["runable"] = "latest";
   }
   if (!pkg.dependencies["vue"]) {
     pkg.dependencies["vue"] = "^3.5.0";
@@ -258,29 +258,32 @@ export async function updatePackageJson(): Promise<void> {
     pkg.dependencies["vue-router"] = "^4.5.0";
   }
 
-  if (!pkg.devDependencies["@syora/cli"]) {
-    pkg.devDependencies["@syora/cli"] = "latest";
+  if (!pkg.devDependencies["@runable/cli"]) {
+    pkg.devDependencies["@runable/cli"] = "latest";
   }
 
   if (!pkg.scripts["app:build"]) {
-    pkg.scripts["app:build"] = "syora build";
+    pkg.scripts["app:build"] = "runable build";
   }
   if (!pkg.scripts["app:prepare"]) {
-    pkg.scripts["app:prepare"] = "syora prepare";
+    pkg.scripts["app:prepare"] = "runable prepare";
   }
 
   await writeFile(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
-  consola.success("Updated package.json with Syora dependencies and scripts");
+  consola.success("Updated package.json with Runable dependencies and scripts");
 }
 
 /**
- * Builds an in-memory `syora.config.ts` module (via magicast) whose default
+ * Builds an in-memory `runable.config.ts` module (via magicast) whose default
  * export is `identifier({ ...config })`. Going through an AST instead of
  * `JSON.stringify` lets `config` values be more than plain JSON — in
  * particular, a function is emitted as real source code (see `valueToNode`)
  * instead of being dropped or stringified.
  */
-function buildSyoraConfig(identifier: string, config: Record<string, unknown>) {
+function buildRunableConfig(
+  identifier: string,
+  config: Record<string, unknown>,
+) {
   // Recursively turns a config value into something magicast can splice
   // into the AST: primitives, arrays and plain objects pass through as-is;
   // a function is turned into raw source via `.toString()` so it's emitted
@@ -320,7 +323,7 @@ function buildSyoraConfig(identifier: string, config: Record<string, unknown>) {
   );
 
   const mod = parseModule(
-    `import { ${identifier} } from "@syora/core";\n\nexport default ${identifier}({});`,
+    `import { ${identifier} } from "runable";\n\nexport default ${identifier}({});`,
   );
 
   // Replace the placeholder `{}` argument with the real, resolved config.
@@ -330,19 +333,19 @@ function buildSyoraConfig(identifier: string, config: Record<string, unknown>) {
 }
 
 /**
- * Generates and writes `syora.config.ts` at `cwd`, calling `identifier(config)`
+ * Generates and writes `runable.config.ts` at `cwd`, calling `identifier(config)`
  * as its default export — `"defineConfig"` for a regular project,
- * `"defineModule"` for a Syora module (see `afterAnswer`). Prompts to
+ * `"defineModule"` for a Runable module (see `afterAnswer`). Prompts to
  * overwrite if the file already exists.
  */
-export async function writeSyoraConfig(
+export async function writeRunableConfig(
   config: Record<string, unknown>,
   {
     identifier = "defineConfig",
     cwd = process.cwd(),
   }: { identifier?: string; cwd?: string } = {},
 ): Promise<void> {
-  const configPath = resolve(cwd, "syora.config.ts");
+  const configPath = resolve(cwd, "runable.config.ts");
 
   let exists = false;
 
@@ -355,26 +358,26 @@ export async function writeSyoraConfig(
 
   if (exists) {
     const shouldOverwrite = await p.confirm({
-      message: "syora.config.ts already exists. Overwrite?",
+      message: "runable.config.ts already exists. Overwrite?",
       initialValue: false,
     });
 
     if (p.isCancel(shouldOverwrite) || !shouldOverwrite) {
-      consola.info("Skipping syora.config.ts generation.");
+      consola.info("Skipping runable.config.ts generation.");
       return;
     }
   }
 
-  const mod = buildSyoraConfig(identifier, config);
+  const mod = buildRunableConfig(identifier, config);
   const content = generateCode(mod).code + "\n";
 
   await writeFile(configPath, content, "utf-8");
 
-  consola.success("Created syora.config.ts");
+  consola.success("Created runable.config.ts");
 }
 
 /**
- * Scaffolds a minimal `package.json` for a new Syora module at `targetDir`,
+ * Scaffolds a minimal `package.json` for a new Runable module at `targetDir`,
  * prompting to overwrite if one already exists. Used by the module flow
  * instead of `updatePackageJson`, since there's no existing file to merge into.
  */
@@ -419,14 +422,14 @@ export async function createPackageJson(
     types: "./dist/index.d.ts",
     files: ["dist"],
     scripts: {
-      build: "syora build",
-      "app:prepare": "syora prepare",
+      build: "runable build",
+      "app:prepare": "runable prepare",
     },
     dependencies: {
-      //   "@syora/core": "latest",
+      //   "runable": "latest",
     },
     devDependencies: {
-      //   "@syora/cli": "latest",
+      //   "@runable/cli": "latest",
       typescript: "^6.0.3",
     },
     engines: {
@@ -468,7 +471,7 @@ export async function installDependenciesIfWanted(
 /**
  * Runs the prompts shared by the "existing project" and "module" flows and
  * returns the collected answers. `_config` is the subset later handed
- * as-is to `writeSyoraConfig` — keep its shape in sync with `SyoraConfig`.
+ * as-is to `writeRunableConfig` — keep its shape in sync with `RunableConfig`.
  */
 export async function handleSharedAnswers() {
   const framework = await askFramework();
@@ -507,7 +510,7 @@ export async function handleSharedAnswers() {
 
 /**
  * Finishes scaffolding a project/module from `handleSharedAnswers`'s
- * result: copies the app template, generates `syora.config.ts`, writes or
+ * result: copies the app template, generates `runable.config.ts`, writes or
  * updates `package.json` (`createPackageJson` for a module — `moduleName`
  * is then required — or `updatePackageJson` for a regular project), copies
  * the server entry if requested, then installs dependencies.
@@ -523,7 +526,7 @@ export async function afterAnswer(
   const appDirResolved = resolve(cwd, answers.appDir);
   await copyAppTemplate(appDirResolved);
 
-  await writeSyoraConfig(answers._config, {
+  await writeRunableConfig(answers._config, {
     identifier: isModule ? "defineModule" : "defineConfig",
     cwd,
   });

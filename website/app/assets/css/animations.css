@@ -55,15 +55,15 @@
 
 .sr-draw-visible {
   stroke-dashoffset: 0;
-  transition: stroke-dashoffset var(--syora-duration-slow, 300ms)
-    var(--syora-ease-draw, cubic-bezier(0.65, 0, 0.45, 1));
+  transition: stroke-dashoffset var(--runable-duration-slow, 300ms)
+    var(--runable-ease-draw, cubic-bezier(0.65, 0, 0.45, 1));
 }
 
 /* ================================================
    PROGRESS — Ligne de chargement
    ================================================ */
 
-@keyframes syora-progress {
+@keyframes runable-progress {
   0% {
     transform: scaleX(0);
   }
@@ -73,18 +73,18 @@
 }
 
 .animate-progress {
-  animation: syora-progress 2s var(--syora-ease-default, ease-out) forwards;
+  animation: runable-progress 2s var(--runable-ease-default, ease-out) forwards;
 }
 
 .animate-progress-slow {
-  animation: syora-progress 3s var(--syora-ease-default, ease-out) forwards;
+  animation: runable-progress 3s var(--runable-ease-default, ease-out) forwards;
 }
 
 /* ================================================
    FADE UP — Apparition simple
    ================================================ */
 
-@keyframes syora-fade-up {
+@keyframes runable-fade-up {
   0% {
     opacity: 0;
     transform: translateY(8px);
@@ -96,15 +96,15 @@
 }
 
 .animate-fade-up {
-  animation: syora-fade-up var(--syora-duration-base, 200ms)
-    var(--syora-ease-smooth, cubic-bezier(0.4, 0, 0.2, 1)) forwards;
+  animation: runable-fade-up var(--runable-duration-base, 200ms)
+    var(--runable-ease-smooth, cubic-bezier(0.4, 0, 0.2, 1)) forwards;
 }
 
 /* ================================================
    SLIDE IN — Panneau latéral
    ================================================ */
 
-@keyframes syora-slide-in {
+@keyframes runable-slide-in {
   0% {
     transform: translateX(-100%);
   }
@@ -114,15 +114,15 @@
 }
 
 .animate-slide-in {
-  animation: syora-slide-in var(--syora-duration-base, 200ms)
-    var(--syora-ease-smooth, cubic-bezier(0.4, 0, 0.2, 1)) forwards;
+  animation: runable-slide-in var(--runable-duration-base, 200ms)
+    var(--runable-ease-smooth, cubic-bezier(0.4, 0, 0.2, 1)) forwards;
 }
 
 /* ================================================
    PULSE — Skeleton loading
    ================================================ */
 
-@keyframes syora-pulse {
+@keyframes runable-pulse {
   0%,
   100% {
     opacity: 1;
@@ -132,16 +132,16 @@
   }
 }
 
-.animate-pulse-syora {
-  animation: syora-pulse 2s
-    var(--syora-ease-smooth, cubic-bezier(0.4, 0, 0.2, 1)) infinite;
+.animate-pulse-runable {
+  animation: runable-pulse 2s
+    var(--runable-ease-smooth, cubic-bezier(0.4, 0, 0.2, 1)) infinite;
 }
 
 /* ================================================
    CHECK DRAW — Coche manuscrite
    ================================================ */
 
-@keyframes syora-check-draw {
+@keyframes runable-check-draw {
   0% {
     stroke-dashoffset: 24;
   }
@@ -153,8 +153,8 @@
 .animate-check {
   stroke-dasharray: 24;
   stroke-dashoffset: 24;
-  animation: syora-check-draw var(--syora-duration-slow, 300ms)
-    var(--syora-ease-draw, cubic-bezier(0.65, 0, 0.45, 1)) forwards;
+  animation: runable-check-draw var(--runable-duration-slow, 300ms)
+    var(--runable-ease-draw, cubic-bezier(0.65, 0, 0.45, 1)) forwards;
 }
 
 /* ================================================
@@ -176,8 +176,8 @@
   background-color: currentColor;
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform var(--syora-duration-instant, 100ms)
-    var(--syora-ease-default, ease-out);
+  transition: transform var(--runable-duration-instant, 100ms)
+    var(--runable-ease-default, ease-out);
 }
 
 .underline-draw:hover::after {

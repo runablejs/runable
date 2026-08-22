@@ -1,12 +1,12 @@
 ---
 title: Fastify
-description: Enregistrez Syora comme plugin frontend fallback dans Fastify.
+description: Enregistrez Runable comme plugin frontend fallback dans Fastify.
 ---
 
 ## Installation
 
 ```bash
-pnpm add @syora/core vue vue-router fastify
+pnpm add runable vue vue-router fastify
 ```
 
 ## Configuration
@@ -14,7 +14,7 @@ pnpm add @syora/core vue vue-router fastify
 ```ts
 // server.ts
 import Fastify from "fastify";
-import { fastify } from "@syora/core/adapters/fastify";
+import { fastify } from "runable/adapters/fastify";
 
 const app = Fastify();
 
@@ -24,7 +24,7 @@ await app.register(fastify());
 await app.listen({ port: 3000 });
 ```
 
-`fastify()` retourne un `FastifyPluginAsync`. Le plugin ajoute une route catch-all, transmet les objets Node bruts à Syora puis appelle `reply.hijack()` parce que Syora écrit directement dans la réponse.
+`fastify()` retourne un `FastifyPluginAsync`. Le plugin ajoute une route catch-all, transmet les objets Node bruts à Runable puis appelle `reply.hijack()` parce que Runable écrit directement dans la réponse.
 
 Enregistrez vos routes métier avant le plugin pour qu'elles restent prioritaires.
 

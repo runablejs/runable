@@ -1,5 +1,5 @@
 {
-  "name": "@syora/cli",
+  "name": "@runable/cli",
   "version": "1.0.0-alpha.3",
   "private": false,
   "license": "MIT",
@@ -15,7 +15,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "syora": "./dist/index.js"
+    "runable": "./dist/index.js"
   },
   "files": [
     "dist"
@@ -23,13 +23,13 @@
   "scripts": {
     "build": "tsdown",
     "prepublish": "pnpm build",
-    "syora": "tsx src/index.ts",
-    "app:build": "syora build",
-    "app:prepare": "syora prepare"
+    "runable": "tsx src/index.ts",
+    "app:build": "runable build",
+    "app:prepare": "runable prepare"
   },
   "dependencies": {
     "@clack/prompts": "catalog:",
-    "@syora/core": "workspace:^",
+    "runable": "workspace:^",
     "consola": "catalog:",
     "dayjs": "catalog:",
     "esbuild": "catalog:",

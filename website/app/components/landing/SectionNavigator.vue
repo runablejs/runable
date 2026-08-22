@@ -9,7 +9,7 @@ interface NavSection {
 
 const sections: NavSection[] = [
   { id: "section-hero", num: "01", label: "Hero" },
-  { id: "section-why", num: "02", label: "Why Syora" },
+  { id: "section-why", num: "02", label: "Why Runable" },
   { id: "section-capabilities", num: "03", label: "Capabilities" },
   { id: "section-runtimes", num: "04", label: "Runtimes" },
   { id: "section-sponsors", num: "05", label: "Sponsors" },

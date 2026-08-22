@@ -1,18 +1,18 @@
 ---
 title: modules
-description: Develop local Syora modules before extracting them into a package.
+description: Develop local Runable modules before extracting them into a package.
 ---
 
-The `modules/` directory is a recommended location for project-specific Syora extensions. It is not scanned automatically: declare each module in the configuration.
+The `modules/` directory is a recommended location for project-specific Runable extensions. It is not scanned automatically: declare each module in the configuration.
 
 ```text
 modules/
 └── analytics/
-    └── syora.config.ts
+    └── runable.config.ts
 ```
 
 ```ts
-// syora.config.ts
+// runable.config.ts
 export default defineConfig({
   modules: ["./modules/analytics"],
 });

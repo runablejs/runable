@@ -1,11 +1,11 @@
 ---
 title: Guide de rédaction de la documentation
-description: Comment écrire et structurer la documentation Syora — conventions, outils et bonnes pratiques.
+description: Comment écrire et structurer la documentation Runable — conventions, outils et bonnes pratiques.
 ---
 
 # Guide de rédaction de la documentation
 
-Ce document est le **point d'entrée obligatoire** pour toute personne (développeur humain ou IA) souhaitant écrire ou modifier une page de la documentation Syora.
+Ce document est le **point d'entrée obligatoire** pour toute personne (développeur humain ou IA) souhaitant écrire ou modifier une page de la documentation Runable.
 
 Il décrit l'architecture, la stack technique, les composants disponibles et les conventions de style.
 
@@ -18,32 +18,32 @@ La documentation est structurée en **5 blocs thématiques** :
 ```text
 docs/
 ├── getting-started/       ← Embarquement, vision & concepts
-│   ├── why-syora.md
+│   ├── why-runable.md
 │   ├── installation.md
 │   ├── quickstart.md
 │   ├── vs-nuxt.md
 │   ├── configuration.md
 │   └── concepts.md
 │
-├── structure/               ← Architecture d'un projet Syora
+├── structure/               ← Architecture d'un projet Runable
 |  ├── app/                    ← Votre application Vue (source)
 |  │   ├── pages/              ← Routes automatiques (filesystem routing)
 |  │   ├── layouts/            ← Dispositions d'interface réutilisables
 |  │   ├── components/         ← Composants Vue auto-importés
 |  │   ├── composables/        ← Composables Vue auto-importés
-|  │   ├── plugins/            ← Plugins Vue / Syora
+|  │   ├── plugins/            ← Plugins Vue / Runable
 |  │   ├── middlewares/        ← Middlewares de navigation
 |  │   └── css/                ← Styles globaux et configurations CSS
 |  ├── public/                 ← Assets statiques (servis directement à la racine)
 |  ├── .env                    ← Variables d'environnement
 |  ├── .gitignore              ← Fichiers et dossiers ignorés par Git
-|  ├── syora.config.ts         ← Configuration principale de Syora
+|  ├── runable.config.ts         ← Configuration principale de Runable
 |  ├── server.ts               ← Point d'entrée de votre serveur (Express, Fastify, Hono...)
 |  ├── package.json            ← Dépendances, scripts et métadonnées du projet
 |  ├── tsconfig.json           ← Configuration TypeScript principale
 |  ├── tsconfig.app.json       ← Facultatif : extensions TypeScript propres au frontend
 |  ├── tsconfig.node.json      ← Configuration TypeScript pour le serveur Node.js
-|  ├── .app/                   ← Généré : fichiers virtuels et d'aides préparés par Syora
+|  ├── .app/                   ← Généré : fichiers virtuels et d'aides préparés par Runable
 |  ├── .output/                ← Généré : build final de production
 |  └── node_modules/
 │
@@ -89,9 +89,9 @@ docs/
 | Bloc | Public cible | Objectif |
 | --- | --- | --- |
 | **Getting Started** | Nouvel arrivant | Comprendre la philosophie, installer, configurer et lancer le projet |
-| **Structure** | Développeur projet | Maîtriser l'organisation des dossiers et fichiers d'un projet Syora |
-| **Guide** | Utilisateur quotidien | Maîtriser chaque feature fondamentale de Syora |
-| **Integrations** | Développeur backend | Connecter Syora à SON serveur existant ou favori |
+| **Structure** | Développeur projet | Maîtriser l'organisation des dossiers et fichiers d'un projet Runable |
+| **Guide** | Utilisateur quotidien | Maîtriser chaque feature fondamentale de Runable |
+| **Integrations** | Développeur backend | Connecter Runable à SON serveur existant ou favori |
 | **API** | Développeur avancé | Référence rapide des signatures, typages et configurations |
 
 ---
@@ -162,7 +162,7 @@ variant: warning
 title: Vos routes API ne bougent pas
 ---
 
-L'intégration Syora est **additive**. Vous ne migrez rien.
+L'intégration Runable est **additive**. Vous ne migrez rien.
 
 ::
 
@@ -190,7 +190,7 @@ Utilisé pour montrer le même exemple dans plusieurs langages ou frameworks bac
 
 ` ` `ts [Express]
 import Express from "express";
-import { express } from "@syora/core";
+import { express } from "runable";
 
 const app = Express();
 app.use(express());
@@ -199,7 +199,7 @@ app.listen(3000);
 
 ` ` `ts [Fastify]
 import Fastify from "fastify";
-import { fastify } from "@syora/core";
+import { fastify } from "runable";
 
 const app = Fastify();
 await app.register(fastify());
@@ -271,7 +271,7 @@ Pour les listes avec icônes (checklist, étapes numérotées), utiliser des `di
   </div>
   <div class="flex flex-wrap items-center gap-2">
     <u-icon name="tabler:circle-2-filled" class="size-5 text-muted-foreground"></u-icon>
-    <span><strong>Générez</strong> <code>syora.config.ts</code></span>
+    <span><strong>Générez</strong> <code>runable.config.ts</code></span>
   </div>
 </div>
 
@@ -292,7 +292,7 @@ Pour les listes avec icônes (checklist, étapes numérotées), utiliser des `di
 
 * **La documentation est rédigée en français.**
 * Les termes techniques restent en anglais : `defineConfig`, `useAsyncData`, `ssr`, `middleware`, `composable`...
-* Les noms de fichiers, de fonctions, et de dossiers restent en anglais : `app/pages/index.vue`, `syora.config.ts`.
+* Les noms de fichiers, de fonctions, et de dossiers restent en anglais : `app/pages/index.vue`, `runable.config.ts`.
 
 ### Ton
 
@@ -401,7 +401,7 @@ description: Description concise pour le SEO (150 caractères max).
 
 **Règles :**
 
-* `title` : court, descriptif, sans mentionner "Syora" à moins que ce ne soit indispensable au contexte.
+* `title` : court, descriptif, sans mentionner "Runable" à moins que ce ne soit indispensable au contexte.
 * `description` : une phrase complète, sans syntaxe markdown, 150 caractères max.
 
 ---
@@ -413,12 +413,12 @@ Voici une page type qui respecte scrupuleusement toutes les conventions :
 ```markdown
 ---
 title: Routing
-description: Comprendre le filesystem routing de Syora — conventions, paramètres dynamiques et routes catch-all.
+description: Comprendre le filesystem routing de Runable — conventions, paramètres dynamiques et routes catch-all.
 ---
 
 # Routing
 
-Syora génère automatiquement les routes de votre application à partir des fichiers placés dans `app/pages/`.
+Runable génère automatiquement les routes de votre application à partir des fichiers placés dans `app/pages/`.
 
 ## La convention
 
@@ -507,4 +507,4 @@ Avant de soumettre un commit pour une nouvelle page ou une modification majeure,
 | Icônes Tabler | [https://tabler-icons.io](https://tabler-icons.io) |
 | shadcn-vue | [https://www.shadcn-vue.com](https://www.shadcn-vue.com) |
 | v-content | Documentation interne du moteur de contenu |
-| Dépôt Syora | [https://github.com/syorajs/syora](https://github.com/syorajs/syora) |
+| Dépôt Runable | [https://github.com/runablejs/runable](https://github.com/runablejs/runable) |

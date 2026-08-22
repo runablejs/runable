@@ -1,14 +1,14 @@
 ---
 title: Plugins or Modules? Choose the Right Extension Point
-description: Use plugins for Vue startup and modules for reusable Syora configuration that spans several conventions.
+description: Use plugins for Vue startup and modules for reusable Runable configuration that spans several conventions.
 date: 2026-08-19
 authors:
   - domutala
 ---
 
-Plugins and modules both extend a Syora application, but they operate at different moments and solve different problems.
+Plugins and modules both extend a Runable application, but they operate at different moments and solve different problems.
 
-A plugin runs while a Vue application instance is being created. A module runs while Syora configuration is assembled. Choosing the right boundary keeps runtime state isolated and reusable features easy to distribute.
+A plugin runs while a Vue application instance is being created. A module runs while Runable configuration is assembled. Choosing the right boundary keeps runtime state isolated and reusable features easy to distribute.
 
 ## Use a plugin to initialize Vue
 
@@ -39,7 +39,7 @@ This is the right place to:
 - connect runtime hooks;
 - create state scoped to one application instance.
 
-The last point is essential during SSR. Syora creates a Vue application for each render, so mutable request state must be created inside the plugin setup function.
+The last point is essential during SSR. Runable creates a Vue application for each render, so mutable request state must be created inside the plugin setup function.
 
 ```ts
 export default defineVuePlugin(() => {
@@ -68,7 +68,7 @@ export default defineVuePlugin({
 });
 ```
 
-`enforce` places the plugin in the `pre`, normal, or `post` group. `dependsOn` defines order inside the allowed groups. Syora reports circular dependencies rather than producing an unpredictable startup sequence.
+`enforce` places the plugin in the `pre`, normal, or `post` group. `dependsOn` defines order inside the allowed groups. Runable reports circular dependencies rather than producing an unpredictable startup sequence.
 
 ## Use a module to package conventions
 
@@ -76,14 +76,14 @@ A module can add several kinds of application resources at once:
 
 ```text
 modules/analytics/
-├── syora.config.ts
+├── runable.config.ts
 └── runtime/
     └── plugin.ts
 ```
 
 ```ts
-// modules/analytics/syora.config.ts
-import { defineModule } from "@syora/core";
+// modules/analytics/runable.config.ts
+import { defineModule } from "runable";
 
 export default defineModule<{ endpoint: string }>({
   meta: {
@@ -97,7 +97,7 @@ export default defineModule<{ endpoint: string }>({
   plugins: ["./runtime/plugin.ts"],
 
   setup(options) {
-    process.env.SYO_ANALYTICS_ENDPOINT ??= options.endpoint;
+    process.env.RUN_ANALYTICS_ENDPOINT ??= options.endpoint;
   },
 });
 ```
@@ -105,7 +105,7 @@ export default defineModule<{ endpoint: string }>({
 The consuming project selects the module and provides options:
 
 ```ts
-// syora.config.ts
+// runable.config.ts
 export default defineConfig({
   modules: ["./modules/analytics"],
   analytics: {
@@ -126,7 +126,7 @@ Choose a module when the feature:
 - contributes several files or conventions;
 - needs to be reused by multiple applications;
 - should control its own paths and defaults;
-- depends on another Syora module.
+- depends on another Runable module.
 
 Do not create a module for a single local directive. Do not force a multi-part design system into one large runtime plugin. The implementation becomes easier to test and explain when its extension point matches its real scope.
 

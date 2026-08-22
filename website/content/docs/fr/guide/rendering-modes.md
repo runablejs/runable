@@ -3,20 +3,20 @@ title: SSR et CSR
 description: Choisissez le mode de rendu de l'application et isolez le code réservé au navigateur.
 ---
 
-Syora active le rendu côté serveur par défaut. Chaque requête crée une application Vue, résout la route, charge les données attendues et injecte le HTML généré dans la page.
+Runable active le rendu côté serveur par défaut. Chaque requête crée une application Vue, résout la route, charge les données attendues et injecte le HTML généré dans la page.
 
 ## Choisir le mode
 
 ```ts
-// syora.config.ts
-import { defineConfig } from "@syora/core";
+// runable.config.ts
+import { defineConfig } from "runable";
 
 export default defineConfig({
   ssr: true,
 });
 ```
 
-Avec `ssr: false`, Syora sert le template client et Vue construit l'interface dans le navigateur.
+Avec `ssr: false`, Runable sert le template client et Vue construit l'interface dans le navigateur.
 
 | Mode | Choisissez-le pour |
 | --- | --- |

@@ -35,4 +35,4 @@ definePageMeta({
 });
 ```
 
-Syora delegates page detection and reloading to Vue Router. Configure `pages` in `syora.config.ts` only when your views live elsewhere.
+Runable delegates page detection and reloading to Vue Router. Configure `pages` in `runable.config.ts` only when your views live elsewhere.

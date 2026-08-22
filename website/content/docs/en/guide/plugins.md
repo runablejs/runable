@@ -47,13 +47,13 @@ export default defineVuePlugin({
 | `enforce: "post"` | Runs after plugins without priority |
 | `dependsOn` | Waits for named plugins in the same group |
 | `setup` | Configures the Vue application |
-| `hooks` | Registers Syora runtime hooks |
+| `hooks` | Registers Runable runtime hooks |
 
-Syora sorts `pre`, normal, and `post` groups separately, then resolves `dependsOn`. A circular dependency throws an explicit error. A missing dependency produces a warning.
+Runable sorts `pre`, normal, and `post` groups separately, then resolves `dependsOn`. A circular dependency throws an explicit error. A missing dependency produces a warning.
 
 ## Keep SSR isolated
 
-During SSR, Syora creates one Vue application per render. Create mutable state inside `setup()`:
+During SSR, Runable creates one Vue application per render. Create mutable state inside `setup()`:
 
 ```ts
 export default defineVuePlugin(() => {
@@ -70,6 +70,6 @@ variant: info
 title: Plugin or module?
 ---
 
-A plugin initializes Vue at runtime. A module configures Syora and can provide several plugins, components, layouts, or other collections.
+A plugin initializes Vue at runtime. A module configures Runable and can provide several plugins, components, layouts, or other collections.
 
 ::

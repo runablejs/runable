@@ -3,6 +3,6 @@
   "compilerOptions": {
     "paths": {}
   },
-  "include": ["./**/*.ts", "syora.config.ts"],
+  "include": ["./**/*.ts", "runable.config.ts"],
   "exclude": ["dist", "node_modules"]
 }

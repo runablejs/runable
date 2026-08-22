@@ -1,6 +1,6 @@
 ---
 title: NestJS
-description: Connect Syora after the controllers of a NestJS application using Express.
+description: Connect Runable after the controllers of a NestJS application using Express.
 ---
 
 The current adapter targets the NestJS Express platform.
@@ -8,7 +8,7 @@ The current adapter targets the NestJS Express platform.
 ## Installation
 
 ```bash
-pnpm add @syora/core vue vue-router @nestjs/common @nestjs/core @nestjs/platform-express
+pnpm add runable vue vue-router @nestjs/common @nestjs/core @nestjs/platform-express
 ```
 
 ## Configuration
@@ -16,7 +16,7 @@ pnpm add @syora/core vue vue-router @nestjs/common @nestjs/core @nestjs/platform
 ```ts
 // main.ts
 import { NestFactory } from "@nestjs/core";
-import { nestjs } from "@syora/core/adapters/nestjs";
+import { nestjs } from "runable/adapters/nestjs";
 import { AppModule } from "./app.module.js";
 
 const app = await NestFactory.create(AppModule);
@@ -28,7 +28,7 @@ app.use(nestjs());
 await app.listen(3000);
 ```
 
-`nestjs()` returns a function compatible with `NestMiddleware["use"]`. Calling `app.init()` before `app.use()` ensures controller routes are registered before the Syora fallback.
+`nestjs()` returns a function compatible with `NestMiddleware["use"]`. Calling `app.init()` before `app.use()` ensures controller routes are registered before the Runable fallback.
 
 ::u-tip
 ---

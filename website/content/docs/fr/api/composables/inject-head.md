@@ -3,7 +3,7 @@ title: injectHead
 description: Accédez directement à l'instance Unhead installée dans l'application.
 ---
 
-`injectHead()` retourne l'instance Unhead injectée par Syora. Utilisez cette API pour une intégration avancée qui doit manipuler directement le gestionnaire de head.
+`injectHead()` retourne l'instance Unhead injectée par Runable. Utilisez cette API pour une intégration avancée qui doit manipuler directement le gestionnaire de head.
 
 ```ts
 const head = injectHead();

@@ -19,6 +19,6 @@ definePageMeta({
 </script>
 ```
 
-Syora extracts this call statically when generating routes. Pass a serializable object directly; do not build metadata from a runtime-computed value.
+Runable extracts this call statically when generating routes. Pass a serializable object directly; do not build metadata from a runtime-computed value.
 
 Modules can extend `RouteMeta` to type their own properties.

@@ -1,6 +1,6 @@
 ---
 title: useRuntime
-description: Access public and private environment variables loaded by Syora.
+description: Access public and private environment variables loaded by Runable.
 ---
 
 ```ts
@@ -8,8 +8,8 @@ function useRuntime(): RuntimeValues
 ```
 
 ```dotenv
-SYO_PUBLIC_API_BASE=/api
-SYO_DATABASE_URL=postgres://localhost/acme
+RUN_PUBLIC_API_BASE=/api
+RUN_DATABASE_URL=postgres://localhost/acme
 ```
 
 ```ts

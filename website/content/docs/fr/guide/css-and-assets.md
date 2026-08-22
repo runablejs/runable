@@ -3,11 +3,11 @@ title: CSS et assets
 description: Chargez les styles globaux et servez les fichiers statiques de l'application.
 ---
 
-Syora distingue les fichiers transformés par Vite des fichiers servis tels quels.
+Runable distingue les fichiers transformés par Vite des fichiers servis tels quels.
 
 ## Charger des styles globaux
 
-Déclarez-les dans `syora.config.ts` :
+Déclarez-les dans `runable.config.ts` :
 
 ```ts
 export default defineConfig({
@@ -18,7 +18,7 @@ export default defineConfig({
 });
 ```
 
-Syora regroupe les styles du projet et de ses modules, supprime les doublons puis les importe dans l'entrée client. Vite traite les imports, URLs et préprocesseurs installés.
+Runable regroupe les styles du projet et de ses modules, supprime les doublons puis les importe dans l'entrée client. Vite traite les imports, URLs et préprocesseurs installés.
 
 Vous pouvez aussi scanner un dossier :
 

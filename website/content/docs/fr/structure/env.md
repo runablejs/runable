@@ -1,34 +1,34 @@
 ---
 title: .env
-description: Chargez des variables d'environnement typées et contrôlez celles que Syora expose au navigateur.
+description: Chargez des variables d'environnement typées et contrôlez celles que Runable expose au navigateur.
 ---
 
-Syora charge les fichiers d'environnement du mode Vite actif et les variables déjà présentes dans `process.env`. Utilisez `useRuntime()` pour les lire depuis l'application.
+Runable charge les fichiers d'environnement du mode Vite actif et les variables déjà présentes dans `process.env`. Utilisez `useRuntime()` pour les lire depuis l'application.
 
 ## Déclarer les variables
 
-Syora reconnaît trois préfixes : `SYO_`, `SYORA_` et `VITE_`. Préférez `SYO_` dans un nouveau projet pour distinguer clairement la configuration Syora.
+Runable reconnaît trois préfixes : `RUN_`, et `VITE_`. Préférez `RUN_` dans un nouveau projet pour distinguer clairement la configuration Runable.
 
 ```dotenv
 # Disponible dans le navigateur et pendant le SSR
-SYO_PUBLIC_API_BASE=/api
-SYO_PUBLIC_FEATURE_ENABLED=true
+RUN_PUBLIC_API_BASE=/api
+RUN_PUBLIC_FEATURE_ENABLED=true
 
 # Disponible uniquement côté serveur
-SYO_DATABASE_URL=postgres://localhost/acme
-SYO_RETRY_COUNT=3
+RUN_DATABASE_URL=postgres://localhost/acme
+RUN_RETRY_COUNT=3
 ```
 
 Le segment `PUBLIC_` contrôle l'exposition au client :
 
 | Nom dans `.env` | Propriété générée | Client | Serveur |
 | --- | --- | --- | --- |
-| `SYO_PUBLIC_API_BASE` | `runtime.public.apiBase` | Oui | Oui |
-| `SYORA_PUBLIC_APP_NAME` | `runtime.public.appName` | Oui | Oui |
-| `SYO_DATABASE_URL` | `runtime.databaseUrl` | Non | Oui |
-| `SYORA_RETRY_COUNT` | `runtime.retryCount` | Non | Oui |
+| `RUN_PUBLIC_API_BASE` | `runtime.public.apiBase` | Oui | Oui |
+| `RUN_PUBLIC_APP_NAME` | `runtime.public.appName` | Oui | Oui |
+| `RUN_DATABASE_URL` | `runtime.databaseUrl` | Non | Oui |
+| `RUN_RETRY_COUNT` | `runtime.retryCount` | Non | Oui |
 
-Syora retire le préfixe puis convertit le nom en `camelCase`.
+Runable retire le préfixe puis convertit le nom en `camelCase`.
 
 ## Lire la configuration
 
@@ -55,28 +55,28 @@ if (import.meta.server) {
 }
 ```
 
-Vous pouvez aussi importer `useRuntime` depuis `@syora/core` dans le code de votre backend. Cette version charge `.env`, fusionne les valeurs avec `process.env` et donne la priorité aux variables du processus.
+Vous pouvez aussi importer `useRuntime` depuis `runable` dans le code de votre backend. Cette version charge `.env`, fusionne les valeurs avec `process.env` et donne la priorité aux variables du processus.
 
 ## Types générés
 
-Au démarrage, Syora analyse les valeurs et écrit leur déclaration dans `.app/runtime.d.ts`. L'éditeur connaît ainsi les propriétés disponibles sans interface TypeScript manuelle.
+Au démarrage, Runable analyse les valeurs et écrit leur déclaration dans `.app/runtime.d.ts`. L'éditeur connaît ainsi les propriétés disponibles sans interface TypeScript manuelle.
 
 ```dotenv
-SYO_PUBLIC_ENABLED=true
-SYO_PORT=3000
-SYO_TAGS=["documentation","dashboard"]
+RUN_PUBLIC_ENABLED=true
+RUN_PORT=3000
+RUN_TAGS=["documentation","dashboard"]
 ```
 
-Les valeurs deviennent respectivement un booléen, un nombre et un tableau. Syora reconnaît aussi `null`, `undefined` et les objets JSON valides. Toute autre valeur reste une chaîne de caractères.
+Les valeurs deviennent respectivement un booléen, un nombre et un tableau. Runable reconnaît aussi `null`, `undefined` et les objets JSON valides. Toute autre valeur reste une chaîne de caractères.
 
 Relancez le serveur de développement après l'ajout ou le renommage d'une variable pour régénérer les types et les valeurs injectées.
 
 ## Accès direct avec import.meta.env
 
-Syora remplace aussi les accès statiques utilisant les préfixes `SYO_` et `SYORA_` :
+Runable remplace aussi les accès statiques utilisant les préfixes `RUN_` et `RUN_` :
 
 ```ts
-const apiBase = import.meta.env.SYO_PUBLIC_API_BASE;
+const apiBase = import.meta.env.RUN_PUBLIC_API_BASE;
 ```
 
 Utilisez la notation avec un point et le nom complet de la variable. L'accès dynamique `import.meta.env[key]` n'est pas transformé.
@@ -90,7 +90,7 @@ surface: solid
 title: Ne placez aucun secret dans une variable publique
 ---
 
-Toute variable `SYO_PUBLIC_*`, `SYORA_PUBLIC_*` ou `VITE_PUBLIC_*` est intégrée au bundle client. Considérez sa valeur comme publique.
+Toute variable `RUN_PUBLIC_*`, `RUN_PUBLIC_*` ou `VITE_PUBLIC_*` est intégrée au bundle client. Considérez sa valeur comme publique.
 
 Évitez également le préfixe `VITE_` pour un secret : Vite expose nativement ses variables `VITE_*` via `import.meta.env`, indépendamment de l'objet construit par `useRuntime()`.
 
@@ -102,6 +102,6 @@ Conservez les valeurs locales dans `.env` ou dans les variantes standard du mode
 
 ```dotenv
 # .env.example
-SYO_PUBLIC_API_BASE=
-SYO_DATABASE_URL=
+RUN_PUBLIC_API_BASE=
+RUN_DATABASE_URL=
 ```

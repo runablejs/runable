@@ -1,6 +1,6 @@
 ---
 title: useConfig
-description: Read the public part of the Syora configuration in the Vue application.
+description: Read the public part of the Runable configuration in the Vue application.
 ---
 
 ```ts

@@ -3,7 +3,7 @@ title: app
 description: Organize your Vue application sources in the app directory.
 ---
 
-The `app/` directory contains the Vue application. Syora scans its conventional subdirectories and generates the required registries.
+The `app/` directory contains the Vue application. Runable scans its conventional subdirectories and generates the required registries.
 
 ```text
 app/
@@ -24,7 +24,7 @@ Every item is optional. A minimal application can contain only `app/pages/index.
 ## Use another name
 
 ```ts
-// syora.config.ts
+// runable.config.ts
 export default defineConfig({
   appDir: "frontend",
 });

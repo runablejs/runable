@@ -1,9 +1,9 @@
 ---
 title: tsconfig.node.json
-description: Typez le serveur, la configuration Syora et les scripts exécutés par Node.js.
+description: Typez le serveur, la configuration Runable et les scripts exécutés par Node.js.
 ---
 
-Cette configuration couvre `server.ts`, `syora.config.ts` et les autres outils exécutés côté serveur.
+Cette configuration couvre `server.ts`, `runable.config.ts` et les autres outils exécutés côté serveur.
 
 ```json
 {
@@ -17,7 +17,7 @@ Cette configuration couvre `server.ts`, `syora.config.ts` et les autres outils e
   },
   "include": [
     "server.ts",
-    "syora.config.ts",
+    "runable.config.ts",
     "scripts/**/*.ts"
   ]
 }

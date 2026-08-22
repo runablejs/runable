@@ -81,7 +81,7 @@ onMounted(() => {
               transform 300ms ease-out;
           "
         >
-          Syora is a Vue framework for teams that want the conventions and
+          Runable is a Vue framework for teams that want the conventions and
           developer experience of a meta-framework without adopting a specific
           server runtime.
         </p>
@@ -96,16 +96,16 @@ onMounted(() => {
           "
         >
           <UButton variant="default" size="lg" as-child>
-            <SyoraLink to="/why-syora">
-              Why Syora?
+            <RunableLink to="/why-runable">
+              Why Runable?
               <UIcon name="tabler:arrow-right" class="size-4" />
-            </SyoraLink>
+            </RunableLink>
           </UButton>
 
           <UButton variant="outline" size="lg" as-child>
-            <SyoraLink to="/docs/getting-started/installation">
+            <RunableLink to="/docs/getting-started/installation">
               Get Started
-            </SyoraLink>
+            </RunableLink>
           </UButton>
         </div>
       </div>
@@ -145,7 +145,7 @@ onMounted(() => {
             class="overflow-x-auto p-6 font-mono text-[13px] leading-7"
           ><code><span class="text-muted-foreground">import</span> Express <span class="text-muted-foreground">from</span> <span class="text-accent">"express"</span>;
 <span class="text-muted-foreground">import</span> { express } <span class="text-muted-foreground">from</span>
-  <span class="text-accent">"@syora/core/adapters/express"</span>;
+  <span class="text-accent">"runable/adapters/express"</span>;
 
 <span class="text-muted-foreground">const</span> server = Express();
 

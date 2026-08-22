@@ -1,8 +1,8 @@
 import { defineCommand, runMain } from "citty";
 
-const name = "syora";
+const name = "runable";
 const version = "0.1.1";
-const description = "Syora CLI";
+const description = "Runable CLI";
 
 const commands = {
   create: () => import("./commands/create").then((m) => m.default),

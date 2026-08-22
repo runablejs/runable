@@ -3,11 +3,11 @@ title: CSS and assets
 description: Load global styles and serve the application's static files.
 ---
 
-Syora distinguishes files transformed by Vite from files served as-is.
+Runable distinguishes files transformed by Vite from files served as-is.
 
 ## Load global styles
 
-Declare them in `syora.config.ts`:
+Declare them in `runable.config.ts`:
 
 ```ts
 export default defineConfig({
@@ -18,7 +18,7 @@ export default defineConfig({
 });
 ```
 
-Syora combines project and module styles, removes duplicates, and imports them into the client entry. Vite processes imports, URLs, and installed preprocessors.
+Runable combines project and module styles, removes duplicates, and imports them into the client entry. Vite processes imports, URLs, and installed preprocessors.
 
 You can also scan a directory:
 

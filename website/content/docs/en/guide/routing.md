@@ -3,7 +3,7 @@ title: Routing
 description: Create application routes from files in app/pages.
 ---
 
-Syora turns components in `app/pages/` into Vue Router routes. Add, move, or delete a file and the route table follows automatically.
+Runable turns components in `app/pages/` into Vue Router routes. Add, move, or delete a file and the route table follows automatically.
 
 ## Create routes
 
@@ -59,11 +59,11 @@ Parent route metadata is passed to children. A value defined by the child takes 
 
 ## Navigate
 
-Use `SyoraLink` in templates or `navigateTo()` in scripts:
+Use `RunableLink` in templates or `navigateTo()` in scripts:
 
 ```vue
 <template>
-  <SyoraLink to="/projects">View projects</SyoraLink>
+  <RunableLink to="/projects">View projects</RunableLink>
 </template>
 ```
 
@@ -75,14 +75,14 @@ For direct Vue Router access, use `useRoute()` and `useRouter()`.
 
 ## Display nested pages
 
-Place `SyoraPage` in a parent page to display its child route:
+Place `RunablePage` in a parent page to display its child route:
 
 ```vue
 <!-- app/pages/projects.vue -->
 <template>
   <section>
     <h1>Projects</h1>
-    <SyoraPage />
+    <RunablePage />
   </section>
 </template>
 ```

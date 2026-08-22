@@ -1,26 +1,26 @@
 ---
-title: Syora vs Nuxt
-description: Compare Syora and Nuxt by server runtime, backend integration, Vue conventions, and ecosystem maturity.
+title: Runable vs Nuxt
+description: Compare Runable and Nuxt by server runtime, backend integration, Vue conventions, and ecosystem maturity.
 ---
 
-Syora and Nuxt both provide a structured Vue experience. Their main difference is who owns the server.
+Runable and Nuxt both provide a structured Vue experience. Their main difference is who owns the server.
 
 ## The difference in one sentence
 
-Nuxt provides a complete application around Nitro. Syora adds a Vue application to a backend that you choose and operate yourself.
+Nuxt provides a complete application around Nitro. Runable adds a Vue application to a backend that you choose and operate yourself.
 
 ```text
-Nuxt                          Syora
+Nuxt                          Runable
 ┌──────────────────────┐      ┌────────────────────────────┐
 │ Vue application      │      │ Your backend               │
 │ Nuxt                 │      │ Express, Fastify, Hono…    │
-│ Nitro                │      │ └─ Syora ─ Vue application │
+│ Nitro                │      │ └─ Runable ─ Vue application │
 └──────────────────────┘      └────────────────────────────┘
 ```
 
 ## Quick comparison
 
-| Topic | Nuxt | Syora |
+| Topic | Nuxt | Runable |
 | --- | --- | --- |
 | Server runtime | Nitro | Your HTTP server |
 | File-based pages | Yes | Yes |
@@ -29,11 +29,11 @@ Nuxt                          Syora
 | Route middleware | Yes | Yes |
 | SSR and hydration | Yes | Yes |
 | Data loading | `useAsyncData()` | `useAsyncData()` |
-| Modules and plugins | Nuxt ecosystem | Syora's own systems |
+| Modules and plugins | Nuxt ecosystem | Runable's own systems |
 | Documented deployments | Many Nitro presets | Depends on your backend |
 | Maturity | Established ecosystem | Alpha project |
 
-Features with the same name do not guarantee identical APIs. Always check the Syora reference before reusing Nuxt code.
+Features with the same name do not guarantee identical APIs. Always check the Runable reference before reusing Nuxt code.
 
 ## Choose Nuxt
 
@@ -48,11 +48,11 @@ Nuxt is generally a better fit when:
   <div class="flex flex-wrap items-center gap-2"><u-icon name="tabler:circle-check-filled" class="size-5 text-success"></u-icon><span>your team already knows Nuxt conventions.</span></div>
 </div>
 
-## Choose Syora
+## Choose Runable
 
-Choose Syora when the backend is a foundational decision that must not be replaced.
+Choose Runable when the backend is a foundational decision that must not be replaced.
 
-Syora is generally a better fit when:
+Runable is generally a better fit when:
 
 <div class="py-3 space-y-2">
   <div class="flex flex-wrap items-center gap-2"><u-icon name="tabler:circle-check-filled" class="size-5 text-success"></u-icon><span>Express, Fastify, NestJS, AdonisJS, Koa, or Hono already hosts your application logic;</span></div>
@@ -63,23 +63,23 @@ Syora is generally a better fit when:
 
 ## What changes in server code
 
-With Syora, you own the HTTP entry point:
+With Runable, you own the HTTP entry point:
 
 ```ts
 // server.ts
-import { express } from "@syora/core/adapters/express";
+import { express } from "runable/adapters/express";
 
 server.get("/api/users", usersController);
 server.use(express());
 ```
 
-You decide middleware order, API routes, observability, and server startup. The adapter initializes Syora and handles requests that reach it.
+You decide middleware order, API routes, observability, and server startup. The adapter initializes Runable and handles requests that reach it.
 
 ## What remains familiar
 
 A Nuxt developer will recognize several conventions:
 
-| Nuxt | Syora |
+| Nuxt | Runable |
 | --- | --- |
 | `pages/` | `app/pages/` |
 | `layouts/` | `app/layouts/` |
@@ -98,7 +98,7 @@ variant: warning
 title: Not a drop-in replacement
 ---
 
-Syora adopts useful conventions, not all of Nuxt. Nuxt modules, Nitro APIs, and Nitro deployment presets are not directly compatible.
+Runable adopts useful conventions, not all of Nuxt. Nuxt modules, Nitro APIs, and Nitro deployment presets are not directly compatible.
 
 ::
 
@@ -107,9 +107,9 @@ Syora adopts useful conventions, not all of Nuxt. Nuxt modules, Nitro APIs, and 
 | Question | If the answer is yes |
 | --- | --- |
 | Does Nitro meet your server needs? | Evaluate Nuxt first |
-| Must an existing backend remain in control of the server? | Evaluate Syora |
+| Must an existing backend remain in control of the server? | Evaluate Runable |
 | Do you only need a lightweight SPA? | Vue and Vite may be enough |
-| Is production stability more important than runtime freedom? | Account for Syora's alpha status |
+| Is production stability more important than runtime freedom? | Account for Runable's alpha status |
 
 ::u-tip
 ---

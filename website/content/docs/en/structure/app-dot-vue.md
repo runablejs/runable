@@ -8,14 +8,14 @@ description: Customize the root component of the Vue application.
 ```vue
 <!-- app/app.vue -->
 <template>
-  <SyoraLayout>
-    <SyoraPage />
-  </SyoraLayout>
+  <RunableLayout>
+    <RunablePage />
+  </RunableLayout>
 </template>
 ```
 
 In most applications, visual structures specific to an area belong in `app/layouts/`. Keep `app.vue` lightweight so all routes share the same behavior.
 
-`SyoraPage` displays the current route. `SyoraLayout` applies the layout selected with `definePageMeta()` around its content.
+`RunablePage` displays the current route. `RunableLayout` applies the layout selected with `definePageMeta()` around its content.
 
-This file is optional. When absent, Syora uses this structure in its internal root component.
+This file is optional. When absent, Runable uses this structure in its internal root component.

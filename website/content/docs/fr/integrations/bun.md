@@ -1,19 +1,19 @@
 ---
 title: Bun
-description: Utilisez l'adaptateur Fetch API de Syora avec Bun.serve().
+description: Utilisez l'adaptateur Fetch API de Runable avec Bun.serve().
 ---
 
 ## Installation
 
 ```bash
-bun add @syora/core vue vue-router
+bun add runable vue vue-router
 ```
 
 ## Configuration
 
 ```ts
 // server.ts
-import { bun } from "@syora/core/adapters/bun";
+import { bun } from "runable/adapters/bun";
 
 Bun.serve({
   port: 3000,
@@ -26,7 +26,7 @@ Bun.serve({
 Pour conserver des routes API, placez l'adaptateur en fallback :
 
 ```ts
-const renderSyora = bun();
+const renderRunable = bun();
 
 Bun.serve({
   async fetch(request) {
@@ -35,7 +35,7 @@ Bun.serve({
       return Response.json({ status: "ok" });
     }
 
-    return renderSyora(request);
+    return renderRunable(request);
   },
 });
 ```

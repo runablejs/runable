@@ -1,13 +1,13 @@
-import { defineConfig } from "@syora/core";
+import { defineConfig } from "runable";
 import { join } from "node:path";
 
 export default defineConfig({
   // devtools: { enable: true },
 
-  modules: ["@syora/content"],
+  modules: ["@runable/content"],
 
   head: {
-    title: "Syora/vue playground",
+    title: "Runable/vue playground",
 
     link: [{ rel: "icon", href: "/favicon.svg" }],
   },

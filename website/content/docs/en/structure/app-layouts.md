@@ -28,6 +28,6 @@ definePageMeta({ layout: "dashboard" });
 </template>
 ```
 
-The `dashboard` name maps to `app/layouts/dashboard.vue`. Syora generates the registry and related types in `.app/layouts.d.ts`.
+The `dashboard` name maps to `app/layouts/dashboard.vue`. Runable generates the registry and related types in `.app/layouts.d.ts`.
 
 Layouts can use composables, auto-imported components, and `RouterLink` like the rest of the application.

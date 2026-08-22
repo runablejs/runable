@@ -1,8 +1,8 @@
-# Syora
+# Runable
 
 ### Build the Vue app you want. Keep the backend you chose.
 
-Syora brings the developer experience of a Vue meta-framework to **any backend**.
+Runable brings the developer experience of a Vue meta-framework to **any backend**.
 
 File-system routing, layouts, middleware, auto-imports, SSR, data loading, plugins, and modules—without requiring a specific server runtime.
 
@@ -12,12 +12,12 @@ Use the backend that fits your application: **Fastify, NestJS, AdonisJS, Express
 
 Vue gives you flexibility. Meta-frameworks give you conventions. Until now, getting both often meant accepting the server runtime selected by the frontend framework—or splitting one application into two projects.
 
-Syora offers another path.
+Runable offers another path.
 
-Your backend keeps ownership of HTTP, APIs, authentication, and business logic. Syora adds the structured Vue application experience around it.
+Your backend keeps ownership of HTTP, APIs, authentication, and business logic. Runable adds the structured Vue application experience around it.
 
 ```text
-Your backend  +  Syora  +  Vue
+Your backend  +  Runable  +  Vue
      ↓             ↓        ↓
 Your architecture. One application. A better developer experience.
 ```
@@ -30,18 +30,18 @@ Your architecture. One application. A better developer experience.
 - First-class TypeScript support and generated types
 - Freedom to run on the server stack your team already trusts
 
-## Discover Syora
+## Discover Runable
 
-See how Syora works, explore supported runtimes, and build your first application on the official website.
+See how Runable works, explore supported runtimes, and build your first application on the official website.
 
-### [Explore Syora →](https://syora.netlify.app)
+### [Explore Runable →](https://runable.netlify.app)
 
-[Why Syora?](https://syora.netlify.app/why-syora) · [Documentation](https://syora.netlify.app/docs) · [Blog](https://syora.netlify.app/blog) · [Changelog](https://syora.netlify.app/changelog)
+[Why Runable?](https://runable.netlify.app/why-runable) · [Documentation](https://runable.netlify.app/docs) · [Blog](https://runable.netlify.app/blog) · [Changelog](https://runable.netlify.app/changelog)
 
-> Syora is currently in alpha. The project is evolving quickly and feedback is welcome.
+> Runable is currently in alpha. The project is evolving quickly and feedback is welcome.
 
 ## Open source
 
-Syora is developed in public and released under the [MIT License](./LICENSE).
+Runable is developed in public and released under the [MIT License](./LICENSE).
 
-[View on GitHub](https://github.com/syorajs/syora) · [Report an issue](https://github.com/syorajs/syora/issues) · [Sponsor the project](https://github.com/sponsors/domutala)
+[View on GitHub](https://github.com/runablejs/runable) · [Report an issue](https://github.com/runablejs/runable/issues) · [Sponsor the project](https://github.com/sponsors/domutala)

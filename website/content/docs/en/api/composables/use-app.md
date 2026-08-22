@@ -1,6 +1,6 @@
 ---
 title: useApp
-description: Retrieve the current Vue application, its global properties, and Syora hooks.
+description: Retrieve the current Vue application, its global properties, and Runable hooks.
 ---
 
 ```ts

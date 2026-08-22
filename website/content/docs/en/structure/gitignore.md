@@ -3,7 +3,7 @@ title: .gitignore
 description: Ignore dependencies, builds, generated files, and local secrets.
 ---
 
-A Syora project should at least ignore its dependencies, generated output, and local variables.
+A Runable project should at least ignore its dependencies, generated output, and local variables.
 
 ```gitignore
 node_modules/
@@ -18,6 +18,6 @@ node_modules/
 .DS_Store
 ```
 
-Adjust `.output/` and `.app/` if you changed `distdir` or `output` in `syora.config.ts`.
+Adjust `.output/` and `.app/` if you changed `distdir` or `output` in `runable.config.ts`.
 
-Commit sources, configuration, `package.json`, the lockfile, and `.env.example`. Generated directories must be reproducible with `pnpm install`, `syora prepare`, and `syora build`.
+Commit sources, configuration, `package.json`, the lockfile, and `.env.example`. Generated directories must be reproducible with `pnpm install`, `runable prepare`, and `runable build`.

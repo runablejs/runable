@@ -1,9 +1,9 @@
 ---
 title: app/css
-description: Organize global stylesheets loaded by Syora.
+description: Organize global stylesheets loaded by Runable.
 ---
 
-`app/css/` is an organizational convention, but its files are not loaded automatically. Declare each global entry in `syora.config.ts`.
+`app/css/` is an organizational convention, but its files are not loaded automatically. Declare each global entry in `runable.config.ts`.
 
 ```css
 /* app/css/main.css */

@@ -1,29 +1,29 @@
 ---
 title: package.json
-description: Déclarez les scripts, dépendances et contraintes runtime d'un projet Syora.
+description: Déclarez les scripts, dépendances et contraintes runtime d'un projet Runable.
 ---
 
 `package.json` décrit le projet et les commandes utilisées en développement ou en production.
 
 ```json
 {
-  "name": "my-syora-app",
+  "name": "my-runable-app",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "tsx watch server.ts",
-    "app:prepare": "syora prepare",
-    "app:build": "syora build",
+    "app:prepare": "runable prepare",
+    "app:build": "runable build",
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "@syora/core": "latest",
+    "runable": "latest",
     "express": "latest",
     "vue": "latest",
     "vue-router": "latest"
   },
   "devDependencies": {
-    "@syora/cli": "latest",
+    "@runable/cli": "latest",
     "@types/express": "latest",
     "tsx": "latest",
     "typescript": "latest",
@@ -32,7 +32,7 @@ description: Déclarez les scripts, dépendances et contraintes runtime d'un pro
 }
 ```
 
-Gardez `@syora/core`, Vue et le backend dans `dependencies` : ils sont nécessaires à l'exécution. Les types, le CLI et les outils de contrôle appartiennent généralement à `devDependencies`.
+Gardez `runable`, Vue et le backend dans `dependencies` : ils sont nécessaires à l'exécution. Les types, le CLI et les outils de contrôle appartiennent généralement à `devDependencies`.
 
-Le champ `"type": "module"` permet d'utiliser les modules ES dans `server.ts` et `syora.config.ts`.
+Le champ `"type": "module"` permet d'utiliser les modules ES dans `server.ts` et `runable.config.ts`.
 

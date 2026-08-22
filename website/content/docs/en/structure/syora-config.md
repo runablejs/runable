@@ -1,13 +1,13 @@
 ---
-title: syora.config.ts
+title: runable.config.ts
 description: Configure conventions, SSR, modules, and Vite from the project's central file.
 ---
 
-This file is Syora's source of truth. Place it at the root and export the result of `defineConfig()`.
+This file is Runable's source of truth. Place it at the root and export the result of `defineConfig()`.
 
 ```ts
-// syora.config.ts
-import { defineConfig } from "@syora/core";
+// runable.config.ts
+import { defineConfig } from "runable";
 
 export default defineConfig({
   ssr: true,

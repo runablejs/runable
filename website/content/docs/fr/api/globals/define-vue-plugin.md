@@ -1,6 +1,6 @@
 ---
 title: defineVuePlugin
-description: Déclarez un plugin Syora avec des injections, dépendances et hooks applicatifs.
+description: Déclarez un plugin Runable avec des injections, dépendances et hooks applicatifs.
 ---
 
 La forme courte reçoit directement une fonction de setup :

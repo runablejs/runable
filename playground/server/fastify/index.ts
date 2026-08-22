@@ -1,5 +1,5 @@
 import Fastify from "fastify";
-import { fastify } from "@syora/core/adapters/fastify";
+import { fastify } from "runable/adapters/fastify";
 
 const app = Fastify();
 await app.register(fastify());

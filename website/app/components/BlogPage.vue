@@ -17,6 +17,17 @@ const props = defineProps<{
   page?: ResolvedPageEntry | null;
   pending: boolean;
 }>();
+
+watch(
+  () => props.page,
+  () => {
+    // useHead({
+    //   title: props.page?.meta.title,
+    //   meta: [{ name: "description", content: props.page?.meta.description }],
+    // });
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -58,7 +69,7 @@ const props = defineProps<{
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink as-child>
-            <SyoraLink to="/blog"> Blog </SyoraLink>
+            <RunableLink to="/blog"> Blog </RunableLink>
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />

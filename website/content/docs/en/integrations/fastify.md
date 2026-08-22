@@ -1,12 +1,12 @@
 ---
 title: Fastify
-description: Register Syora as a frontend fallback plugin in Fastify.
+description: Register Runable as a frontend fallback plugin in Fastify.
 ---
 
 ## Installation
 
 ```bash
-pnpm add @syora/core vue vue-router fastify
+pnpm add runable vue vue-router fastify
 ```
 
 ## Configuration
@@ -14,7 +14,7 @@ pnpm add @syora/core vue vue-router fastify
 ```ts
 // server.ts
 import Fastify from "fastify";
-import { fastify } from "@syora/core/adapters/fastify";
+import { fastify } from "runable/adapters/fastify";
 
 const app = Fastify();
 
@@ -24,6 +24,6 @@ await app.register(fastify());
 await app.listen({ port: 3000 });
 ```
 
-`fastify()` returns a `FastifyPluginAsync`. The plugin adds a catch-all route, passes the raw Node objects to Syora, then calls `reply.hijack()` because Syora writes directly to the response.
+`fastify()` returns a `FastifyPluginAsync`. The plugin adds a catch-all route, passes the raw Node objects to Runable, then calls `reply.hijack()` because Runable writes directly to the response.
 
 Register your application routes before the plugin so they retain priority.

@@ -1,12 +1,12 @@
 ---
 title: Express
-description: Utilisez Syora comme dernier middleware d'une application Express.
+description: Utilisez Runable comme dernier middleware d'une application Express.
 ---
 
 ## Installation
 
 ```bash
-pnpm add @syora/core vue vue-router express
+pnpm add runable vue vue-router express
 pnpm add -D @types/express
 ```
 
@@ -15,7 +15,7 @@ pnpm add -D @types/express
 ```ts
 // server.ts
 import Express from "express";
-import { express } from "@syora/core/adapters/express";
+import { express } from "runable/adapters/express";
 
 const app = Express();
 
@@ -33,8 +33,8 @@ app.listen(3000);
 ## Réutiliser une instance
 
 ```ts
-const syoraApp = createSyoraApp();
+const runableApp = createRunableApp();
 
-app.use(express({ syoraApp }));
+app.use(express({ runableApp }));
 ```
 

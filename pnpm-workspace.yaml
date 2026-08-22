@@ -88,7 +88,7 @@ catalog:
   unplugin: ^3.3.0
 
 allowBuilds:
-  '@parcel/watcher': true
+  "@parcel/watcher": true
   "@swc/core": true
   better-sqlite3: true
   esbuild: true
@@ -96,7 +96,7 @@ allowBuilds:
   vue-demi: true
 
 minimumReleaseAgeExclude:
-  - "@syora/vue@1.0.0"
-  - "@syora/fastify@1.1.1"
+  - "@runable/vue@1.0.0"
+  - "@runable/fastify@1.1.1"
   - syt@0.2.0
   - v-content@1.1.0 || 1.1.1 || 1.1.2 || 1.2.0 || 1.2.1 || 1.2.2 || 1.2.3 || 1.3.0 || 1.3.1 || 1.3.2 || 1.3.3

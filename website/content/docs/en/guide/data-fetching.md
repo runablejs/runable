@@ -3,7 +3,7 @@ title: Data Fetching
 description: Load data with caching, deduplication, cancellation, and SSR hydration.
 ---
 
-Use `useAsyncData()` to load a resource required to render a page. Syora waits during SSR, serializes the cache into the HTML, then restores it before hydration.
+Use `useAsyncData()` to load a resource required to render a page. Runable waits during SSR, serializes the cache into the HTML, then restores it before hydration.
 
 ## Load a resource
 

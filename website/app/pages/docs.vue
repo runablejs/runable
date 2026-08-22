@@ -50,7 +50,7 @@ const blockCode = computed(() => {
 
       <SidebarInset class="">
         <div class="h-full w-full">
-          <SyoraPage :key="$route.path" />
+          <RunablePage :key="$route.path" />
         </div>
       </SidebarInset>
     </div>

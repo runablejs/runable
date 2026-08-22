@@ -17,7 +17,7 @@ let messages: I18nMessageObject;
 let locales: I18nLocale[];
 let defaultLocale: I18nLocale;
 //  = config.defaultLocale ?? locales[0];
-const DEFAULT_STORAGE_KEY = "syora_locale";
+const DEFAULT_STORAGE_KEY = "runable_locale";
 
 function getPersistenceOptions(): LocalePersistenceOptions | undefined {
   if (!config.persistence) return;

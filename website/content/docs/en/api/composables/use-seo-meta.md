@@ -7,9 +7,9 @@ description: Declare SEO metadata with a flat, typed API.
 
 ```ts
 useSeoMeta({
-  title: "Syora",
+  title: "Runable",
   description: "A Vue framework for your backend.",
-  ogTitle: "Syora",
+  ogTitle: "Runable",
   ogDescription: "A Vue framework for your backend.",
   ogImage: "https://example.com/og.png",
   twitterCard: "summary_large_image",

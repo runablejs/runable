@@ -67,20 +67,20 @@ onMounted(() => {
           </p>
 
           <div class="flex flex-col sm:flex-row items-center gap-4 mt-4">
-            <SyoraLink
+            <RunableLink
               to="/docs/getting-started/installation"
               class="group inline-flex items-center gap-3 font-mono text-mono bg-neutral text-inverse px-8 py-4 rounded-md transition-all duration-fast ease-default hover:bg-neutral/90 hover:-translate-y-px"
             >
-              <span>npm create syora@latest</span>
+              <span>npm create runable@latest</span>
 
               <UIcon
                 name="tabler:arrow-right"
                 class="transition-transform duration-fast ease-default group-hover:translate-x-0.5 size-3.5"
               />
-            </SyoraLink>
+            </RunableLink>
 
             <a
-              href="https://github.com/syorajs/syora"
+              href="https://github.com/runablejs/runable"
               target="_blank"
               rel="noopener noreferrer"
               class="inline-flex items-center gap-2 font-mono text-mono px-6 py-4 rounded-md border border-border transition-all duration-fast ease-default hover:border-strong hover:thover:-translate-y-px"

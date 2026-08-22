@@ -1,12 +1,12 @@
 ---
 title: Koa
-description: Add Syora as the last middleware in a Koa application.
+description: Add Runable as the last middleware in a Koa application.
 ---
 
 ## Installation
 
 ```bash
-pnpm add @syora/core vue vue-router koa
+pnpm add runable vue vue-router koa
 pnpm add -D @types/koa
 ```
 
@@ -15,7 +15,7 @@ pnpm add -D @types/koa
 ```ts
 // server.ts
 import Koa from "koa";
-import { koa } from "@syora/core/adapters/koa";
+import { koa } from "runable/adapters/koa";
 
 const app = new Koa();
 

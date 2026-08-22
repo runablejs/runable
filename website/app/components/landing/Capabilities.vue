@@ -23,7 +23,7 @@ const groups = [
     label: "Structure",
     title: "Conventions that stay out of your way",
     description:
-      "Organize the application with familiar files and folders. Syora turns that structure into working code.",
+      "Organize the application with familiar files and folders. Runable turns that structure into working code.",
     items: [
       {
         title: "File-system routing",
@@ -95,7 +95,7 @@ const groups = [
     items: [
       {
         title: "Module system",
-        description: "Package and share reusable Syora features.",
+        description: "Package and share reusable Runable features.",
         icon: "tabler:blocks",
       },
       {
@@ -105,7 +105,7 @@ const groups = [
       },
       {
         title: "Runtime adapters",
-        description: "Attach Syora to the HTTP server you choose.",
+        description: "Attach Runable to the HTTP server you choose.",
         icon: "tabler:arrows-exchange",
       },
       {
@@ -147,11 +147,15 @@ const capabilityCount = groups.reduce(
           03 — Capabilities
         </p>
         <h2 id="capabilities-heading" class="font-display text-h2 text-neutral">
-          Everything you expect from a Vue meta-framework.<br class="hidden md:block" />
-          <em class="font-display italic text-accent">None of the backend lock-in.</em>
+          Everything you expect from a Vue meta-framework.<br
+            class="hidden md:block"
+          />
+          <em class="font-display italic text-accent"
+            >None of the backend lock-in.</em
+          >
         </h2>
         <p class="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-          Syora connects the repetitive pieces of a modern Vue application so
+          Runable connects the repetitive pieces of a modern Vue application so
           you can focus on the product—and still control the server beneath it.
         </p>
       </div>
@@ -168,13 +172,19 @@ const capabilityCount = groups.reduce(
               transform 250ms ease-out;
           "
         >
-          <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div
+            class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
+          >
             <div>
               <div class="mb-3 flex items-center gap-3">
-                <span class="rounded-sm bg-accent px-2 py-1 font-mono text-xs font-bold text-accent-foreground">
+                <span
+                  class="rounded-sm bg-accent px-2 py-1 font-mono text-xs font-bold text-accent-foreground"
+                >
                   {{ group.ref }}
                 </span>
-                <span class="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                <span
+                  class="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground"
+                >
                   {{ group.label }}
                 </span>
               </div>
@@ -182,7 +192,9 @@ const capabilityCount = groups.reduce(
                 {{ group.title }}
               </h3>
             </div>
-            <p class="max-w-lg text-sm leading-relaxed text-muted-foreground sm:text-right">
+            <p
+              class="max-w-lg text-sm leading-relaxed text-muted-foreground sm:text-right"
+            >
               {{ group.description }}
             </p>
           </div>
@@ -197,10 +209,22 @@ const capabilityCount = groups.reduce(
                 class="absolute inset-0 opacity-[0.045] dark:opacity-[0.08]"
                 style="
                   background-image:
-                    linear-gradient(to right, currentColor 1px, transparent 1px),
-                    linear-gradient(to bottom, currentColor 1px, transparent 1px);
+                    linear-gradient(
+                      to right,
+                      currentColor 1px,
+                      transparent 1px
+                    ),
+                    linear-gradient(
+                      to bottom,
+                      currentColor 1px,
+                      transparent 1px
+                    );
                   background-size: 32px 32px;
-                  mask-image: linear-gradient(to bottom left, black, transparent 75%);
+                  mask-image: linear-gradient(
+                    to bottom left,
+                    black,
+                    transparent 75%
+                  );
                 "
               />
               <div
@@ -214,24 +238,34 @@ const capabilityCount = groups.reduce(
 
               <div class="relative flex h-full flex-col">
                 <div class="flex items-start justify-between">
-                  <div class="flex size-12 items-center justify-center rounded-md bg-accent text-accent-foreground shadow-lg shadow-accent/20">
+                  <div
+                    class="flex size-12 items-center justify-center rounded-md bg-accent text-accent-foreground shadow-lg shadow-accent/20"
+                  >
                     <UIcon :name="group.items[0]!.icon" class="size-6" />
                   </div>
-                  <span class="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                  <span
+                    class="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground"
+                  >
                     Featured / 0{{ groupIndex + 1 }}
                   </span>
                 </div>
 
                 <div class="mt-auto pt-16">
-                  <h4 class="max-w-sm font-display text-2xl font-semibold leading-tight">
+                  <h4
+                    class="max-w-sm font-display text-2xl font-semibold leading-tight"
+                  >
                     {{ group.items[0]!.title }}
                   </h4>
-                  <p class="mt-3 max-w-sm leading-relaxed text-muted-foreground">
+                  <p
+                    class="mt-3 max-w-sm leading-relaxed text-muted-foreground"
+                  >
                     {{ group.items[0]!.description }}
                   </p>
-                  <div class="mt-7 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <div
+                    class="mt-7 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground"
+                  >
                     <span class="size-1.5 rounded-full bg-accent" />
-                    Built into Syora core
+                    Built into Runable core
                   </div>
                 </div>
               </div>
@@ -248,14 +282,18 @@ const capabilityCount = groups.reduce(
                   class="absolute left-0 top-6 h-10 w-0.75 origin-top rounded-r-md bg-accent/60 transition-all group-hover/item:scale-y-110 group-hover/item:bg-accent"
                 />
                 <div class="flex items-start justify-between gap-4">
-                  <div class="flex size-10 items-center justify-center rounded-md bg-accent/10 text-accent transition-colors group-hover/item:bg-accent group-hover/item:text-accent-foreground">
+                  <div
+                    class="flex size-10 items-center justify-center rounded-md bg-accent/10 text-accent transition-colors group-hover/item:bg-accent group-hover/item:text-accent-foreground"
+                  >
                     <UIcon :name="item.icon" class="size-5" />
                   </div>
                   <span class="font-mono text-[10px] text-muted-foreground/70">
                     0{{ itemIndex + 2 }}
                   </span>
                 </div>
-                <h4 class="mt-7 font-display text-base font-semibold leading-snug">
+                <h4
+                  class="mt-7 font-display text-base font-semibold leading-snug"
+                >
                   {{ item.title }}
                 </h4>
                 <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
@@ -277,13 +315,14 @@ const capabilityCount = groups.reduce(
         "
       >
         <p class="font-body text-caption text-muted-foreground">
-          {{ capabilityCount }} capabilities. Zero backend lock-in. One developer experience.
+          {{ capabilityCount }} capabilities. Zero backend lock-in. One
+          developer experience.
         </p>
         <UButton variant="outline" size="lg" as-child>
-          <SyoraLink to="/docs">
+          <RunableLink to="/docs">
             Explore every API
             <UIcon name="tabler:arrow-right" class="size-4" />
-          </SyoraLink>
+          </RunableLink>
         </UButton>
       </div>
     </div>

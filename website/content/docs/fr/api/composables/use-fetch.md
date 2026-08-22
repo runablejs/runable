@@ -1,6 +1,6 @@
 ---
 title: useFetch
-description: Récupérez le client HTTP ofetch exposé par Syora.
+description: Récupérez le client HTTP ofetch exposé par Runable.
 ---
 
 ```ts

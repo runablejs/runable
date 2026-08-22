@@ -1,12 +1,12 @@
 ---
-title: SyoraLink
+title: RunableLink
 description: Créez des liens typés qui naviguent avec Vue Router.
 ---
 
-`SyoraLink` enveloppe `RouterLink` et conserve ses props, attributs HTML et slots.
+`RunableLink` enveloppe `RouterLink` et conserve ses props, attributs HTML et slots.
 
 ```vue
-<SyoraLink to="/projects">Projets</SyoraLink>
+<RunableLink to="/projects">Projets</RunableLink>
 ```
 
 ## Props principales

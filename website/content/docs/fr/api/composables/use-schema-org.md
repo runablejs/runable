@@ -8,7 +8,7 @@ description: Ajoutez des données structurées Schema.org au document avec Unhea
 ```ts
 useSchemaOrg([
   defineWebSite({
-    name: "Syora",
+    name: "Runable",
     url: "https://example.com",
   }),
   defineWebPage({
@@ -17,7 +17,7 @@ useSchemaOrg([
 ]);
 ```
 
-Syora installe l'intégration Schema.org avec le `siteUrl` de la configuration comme hôte :
+Runable installe l'intégration Schema.org avec le `siteUrl` de la configuration comme hôte :
 
 ```ts
 export default defineConfig({

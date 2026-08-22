@@ -1,13 +1,13 @@
 ---
 title: Installation
-description: Install Syora in an existing backend project and prepare a minimal Vue application with Express.
+description: Install Runable in an existing backend project and prepare a minimal Vue application with Express.
 ---
 
-Add Syora to your backend, create the Vue directory, then connect HTTP requests to the rendering engine.
+Add Runable to your backend, create the Vue directory, then connect HTTP requests to the rendering engine.
 
 ## Prerequisites
 
-Use a Node.js version supported by `@syora/core`:
+Use a Node.js version supported by `runable`:
 
 | Tool | Version |
 | --- | --- |
@@ -21,23 +21,23 @@ This page uses Express and TypeScript. The same principle applies to other backe
 ::u-code-group
 
 ```bash [pnpm]
-pnpm add @syora/core vue vue-router express
-pnpm add -D @syora/cli tsx typescript @types/node @types/express
+pnpm add runable vue vue-router express
+pnpm add -D @runable/cli tsx typescript @types/node @types/express
 ```
 
 ```bash [npm]
-npm install @syora/core vue vue-router express
-npm install --save-dev @syora/cli tsx typescript @types/node @types/express
+npm install runable vue vue-router express
+npm install --save-dev @runable/cli tsx typescript @types/node @types/express
 ```
 
 ```bash [yarn]
-yarn add @syora/core vue vue-router express
-yarn add --dev @syora/cli tsx typescript @types/node @types/express
+yarn add runable vue vue-router express
+yarn add --dev @runable/cli tsx typescript @types/node @types/express
 ```
 
 ```bash [Bun]
-bun add @syora/core vue vue-router express
-bun add --dev @syora/cli tsx typescript @types/node @types/express
+bun add runable vue vue-router express
+bun add --dev @runable/cli tsx typescript @types/node @types/express
 ```
 
 ::
@@ -51,28 +51,28 @@ Configure development, type preparation, and the production build:
   "type": "module",
   "scripts": {
     "dev": "tsx watch server.ts",
-    "app:prepare": "syora prepare",
-    "app:build": "syora build"
+    "app:prepare": "runable prepare",
+    "app:build": "runable build"
   }
 }
 ```
 
-`syora prepare` generates files required during development. `syora build` produces the application build.
+`runable prepare` generates files required during development. `runable build` produces the application build.
 
 ## Create the configuration
 
-Add `syora.config.ts` at the project root:
+Add `runable.config.ts` at the project root:
 
 ```ts
-// syora.config.ts
-import { defineConfig } from "@syora/core";
+// runable.config.ts
+import { defineConfig } from "runable";
 
 export default defineConfig({
   ssr: true,
 });
 ```
 
-With this minimal configuration, Syora uses these conventions:
+With this minimal configuration, Runable uses these conventions:
 
 | Item | Default location |
 | --- | --- |
@@ -88,20 +88,20 @@ With this minimal configuration, Syora uses these conventions:
 <!-- app/pages/index.vue -->
 <template>
   <main>
-    <h1>Hello Syora</h1>
+    <h1>Hello Runable</h1>
     <p>This page is generated from app/pages/index.vue.</p>
   </main>
 </template>
 ```
 
-You do not need to declare the `/` route. Syora creates it from `index.vue`.
+You do not need to declare the `/` route. Runable creates it from `index.vue`.
 
-## Connect Express to Syora
+## Connect Express to Runable
 
 ```ts
 // server.ts
 import Express from "express";
-import { express } from "@syora/core/adapters/express";
+import { express } from "runable/adapters/express";
 
 const server = Express();
 
@@ -109,7 +109,7 @@ server.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-// The adapter initializes Syora once and serves the frontend.
+// The adapter initializes Runable once and serves the frontend.
 server.use(express());
 
 server.listen(3000, () => {
@@ -117,13 +117,13 @@ server.listen(3000, () => {
 });
 ```
 
-Place the Syora adapter after your API routes. `/api/health` remains handled by Express, while `/` is rendered by Vue.
+Place the Runable adapter after your API routes. `/api/health` remains handled by Express, while `/` is rendered by Vue.
 
-The adapter calls `createSyoraApp()` once. In development, it lets Vite respond to modules and assets before rendering the page.
+The adapter calls `createRunableApp()` once. In development, it lets Vite respond to modules and assets before rendering the page.
 
 ## Install only your backend
 
-Supported frameworks are not runtime dependencies of `@syora/core`. Install the one used by your application:
+Supported frameworks are not runtime dependencies of `runable`. Install the one used by your application:
 
 | Adapter | Consuming project dependency |
 | --- | --- |
@@ -143,7 +143,7 @@ pnpm app:prepare
 pnpm dev
 ```
 
-Open `http://localhost:3000`. The page should display “Hello Syora”.
+Open `http://localhost:3000`. The page should display “Hello Runable”.
 
 ::u-tip
 ---
@@ -151,7 +151,7 @@ variant: warning
 title: Alpha CLI
 ---
 
-The interactive `create-syora` command exists, but its starters are still evolving. The manual installation above shows every file added to your backend.
+The interactive `create-runable` command exists, but its starters are still evolving. The manual installation above shows every file added to your backend.
 
 ::
 

@@ -35,5 +35,5 @@ definePageMeta({
 });
 ```
 
-Syora délègue la détection et le rechargement des pages à Vue Router. Configurez `pages` dans `syora.config.ts` seulement si vos vues se trouvent ailleurs.
+Runable délègue la détection et le rechargement des pages à Vue Router. Configurez `pages` dans `runable.config.ts` seulement si vos vues se trouvent ailleurs.
 

@@ -3,15 +3,15 @@ title: Configuration
 description: Configure directories, SSR, metadata, aliases, modules, and Vite options for your application.
 ---
 
-`syora.config.ts` defines the application structure, rendering mode, and extensions loaded at startup.
+`runable.config.ts` defines the application structure, rendering mode, and extensions loaded at startup.
 
 ## Minimal configuration
 
 Place this file at the project root:
 
 ```ts
-// syora.config.ts
-import { defineConfig } from "@syora/core";
+// runable.config.ts
+import { defineConfig } from "runable";
 
 export default defineConfig({});
 ```
@@ -20,7 +20,7 @@ export default defineConfig({});
 
 ## Default values
 
-Without additional options, Syora uses this structure:
+Without additional options, Runable uses this structure:
 
 | Option | Default | Purpose |
 | --- | --- | --- |
@@ -37,19 +37,19 @@ Without additional options, Syora uses this structure:
 | `middlewares` | `app/middlewares` | Navigation middleware |
 | `plugins` | `app/plugins` | Application plugins |
 | `css` | `[]` | Global stylesheets |
-| `modules` | `[]` | Loaded Syora modules |
+| `modules` | `[]` | Loaded Runable modules |
 
 Relative paths are resolved from the directory containing the configuration.
 
 ## Define main directories
 
 ```ts
-// syora.config.ts
-import { defineConfig } from "@syora/core";
+// runable.config.ts
+import { defineConfig } from "runable";
 
 export default defineConfig({
   appDir: "frontend",
-  output: ".syora",
+  output: ".runable",
   distdir: "dist",
   publicDir: "static",
 });
@@ -65,7 +65,7 @@ export default defineConfig({
 });
 ```
 
-With `ssr: false`, Syora returns the HTML document without rendering the Vue tree on the server. The client then creates the application in the browser.
+With `ssr: false`, Runable returns the HTML document without rendering the Vue tree on the server. The client then creates the application in the browser.
 
 | Mode | Choose it for |
 | --- | --- |
@@ -82,7 +82,7 @@ export default defineConfig({
     meta: [
       {
         name: "description",
-        content: "A Vue application rendered with Syora.",
+        content: "A Vue application rendered with Runable.",
       },
     ],
     link: [{ rel: "icon", href: "/favicon.svg" }],
@@ -115,7 +115,7 @@ export default defineConfig({
 });
 ```
 
-Syora also adds the internal `#build` alias, which points to the generated directory defined by `output`.
+Runable also adds the internal `#build` alias, which points to the generated directory defined by `output`.
 
 ## Extend scanned directories
 
@@ -165,7 +165,7 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  modules: ["@acme/syora-auth", "./modules/content"],
+  modules: ["@acme/runable-auth", "./modules/content"],
 
   auth: {
     redirectTo: "/login",
@@ -190,13 +190,13 @@ export default defineConfig({
 });
 ```
 
-Syora merges this with its internal Vite configuration. Fields that define framework behavior, including `root`, `appType`, `ssr`, and `server.middlewareMode`, remain under Syora's control.
+Runable merges this with its internal Vite configuration. Fields that define framework behavior, including `root`, `appType`, `ssr`, and `server.middlewareMode`, remain under Runable's control.
 
 ## Complete example
 
 ```ts
 import { join } from "node:path";
-import { defineConfig } from "@syora/core";
+import { defineConfig } from "runable";
 
 export default defineConfig({
   appDir: "app",
@@ -209,7 +209,7 @@ export default defineConfig({
 
   head: {
     title: "My application",
-    meta: [{ name: "description", content: "My Syora application" }],
+    meta: [{ name: "description", content: "My Runable application" }],
   },
 
   css: ["./app/css/main.css"],

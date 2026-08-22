@@ -8,16 +8,16 @@ import { Toaster } from "~/components/ui/sonner";
   <SiteBody>
     <ConfigProvider>
       <TooltipProvider>
-        <SyoraLayout>
+        <RunableLayout>
           <div
             class="border-b text-foredeground px-4 py-1 text-center bg-background"
           >
-            Syora is currently in alpha. APIs may evolve as we refine the
+            Runable is currently in alpha. APIs may evolve as we refine the
             framework toward its first stable release.
           </div>
 
-          <SyoraPage />
-        </SyoraLayout>
+          <RunablePage />
+        </RunableLayout>
       </TooltipProvider>
     </ConfigProvider>
     <Toaster :expand="true" />

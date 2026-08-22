@@ -1,29 +1,29 @@
 ---
 title: package.json
-description: Declare scripts, dependencies, and runtime constraints for a Syora project.
+description: Declare scripts, dependencies, and runtime constraints for a Runable project.
 ---
 
 `package.json` describes the project and commands used in development or production.
 
 ```json
 {
-  "name": "my-syora-app",
+  "name": "my-runable-app",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "tsx watch server.ts",
-    "app:prepare": "syora prepare",
-    "app:build": "syora build",
+    "app:prepare": "runable prepare",
+    "app:build": "runable build",
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "@syora/core": "latest",
+    "runable": "latest",
     "express": "latest",
     "vue": "latest",
     "vue-router": "latest"
   },
   "devDependencies": {
-    "@syora/cli": "latest",
+    "@runable/cli": "latest",
     "@types/express": "latest",
     "tsx": "latest",
     "typescript": "latest",
@@ -32,6 +32,6 @@ description: Declare scripts, dependencies, and runtime constraints for a Syora 
 }
 ```
 
-Keep `@syora/core`, Vue, and the backend in `dependencies`: they are needed at runtime. Types, the CLI, and checking tools generally belong in `devDependencies`.
+Keep `runable`, Vue, and the backend in `dependencies`: they are needed at runtime. Types, the CLI, and checking tools generally belong in `devDependencies`.
 
-The `"type": "module"` field enables ES modules in `server.ts` and `syora.config.ts`.
+The `"type": "module"` field enables ES modules in `server.ts` and `runable.config.ts`.

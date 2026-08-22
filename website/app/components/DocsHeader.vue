@@ -85,7 +85,7 @@ onBeforeUnmount(() => {
         class="h-full max-md:hidden flex items-center gap-2"
         :class="cn('items-center gap-0', props.class)"
       >
-        <SyoraLink
+        <RunableLink
           v-for="{ name, href, icon } in nav"
           :key="name"
           :class="{
@@ -98,7 +98,7 @@ onBeforeUnmount(() => {
         >
           <UIcon :name="icon" class="size-4" />
           {{ name }}
-        </SyoraLink>
+        </RunableLink>
       </nav>
 
       <!-- Right side -->

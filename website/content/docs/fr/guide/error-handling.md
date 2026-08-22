@@ -3,7 +3,7 @@ title: Gestion des erreurs
 description: Capturez les erreurs Vue, Router et navigateur dans une interface cohérente.
 ---
 
-Syora installe un état d'erreur isolé pour chaque application Vue. Il capture les erreurs de rendu Vue, les erreurs Vue Router, les erreurs globales du navigateur et les promesses rejetées sans gestionnaire.
+Runable installe un état d'erreur isolé pour chaque application Vue. Il capture les erreurs de rendu Vue, les erreurs Vue Router, les erreurs globales du navigateur et les promesses rejetées sans gestionnaire.
 
 ## Afficher une erreur manuellement
 
@@ -25,7 +25,7 @@ async function save() {
 </script>
 ```
 
-Quand l'état contient une erreur, `SyoraApp` remplace l'interface courante par l'écran d'erreur.
+Quand l'état contient une erreur, `RunableApp` remplace l'interface courante par l'écran d'erreur.
 
 ## Personnaliser l'écran
 
@@ -61,7 +61,7 @@ Une erreur contient notamment `code`, `statusCode`, `message`, `stack`, `source`
 
 ## Erreurs pendant le SSR
 
-Si le rendu serveur échoue, Syora enregistre l'erreur puis effectue un second rendu avec `app/error.vue`. L'exception n'entraîne donc pas automatiquement une page HTML vide.
+Si le rendu serveur échoue, Runable enregistre l'erreur puis effectue un second rendu avec `app/error.vue`. L'exception n'entraîne donc pas automatiquement une page HTML vide.
 
 ::u-tip
 ---

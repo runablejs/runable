@@ -46,7 +46,7 @@ function handleNavigate(path: string) {
                 >
                   <Logo class="size-7 h-9/12" />
                 </div>
-                <span class="font- text-lg">Syora</span>
+                <span class="font- text-lg">Runable</span>
               </RouterLink>
             </div>
 
@@ -69,7 +69,7 @@ function handleNavigate(path: string) {
 
       <div class="scrollbar-none overflow-y-auto px-4 py-6 flex flex-col gap-2">
         <DrawerClose as-child>
-          <SyoraLink
+          <RunableLink
             v-for="(item, index) in nav"
             :key="index"
             class="text- font-medium hover:bg-accent px-2 w-max flex items-center gap-3"
@@ -78,7 +78,7 @@ function handleNavigate(path: string) {
           >
             <UIcon :name="item.icon" class="size-4" />
             {{ item.label }}
-          </SyoraLink>
+          </RunableLink>
         </DrawerClose>
       </div>
     </DrawerContent>

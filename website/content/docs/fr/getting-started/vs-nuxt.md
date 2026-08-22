@@ -1,26 +1,26 @@
 ---
-title: Syora vs Nuxt
-description: Comparez Syora et Nuxt selon le runtime serveur, l'intégration backend, les conventions Vue et la maturité de l'écosystème.
+title: Runable vs Nuxt
+description: Comparez Runable et Nuxt selon le runtime serveur, l'intégration backend, les conventions Vue et la maturité de l'écosystème.
 ---
 
-Syora et Nuxt proposent une expérience Vue structurée. Leur différence principale concerne la propriété du serveur.
+Runable et Nuxt proposent une expérience Vue structurée. Leur différence principale concerne la propriété du serveur.
 
 ## La différence en une phrase
 
-Nuxt fournit une application complète autour de Nitro. Syora ajoute une application Vue à un backend que vous choisissez et exploitez vous-même.
+Nuxt fournit une application complète autour de Nitro. Runable ajoute une application Vue à un backend que vous choisissez et exploitez vous-même.
 
 ```text
-Nuxt                          Syora
+Nuxt                          Runable
 ┌──────────────────────┐      ┌────────────────────────────┐
 │ Application Vue      │      │ Votre backend              │
 │ Nuxt                 │      │ Express, Fastify, Hono…    │
-│ Nitro                │      │ └─ Syora ─ Application Vue │
+│ Nitro                │      │ └─ Runable ─ Application Vue │
 └──────────────────────┘      └────────────────────────────┘
 ```
 
 ## Comparaison rapide
 
-| Sujet | Nuxt | Syora |
+| Sujet | Nuxt | Runable |
 | --- | --- | --- |
 | Runtime serveur | Nitro | Votre serveur HTTP |
 | Pages basées sur les fichiers | Oui | Oui |
@@ -29,11 +29,11 @@ Nuxt                          Syora
 | Middlewares de route | Oui | Oui |
 | SSR et hydratation | Oui | Oui |
 | Chargement de données | `useAsyncData()` | `useAsyncData()` |
-| Modules et plugins | Écosystème Nuxt | Systèmes propres à Syora |
+| Modules et plugins | Écosystème Nuxt | Systèmes propres à Runable |
 | Déploiements documentés | Nombreux presets Nitro | Dépend de votre backend |
 | Maturité | Écosystème établi | Projet en version alpha |
 
-Une fonctionnalité portant le même nom ne garantit pas une API strictement identique. Consultez toujours la référence Syora avant de reprendre du code Nuxt.
+Une fonctionnalité portant le même nom ne garantit pas une API strictement identique. Consultez toujours la référence Runable avant de reprendre du code Nuxt.
 
 ## Choisir Nuxt
 
@@ -60,11 +60,11 @@ Nuxt est généralement plus adapté si :
   </div>
 </div>
 
-## Choisir Syora
+## Choisir Runable
 
-Choisissez Syora lorsque le backend est une décision structurante et ne doit pas être remplacé.
+Choisissez Runable lorsque le backend est une décision structurante et ne doit pas être remplacé.
 
-Syora est généralement plus adapté si :
+Runable est généralement plus adapté si :
 
 <div class="py-3 space-y-2">
   <div class="flex flex-wrap items-center gap-2">
@@ -87,23 +87,23 @@ Syora est généralement plus adapté si :
 
 ## Ce qui change dans le code serveur
 
-Avec Syora, le point d'entrée HTTP vous appartient :
+Avec Runable, le point d'entrée HTTP vous appartient :
 
 ```ts
 // server.ts
-import { express } from "@syora/core/adapters/express";
+import { express } from "runable/adapters/express";
 
 server.get("/api/users", usersController);
 server.use(express());
 ```
 
-Vous décidez de l'ordre des middlewares, des routes API, de l'observabilité et du démarrage du serveur. L'adaptateur initialise Syora et prend en charge les requêtes qui lui parviennent.
+Vous décidez de l'ordre des middlewares, des routes API, de l'observabilité et du démarrage du serveur. L'adaptateur initialise Runable et prend en charge les requêtes qui lui parviennent.
 
 ## Ce qui reste familier
 
 Un développeur Nuxt reconnaîtra plusieurs conventions :
 
-| Nuxt | Syora |
+| Nuxt | Runable |
 | --- | --- |
 | `pages/` | `app/pages/` |
 | `layouts/` | `app/layouts/` |
@@ -122,7 +122,7 @@ variant: warning
 title: Pas un remplacement à l'identique
 ---
 
-Syora reprend des conventions utiles, pas l'intégralité de Nuxt. Les modules Nuxt, les API Nitro et les presets de déploiement Nitro ne sont pas directement compatibles.
+Runable reprend des conventions utiles, pas l'intégralité de Nuxt. Les modules Nuxt, les API Nitro et les presets de déploiement Nitro ne sont pas directement compatibles.
 
 ::
 
@@ -131,9 +131,9 @@ Syora reprend des conventions utiles, pas l'intégralité de Nuxt. Les modules N
 | Question | Si la réponse est oui |
 | --- | --- |
 | Nitro répond-il à vos besoins serveur ? | Commencez par évaluer Nuxt |
-| Un backend existant doit-il rester maître du serveur ? | Évaluez Syora |
+| Un backend existant doit-il rester maître du serveur ? | Évaluez Runable |
 | Avez-vous seulement besoin d'une SPA légère ? | Vue et Vite peuvent suffire |
-| La stabilité de production prime-t-elle sur la liberté du runtime ? | Tenez compte du statut alpha de Syora |
+| La stabilité de production prime-t-elle sur la liberté du runtime ? | Tenez compte du statut alpha de Runable |
 
 ::u-tip
 ---

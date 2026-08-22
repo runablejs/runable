@@ -3,12 +3,12 @@ title: Head and SEO
 description: Define global and page-specific HTML metadata with Unhead.
 ---
 
-Syora installs Unhead and its Schema.org integration. Metadata produced during SSR is injected into the document before it is sent.
+Runable installs Unhead and its Schema.org integration. Metadata produced during SSR is injected into the document before it is sent.
 
 ## Define global values
 
 ```ts
-// syora.config.ts
+// runable.config.ts
 export default defineConfig({
   siteUrl: "https://example.com",
   head: {
@@ -25,7 +25,7 @@ export default defineConfig({
 
 ```vue
 <script setup lang="ts">
-const project = ref({ name: "Syora", summary: "A Vue application with your backend." });
+const project = ref({ name: "Runable", summary: "A Vue application with your backend." });
 
 useSeoMeta({
   title: () => project.value.name,

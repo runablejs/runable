@@ -3,7 +3,7 @@ title: Data Fetching
 description: Chargez des données avec cache, déduplication, annulation et hydratation SSR.
 ---
 
-Utilisez `useAsyncData()` pour charger une ressource liée au rendu d'une page. Syora attend le résultat pendant le SSR, sérialise le cache dans le HTML puis le restaure avant l'hydratation.
+Utilisez `useAsyncData()` pour charger une ressource liée au rendu d'une page. Runable attend le résultat pendant le SSR, sérialise le cache dans le HTML puis le restaure avant l'hydratation.
 
 ## Charger une ressource
 

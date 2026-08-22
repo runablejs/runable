@@ -3,7 +3,7 @@ title: Auto-imports
 description: Utilisez automatiquement les composants, composables et fonctions globales de l'application.
 ---
 
-Syora génère les imports nécessaires à partir de trois collections. Vous gardez des fichiers modulaires sans répéter les imports dans chaque composant.
+Runable génère les imports nécessaires à partir de trois collections. Vous gardez des fichiers modulaires sans répéter les imports dans chaque composant.
 
 ## Composants
 
@@ -73,7 +73,7 @@ export default defineConfig({
 });
 ```
 
-Syora génère les déclarations TypeScript dans `.app`. Faites étendre `.app/tsconfig.app.json` par votre configuration TypeScript afin que l'éditeur connaisse ces symboles.
+Runable génère les déclarations TypeScript dans `.app`. Faites étendre `.app/tsconfig.app.json` par votre configuration TypeScript afin que l'éditeur connaisse ces symboles.
 
 ::u-tip
 ---

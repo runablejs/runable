@@ -1,22 +1,22 @@
 ---
 title: Modules
-description: Regroupez et distribuez une fonctionnalité Syora configurable.
+description: Regroupez et distribuez une fonctionnalité Runable configurable.
 ---
 
-Un module est une configuration Syora réutilisable. Il peut ajouter des composants, composables, layouts, plugins, middlewares, styles et même d'autres modules.
+Un module est une configuration Runable réutilisable. Il peut ajouter des composants, composables, layouts, plugins, middlewares, styles et même d'autres modules.
 
 ## Créer un module local
 
 ```text
 modules/analytics/
-├── syora.config.ts
+├── runable.config.ts
 └── runtime/
     └── plugin.ts
 ```
 
 ```ts
-// modules/analytics/syora.config.ts
-import { defineModule } from "@syora/core";
+// modules/analytics/runable.config.ts
+import { defineModule } from "runable";
 
 export default defineModule<{ endpoint: string }>({
   meta: { name: "analytics", version: "1.0.0" },
@@ -25,7 +25,7 @@ export default defineModule<{ endpoint: string }>({
   plugins: ["./runtime/plugin.ts"],
 
   setup(options) {
-    process.env.SYO_ANALYTICS_ENDPOINT ??= options.endpoint;
+    process.env.RUN_ANALYTICS_ENDPOINT ??= options.endpoint;
   },
 });
 ```
@@ -33,7 +33,7 @@ export default defineModule<{ endpoint: string }>({
 Déclarez-le dans le projet :
 
 ```ts
-// syora.config.ts
+// runable.config.ts
 export default defineConfig({
   modules: ["./modules/analytics"],
   analytics: {
@@ -42,11 +42,11 @@ export default defineConfig({
 });
 ```
 
-`configKey` indique où lire les options du consommateur. Syora fusionne `defaults` avec ces options avant d'appeler `setup()`.
+`configKey` indique où lire les options du consommateur. Runable fusionne `defaults` avec ces options avant d'appeler `setup()`.
 
 ## Ajouter des collections sans setup
 
-Un module étend directement la configuration Syora :
+Un module étend directement la configuration Runable :
 
 ```ts
 export default defineModule({
@@ -69,11 +69,11 @@ export default defineModule({
 });
 ```
 
-Les groupes s'exécutent dans l'ordre `pre`, normal, puis `post`. `dependOn` impose un ordre à l'intérieur d'un groupe ou vers un groupe antérieur. Syora refuse les dépendances inconnues, les cycles et les dépendances vers un groupe exécuté plus tard.
+Les groupes s'exécutent dans l'ordre `pre`, normal, puis `post`. `dependOn` impose un ordre à l'intérieur d'un groupe ou vers un groupe antérieur. Runable refuse les dépendances inconnues, les cycles et les dépendances vers un groupe exécuté plus tard.
 
 ## Publier un module
 
-Compilez le module avant sa publication. Pour un package installé, Syora résout son `syora.config` depuis le dossier `dist` du package. Ajoutez ensuite son nom au tableau `modules` du projet consommateur.
+Compilez le module avant sa publication. Pour un package installé, Runable résout son `runable.config` depuis le dossier `dist` du package. Ajoutez ensuite son nom au tableau `modules` du projet consommateur.
 
 ::u-tip
 ---

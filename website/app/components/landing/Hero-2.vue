@@ -37,7 +37,7 @@ onMounted(() => {
         class="mb-8 flex items-center gap-3 font-mono text-xs uppercase tracking-[0.2em] text-accent"
       >
         <span class="h-px w-8 bg-accent" />
-        Syora
+        Runable
       </div>
 
       <h1
@@ -64,7 +64,7 @@ onMounted(() => {
         "
         class="mt-10 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl sr-hidden"
       >
-        Syora is a Vue framework for teams that want the conventions and
+        Runable is a Vue framework for teams that want the conventions and
         developer experience of a meta-framework without adopting a specific
         server runtime.
       </p>
@@ -80,7 +80,7 @@ onMounted(() => {
         "
       >
         <UButton variant="default" size="lg" as-child>
-          <SyoraLink to="/why-syora"> Why Syora? </SyoraLink>
+          <RunableLink to="/why-runable"> Why Runable? </RunableLink>
         </UButton>
 
         <UButton
@@ -89,9 +89,9 @@ onMounted(() => {
           class="hover:text-foreground"
           as-child
         >
-          <SyoraLink to="/docs/getting-started/installation">
+          <RunableLink to="/docs/getting-started/installation">
             Get Started
-          </SyoraLink>
+          </RunableLink>
         </UButton>
       </div>
     </div>

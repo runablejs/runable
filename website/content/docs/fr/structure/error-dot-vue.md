@@ -20,7 +20,7 @@ const { error, clearError } = useAppError();
 </template>
 ```
 
-Syora capture les erreurs Vue transmises au gestionnaire applicatif et expose leur état avec `useAppError()`. Le composant d'erreur doit rester robuste : évitez d'y réutiliser la logique susceptible d'avoir causé l'échec.
+Runable capture les erreurs Vue transmises au gestionnaire applicatif et expose leur état avec `useAppError()`. Le composant d'erreur doit rester robuste : évitez d'y réutiliser la logique susceptible d'avoir causé l'échec.
 
 ::u-tip
 ---

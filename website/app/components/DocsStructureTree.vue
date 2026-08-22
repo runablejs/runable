@@ -65,7 +65,7 @@ onMounted(() => {
       :class="{ 'pl-3 border-l': item.parentItem }"
       @toggle="(e) => e.preventDefault()"
     >
-      <SyoraLink :to="item.value.href" class="py-4">
+      <RunableLink :to="item.value.href" class="py-4">
         <UIcon
           :name="
             item.hasChildren && isExpanded && item.value.iconOpen
@@ -76,7 +76,7 @@ onMounted(() => {
         />
 
         <span class="truncate">{{ item.value.name }}</span>
-      </SyoraLink>
+      </RunableLink>
     </TreeItem>
   </TreeRoot>
 </template>

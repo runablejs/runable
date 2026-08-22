@@ -8,7 +8,7 @@ description: Add Schema.org structured data to the document with Unhead.
 ```ts
 useSchemaOrg([
   defineWebSite({
-    name: "Syora",
+    name: "Runable",
     url: "https://example.com",
   }),
   defineWebPage({
@@ -17,7 +17,7 @@ useSchemaOrg([
 ]);
 ```
 
-Syora installs the Schema.org integration using the configured `siteUrl` as its host:
+Runable installs the Schema.org integration using the configured `siteUrl` as its host:
 
 ```ts
 export default defineConfig({

@@ -6,7 +6,7 @@
   ],
   "compilerOptions": {
     "paths": {
-      "@/*": ["../packages/core/src/*"],
+      "@/*": ["../packages/runable/src/*"],
       "~/*": ["./app/*"]
     }
   }

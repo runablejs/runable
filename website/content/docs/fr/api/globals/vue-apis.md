@@ -1,9 +1,9 @@
 ---
 title: Vue APIs
-description: Utilisez les fonctions Vue courantes sans import manuel dans l'application Syora.
+description: Utilisez les fonctions Vue courantes sans import manuel dans l'application Runable.
 ---
 
-Syora auto-importe les API Vue utilisées le plus souvent. Le comportement et les signatures restent ceux de Vue.
+Runable auto-importe les API Vue utilisées le plus souvent. Le comportement et les signatures restent ceux de Vue.
 
 ## Réactivité
 

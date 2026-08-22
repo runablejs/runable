@@ -1,6 +1,6 @@
 ---
 title: One Vue Application, Many Server Runtimes
-description: Understand what Syora adapters do and why the backend framework stays a dependency of the consuming project.
+description: Understand what Runable adapters do and why the backend framework stays a dependency of the consuming project.
 date: 2026-08-18
 authors:
   - domutala
@@ -8,21 +8,21 @@ authors:
 
 Rendering Vue is only one part of integrating a frontend into an existing server. Each backend framework has its own request objects, response lifecycle, middleware order, and error conventions.
 
-Syora adapters translate those differences into one rendering pipeline.
+Runable adapters translate those differences into one rendering pipeline.
 
 ## The adapter owns the integration boundary
 
-Without an adapter, a Node server must create the Syora application and forward every frontend request manually:
+Without an adapter, a Node server must create the Runable application and forward every frontend request manually:
 
 ```ts
 import { createServer } from "node:http";
-import { createSyoraApp, requestNode } from "@syora/core";
+import { createRunableApp, requestNode } from "runable";
 
-const syoraApp = createSyoraApp();
+const runableApp = createRunableApp();
 
 createServer(async (request, response) => {
   await requestNode({
-    syoraApp: await syoraApp,
+    runableApp: await runableApp,
     req: request,
     res: response,
   });
@@ -37,7 +37,7 @@ For Express, the result is a request handler:
 
 ```ts
 import Express from "express";
-import { express } from "@syora/core/adapters/express";
+import { express } from "runable/adapters/express";
 
 const app = Express();
 
@@ -52,7 +52,7 @@ For Hono, the result is Hono middleware:
 
 ```ts
 import { Hono } from "hono";
-import { hono } from "@syora/core/adapters/hono";
+import { hono } from "runable/adapters/hono";
 
 const app = new Hono();
 
@@ -63,11 +63,11 @@ app.get("/api/health", (context) => {
 app.use("*", hono());
 ```
 
-The public shape follows the host framework instead of forcing every project through a Syora-specific server abstraction.
+The public shape follows the host framework instead of forcing every project through a Runable-specific server abstraction.
 
 ## Initialize once, render many times
 
-An adapter creates the Syora application once and reuses the resulting promise across requests. That avoids rebuilding the Vite server or production renderer for each visit.
+An adapter creates the Runable application once and reuses the resulting promise across requests. That avoids rebuilding the Vite server or production renderer for each visit.
 
 During development, Node adapters first let Vite process the request. If Vite serves a module, stylesheet, or another development asset, the response is already complete and rendering stops. Other requests continue to the Vue renderer.
 
@@ -75,7 +75,7 @@ This response check matters. Writing headers after another middleware has sent t
 
 ## Let backend routes run first
 
-Syora should not intercept application APIs. Register the adapter after the routes that belong to the backend.
+Runable should not intercept application APIs. Register the adapter after the routes that belong to the backend.
 
 ```ts
 app.use(authentication());
@@ -87,15 +87,15 @@ This order makes ownership clear:
 
 1. shared backend middleware runs;
 2. API and server routes get the first chance to respond;
-3. Syora renders the remaining frontend request.
+3. Runable renders the remaining frontend request.
 
 Hono uses its own middleware flow, so its adapter waits for downstream handlers and renders only when the result is still a `404`.
 
 ## Install only the framework you use
 
-`@syora/core` exposes integrations for several runtimes, but it should not install all of those frameworks in every consuming application.
+`runable` exposes integrations for several runtimes, but it should not install all of those frameworks in every consuming application.
 
-If the project uses Express, install Express. If it uses Fastify, install Fastify. Framework packages required to type and develop adapters belong in Syora's development dependencies, while the consuming project owns its chosen runtime.
+If the project uses Express, install Express. If it uses Fastify, install Fastify. Framework packages required to type and develop adapters belong in Runable's development dependencies, while the consuming project owns its chosen runtime.
 
 That keeps the production dependency graph aligned with the actual server.
 

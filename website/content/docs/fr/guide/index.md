@@ -1,9 +1,9 @@
 ---
 title: Guide
-description: Construisez, rendez, étendez et livrez une application Syora.
+description: Construisez, rendez, étendez et livrez une application Runable.
 ---
 
-Ce guide explique comment utiliser les fonctionnalités de Syora dans une application réelle. Chaque page part d'un besoin concret et montre le code à écrire.
+Ce guide explique comment utiliser les fonctionnalités de Runable dans une application réelle. Chaque page part d'un besoin concret et montre le code à écrire.
 
 ## Construire l'interface
 
@@ -26,7 +26,7 @@ Ces pages couvrent les données, le SSR et les métadonnées HTML.
 | Choisir entre SSR et CSR | <a href="/docs/guide/rendering-modes.md">SSR et CSR</a> |
 | Définir le titre, le SEO et les données structurées | <a href="/docs/guide/head-and-seo.md">Head et SEO</a> |
 
-## Étendre Syora
+## Étendre Runable
 
 Utilisez les auto-imports pour le code applicatif, les plugins pour initialiser Vue et les modules pour distribuer un ensemble complet de conventions.
 

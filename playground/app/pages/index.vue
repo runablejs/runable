@@ -1,4 +1,4 @@
-<!-- components/SyoraWelcome.vue -->
+<!-- components/RunableWelcome.vue -->
 <script setup lang="ts">
 const page = ref(1);
 
@@ -15,14 +15,14 @@ const version = ref("1.1.0");
   {{ data }}+
   <div><button @click="page++">refresh</button> {{ page }}</div>
   <HelloGlobal />
-  <div class="syora-welcome">
+  <div class="runable-welcome">
     <!-- Background Grid with Vignette Fade -->
     <div class="bg-grid"></div>
 
     <!-- Main Content -->
     <main class="main">
       <div class="hero">
-        <h1 class="title">Welcome to <span class="font-bold">Syora</span></h1>
+        <h1 class="title">Welcome to <span class="font-bold">Runable</span></h1>
       </div>
 
       <!-- Features & Resources Grid -->
@@ -62,7 +62,9 @@ const version = ref("1.1.0");
           <p>
             Learn the core architecture or inspect auto-generated OpenAPI
             endpoints at
-            <a href="https://github.com/syorajs/syora" target="_blank">docs</a>.
+            <a href="https://github.com/runablejs/runable" target="_blank"
+              >docs</a
+            >.
           </p>
         </div>
 
@@ -114,9 +116,9 @@ const version = ref("1.1.0");
           </div>
           <h3>Star on GitHub</h3>
           <p>
-            Syora is open-source. Support framework development and star the
+            Runable is open-source. Support framework development and star the
             repository on
-            <a href="https://github.com/syorajs" target="_blank">GitHub</a>.
+            <a href="https://github.com/runablejs" target="_blank">GitHub</a>.
           </p>
         </div>
       </div>
@@ -145,7 +147,7 @@ body {
 /* ==========================================================================
    Design Tokens & CSS Variables (Dark theme by default)
    ========================================================================== */
-.syora-welcome {
+.runable-welcome {
   color-scheme: dark light;
   --bg-color: #000000;
   --card-bg: #0a0a0a;
@@ -169,7 +171,7 @@ body {
    Light Mode Theme Adaptation
    ========================================================================== */
 @media (prefers-color-scheme: light) {
-  .syora-welcome {
+  .runable-welcome {
     --bg-color: #ffffff;
     --card-bg: #f8fafc;
     --card-border: rgba(0, 0, 0, 0.08);
@@ -190,7 +192,7 @@ body {
 /* ==========================================================================
    Main Layout
    ========================================================================== */
-.syora-welcome {
+.runable-welcome {
   min-height: 100vh;
   background-color: var(--bg-color);
   color: var(--text-main);
@@ -207,9 +209,9 @@ body {
     color 0.3s ease;
 }
 
-.syora-welcome *,
-.syora-welcome *::before,
-.syora-welcome *::after {
+.runable-welcome *,
+.runable-welcome *::before,
+.runable-welcome *::after {
   box-sizing: border-box;
 }
 

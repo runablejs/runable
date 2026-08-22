@@ -47,13 +47,13 @@ export default defineVuePlugin({
 | `enforce: "post"` | Passe après les plugins sans priorité |
 | `dependsOn` | Attend les plugins nommés du même groupe |
 | `setup` | Configure l'application Vue |
-| `hooks` | Enregistre des hooks runtime Syora |
+| `hooks` | Enregistre des hooks runtime Runable |
 
-Syora trie séparément les groupes `pre`, normal et `post`, puis résout `dependsOn`. Une dépendance circulaire provoque une erreur explicite. Une dépendance absente produit un avertissement.
+Runable trie séparément les groupes `pre`, normal et `post`, puis résout `dependsOn`. Une dépendance circulaire provoque une erreur explicite. Une dépendance absente produit un avertissement.
 
 ## Garder le SSR isolé
 
-En SSR, Syora crée une application Vue pour chaque rendu. Créez les états mutables dans `setup()` :
+En SSR, Runable crée une application Vue pour chaque rendu. Créez les états mutables dans `setup()` :
 
 ```ts
 export default defineVuePlugin(() => {
@@ -70,6 +70,6 @@ variant: info
 title: Plugin ou module ?
 ---
 
-Un plugin initialise Vue à l'exécution. Un module configure Syora et peut fournir plusieurs plugins, composants, layouts ou autres collections.
+Un plugin initialise Vue à l'exécution. Un module configure Runable et peut fournir plusieurs plugins, composants, layouts ou autres collections.
 
 ::

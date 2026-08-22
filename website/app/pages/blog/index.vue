@@ -32,14 +32,14 @@ const { data: articles, pending } = useAsyncData("blog:index", () =>
         data-slot="title"
         class="text-4xl text-pretty tracking-tight font-bold text-highlighted sm:text-4xl"
       >
-        The Syora Blog
+        The Runable Blog
       </h1>
       <div
         data-slot="description"
         class="mt-6 text-pretty text-muted-foreground text-xl"
       >
         Product updates, technical deep dives, and practical notes from the
-        people building Syora.
+        people building Runable.
       </div>
     </div>
 
@@ -84,7 +84,7 @@ const { data: articles, pending } = useAsyncData("blog:index", () =>
         :key="article.path"
         class="group relative dark:bg-muted/20 border border-border rounded-md overflow-hidden h-full"
       >
-        <SyoraLink
+        <RunableLink
           :to="`/blog${article.path}`"
           style="
             transition:
@@ -94,7 +94,7 @@ const { data: articles, pending } = useAsyncData("blog:index", () =>
           "
           class="focus:outline-none absolute inset-0"
         >
-        </SyoraLink>
+        </RunableLink>
 
         <div
           v-if="article.meta.cover"

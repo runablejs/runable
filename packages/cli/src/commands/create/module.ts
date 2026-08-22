@@ -12,7 +12,7 @@ import {
   afterAnswer,
 } from "./shared.js";
 
-/** Answers collected for the "create a Syora module" flow: the shared answers plus the module's own identity (name and `configKey`). */
+/** Answers collected for the "create a Runable module" flow: the shared answers plus the module's own identity (name and `configKey`). */
 export interface ModuleProjectAnswers extends BaseProjectAnswers {
   moduleName: string;
   configKey: string;
@@ -22,7 +22,7 @@ export interface ModuleProjectAnswers extends BaseProjectAnswers {
 async function askModuleName(): Promise<string> {
   const name = await p.text({
     message: "Module name?",
-    placeholder: "syora-awesome-module",
+    placeholder: "runable-awesome-module",
     validate(value) {
       if (!value) return "Module name is required.";
       if (!/^(@[a-z0-9-]+\/)?[a-z0-9-]+$/.test(value)) {
@@ -37,7 +37,7 @@ async function askModuleName(): Promise<string> {
 async function askConfigKey(moduleName: string): Promise<string> {
   const key = await p.text({
     message:
-      "Config key? (used in consumer's syora.config to configure this module)",
+      "Config key? (used in consumer's runable.config to configure this module)",
     placeholder: moduleName,
   });
   return exitOnCancel(key).trim() || moduleName;
@@ -57,12 +57,12 @@ function printSummary(answers: ModuleProjectAnswers): void {
 }
 
 /**
- * Runs the "create a Syora module" flow: asks for the module's identity,
+ * Runs the "create a Runable module" flow: asks for the module's identity,
  * scaffolds a new directory named after it, copies the app template into
  * it, then wires it up via `afterAnswer` with the module-specific flags.
  */
 export async function handleModuleProject() {
-  consola.start("Mode: Create a Syora module");
+  consola.start("Mode: Create a Runable module");
 
   const moduleName = await askModuleName();
   const configKey = await askConfigKey(moduleName);
@@ -81,7 +81,7 @@ export async function handleModuleProject() {
   await copyAppTemplate(appDirResolved);
 
   // Record the config key alongside the other shared config values so it
-  // ends up in the module's generated syora.config.
+  // ends up in the module's generated runable.config.
   Object.assign(answers._config, { configKey });
 
   // `isModule: true` tells `afterAnswer` to scaffold module-specific output

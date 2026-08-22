@@ -5,7 +5,7 @@ const footerLinks = [
   {
     title: "Product",
     links: [
-      { label: "Why Syora", to: "/why-syora" },
+      { label: "Why Runable", to: "/why-runable" },
       { label: "Documentation", to: "/docs" },
       { label: "Installation", to: "/docs/getting-started/installation" },
       { label: "Integrations", to: "/docs/integrations" },
@@ -23,11 +23,11 @@ const footerLinks = [
   {
     title: "Community",
     links: [
-      { label: "GitHub", href: "https://github.com/syorajs/syora" },
-      { label: "Issues", href: "https://github.com/syorajs/syora/issues" },
+      { label: "GitHub", href: "https://github.com/runablejs/runable" },
+      { label: "Issues", href: "https://github.com/runablejs/runable/issues" },
       {
         label: "Discussions",
-        href: "https://github.com/syorajs/syora/discussions",
+        href: "https://github.com/runablejs/runable/discussions",
       },
       {
         label: "Bluesky",
@@ -45,7 +45,7 @@ const year = new Date().getFullYear();
     <div class="mx-auto max-w-7xl px-6 sm:px-10 lg:px-12">
       <div class="grid gap-14 py-16 lg:grid-cols-[1.2fr_1.8fr] lg:py-20">
         <div class="max-w-md">
-          <SyoraLink to="/" class="inline-flex items-center gap-3">
+          <RunableLink to="/" class="inline-flex items-center gap-3">
             <span
               class="flex size-11 items-center justify-center bg-accent text-accent-foreground"
             >
@@ -53,8 +53,8 @@ const year = new Date().getFullYear();
                 <Logo />
               </div>
             </span>
-            <span class="font-display text-2xl font-semibold">Syora</span>
-          </SyoraLink>
+            <span class="font-display text-2xl font-semibold">Runable</span>
+          </RunableLink>
 
           <p class="mt-6 text-base leading-relaxed text-muted-foreground">
             The Vue framework that brings productive conventions to any backend.
@@ -62,10 +62,10 @@ const year = new Date().getFullYear();
 
           <div class="mt-8 flex items-center gap-2">
             <a
-              href="https://github.com/syorajs/syora"
+              href="https://github.com/runablejs/runable"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Syora on GitHub"
+              aria-label="Runable on GitHub"
               class="flex size-10 items-center justify-center rounded-md border border-border bg-background text-muted-foreground transition-colors hover:border-strong hover:text-foreground"
             >
               <UIcon name="simple-icons:github" class="size-4" />
@@ -74,7 +74,7 @@ const year = new Date().getFullYear();
               href="https://github.com/sponsors/domutala"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Sponsor Syora"
+              aria-label="Sponsor Runable"
               class="flex size-10 items-center justify-center rounded-md border border-border bg-background text-muted-foreground transition-colors hover:border-accent hover:text-accent"
             >
               <UIcon name="simple-icons:githubsponsors" class="size-4" />
@@ -83,7 +83,7 @@ const year = new Date().getFullYear();
               href="https://bsky.app/profile/domutala.bsky.social"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Syora on Bluesky"
+              aria-label="Runable on Bluesky"
               class="flex size-10 items-center justify-center rounded-md border border-border bg-background text-muted-foreground transition-colors hover:border-strong hover:text-foreground"
             >
               <UIcon name="simple-icons:bluesky" class="size-4" />
@@ -116,13 +116,13 @@ const year = new Date().getFullYear();
                     class="size-3 opacity-0 transition-opacity group-hover:opacity-100"
                   />
                 </a>
-                <SyoraLink
+                <RunableLink
                   v-else
                   :to="link.to!"
                   class="text-sm text-muted-foreground transition-colors hover:text-accent"
                 >
                   {{ link.label }}
-                </SyoraLink>
+                </RunableLink>
               </li>
             </ul>
           </div>
@@ -132,13 +132,13 @@ const year = new Date().getFullYear();
       <div
         class="flex flex-col gap-4 border-t border-border py-6 font-mono text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
       >
-        <p>© {{ year }} Syora. Released under the MIT License.</p>
+        <p>© {{ year }} Runable. Released under the MIT License.</p>
         <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
           <span class="inline-flex items-center gap-2">
             <span class="size-1.5 rounded-full bg-accent" />
             Open source
           </span>
-          <span>Built with Vue and Syora</span>
+          <span>Built with Vue and Runable</span>
         </div>
       </div>
     </div>

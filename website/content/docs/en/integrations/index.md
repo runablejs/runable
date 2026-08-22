@@ -1,13 +1,13 @@
 ---
 title: Integrations
-description: Connect Syora to Express, Fastify, Hono, Koa, NestJS, AdonisJS, Bun, Deno, or a custom server.
+description: Connect Runable to Express, Fastify, Hono, Koa, NestJS, AdonisJS, Bun, Deno, or a custom server.
 ---
 
-An adapter connects requests from your backend to the Syora rendering engine. It initializes the application once, lets Vite serve development assets when the runtime allows it, then produces the Vue response.
+An adapter connects requests from your backend to the Runable rendering engine. It initializes the application once, lets Vite serve development assets when the runtime allows it, then produces the Vue response.
 
 ## Available adapters
 
-| Backend | Syora API | Form |
+| Backend | Runable API | Form |
 | --- | --- | --- |
 | Express | `express()` | Middleware |
 | Fastify | `fastify()` | Plugin |
@@ -18,19 +18,19 @@ An adapter connects requests from your backend to the Syora rendering engine. It
 | Bun | `bun()` | Fetch API handler |
 | Deno | `deno()` | Fetch API handler |
 
-h3 and other servers currently use the low-level `createSyoraApp()`, `requestNode()`, or `requestWeb()` functions.
+h3 and other servers currently use the low-level `createRunableApp()`, `requestNode()`, or `requestWeb()` functions.
 
 ## Shared option
 
 Every adapter accepts an already initialized instance:
 
 ```ts
-type SyoraAdapterOptions = {
-  syoraApp?: Promise<ViteDevServer | null> | ViteDevServer | null;
+type RunableAdapterOptions = {
+  runableApp?: Promise<ViteDevServer | null> | ViteDevServer | null;
 };
 ```
 
-Without this option, the adapter calls `createSyoraApp()` itself once.
+Without this option, the adapter calls `createRunableApp()` itself once.
 
 ::u-tip
 ---

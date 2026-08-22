@@ -1,6 +1,6 @@
 ---
 title: useApp
-description: Récupérez l'application Vue courante, ses propriétés globales et les hooks Syora.
+description: Récupérez l'application Vue courante, ses propriétés globales et les hooks Runable.
 ---
 
 ```ts

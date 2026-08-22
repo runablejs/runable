@@ -1,9 +1,9 @@
 ---
 title: Composables
-description: Reference for the auto-imported Syora, Vue Router, Unhead, and Schema.org composables.
+description: Reference for the auto-imported Runable, Vue Router, Unhead, and Schema.org composables.
 ---
 
-Composables are available without imports in components, pages, layouts, middleware, and plugins scanned by Syora.
+Composables are available without imports in components, pages, layouts, middleware, and plugins scanned by Runable.
 
 | Area | API |
 | --- | --- |

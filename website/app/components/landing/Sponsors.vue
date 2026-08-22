@@ -85,9 +85,9 @@ const investments = [
           <p
             class="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground"
           >
-            Sponsorship gives Syora the time and resources to improve the core,
-            maintain integrations, and produce documentation developers can rely
-            on.
+            Sponsorship gives Runable the time and resources to improve the
+            core, maintain integrations, and produce documentation developers
+            can rely on.
           </p>
         </div>
       </div>
@@ -122,7 +122,7 @@ const investments = [
                 Put your name behind backend freedom.
               </h3>
               <p class="mt-5 text-lg leading-relaxed text-muted-foreground">
-                Become one of Syora's first sponsors. Your support will be
+                Become one of Runable's first sponsors. Your support will be
                 recognized here and directly fund the project's development.
               </p>
               <UButton size="lg" as-child class="mt-8">
@@ -167,7 +167,7 @@ const investments = [
       </div>
 
       <p class="mt-7 text-center font-mono text-xs text-muted-foreground">
-        Syora remains open source and MIT licensed for everyone.
+        Runable remains open source and MIT licensed for everyone.
       </p>
     </div>
   </section>

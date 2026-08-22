@@ -3,12 +3,12 @@ title: Head et SEO
 description: Définissez les métadonnées HTML globales et propres à chaque page avec Unhead.
 ---
 
-Syora installe Unhead et son intégration Schema.org. Les métadonnées produites pendant le SSR sont injectées dans le document avant son envoi.
+Runable installe Unhead et son intégration Schema.org. Les métadonnées produites pendant le SSR sont injectées dans le document avant son envoi.
 
 ## Définir les valeurs globales
 
 ```ts
-// syora.config.ts
+// runable.config.ts
 export default defineConfig({
   siteUrl: "https://example.com",
   head: {
@@ -25,7 +25,7 @@ export default defineConfig({
 
 ```vue
 <script setup lang="ts">
-const project = ref({ name: "Syora", summary: "Application Vue avec votre backend." });
+const project = ref({ name: "Runable", summary: "Application Vue avec votre backend." });
 
 useSeoMeta({
   title: () => project.value.name,

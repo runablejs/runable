@@ -10,12 +10,12 @@ import { handleStarterProject } from "./starter.js";
 export default defineCommand({
   meta: {
     name: "create",
-    description: "Create Syora project",
+    description: "Create Runable project",
   },
   args: {},
 
   async run() {
-    p.intro("Syora");
+    p.intro("Runable");
 
     const projectType = await p.select({
       message: "What do you want to create?",
@@ -32,8 +32,8 @@ export default defineCommand({
         },
         {
           value: "module",
-          label: "Create a Syora module",
-          hint: "A reusable module for the Syora ecosystem",
+          label: "Create a Runable module",
+          hint: "A reusable module for the Runable ecosystem",
         },
       ],
     });
@@ -64,11 +64,11 @@ export default defineCommand({
 
     const framework = frameworks.find((f) => f.value === answer.framework);
 
-    // Not every flow ends up with a framework (e.g. a Syora module has none)
+    // Not every flow ends up with a framework (e.g. a Runable module has none)
     // — only print the framework-specific docs link when one was chosen.
     if (framework) {
       consola.info(
-        `\n Documentation: https://syora.com/docs/integrations/${framework.value}`,
+        `\n Documentation: https://runable.com/docs/integrations/${framework.value}`,
       );
       consola.info(`\n ${framework.label} Documentation: ${framework.docs}`);
     }

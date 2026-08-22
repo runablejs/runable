@@ -1,6 +1,6 @@
 ---
 title: NestJS
-description: Branchez Syora après les contrôleurs d'une application NestJS utilisant Express.
+description: Branchez Runable après les contrôleurs d'une application NestJS utilisant Express.
 ---
 
 L'adaptateur actuel cible la plateforme Express de NestJS.
@@ -8,7 +8,7 @@ L'adaptateur actuel cible la plateforme Express de NestJS.
 ## Installation
 
 ```bash
-pnpm add @syora/core vue vue-router @nestjs/common @nestjs/core @nestjs/platform-express
+pnpm add runable vue vue-router @nestjs/common @nestjs/core @nestjs/platform-express
 ```
 
 ## Configuration
@@ -16,7 +16,7 @@ pnpm add @syora/core vue vue-router @nestjs/common @nestjs/core @nestjs/platform
 ```ts
 // main.ts
 import { NestFactory } from "@nestjs/core";
-import { nestjs } from "@syora/core/adapters/nestjs";
+import { nestjs } from "runable/adapters/nestjs";
 import { AppModule } from "./app.module.js";
 
 const app = await NestFactory.create(AppModule);
@@ -28,7 +28,7 @@ app.use(nestjs());
 await app.listen(3000);
 ```
 
-`nestjs()` retourne une fonction compatible avec `NestMiddleware["use"]`. L'appel à `app.init()` avant `app.use()` garantit que les routes des contrôleurs sont enregistrées avant le fallback Syora.
+`nestjs()` retourne une fonction compatible avec `NestMiddleware["use"]`. L'appel à `app.init()` avant `app.use()` garantit que les routes des contrôleurs sont enregistrées avant le fallback Runable.
 
 ::u-tip
 ---

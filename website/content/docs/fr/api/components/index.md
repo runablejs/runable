@@ -1,22 +1,22 @@
 ---
 title: Components
-description: Référence des composants globaux intégrés au runtime Syora.
+description: Référence des composants globaux intégrés au runtime Runable.
 ---
 
-Syora enregistre ses composants internes globalement. Utilisez-les directement dans un template.
+Runable enregistre ses composants internes globalement. Utilisez-les directement dans un template.
 
 | Composant | Rôle |
 | --- | --- |
-| `SyoraPage` | Afficher la route courante |
-| `SyoraLink` | Naviguer avec Vue Router |
-| `SyoraLayout` | Appliquer le layout de la page |
+| `RunablePage` | Afficher la route courante |
+| `RunableLink` | Naviguer avec Vue Router |
+| `RunableLayout` | Appliquer le layout de la page |
 | `ClientOnly` | Différer un rendu jusqu'au montage client |
 
 ```vue
 <template>
-  <SyoraLayout>
-    <SyoraPage />
-  </SyoraLayout>
+  <RunableLayout>
+    <RunablePage />
+  </RunableLayout>
 </template>
 ```
 

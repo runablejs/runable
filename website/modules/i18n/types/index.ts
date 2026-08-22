@@ -34,7 +34,7 @@ export type LocalePersistenceStrategy =
 
 export interface LocalePersistenceOptions {
   strategy: LocalePersistenceStrategy;
-  /** Storage key or cookie name. @default "syora_locale" */
+  /** Storage key or cookie name. @default "runable_locale" */
   key?: string;
   /** Cookie lifetime in seconds. Only used by the cookie strategy. */
   maxAge?: number;

@@ -23,4 +23,4 @@ export function formatPrice(value: number) {
 
 Unlike a composable, a global does not need reactive state or the Vue lifecycle. Prefer pure, easily tested functions.
 
-Syora scans JavaScript and TypeScript files, generates `.app/globals.d.ts`, then transforms free references into imports. Avoid overly generic names that could conflict with local variables or browser APIs.
+Runable scans JavaScript and TypeScript files, generates `.app/globals.d.ts`, then transforms free references into imports. Avoid overly generic names that could conflict with local variables or browser APIs.

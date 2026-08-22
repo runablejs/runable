@@ -1,9 +1,9 @@
 ---
 title: .output
-description: Comprenez le contenu du build de production généré par Syora.
+description: Comprenez le contenu du build de production généré par Runable.
 ---
 
-La commande `syora build` écrit le build de production dans `.output/` par défaut.
+La commande `runable build` écrit le build de production dans `.output/` par défaut.
 
 ```text
 .output/
@@ -11,15 +11,15 @@ La commande `syora build` écrit le build de production dans `.output/` par déf
 │   ├── assets/          # JavaScript, CSS et assets avec hash
 │   └── index.html
 ├── server/              # Bundle SSR, si le SSR est actif
-└── manifest.js          # Entrées utilisées par le runtime Syora
+└── manifest.js          # Entrées utilisées par le runtime Runable
 ```
 
-Avec `ssr: false`, Syora ne produit pas le bundle serveur. Le dossier `client/` suffit à démarrer l'application dans le navigateur.
+Avec `ssr: false`, Runable ne produit pas le bundle serveur. Le dossier `client/` suffit à démarrer l'application dans le navigateur.
 
 ## Changer l'emplacement
 
 ```ts
-// syora.config.ts
+// runable.config.ts
 export default defineConfig({
   distdir: "dist",
 });

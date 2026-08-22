@@ -1,5 +1,5 @@
 ---
-"@syora/cli": patch
+"@runable/cli": patch
 ---
 
 clean code

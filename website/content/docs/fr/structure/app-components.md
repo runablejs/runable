@@ -3,7 +3,7 @@ title: app/components
 description: Créez des composants Vue disponibles sans import manuel.
 ---
 
-Syora détecte les composants Vue de ce dossier et les rend disponibles dans les templates.
+Runable détecte les composants Vue de ce dossier et les rend disponibles dans les templates.
 
 ```vue
 <!-- app/components/AppLogo.vue -->
@@ -34,7 +34,7 @@ export default defineConfig({
 });
 ```
 
-Syora écrit les déclarations dans `.app/components.d.ts`. Si l'autocomplétion ne reflète pas un nouveau composant, relancez `syora prepare` ou le serveur de développement.
+Runable écrit les déclarations dans `.app/components.d.ts`. Si l'autocomplétion ne reflète pas un nouveau composant, relancez `runable prepare` ou le serveur de développement.
 
 ## Définir le nom dans le composant
 
@@ -53,7 +53,7 @@ defineOptions({
 </template>
 ```
 
-Le composant est alors disponible avec `<PrimaryAction />`, même si le fichier s'appelle `button.vue`. Syora reconnaît aussi l'API Options et `defineComponent()` :
+Le composant est alors disponible avec `<PrimaryAction />`, même si le fichier s'appelle `button.vue`. Runable reconnaît aussi l'API Options et `defineComponent()` :
 
 ```ts
 export default defineComponent({
@@ -61,37 +61,37 @@ export default defineComponent({
 });
 ```
 
-Le nom doit être une chaîne statique. Une fonction `componentName` définie dans `syora.config.ts` garde la priorité. Sans nom déclaré ni renommage configuré, Syora utilise le nom du fichier et, selon `pathPrefix`, celui de ses dossiers parents.
+Le nom doit être une chaîne statique. Une fonction `componentName` définie dans `runable.config.ts` garde la priorité. Sans nom déclaré ni renommage configuré, Runable utilise le nom du fichier et, selon `pathPrefix`, celui de ses dossiers parents.
 
 Cette détection s'applique aussi aux composants écrits directement dans un fichier JavaScript ou TypeScript :
 
 ```ts
 // app/components/layout.ts
 export default defineComponent({
-  name: "SyoraLayout",
+  name: "RunableLayout",
   setup() {
     // ...
   },
 });
 ```
 
-## Composants fournis par Syora
+## Composants fournis par Runable
 
-Syora enregistre plusieurs composants internes avec les composants du projet :
+Runable enregistre plusieurs composants internes avec les composants du projet :
 
 | Composant | Rôle |
 | --- | --- |
-| `SyoraPage` | Affiche la route Vue Router courante |
-| `SyoraLink` | Crée un lien de navigation avec les props de `RouterLink` |
-| `SyoraLayout` | Applique le layout associé à la page |
+| `RunablePage` | Affiche la route Vue Router courante |
+| `RunableLink` | Crée un lien de navigation avec les props de `RouterLink` |
+| `RunableLayout` | Applique le layout associé à la page |
 | `ClientOnly` | Rend son contenu uniquement dans le navigateur |
 
 ```vue
 <template>
   <nav>
-    <SyoraLink to="/projects">Projets</SyoraLink>
+    <RunableLink to="/projects">Projets</RunableLink>
   </nav>
 
-  <SyoraPage />
+  <RunablePage />
 </template>
 ```

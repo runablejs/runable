@@ -3,7 +3,7 @@ title: Error handling
 description: Capture Vue, Router, and browser errors in a consistent interface.
 ---
 
-Syora installs error state isolated to each Vue application. It captures Vue rendering errors, Vue Router errors, global browser errors, and unhandled promise rejections.
+Runable installs error state isolated to each Vue application. It captures Vue rendering errors, Vue Router errors, global browser errors, and unhandled promise rejections.
 
 ## Display an error manually
 
@@ -25,7 +25,7 @@ async function save() {
 </script>
 ```
 
-When the state contains an error, `SyoraApp` replaces the current interface with the error screen.
+When the state contains an error, `RunableApp` replaces the current interface with the error screen.
 
 ## Customize the screen
 
@@ -61,7 +61,7 @@ An error includes `code`, `statusCode`, `message`, `stack`, `source`, `info`, `u
 
 ## Errors during SSR
 
-If server rendering fails, Syora records the error and renders `app/error.vue` in a second pass. The exception therefore does not automatically produce an empty HTML page.
+If server rendering fails, Runable records the error and renders `app/error.vue` in a second pass. The exception therefore does not automatically produce an empty HTML page.
 
 ::u-tip
 ---

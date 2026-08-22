@@ -10,7 +10,7 @@ Server-side rendering is only useful when the browser can take over the rendered
 
 A page fetches a resource on the server, renders HTML, and sends it to the browser. Vue then starts on the client and runs the same request again because its local state is empty. The user sees the correct page, but the application has paid for the data twice.
 
-Syora's `useAsyncData()` connects both sides of that lifecycle.
+Runable's `useAsyncData()` connects both sides of that lifecycle.
 
 ## Load once during server rendering
 
@@ -46,9 +46,9 @@ const {
 </template>
 ```
 
-During SSR, Syora waits for the awaited data, stores the result in its request cache, and renders the list. It then serializes that cache into the HTML response.
+During SSR, Runable waits for the awaited data, stores the result in its request cache, and renders the list. It then serializes that cache into the HTML response.
 
-Before Vue hydrates in the browser, Syora restores the serialized entries. The client finds `projects` in the cache and can reuse it instead of starting the same request immediately.
+Before Vue hydrates in the browser, Runable restores the serialized entries. The client finds `projects` in the cache and can reuse it instead of starting the same request immediately.
 
 ## Treat the key as part of the data model
 

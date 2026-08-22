@@ -1,0 +1,112 @@
+{
+  "name": "runable",
+  "version": "1.0.0-alpha.3",
+  "private": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./adapters/adonis": {
+      "types": "./dist/adapters/adonis.d.ts",
+      "import": "./dist/adapters/adonis.js",
+      "require": "./dist/adapters/adonis.js"
+    },
+    "./adapters/bun": {
+      "types": "./dist/adapters/bun.d.ts",
+      "import": "./dist/adapters/bun.js",
+      "require": "./dist/adapters/bun.js"
+    },
+    "./adapters/deno": {
+      "types": "./dist/adapters/deno.d.ts",
+      "import": "./dist/adapters/deno.js",
+      "require": "./dist/adapters/deno.js"
+    },
+    "./adapters/express": {
+      "types": "./dist/adapters/express.d.ts",
+      "import": "./dist/adapters/express.js",
+      "require": "./dist/adapters/express.js"
+    },
+    "./adapters/fastify": {
+      "types": "./dist/adapters/fastify.d.ts",
+      "import": "./dist/adapters/fastify.js",
+      "require": "./dist/adapters/fastify.js"
+    },
+    "./adapters/hono": {
+      "types": "./dist/adapters/hono.d.ts",
+      "import": "./dist/adapters/hono.js",
+      "require": "./dist/adapters/hono.js"
+    },
+    "./adapters/koa": {
+      "types": "./dist/adapters/koa.d.ts",
+      "import": "./dist/adapters/koa.js",
+      "require": "./dist/adapters/koa.js"
+    },
+    "./adapters/nestjs": {
+      "types": "./dist/adapters/nestjs.d.ts",
+      "import": "./dist/adapters/nestjs.js",
+      "require": "./dist/adapters/nestjs.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "prepublish": "pnpm build"
+  },
+  "dependencies": {
+    "@babel/parser": "catalog:",
+    "@babel/traverse": "catalog:",
+    "@babel/types": "catalog:",
+    "@tsdown/css": "catalog:",
+    "@unhead/schema-org": "catalog:",
+    "@unhead/vue": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
+    "@vue/compiler-core": "catalog:",
+    "acorn": "catalog:",
+    "c12": "catalog:",
+    "devalue": "catalog:",
+    "dotenv": "catalog:",
+    "estree-walker": "catalog:",
+    "fast-glob": "catalog:",
+    "lodash": "catalog:",
+    "magic-string": "catalog:",
+    "mlly": "catalog:",
+    "ofetch": "catalog:",
+    "syt": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "unhead": "catalog:",
+    "unimport": "catalog:",
+    "unplugin": "catalog:",
+    "unplugin-vue": "catalog:",
+    "vite": "catalog:",
+    "vue": "catalog:",
+    "vue-router": "catalog:",
+    "vue-tsc": "catalog:"
+  },
+  "devDependencies": {
+    "@adonisjs/core": "catalog:",
+    "@nestjs/common": "catalog:",
+    "@nestjs/core": "catalog:",
+    "@nestjs/platform-express": "catalog:",
+    "@types/express": "catalog:",
+    "@types/koa": "catalog:",
+    "@types/lodash": "catalog:",
+    "@types/node": "catalog:",
+    "express": "catalog:",
+    "fastify": "catalog:",
+    "hono": "catalog:",
+    "koa": "catalog:",
+    "unctx": "^3.0.1"
+  },
+  "engines": {
+    "node": "^22.18.0 || >=24.12.0"
+  }
+}

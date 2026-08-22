@@ -1,9 +1,9 @@
 ---
 title: app/css
-description: Organisez les feuilles de style globales chargées par Syora.
+description: Organisez les feuilles de style globales chargées par Runable.
 ---
 
-Le dossier `app/css/` est une convention d'organisation, mais ses fichiers ne sont pas chargés automatiquement. Déclarez chaque entrée globale dans `syora.config.ts`.
+Le dossier `app/css/` est une convention d'organisation, mais ses fichiers ne sont pas chargés automatiquement. Déclarez chaque entrée globale dans `runable.config.ts`.
 
 ```css
 /* app/css/main.css */

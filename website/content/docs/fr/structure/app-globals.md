@@ -23,5 +23,5 @@ export function formatPrice(value: number) {
 
 Contrairement à un composable, une globale n'a pas besoin de s'appuyer sur l'état réactif ou le cycle de vie Vue. Préférez des fonctions pures et faciles à tester.
 
-Syora analyse les fichiers JavaScript et TypeScript, génère `.app/globals.d.ts`, puis transforme les références libres en imports. Évitez les noms trop génériques qui pourraient entrer en conflit avec une variable locale ou une API du navigateur.
+Runable analyse les fichiers JavaScript et TypeScript, génère `.app/globals.d.ts`, puis transforme les références libres en imports. Évitez les noms trop génériques qui pourraient entrer en conflit avec une variable locale ou une API du navigateur.
 

@@ -54,7 +54,7 @@ Plusieurs middlewares peuvent être déclarés :
 definePageMeta({ middleware: ["auth", "admin"] });
 ```
 
-Syora charge les middlewares nécessaires, supprime les doublons puis les exécute dans l'ordre. Les middlewares globaux passent avant ceux de la route.
+Runable charge les middlewares nécessaires, supprime les doublons puis les exécute dans l'ordre. Les middlewares globaux passent avant ceux de la route.
 
 ::u-tip
 ---

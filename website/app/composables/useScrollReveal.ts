@@ -2,19 +2,19 @@
  * useScrollReveal — Composable d'animations au scroll
  * ====================================================
  * Basé sur IntersectionObserver natif. Zero dépendance externe.
- * 
- * Philosophie Syora :
+ *
+ * Philosophie Runable :
  *   - Pas de rebond, pas d'élasticité, pas de scale
  *   - Gestes de précision : opacity + translateY microscopique
  *   - Stagger contrôlé pour les grilles
  *   - Respect des tokens motion (duration, ease)
- * 
+ *
  * Usage :
  *   const { reveal } = useScrollReveal({ threshold: 0.15, stagger: 80 });
  *   reveal(elRef);
  */
 
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from "vue";
 
 export interface ScrollRevealOptions {
   /** Seuil de visibilité avant déclenchement (0–1) */
@@ -37,12 +37,12 @@ export interface ScrollRevealOptions {
 
 const defaultOptions: Required<ScrollRevealOptions> = {
   threshold: 0.15,
-  rootMargin: '0px 0px -40px 0px',
+  rootMargin: "0px 0px -40px 0px",
   stagger: 0,
-  hiddenClass: 'sr-hidden',
-  visibleClass: 'sr-visible',
-  duration: 'var(--syora-duration-base, 200ms)',
-  ease: 'var(--syora-ease-smooth, cubic-bezier(0.4, 0, 0.2, 1))',
+  hiddenClass: "sr-hidden",
+  visibleClass: "sr-visible",
+  duration: "var(--runable-duration-base, 200ms)",
+  ease: "var(--runable-ease-smooth, cubic-bezier(0.4, 0, 0.2, 1))",
   y: 12,
 };
 
@@ -61,16 +61,17 @@ export function useScrollReveal(options: ScrollRevealOptions = {}) {
   ) {
     if (!target) return;
 
-    const elements = Array.isArray(target) || target instanceof NodeList
-      ? Array.from(target)
-      : [target];
+    const elements =
+      Array.isArray(target) || target instanceof NodeList
+        ? Array.from(target)
+        : [target];
 
     if (elements.length === 0) return;
 
     // Applique les styles initiaux (hidden state)
     elements.forEach((el, index) => {
       el.classList.add(opts.hiddenClass);
-      el.style.transitionProperty = 'opacity, transform';
+      el.style.transitionProperty = "opacity, transform";
       el.style.transitionDuration = opts.duration;
       el.style.transitionTimingFunction = opts.ease;
       el.style.transitionDelay = `${index * opts.stagger}ms`;
@@ -110,7 +111,7 @@ export function useScrollReveal(options: ScrollRevealOptions = {}) {
 
     const children = childSelector
       ? Array.from(container.querySelectorAll<HTMLElement>(childSelector))
-      : Array.from(container.children) as HTMLElement[];
+      : (Array.from(container.children) as HTMLElement[]);
 
     reveal(children);
 

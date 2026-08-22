@@ -1,34 +1,34 @@
 ---
 title: .env
-description: Load typed environment variables and control which values Syora exposes to the browser.
+description: Load typed environment variables and control which values Runable exposes to the browser.
 ---
 
-Syora loads environment files for the active Vite mode and variables already present in `process.env`. Use `useRuntime()` to read them from the application.
+Runable loads environment files for the active Vite mode and variables already present in `process.env`. Use `useRuntime()` to read them from the application.
 
 ## Declare variables
 
-Syora recognizes three prefixes: `SYO_`, `SYORA_`, and `VITE_`. Prefer `SYO_` in new projects to distinguish Syora configuration clearly.
+Runable recognizes three prefixes: `RUN_`, and `VITE_`. Prefer `RUN_` in new projects to distinguish Runable configuration clearly.
 
 ```dotenv
 # Available in the browser and during SSR
-SYO_PUBLIC_API_BASE=/api
-SYO_PUBLIC_FEATURE_ENABLED=true
+RUN_PUBLIC_API_BASE=/api
+RUN_PUBLIC_FEATURE_ENABLED=true
 
 # Available only on the server
-SYO_DATABASE_URL=postgres://localhost/acme
-SYO_RETRY_COUNT=3
+RUN_DATABASE_URL=postgres://localhost/acme
+RUN_RETRY_COUNT=3
 ```
 
 The `PUBLIC_` segment controls client exposure:
 
 | Name in `.env` | Generated property | Client | Server |
 | --- | --- | --- | --- |
-| `SYO_PUBLIC_API_BASE` | `runtime.public.apiBase` | Yes | Yes |
-| `SYORA_PUBLIC_APP_NAME` | `runtime.public.appName` | Yes | Yes |
-| `SYO_DATABASE_URL` | `runtime.databaseUrl` | No | Yes |
-| `SYORA_RETRY_COUNT` | `runtime.retryCount` | No | Yes |
+| `RUN_PUBLIC_API_BASE` | `runtime.public.apiBase` | Yes | Yes |
+| `RUN_PUBLIC_APP_NAME` | `runtime.public.appName` | Yes | Yes |
+| `RUN_DATABASE_URL` | `runtime.databaseUrl` | No | Yes |
+| `RUN_RETRY_COUNT` | `runtime.retryCount` | No | Yes |
 
-Syora removes the prefix and converts the name to `camelCase`.
+Runable removes the prefix and converts the name to `camelCase`.
 
 ## Read configuration
 
@@ -55,28 +55,28 @@ if (import.meta.server) {
 }
 ```
 
-You can also import `useRuntime` from `@syora/core` in backend code. This version loads `.env`, merges values with `process.env`, and gives process variables priority.
+You can also import `useRuntime` from `runable` in backend code. This version loads `.env`, merges values with `process.env`, and gives process variables priority.
 
 ## Generated types
 
-At startup, Syora analyzes values and writes declarations to `.app/runtime.d.ts`. Your editor therefore knows the available properties without a manual TypeScript interface.
+At startup, Runable analyzes values and writes declarations to `.app/runtime.d.ts`. Your editor therefore knows the available properties without a manual TypeScript interface.
 
 ```dotenv
-SYO_PUBLIC_ENABLED=true
-SYO_PORT=3000
-SYO_TAGS=["documentation","dashboard"]
+RUN_PUBLIC_ENABLED=true
+RUN_PORT=3000
+RUN_TAGS=["documentation","dashboard"]
 ```
 
-These values become a boolean, number, and array respectively. Syora also recognizes `null`, `undefined`, and valid JSON objects. Every other value remains a string.
+These values become a boolean, number, and array respectively. Runable also recognizes `null`, `undefined`, and valid JSON objects. Every other value remains a string.
 
 Restart the development server after adding or renaming a variable to regenerate types and injected values.
 
 ## Direct access with import.meta.env
 
-Syora also replaces static accesses using the `SYO_` and `SYORA_` prefixes:
+Runable also replaces static accesses using the `RUN_` and `RUN_` prefixes:
 
 ```ts
-const apiBase = import.meta.env.SYO_PUBLIC_API_BASE;
+const apiBase = import.meta.env.RUN_PUBLIC_API_BASE;
 ```
 
 Use dot notation and the full variable name. Dynamic access such as `import.meta.env[key]` is not transformed.
@@ -90,7 +90,7 @@ surface: solid
 title: Never put a secret in a public variable
 ---
 
-Every `SYO_PUBLIC_*`, `SYORA_PUBLIC_*`, or `VITE_PUBLIC_*` variable is bundled for the client. Treat its value as public.
+Every `RUN_PUBLIC_*`, `RUN_PUBLIC_*`, or `VITE_PUBLIC_*` variable is bundled for the client. Treat its value as public.
 
 Also avoid the `VITE_` prefix for secrets: Vite exposes `VITE_*` variables through `import.meta.env` independently of the object built by `useRuntime()`.
 
@@ -102,6 +102,6 @@ Keep local values in `.env` or standard Vite mode variants such as `.env.develop
 
 ```dotenv
 # .env.example
-SYO_PUBLIC_API_BASE=
-SYO_DATABASE_URL=
+RUN_PUBLIC_API_BASE=
+RUN_DATABASE_URL=
 ```

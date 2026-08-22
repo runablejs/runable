@@ -3,15 +3,15 @@ title: Configuration
 description: Configurez les dossiers, le SSR, les métadonnées, les alias, les modules et les options Vite de votre application.
 ---
 
-Le fichier `syora.config.ts` définit la structure de l'application, son rendu et les extensions chargées au démarrage.
+Le fichier `runable.config.ts` définit la structure de l'application, son rendu et les extensions chargées au démarrage.
 
 ## Configuration minimale
 
 Placez ce fichier à la racine du projet :
 
 ```ts
-// syora.config.ts
-import { defineConfig } from "@syora/core";
+// runable.config.ts
+import { defineConfig } from "runable";
 
 export default defineConfig({});
 ```
@@ -20,7 +20,7 @@ export default defineConfig({});
 
 ## Valeurs par défaut
 
-Sans option supplémentaire, Syora utilise cette structure :
+Sans option supplémentaire, Runable utilise cette structure :
 
 | Option | Valeur par défaut | Rôle |
 | --- | --- | --- |
@@ -37,19 +37,19 @@ Sans option supplémentaire, Syora utilise cette structure :
 | `middlewares` | `app/middlewares` | Middlewares de navigation |
 | `plugins` | `app/plugins` | Plugins applicatifs |
 | `css` | `[]` | Feuilles de style globales |
-| `modules` | `[]` | Modules Syora chargés |
+| `modules` | `[]` | Modules Runable chargés |
 
 Les chemins relatifs sont résolus depuis le dossier qui contient la configuration.
 
 ## Définir les dossiers principaux
 
 ```ts
-// syora.config.ts
-import { defineConfig } from "@syora/core";
+// runable.config.ts
+import { defineConfig } from "runable";
 
 export default defineConfig({
   appDir: "frontend",
-  output: ".syora",
+  output: ".runable",
   distdir: "dist",
   publicDir: "static",
 });
@@ -60,13 +60,13 @@ Utilisez `publicDir: false` si votre backend ou un CDN gère tous les assets sta
 ## Activer ou désactiver le SSR
 
 ```ts
-// syora.config.ts
+// runable.config.ts
 export default defineConfig({
   ssr: false,
 });
 ```
 
-Avec `ssr: false`, Syora renvoie le document HTML sans rendre l'arbre Vue sur le serveur. Le client crée ensuite l'application dans le navigateur.
+Avec `ssr: false`, Runable renvoie le document HTML sans rendre l'arbre Vue sur le serveur. Le client crée ensuite l'application dans le navigateur.
 
 | Mode | Choisissez-le pour |
 | --- | --- |
@@ -76,7 +76,7 @@ Avec `ssr: false`, Syora renvoie le document HTML sans rendre l'arbre Vue sur le
 ## Configurer les métadonnées HTML
 
 ```ts
-// syora.config.ts
+// runable.config.ts
 export default defineConfig({
   siteUrl: "https://example.com",
   head: {
@@ -84,7 +84,7 @@ export default defineConfig({
     meta: [
       {
         name: "description",
-        content: "Une application Vue rendue avec Syora.",
+        content: "Une application Vue rendue avec Runable.",
       },
     ],
     link: [{ rel: "icon", href: "/favicon.svg" }],
@@ -97,7 +97,7 @@ export default defineConfig({
 ## Ajouter des styles globaux
 
 ```ts
-// syora.config.ts
+// runable.config.ts
 export default defineConfig({
   css: ["./app/css/reset.css", "./app/css/main.css"],
 });
@@ -108,7 +108,7 @@ Le tableau `css` accepte les fichiers que Vite sait traiter. Installez le prépr
 ## Définir des alias
 
 ```ts
-// syora.config.ts
+// runable.config.ts
 import { join } from "node:path";
 
 export default defineConfig({
@@ -119,14 +119,14 @@ export default defineConfig({
 });
 ```
 
-Syora ajoute aussi l'alias interne `#build`, qui pointe vers le dossier généré défini par `output`.
+Runable ajoute aussi l'alias interne `#build`, qui pointe vers le dossier généré défini par `output`.
 
 ## Étendre les dossiers analysés
 
 Vous pouvez remplacer les emplacements conventionnels par vos propres chemins :
 
 ```ts
-// syora.config.ts
+// runable.config.ts
 export default defineConfig({
   pages: ["./frontend/views"],
   layouts: ["./frontend/shells"],
@@ -152,7 +152,7 @@ Lorsque vous fournissez une option de dossier, considérez-la comme la nouvelle 
 Une entrée objet permet de contrôler le nom généré :
 
 ```ts
-// syora.config.ts
+// runable.config.ts
 export default defineConfig({
   components: [
     "./app/components",
@@ -170,9 +170,9 @@ Un composant `app/components/ui/Button.vue` peut ainsi être exposé sous un nom
 ## Charger des modules
 
 ```ts
-// syora.config.ts
+// runable.config.ts
 export default defineConfig({
-  modules: ["@acme/syora-auth", "./modules/content"],
+  modules: ["@acme/runable-auth", "./modules/content"],
 
   auth: {
     redirectTo: "/login",
@@ -185,7 +185,7 @@ Un module peut ajouter ses propres pages, composants, layouts, plugins ou option
 ## Étendre Vite
 
 ```ts
-// syora.config.ts
+// runable.config.ts
 import inspect from "vite-plugin-inspect";
 
 export default defineConfig({
@@ -198,14 +198,14 @@ export default defineConfig({
 });
 ```
 
-Syora fusionne cette configuration avec sa configuration Vite interne. Certains champs qui définissent son fonctionnement, comme `root`, `appType`, `ssr` et `server.middlewareMode`, restent sous le contrôle du framework.
+Runable fusionne cette configuration avec sa configuration Vite interne. Certains champs qui définissent son fonctionnement, comme `root`, `appType`, `ssr` et `server.middlewareMode`, restent sous le contrôle du framework.
 
 ## Exemple complet
 
 ```ts
-// syora.config.ts
+// runable.config.ts
 import { join } from "node:path";
-import { defineConfig } from "@syora/core";
+import { defineConfig } from "runable";
 
 export default defineConfig({
   appDir: "app",
@@ -218,7 +218,7 @@ export default defineConfig({
 
   head: {
     title: "Mon application",
-    meta: [{ name: "description", content: "Mon application Syora" }],
+    meta: [{ name: "description", content: "Mon application Runable" }],
   },
 
   css: ["./app/css/main.css"],

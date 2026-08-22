@@ -1,21 +1,21 @@
 ---
 title: Components
-description: Reference for the global components built into the Syora runtime.
+description: Reference for the global components built into the Runable runtime.
 ---
 
-Syora registers its internal components globally. Use them directly in a template.
+Runable registers its internal components globally. Use them directly in a template.
 
 | Component | Purpose |
 | --- | --- |
-| `SyoraPage` | Display the current route |
-| `SyoraLink` | Navigate with Vue Router |
-| `SyoraLayout` | Apply the page layout |
+| `RunablePage` | Display the current route |
+| `RunableLink` | Navigate with Vue Router |
+| `RunableLayout` | Apply the page layout |
 | `ClientOnly` | Delay rendering until the client has mounted |
 
 ```vue
 <template>
-  <SyoraLayout>
-    <SyoraPage />
-  </SyoraLayout>
+  <RunableLayout>
+    <RunablePage />
+  </RunableLayout>
 </template>
 ```

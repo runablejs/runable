@@ -7,9 +7,9 @@ description: Déclarez les métadonnées SEO avec une API plate et typée.
 
 ```ts
 useSeoMeta({
-  title: "Syora",
+  title: "Runable",
   description: "Framework Vue pour votre backend.",
-  ogTitle: "Syora",
+  ogTitle: "Runable",
   ogDescription: "Framework Vue pour votre backend.",
   ogImage: "https://example.com/og.png",
   twitterCard: "summary_large_image",

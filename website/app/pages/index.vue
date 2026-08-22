@@ -4,7 +4,7 @@ import { ref, onMounted } from "vue";
 // ─── Sections ───
 import HeroSection from "~/components/landing/Hero.vue";
 // import ArchitectureSection from "~/components/landing/TheCompromise.vue";
-import WhySyoraSection from "~/components/landing/WhySyora.vue";
+import WhyRunableSection from "~/components/landing/WhyRunable.vue";
 import CapabilitiesSection from "~/components/landing/Capabilities.vue";
 import RuntimesSection from "~/components/landing/Runtimes.vue";
 import SponsorsSection from "~/components/landing/Sponsors.vue";
@@ -40,7 +40,7 @@ onMounted(() => {
         <a
           href="/"
           class="font-display text-h4 text-neutral hover:text-accent transition-colors duration-instant ease-default"
-          >Syora</a
+          >Runable</a
         >
 
         <nav class="hidden md:flex items-center gap-8">
@@ -63,7 +63,7 @@ onMounted(() => {
             />
           </a>
           <a
-            href="https://github.com/syorajs/syora"
+            href="https://github.com/runablejs/runable"
             target="_blank"
             rel="noopener noreferrer"
             class="font-body text-small text-secondary hover:text-neutral relative transition-colors duration-instant ease-default group"
@@ -122,7 +122,7 @@ onMounted(() => {
     </div>
 
     <div id="section-why" data-nav-section>
-      <WhySyoraSection />
+      <WhyRunableSection />
     </div>
 
     <div id="section-capabilities" data-nav-section>
@@ -169,10 +169,10 @@ onMounted(() => {
         class="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
       >
         <div class="flex items-center justify-between md:justify-start gap-6">
-          <span class="font-display text-h4 text-neutral">Syora</span>
+          <span class="font-display text-h4 text-neutral">Runable</span>
           <div class="flex items-center gap-4">
             <a
-              href="https://github.com/syorajs/syora"
+              href="https://github.com/runablejs/runable"
               target="_blank"
               rel="noopener noreferrer"
               class="text-secondary hover:text-neutral transition-colors duration-instant ease-default"
@@ -193,7 +193,7 @@ onMounted(() => {
               </svg>
             </a>
             <a
-              href="https://twitter.com/syorajs"
+              href="https://twitter.com/runablejs"
               target="_blank"
               rel="noopener noreferrer"
               class="text-secondary hover:text-neutral transition-colors duration-instant ease-default"
@@ -217,7 +217,7 @@ onMounted(() => {
         </div>
         <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
           <span class="font-mono text-mono-sm text-tertiary"
-            >© 2026 Syora. MIT License.</span
+            >© 2026 Runable. MIT License.</span
           >
           <div class="flex items-center gap-4">
             <a

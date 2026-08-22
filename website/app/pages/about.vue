@@ -11,7 +11,7 @@ const values = [
     number: "02",
     title: "Interoperability first",
     description:
-      "Syora should fit into an existing stack. It builds on open interfaces and works with the tools teams have already chosen.",
+      "Runable should fit into an existing stack. It builds on open interfaces and works with the tools teams have already chosen.",
     icon: "tabler:arrows-join-2",
   },
   {
@@ -44,7 +44,7 @@ const values = [
             class="flex items-center justify-between font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground"
           >
             <span>About</span>
-            <span>Syora / Project</span>
+            <span>Runable / Project</span>
           </div>
 
           <div class="my-20 max-w-sm lg:my-12">
@@ -60,7 +60,7 @@ const values = [
           </div>
 
           <a
-            href="https://github.com/syorajs/syora"
+            href="https://github.com/runablejs/runable"
             target="_blank"
             rel="noopener noreferrer"
             class="flex items-center justify-between border-t border-border pt-5 font-mono text-xs uppercase tracking-[0.14em] transition-colors hover:text-accent"
@@ -86,7 +86,7 @@ const values = [
             <p
               class="mt-9 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl"
             >
-              Syora is built around a simple belief: frontend productivity and
+              Runable is built around a simple belief: frontend productivity and
               backend freedom can belong in the same application.
             </p>
           </div>
@@ -111,7 +111,7 @@ const values = [
           <h2
             class="max-w-3xl font-display text-3xl font-bold leading-tight tracking-tight sm:text-5xl"
           >
-            Syora started with a practical frustration, not a plan to create
+            Runable started with a practical frustration, not a plan to create
             another framework.
           </h2>
           <div
@@ -124,7 +124,7 @@ const values = [
               meta-framework or accepting a server runtime chosen elsewhere.
             </p>
             <p>
-              Syora began as an attempt to remove that trade-off. The project
+              Runable began as an attempt to remove that trade-off. The project
               now focuses on a small application layer that connects Vue, Vite,
               routing, rendering, and data loading to the server already in
               place.
@@ -236,9 +236,9 @@ const values = [
             <p
               class="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground"
             >
-              Mamadou created Syora and leads its technical direction. The work
-              is developed openly with the Syora community, contributors, and
-              developers testing the framework in their own stacks.
+              Mamadou created Runable and leads its technical direction. The
+              work is developed openly with the Runable community, contributors,
+              and developers testing the framework in their own stacks.
             </p>
             <div class="mt-8 flex flex-wrap gap-3">
               <UButton variant="outline" as-child>
@@ -279,7 +279,7 @@ const values = [
             <h2
               class="mt-5 max-w-3xl font-display text-4xl font-bold tracking-tight sm:text-5xl"
             >
-              Syora grows through code, questions, experiments, and honest
+              Runable grows through code, questions, experiments, and honest
               feedback.
             </h2>
             <p class="mt-6 max-w-2xl text-lg leading-relaxed opacity-80">
@@ -294,7 +294,7 @@ const values = [
           >
             <UButton variant="secondary" size="lg" as-child>
               <a
-                href="https://github.com/syorajs/syora"
+                href="https://github.com/runablejs/runable"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -308,9 +308,9 @@ const values = [
               as-child
               class="mt-3 hover:bg-accent-foreground/10 hover:text-accent-foreground"
             >
-              <SyoraLink to="/docs/getting-started/installation">
-                Build with Syora
-              </SyoraLink>
+              <RunableLink to="/docs/getting-started/installation">
+                Build with Runable
+              </RunableLink>
             </UButton>
           </div>
         </div>

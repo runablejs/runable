@@ -1,6 +1,6 @@
 ---
 title: Adaptateur personnalisé
-description: Connectez Syora à un serveur Node ou Fetch API sans adaptateur dédié.
+description: Connectez Runable à un serveur Node ou Fetch API sans adaptateur dédié.
 ---
 
 Créez l'application une seule fois, puis transmettez chaque requête frontend à la primitive adaptée à votre runtime.
@@ -9,13 +9,13 @@ Créez l'application une seule fois, puis transmettez chaque requête frontend �
 
 ```ts
 import { createServer } from "node:http";
-import { createSyoraApp, requestNode } from "@syora/core";
+import { createRunableApp, requestNode } from "runable";
 
-const syoraApp = createSyoraApp();
+const runableApp = createRunableApp();
 
 createServer(async (req, res) => {
   await requestNode({
-    syoraApp: await syoraApp,
+    runableApp: await runableApp,
     req,
     res,
   });
@@ -25,19 +25,19 @@ createServer(async (req, res) => {
 ## Runtime Fetch API
 
 ```ts
-import { createSyoraApp, requestWeb } from "@syora/core";
+import { createRunableApp, requestWeb } from "runable";
 
-const syoraApp = createSyoraApp();
+const runableApp = createRunableApp();
 
 export async function fetch(request: Request) {
   return requestWeb({
-    syoraApp: await syoraApp,
+    runableApp: await runableApp,
     req: request,
   });
 }
 ```
 
-`requestNode()` écrit directement dans `ServerResponse`. `requestWeb()` retourne une `Response`. Dans les deux cas, traitez vos routes API avant d'appeler Syora.
+`requestNode()` écrit directement dans `ServerResponse`. `requestWeb()` retourne une `Response`. Dans les deux cas, traitez vos routes API avant d'appeler Runable.
 
 ::u-tip
 ---

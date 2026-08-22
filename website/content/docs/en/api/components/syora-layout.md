@@ -1,15 +1,15 @@
 ---
-title: SyoraLayout
+title: RunableLayout
 description: Load and apply the layout selected in the route metadata.
 ---
 
-`SyoraLayout` reads `route.meta.layout`, loads the matching layout, then renders its default slot inside it.
+`RunableLayout` reads `route.meta.layout`, loads the matching layout, then renders its default slot inside it.
 
 ```vue
 <template>
-  <SyoraLayout>
-    <SyoraPage />
-  </SyoraLayout>
+  <RunableLayout>
+    <RunablePage />
+  </RunableLayout>
 </template>
 ```
 

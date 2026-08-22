@@ -19,7 +19,7 @@ definePageMeta({
 </script>
 ```
 
-Syora extrait statiquement cet appel lors de la génération des routes. Passez directement un objet sérialisable ; ne construisez pas les métadonnées à partir d'une valeur calculée au runtime.
+Runable extrait statiquement cet appel lors de la génération des routes. Passez directement un objet sérialisable ; ne construisez pas les métadonnées à partir d'une valeur calculée au runtime.
 
 Les modules peuvent étendre `RouteMeta` pour typer leurs propres propriétés.
 

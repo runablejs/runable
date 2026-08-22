@@ -32,7 +32,7 @@ definePageMeta({ layout: "admin" });
 </template>
 ```
 
-Syora then looks for `app/layouts/admin.vue`.
+Runable then looks for `app/layouts/admin.vue`.
 
 ## Pass properties
 
@@ -74,6 +74,6 @@ variant: warning
 title: Layout not found
 ---
 
-If the name matches no loaded layout, Syora displays the page without a wrapper. Check the file name and `layout` value.
+If the name matches no loaded layout, Runable displays the page without a wrapper. Check the file name and `layout` value.
 
 ::

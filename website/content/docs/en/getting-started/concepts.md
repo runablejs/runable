@@ -1,37 +1,37 @@
 ---
 title: Concepts
-description: Understand the backend, Syora engine, Vue application, generated files, and SSR lifecycle.
+description: Understand the backend, Runable engine, Vue application, generated files, and SSR lifecycle.
 ---
 
-Syora connects three layers: your HTTP server, the framework engine, and your Vue application.
+Runable connects three layers: your HTTP server, the framework engine, and your Vue application.
 
 ## Three responsibilities
 
 | Layer | Responsibility |
 | --- | --- |
 | Your backend | Listen on the network, run API routes, and handle application logic |
-| Syora | Prepare the application, generate conventions, and produce the frontend response |
+| Runable | Prepare the application, generate conventions, and produce the frontend response |
 | Your Vue application | Define pages, components, layouts, and user interactions |
 
 This separation lets you replace Express with Fastify or Hono without reorganizing Vue files.
 
 ## The backend remains the entry point
 
-Syora does not automatically start your application server. You create the server, then forward frontend requests to it.
+Runable does not automatically start your application server. You create the server, then forward frontend requests to it.
 
 ```ts
 // server.ts
-import { express } from "@syora/core/adapters/express";
+import { express } from "runable/adapters/express";
 
 server.get("/api/orders", ordersController);
 server.use(express());
 ```
 
-You control the order. Place API routes before the Syora adapter so the backend handles them first.
+You control the order. Place API routes before the Runable adapter so the backend handles them first.
 
 ## Adapters for each backend
 
-Each adapter initializes Syora once and translates framework objects for the rendering engine:
+Each adapter initializes Runable once and translates framework objects for the rendering engine:
 
 | Adapter | Environment |
 | --- | --- |
@@ -54,7 +54,7 @@ Always place the adapter after API routes or as the router's final fallback.
 
 ```ts [Express]
 import Express from "express";
-import { express } from "@syora/core/adapters/express";
+import { express } from "runable/adapters/express";
 
 const app = Express();
 app.use(express());
@@ -63,7 +63,7 @@ app.listen(3000);
 
 ```ts [Fastify]
 import Fastify from "fastify";
-import { fastify } from "@syora/core/adapters/fastify";
+import { fastify } from "runable/adapters/fastify";
 
 const app = Fastify();
 await app.register(fastify());
@@ -72,7 +72,7 @@ await app.listen({ port: 3000 });
 
 ```ts [Hono]
 import { Hono } from "hono";
-import { hono } from "@syora/core/adapters/hono";
+import { hono } from "runable/adapters/hono";
 
 const app = new Hono();
 app.use("*", hono());
@@ -82,7 +82,7 @@ export default app;
 
 ```ts [Koa]
 import Koa from "koa";
-import { koa } from "@syora/core/adapters/koa";
+import { koa } from "runable/adapters/koa";
 
 const app = new Koa();
 app.use(koa());
@@ -91,7 +91,7 @@ app.listen(3000);
 
 ```ts [NestJS]
 import { NestFactory } from "@nestjs/core";
-import { nestjs } from "@syora/core/adapters/nestjs";
+import { nestjs } from "runable/adapters/nestjs";
 import { AppModule } from "./app.module.js";
 
 const app = await NestFactory.create(AppModule);
@@ -101,19 +101,19 @@ await app.listen(3000);
 
 ```ts [AdonisJS]
 import router from "@adonisjs/core/services/router";
-import { adonis } from "@syora/core/adapters/adonis";
+import { adonis } from "runable/adapters/adonis";
 
 router.any("*", adonis());
 ```
 
 ```ts [Bun]
-import { bun } from "@syora/core/adapters/bun";
+import { bun } from "runable/adapters/bun";
 
 Bun.serve({ port: 3000, fetch: bun() });
 ```
 
 ```ts [Deno]
-import { deno } from "@syora/core/adapters/deno";
+import { deno } from "runable/adapters/deno";
 
 Deno.serve({ port: 3000 }, deno());
 ```
@@ -122,7 +122,7 @@ Deno.serve({ port: 3000 }, deno());
 
 ## Conventions become generated code
 
-At startup, Syora reads `syora.config.ts`, resolves paths, and configures several Vite plugins.
+At startup, Runable reads `runable.config.ts`, resolves paths, and configures several Vite plugins.
 
 ```text
 app/pages/          ──► Vue Router routes
@@ -138,7 +138,7 @@ Required declarations and virtual files are written to `.app/`. This directory i
 
 ## One Vue application per server render
 
-For every SSR render, Syora creates a new Vue application, then installs the router, layouts, plugins, data manager, and Unhead.
+For every SSR render, Runable creates a new Vue application, then installs the router, layouts, plugins, data manager, and Unhead.
 
 This isolation prevents request-specific state from being shared with another user.
 
@@ -154,15 +154,15 @@ Do not store user-specific data in a global module variable. Use state created i
 When `ssr` is `true`, a request follows these steps:
 
 <div class="py-3 space-y-2">
-  <div class="flex flex-wrap items-center gap-2"><u-icon name="tabler:circle-1-filled" class="size-5 text-muted-foreground"></u-icon><span>the backend forwards the URL to Syora;</span></div>
+  <div class="flex flex-wrap items-center gap-2"><u-icon name="tabler:circle-1-filled" class="size-5 text-muted-foreground"></u-icon><span>the backend forwards the URL to Runable;</span></div>
   <div class="flex flex-wrap items-center gap-2"><u-icon name="tabler:circle-2-filled" class="size-5 text-muted-foreground"></u-icon><span>Vue Router resolves the page and its middleware;</span></div>
   <div class="flex flex-wrap items-center gap-2"><u-icon name="tabler:circle-3-filled" class="size-5 text-muted-foreground"></u-icon><span><code>useAsyncData()</code> waits for non-lazy data;</span></div>
   <div class="flex flex-wrap items-center gap-2"><u-icon name="tabler:circle-4-filled" class="size-5 text-muted-foreground"></u-icon><span>Vue produces HTML and Unhead injects the head;</span></div>
-  <div class="flex flex-wrap items-center gap-2"><u-icon name="tabler:circle-5-filled" class="size-5 text-muted-foreground"></u-icon><span>Syora serializes the data cache into the response;</span></div>
+  <div class="flex flex-wrap items-center gap-2"><u-icon name="tabler:circle-5-filled" class="size-5 text-muted-foreground"></u-icon><span>Runable serializes the data cache into the response;</span></div>
   <div class="flex flex-wrap items-center gap-2"><u-icon name="tabler:circle-6-filled" class="size-5 text-muted-foreground"></u-icon><span>the browser restores the cache and hydrates the application.</span></div>
 </div>
 
-With `ssr: false`, Syora returns the client template without rendering components on the server.
+With `ssr: false`, Runable returns the client template without rendering components on the server.
 
 ## Pages and metadata
 
@@ -218,9 +218,9 @@ A module runs earlier, while configuration loads. It can add directories, plugin
 
 ## Development and production
 
-In development, `createSyoraApp()` returns a Vite instance in middleware mode. Your backend uses it for HMR and module transformation.
+In development, `createRunableApp()` returns a Vite instance in middleware mode. Your backend uses it for HMR and module transformation.
 
-In production, `createSyoraApp()` loads configuration without creating a Vite server. `syora build` must generate the expected files in `.output/` before startup.
+In production, `createRunableApp()` loads configuration without creating a Vite server. `runable build` must generate the expected files in `.output/` before startup.
 
 | Directory | Status | Content |
 | --- | --- | --- |
@@ -231,7 +231,7 @@ In production, `createSyoraApp()` loads configuration without creating a Vite se
 
 ## Mental model
 
-Remember this rule: your backend owns HTTP, Syora owns application assembly, and Vue owns the interface.
+Remember this rule: your backend owns HTTP, Runable owns application assembly, and Vue owns the interface.
 
 ::u-tip
 ---
@@ -239,6 +239,6 @@ variant: success
 title: Getting Started complete
 ---
 
-You can now browse the Structure section to understand every directory in a Syora project.
+You can now browse the Structure section to understand every directory in a Runable project.
 
 ::

@@ -54,7 +54,7 @@ You can declare several middleware functions:
 definePageMeta({ middleware: ["auth", "admin"] });
 ```
 
-Syora loads required middleware, removes duplicates, and runs them in order. Global middleware runs before route middleware.
+Runable loads required middleware, removes duplicates, and runs them in order. Global middleware runs before route middleware.
 
 ::u-tip
 ---

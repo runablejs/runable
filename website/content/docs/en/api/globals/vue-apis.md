@@ -1,9 +1,9 @@
 ---
 title: Vue APIs
-description: Use common Vue functions without manual imports in a Syora application.
+description: Use common Vue functions without manual imports in a Runable application.
 ---
 
-Syora auto-imports the most frequently used Vue APIs. Their behavior and signatures remain unchanged.
+Runable auto-imports the most frequently used Vue APIs. Their behavior and signatures remain unchanged.
 
 ## Reactivity
 

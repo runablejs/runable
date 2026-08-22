@@ -1,15 +1,15 @@
 ---
 title: Build de production
-description: Générez les bundles client et serveur puis lancez Syora sans serveur Vite.
+description: Générez les bundles client et serveur puis lancez Runable sans serveur Vite.
 ---
 
-Le build de production génère le client et, lorsque le SSR est actif, un bundle serveur. Syora utilise ensuite ces fichiers sans démarrer le serveur de développement Vite.
+Le build de production génère le client et, lorsque le SSR est actif, un bundle serveur. Runable utilise ensuite ces fichiers sans démarrer le serveur de développement Vite.
 
 ## Créer le script de build
 
 ```ts
 // scripts/build.ts
-import { buildProduction, loadConfig } from "@syora/core";
+import { buildProduction, loadConfig } from "runable";
 
 await loadConfig();
 await buildProduction();
@@ -30,7 +30,7 @@ Installez `tsx` en dépendance de développement si votre serveur et votre scrip
 
 ## Comprendre la sortie
 
-Avec le `distdir` par défaut, Syora écrit dans `.output/` :
+Avec le `distdir` par défaut, Runable écrit dans `.output/` :
 
 ```text
 .output/
@@ -41,7 +41,7 @@ Avec le `distdir` par défaut, Syora écrit dans `.output/` :
 └── manifest.js
 ```
 
-`manifest.js` relie le serveur Syora au template client et au point d'entrée SSR compilé.
+`manifest.js` relie le serveur Runable au template client et au point d'entrée SSR compilé.
 
 ## Lancer le serveur existant
 
@@ -49,7 +49,7 @@ Votre fichier `server.ts` ne change pas :
 
 ```ts
 import Express from "express";
-import { express } from "@syora/core/adapters/express";
+import { express } from "runable/adapters/express";
 
 const server = Express();
 
@@ -69,7 +69,7 @@ Copiez dans l'environnement de production :
 
 - `.output/` ;
 - le serveur et ses dépendances d'exécution ;
-- `syora.config.ts` ou sa version compilée ;
+- `runable.config.ts` ou sa version compilée ;
 - les variables d'environnement nécessaires.
 
 Testez toujours la commande de démarrage avec `NODE_ENV=production` avant le déploiement.

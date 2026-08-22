@@ -60,7 +60,7 @@ const releases = [
   {
     version: "Project milestone",
     date: "August 13, 2026",
-    title: "The Syora CLI takes shape",
+    title: "The Runable CLI takes shape",
     description:
       "The command-line workflow gained the foundations needed to create projects and grow them without editing framework internals.",
     current: false,
@@ -69,7 +69,7 @@ const releases = [
         type: "Added",
         tone: "accent",
         items: [
-          "Added commands for creating and managing Syora projects.",
+          "Added commands for creating and managing Runable projects.",
           "Added workflows for modules and starter templates.",
           "Added changesets and the initial package publication workflow.",
           "Published the initial README and project license configuration.",
@@ -118,7 +118,7 @@ function toneClass(tone: string) {
             class="max-w-4xl font-display text-5xl font-bold leading-[1.04] tracking-tight sm:text-7xl"
           >
             What changed in
-            <em class="font-display italic text-accent">Syora.</em>
+            <em class="font-display italic text-accent">Runable.</em>
           </h1>
           <p
             class="mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground"
@@ -158,7 +158,7 @@ function toneClass(tone: string) {
               >Alpha channel</span
             >
             <a
-              href="https://github.com/syorajs/syora/releases"
+              href="https://github.com/runablejs/runable/releases"
               target="_blank"
               rel="noopener noreferrer"
               class="inline-flex items-center gap-1.5 text-sm transition-colors hover:text-accent"
@@ -263,7 +263,7 @@ function toneClass(tone: string) {
         </div>
         <UButton variant="outline" size="lg" as-child>
           <a
-            href="https://github.com/syorajs/syora"
+            href="https://github.com/runablejs/runable"
             target="_blank"
             rel="noopener noreferrer"
           >

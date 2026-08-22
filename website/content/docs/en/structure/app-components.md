@@ -3,7 +3,7 @@ title: app/components
 description: Create Vue components that are available without manual imports.
 ---
 
-Syora detects Vue components in this directory and makes them available in templates.
+Runable detects Vue components in this directory and makes them available in templates.
 
 ```vue
 <!-- app/components/AppLogo.vue -->
@@ -34,7 +34,7 @@ export default defineConfig({
 });
 ```
 
-Syora writes declarations to `.app/components.d.ts`. If autocomplete does not reflect a new component, restart `syora prepare` or the development server.
+Runable writes declarations to `.app/components.d.ts`. If autocomplete does not reflect a new component, restart `runable prepare` or the development server.
 
 ## Define the name inside the component
 
@@ -53,7 +53,7 @@ defineOptions({
 </template>
 ```
 
-The component is then available as `<PrimaryAction />`, even though the file is named `button.vue`. Syora also recognizes the Options API and `defineComponent()`:
+The component is then available as `<PrimaryAction />`, even though the file is named `button.vue`. Runable also recognizes the Options API and `defineComponent()`:
 
 ```ts
 export default defineComponent({
@@ -61,37 +61,37 @@ export default defineComponent({
 });
 ```
 
-The name must be a static string. A `componentName` function defined in `syora.config.ts` takes priority. Without a declared or configured name, Syora uses the file name and, depending on `pathPrefix`, its parent directories.
+The name must be a static string. A `componentName` function defined in `runable.config.ts` takes priority. Without a declared or configured name, Runable uses the file name and, depending on `pathPrefix`, its parent directories.
 
 This detection also applies to components written directly in JavaScript or TypeScript files:
 
 ```ts
 // app/components/layout.ts
 export default defineComponent({
-  name: "SyoraLayout",
+  name: "RunableLayout",
   setup() {
     // ...
   },
 });
 ```
 
-## Components provided by Syora
+## Components provided by Runable
 
-Syora registers several internal components alongside project components:
+Runable registers several internal components alongside project components:
 
 | Component | Purpose |
 | --- | --- |
-| `SyoraPage` | Displays the current Vue Router route |
-| `SyoraLink` | Creates a navigation link with `RouterLink` props |
-| `SyoraLayout` | Applies the layout associated with the page |
+| `RunablePage` | Displays the current Vue Router route |
+| `RunableLink` | Creates a navigation link with `RouterLink` props |
+| `RunableLayout` | Applies the layout associated with the page |
 | `ClientOnly` | Renders its content only in the browser |
 
 ```vue
 <template>
   <nav>
-    <SyoraLink to="/projects">Projects</SyoraLink>
+    <RunableLink to="/projects">Projects</RunableLink>
   </nav>
 
-  <SyoraPage />
+  <RunablePage />
 </template>
 ```

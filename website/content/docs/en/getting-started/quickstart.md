@@ -1,6 +1,6 @@
 ---
 title: Quick Start
-description: Create a Syora application with two pages, a layout, an API route, and server-rendered data.
+description: Create a Runable application with two pages, a layout, an API route, and server-rendered data.
 ---
 
 Build a small application that combines automatic routing, a shared layout, and SSR data loading.
@@ -14,7 +14,7 @@ Replace `server.ts` with this example:
 ```ts
 // server.ts
 import Express from "express";
-import { express } from "@syora/core/adapters/express";
+import { express } from "runable/adapters/express";
 
 const server = Express();
 
@@ -32,7 +32,7 @@ server.listen(3000, () => {
 });
 ```
 
-Your API remains a regular Express route. Syora does not move it into the frontend.
+Your API remains a regular Express route. Runable does not move it into the frontend.
 
 ## Create a layout
 
@@ -118,7 +118,7 @@ const { data: projects, pending, error, refresh } = await useAsyncData(
 </template>
 ```
 
-`useAsyncData()` runs the fetch during server rendering. Syora embeds the result in the HTML and restores the cache on the client, so the browser does not immediately repeat the request during hydration.
+`useAsyncData()` runs the fetch during server rendering. Runable embeds the result in the HTML and restores the cache on the client, so the browser does not immediately repeat the request during hydration.
 
 ::u-tip
 ---
@@ -144,7 +144,7 @@ Add a file to `app/pages/` to create a route. There is no route table to maintai
 
 ## What you just used
 
-| Need | Syora solution |
+| Need | Runable solution |
 | --- | --- |
 | Display several screens | Routing based on `app/pages/` |
 | Share navigation | `default.vue` layout |
@@ -158,6 +158,6 @@ variant: info
 title: Next step
 ---
 
-Compare this model with Nuxt in <a href="/docs/getting-started/vs-nuxt.md">Syora vs Nuxt</a>.
+Compare this model with Nuxt in <a href="/docs/getting-started/vs-nuxt.md">Runable vs Nuxt</a>.
 
 ::

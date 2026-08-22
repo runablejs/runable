@@ -1,13 +1,13 @@
 ---
 title: Deno
-description: Utilisez l'adaptateur Fetch API de Syora avec Deno.serve().
+description: Utilisez l'adaptateur Fetch API de Runable avec Deno.serve().
 ---
 
 ## Configuration
 
 ```ts
 // server.ts
-import { deno } from "@syora/core/adapters/deno";
+import { deno } from "runable/adapters/deno";
 
 Deno.serve({ port: 3000 }, deno());
 ```
@@ -15,7 +15,7 @@ Deno.serve({ port: 3000 }, deno());
 `deno()` possède la même signature Fetch API que l'adaptateur Bun.
 
 ```ts
-const renderSyora = deno();
+const renderRunable = deno();
 
 Deno.serve({ port: 3000 }, (request) => {
   const url = new URL(request.url);
@@ -24,9 +24,9 @@ Deno.serve({ port: 3000 }, (request) => {
     return Response.json({ status: "ok" });
   }
 
-  return renderSyora(request);
+  return renderRunable(request);
 });
 ```
 
-Configurez l'import npm de `@syora/core` selon la stratégie choisie par votre projet Deno.
+Configurez l'import npm de `runable` selon la stratégie choisie par votre projet Deno.
 

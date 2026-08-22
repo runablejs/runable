@@ -1,9 +1,9 @@
 ---
 title: .app
-description: Découvrez les types, registres et fichiers virtuels préparés par Syora.
+description: Découvrez les types, registres et fichiers virtuels préparés par Runable.
 ---
 
-Syora transforme ses conventions en code et en déclarations TypeScript dans `.app/`. La commande `syora prepare` crée ce dossier ; le serveur de développement le maintient ensuite à jour.
+Runable transforme ses conventions en code et en déclarations TypeScript dans `.app/`. La commande `runable prepare` crée ce dossier ; le serveur de développement le maintient ensuite à jour.
 
 Selon les fonctionnalités utilisées, vous y trouverez notamment :
 

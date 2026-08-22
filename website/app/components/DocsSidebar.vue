@@ -65,13 +65,13 @@ function isActive(href: string) {
                     class="relative h-6 px-1 w-fit rounded-none overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md data-[active=true]:border-accent data-[active=true]:bg-accent 3xl:fixed:w-full 3xl:fixed:max-w-48"
                   >
                     <!-- :is-active="isActive(item.href)" -->
-                    <SyoraLink :to="item.href">
+                    <RunableLink :to="item.href">
                       <span
                         class="absolute inset-0 flex w-(--sidebar-menu-width) bg-transparent"
                       />
                       <UIcon :name="item.icon" />
                       {{ item.name }}
-                    </SyoraLink>
+                    </RunableLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
@@ -86,13 +86,13 @@ function isActive(href: string) {
                 class="relative h-6 px-1 w-fit rounded-none overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md data-[active=true]:border-accent data-[active=true]:bg-accent 3xl:fixed:w-full 3xl:fixed:max-w-48"
               >
                 <!-- :is-active="isActive(item.href)" -->
-                <SyoraLink :to="tree.href">
+                <RunableLink :to="tree.href">
                   <span
                     class="absolute inset-0 flex w-(--sidebar-menu-width) bg-transparent"
                   />
                   <UIcon :name="tree.icon" />
                   {{ tree.name }}
-                </SyoraLink>
+                </RunableLink>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

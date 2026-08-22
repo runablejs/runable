@@ -20,7 +20,7 @@ const { error, clearError } = useAppError();
 </template>
 ```
 
-Syora captures Vue errors passed to the application handler and exposes their state through `useAppError()`. Keep the error component robust: avoid reusing logic that may have caused the failure.
+Runable captures Vue errors passed to the application handler and exposes their state through `useAppError()`. Keep the error component robust: avoid reusing logic that may have caused the failure.
 
 ::u-tip
 ---

@@ -1,9 +1,9 @@
 ---
 title: .app
-description: Understand the types, registries, and virtual files prepared by Syora.
+description: Understand the types, registries, and virtual files prepared by Runable.
 ---
 
-Syora turns conventions into code and TypeScript declarations in `.app/`. The `syora prepare` command creates this directory; the development server then keeps it up to date.
+Runable turns conventions into code and TypeScript declarations in `.app/`. The `runable prepare` command creates this directory; the development server then keeps it up to date.
 
 Depending on the features used, it may contain:
 

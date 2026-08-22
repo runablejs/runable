@@ -1,4 +1,4 @@
-import { express } from "@syora/core/adapters/express";
+import { express } from "runable/adapters/express";
 import Express from "express";
 
 const app = Express();

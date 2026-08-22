@@ -1,9 +1,9 @@
 ---
-title: Pourquoi Syora ?
+title: Pourquoi Runable ?
 description: Retrouvez une expérience proche de Nuxt dans Vue tout en conservant le backend et le serveur HTTP de votre choix.
 ---
 
-Syora apporte à Vue les conventions attendues d'un framework full-stack, sans vous imposer un runtime serveur particulier.
+Runable apporte à Vue les conventions attendues d'un framework full-stack, sans vous imposer un runtime serveur particulier.
 
 ## Le problème
 
@@ -37,9 +37,9 @@ Sans solution intermédiaire, vous devez généralement choisir entre deux archi
 | Vue et Vite seuls | Contrôle complet du serveur | Les conventions et fonctionnalités doivent être assemblées manuellement |
 | Backend et frontend Nuxt séparés | Expérience Nuxt complète | Deux applications à développer, connecter et déployer |
 
-## Ce que change Syora
+## Ce que change Runable
 
-Syora place une couche applicative Vue dans votre serveur existant. Votre backend continue de gérer HTTP, les routes API, l'authentification et la logique métier. Syora prend en charge le rendu de l'interface.
+Runable place une couche applicative Vue dans votre serveur existant. Votre backend continue de gérer HTTP, les routes API, l'authentification et la logique métier. Runable prend en charge le rendu de l'interface.
 
 ```text
 Requête HTTP
@@ -47,15 +47,15 @@ Requête HTTP
     ▼
 Votre backend ──────► Routes API et logique métier
     │
-    └───────────────► Syora ──► Application Vue
+    └───────────────► Runable ──► Application Vue
 ```
 
-Concrètement, votre serveur transmet à Syora les requêtes destinées au frontend :
+Concrètement, votre serveur transmet à Runable les requêtes destinées au frontend :
 
 ```ts
 // server.ts
 import Express from "express";
-import { express } from "@syora/core/adapters/express";
+import { express } from "runable/adapters/express";
 
 const server = Express();
 
@@ -64,7 +64,7 @@ server.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-// L'adaptateur initialise Syora et rend les autres requêtes avec Vue.
+// L'adaptateur initialise Runable et rend les autres requêtes avec Vue.
 server.use(express());
 
 server.listen(3000);
@@ -76,11 +76,11 @@ variant: info
 title: Une intégration additive
 ---
 
-Vous n'avez pas besoin de réécrire votre backend. Ajoutez Syora à l'endroit où votre serveur doit rendre l'application Vue.
+Vous n'avez pas besoin de réécrire votre backend. Ajoutez Runable à l'endroit où votre serveur doit rendre l'application Vue.
 
 ::
 
-## Ce que Syora fournit
+## Ce que Runable fournit
 
 | Fonctionnalité | Convention ou API |
 | --- | --- |
@@ -95,9 +95,9 @@ Vous n'avez pas besoin de réécrire votre backend. Ajoutez Syora à l'endroit o
 
 Cette séparation vous permet de choisir le backend pour ses capacités propres sans reconstruire toute l'expérience développeur du frontend.
 
-## Quand choisir Syora ?
+## Quand choisir Runable ?
 
-Syora est adapté si :
+Runable est adapté si :
 
 <div class="py-3 space-y-2">
   <div class="flex flex-wrap items-center gap-2">
@@ -132,13 +132,13 @@ variant: warning
 title: Projet en version alpha
 ---
 
-Syora est actuellement en version alpha. Vérifiez la disponibilité des fonctionnalités dont votre application dépend avant de l'utiliser en production.
+Runable est actuellement en version alpha. Vérifiez la disponibilité des fonctionnalités dont votre application dépend avant de l'utiliser en production.
 
 ::
 
 ## À retenir
 
-Syora ne remplace pas votre backend. Il lui ajoute une application Vue structurée, rendue côté serveur ou côté client, avec des conventions prêtes à l'emploi.
+Runable ne remplace pas votre backend. Il lui ajoute une application Vue structurée, rendue côté serveur ou côté client, avec des conventions prêtes à l'emploi.
 
 ::u-tip
 ---

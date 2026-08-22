@@ -1,37 +1,37 @@
 ---
 title: Concepts
-description: Comprenez le rôle du backend, du moteur Syora, de l'application Vue, des fichiers générés et du rendu SSR.
+description: Comprenez le rôle du backend, du moteur Runable, de l'application Vue, des fichiers générés et du rendu SSR.
 ---
 
-Syora relie trois couches : votre serveur HTTP, le moteur du framework et votre application Vue.
+Runable relie trois couches : votre serveur HTTP, le moteur du framework et votre application Vue.
 
 ## Les trois responsabilités
 
 | Couche | Responsabilité |
 | --- | --- |
 | Votre backend | Écouter le réseau, exécuter les routes API et gérer le métier |
-| Syora | Préparer l'application, générer ses conventions et produire la réponse frontend |
+| Runable | Préparer l'application, générer ses conventions et produire la réponse frontend |
 | Votre application Vue | Définir les pages, composants, layouts et interactions utilisateur |
 
 Cette séparation permet de remplacer Express par Fastify ou Hono sans réorganiser les fichiers Vue.
 
 ## Le backend reste le point d'entrée
 
-Syora ne démarre pas automatiquement votre serveur métier. Vous créez le serveur, puis vous lui transmettez les requêtes destinées au frontend.
+Runable ne démarre pas automatiquement votre serveur métier. Vous créez le serveur, puis vous lui transmettez les requêtes destinées au frontend.
 
 ```ts
 // server.ts
-import { express } from "@syora/core/adapters/express";
+import { express } from "runable/adapters/express";
 
 server.get("/api/orders", ordersController);
 server.use(express());
 ```
 
-L'ordre reste sous votre contrôle. Placez les routes API avant l'adaptateur Syora pour qu'elles soient traitées par le backend.
+L'ordre reste sous votre contrôle. Placez les routes API avant l'adaptateur Runable pour qu'elles soient traitées par le backend.
 
 ## Des adaptateurs pour chaque backend
 
-Chaque adaptateur initialise Syora une seule fois et traduit les objets du framework vers le moteur de rendu :
+Chaque adaptateur initialise Runable une seule fois et traduit les objets du framework vers le moteur de rendu :
 
 | Adaptateur | Environnement |
 | --- | --- |
@@ -55,7 +55,7 @@ Placez toujours l'adaptateur après vos routes API ou en dernier fallback du rou
 ```ts [Express]
 // server.ts
 import Express from "express";
-import { express } from "@syora/core/adapters/express";
+import { express } from "runable/adapters/express";
 
 const app = Express();
 app.use(express());
@@ -65,7 +65,7 @@ app.listen(3000);
 ```ts [Fastify]
 // server.ts
 import Fastify from "fastify";
-import { fastify } from "@syora/core/adapters/fastify";
+import { fastify } from "runable/adapters/fastify";
 
 const app = Fastify();
 await app.register(fastify());
@@ -75,7 +75,7 @@ await app.listen({ port: 3000 });
 ```ts [Hono]
 // server.ts
 import { Hono } from "hono";
-import { hono } from "@syora/core/adapters/hono";
+import { hono } from "runable/adapters/hono";
 
 const app = new Hono();
 app.use("*", hono());
@@ -86,7 +86,7 @@ export default app;
 ```ts [Koa]
 // server.ts
 import Koa from "koa";
-import { koa } from "@syora/core/adapters/koa";
+import { koa } from "runable/adapters/koa";
 
 const app = new Koa();
 app.use(koa());
@@ -96,7 +96,7 @@ app.listen(3000);
 ```ts [NestJS]
 // main.ts
 import { NestFactory } from "@nestjs/core";
-import { nestjs } from "@syora/core/adapters/nestjs";
+import { nestjs } from "runable/adapters/nestjs";
 import { AppModule } from "./app.module.js";
 
 const app = await NestFactory.create(AppModule);
@@ -107,14 +107,14 @@ await app.listen(3000);
 ```ts [AdonisJS]
 // start/routes.ts
 import router from "@adonisjs/core/services/router";
-import { adonis } from "@syora/core/adapters/adonis";
+import { adonis } from "runable/adapters/adonis";
 
 router.any("*", adonis());
 ```
 
 ```ts [Bun]
 // server.ts
-import { bun } from "@syora/core/adapters/bun";
+import { bun } from "runable/adapters/bun";
 
 Bun.serve({
   port: 3000,
@@ -124,7 +124,7 @@ Bun.serve({
 
 ```ts [Deno]
 // server.ts
-import { deno } from "@syora/core/adapters/deno";
+import { deno } from "runable/adapters/deno";
 
 Deno.serve({ port: 3000 }, deno());
 ```
@@ -133,7 +133,7 @@ Deno.serve({ port: 3000 }, deno());
 
 ## Les conventions deviennent du code généré
 
-Au démarrage, Syora lit `syora.config.ts`, résout les chemins puis configure plusieurs plugins Vite.
+Au démarrage, Runable lit `runable.config.ts`, résout les chemins puis configure plusieurs plugins Vite.
 
 ```text
 app/pages/          ──► routes Vue Router
@@ -149,7 +149,7 @@ Les déclarations et fichiers virtuels nécessaires sont écrits dans `.app/`. C
 
 ## Une application Vue par rendu serveur
 
-Pour chaque rendu SSR, Syora crée une nouvelle application Vue. Elle installe ensuite le routeur, les layouts, les plugins, le gestionnaire de données et Unhead.
+Pour chaque rendu SSR, Runable crée une nouvelle application Vue. Elle installe ensuite le routeur, les layouts, les plugins, le gestionnaire de données et Unhead.
 
 Cette isolation évite qu'un état lié à une requête soit partagé avec un autre utilisateur.
 
@@ -167,7 +167,7 @@ Quand `ssr` vaut `true`, une requête suit ce parcours :
 <div class="py-3 space-y-2">
   <div class="flex flex-wrap items-center gap-2">
     <u-icon name="tabler:circle-1-filled" class="size-5 text-muted-foreground"></u-icon>
-    <span>le backend transmet l'URL à Syora ;</span>
+    <span>le backend transmet l'URL à Runable ;</span>
   </div>
   <div class="flex flex-wrap items-center gap-2">
     <u-icon name="tabler:circle-2-filled" class="size-5 text-muted-foreground"></u-icon>
@@ -183,7 +183,7 @@ Quand `ssr` vaut `true`, une requête suit ce parcours :
   </div>
   <div class="flex flex-wrap items-center gap-2">
     <u-icon name="tabler:circle-5-filled" class="size-5 text-muted-foreground"></u-icon>
-    <span>Syora sérialise le cache de données dans la réponse ;</span>
+    <span>Runable sérialise le cache de données dans la réponse ;</span>
   </div>
   <div class="flex flex-wrap items-center gap-2">
     <u-icon name="tabler:circle-6-filled" class="size-5 text-muted-foreground"></u-icon>
@@ -191,7 +191,7 @@ Quand `ssr` vaut `true`, une requête suit ce parcours :
   </div>
 </div>
 
-Avec `ssr: false`, Syora renvoie le template client sans rendre les composants sur le serveur.
+Avec `ssr: false`, Runable renvoie le template client sans rendre les composants sur le serveur.
 
 ## Pages et métadonnées
 
@@ -247,9 +247,9 @@ Un module agit plus tôt, pendant le chargement de la configuration. Il peut ajo
 
 ## Développement et production
 
-En développement, `createSyoraApp()` retourne une instance Vite en mode middleware. Votre backend l'utilise pour le HMR et la transformation des modules.
+En développement, `createRunableApp()` retourne une instance Vite en mode middleware. Votre backend l'utilise pour le HMR et la transformation des modules.
 
-En production, `createSyoraApp()` charge la configuration sans créer de serveur Vite. `syora build` doit avoir produit les fichiers attendus dans `.output/` avant le démarrage.
+En production, `createRunableApp()` charge la configuration sans créer de serveur Vite. `runable build` doit avoir produit les fichiers attendus dans `.output/` avant le démarrage.
 
 | Dossier | Statut | Contenu |
 | --- | --- | --- |
@@ -260,7 +260,7 @@ En production, `createSyoraApp()` charge la configuration sans créer de serveur
 
 ## Modèle mental
 
-Retenez cette règle : votre backend possède HTTP, Syora possède l'assemblage de l'application et Vue possède l'interface.
+Retenez cette règle : votre backend possède HTTP, Runable possède l'assemblage de l'application et Vue possède l'interface.
 
 ::u-tip
 ---
@@ -268,6 +268,6 @@ variant: success
 title: Getting Started terminé
 ---
 
-Vous pouvez maintenant parcourir la section Structure pour comprendre chaque dossier d'un projet Syora.
+Vous pouvez maintenant parcourir la section Structure pour comprendre chaque dossier d'un projet Runable.
 
 ::

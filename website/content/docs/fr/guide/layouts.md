@@ -32,7 +32,7 @@ definePageMeta({ layout: "admin" });
 </template>
 ```
 
-Syora cherche alors `app/layouts/admin.vue`.
+Runable cherche alors `app/layouts/admin.vue`.
 
 ## Passer des propriétés
 
@@ -74,6 +74,6 @@ variant: warning
 title: Layout introuvable
 ---
 
-Si le nom ne correspond à aucun layout chargé, Syora affiche la page sans enveloppe. Vérifiez le nom du fichier et la valeur de `layout`.
+Si le nom ne correspond à aucun layout chargé, Runable affiche la page sans enveloppe. Vérifiez le nom du fichier et la valeur de `layout`.
 
 ::

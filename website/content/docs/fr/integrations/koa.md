@@ -1,12 +1,12 @@
 ---
 title: Koa
-description: Ajoutez Syora comme dernier middleware d'une application Koa.
+description: Ajoutez Runable comme dernier middleware d'une application Koa.
 ---
 
 ## Installation
 
 ```bash
-pnpm add @syora/core vue vue-router koa
+pnpm add runable vue vue-router koa
 pnpm add -D @types/koa
 ```
 
@@ -15,7 +15,7 @@ pnpm add -D @types/koa
 ```ts
 // server.ts
 import Koa from "koa";
-import { koa } from "@syora/core/adapters/koa";
+import { koa } from "runable/adapters/koa";
 
 const app = new Koa();
 

@@ -1,9 +1,9 @@
 ---
-title: Why Syora?
+title: Why Runable?
 description: Get a Nuxt-like experience in Vue while keeping the backend and HTTP server of your choice.
 ---
 
-Syora brings full-stack framework conventions to Vue without imposing a specific server runtime.
+Runable brings full-stack framework conventions to Vue without imposing a specific server runtime.
 
 ## The problem
 
@@ -25,9 +25,9 @@ Without a middle ground, you usually choose between two architectures:
 | Vue and Vite alone | Complete server control | Conventions and features must be assembled manually |
 | Separate backend and Nuxt frontend | Complete Nuxt experience | Two applications to build, connect, and deploy |
 
-## What Syora changes
+## What Runable changes
 
-Syora places a Vue application layer inside your existing server. Your backend continues to handle HTTP, API routes, authentication, and application logic. Syora renders the interface.
+Runable places a Vue application layer inside your existing server. Your backend continues to handle HTTP, API routes, authentication, and application logic. Runable renders the interface.
 
 ```text
 HTTP request
@@ -35,15 +35,15 @@ HTTP request
     ▼
 Your backend ──────► API routes and application logic
     │
-    └───────────────► Syora ──► Vue application
+    └───────────────► Runable ──► Vue application
 ```
 
-Your server forwards frontend requests to Syora:
+Your server forwards frontend requests to Runable:
 
 ```ts
 // server.ts
 import Express from "express";
-import { express } from "@syora/core/adapters/express";
+import { express } from "runable/adapters/express";
 
 const server = Express();
 
@@ -52,7 +52,7 @@ server.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-// The adapter initializes Syora and renders other requests with Vue.
+// The adapter initializes Runable and renders other requests with Vue.
 server.use(express());
 
 server.listen(3000);
@@ -64,11 +64,11 @@ variant: info
 title: An additive integration
 ---
 
-You do not need to rewrite your backend. Add Syora where your server should render the Vue application.
+You do not need to rewrite your backend. Add Runable where your server should render the Vue application.
 
 ::
 
-## What Syora provides
+## What Runable provides
 
 | Feature | Convention or API |
 | --- | --- |
@@ -83,9 +83,9 @@ You do not need to rewrite your backend. Add Syora where your server should rend
 
 This separation lets you choose a backend for its own capabilities without rebuilding the entire frontend developer experience.
 
-## When should you choose Syora?
+## When should you choose Runable?
 
-Syora is a good fit when:
+Runable is a good fit when:
 
 <div class="py-3 space-y-2">
   <div class="flex flex-wrap items-center gap-2"><u-icon name="tabler:circle-check-filled" class="size-5 text-success"></u-icon><span>you already have a <strong>production backend</strong>;</span></div>
@@ -108,13 +108,13 @@ variant: warning
 title: Alpha project
 ---
 
-Syora is currently in alpha. Check the availability of features your application depends on before using it in production.
+Runable is currently in alpha. Check the availability of features your application depends on before using it in production.
 
 ::
 
 ## Key takeaway
 
-Syora does not replace your backend. It adds a structured Vue application that can render on the server or client, with ready-to-use conventions.
+Runable does not replace your backend. It adds a structured Vue application that can render on the server or client, with ready-to-use conventions.
 
 ::u-tip
 ---

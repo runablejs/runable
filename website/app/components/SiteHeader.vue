@@ -8,8 +8,8 @@ import MobileNav from "./MobileNav.vue";
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
   {
-    label: "Why Syora?",
-    to: "/why-syora",
+    label: "Why Runable?",
+    to: "/why-runable",
     icon: "tabler:sparkles",
   },
   {
@@ -62,7 +62,7 @@ const active = computed(() => {
           >
             <Logo class="size-7 h-9/12" />
           </div>
-          <span class="font-bold text-lg">Syora</span>
+          <span class="font-bold text-lg">Runable</span>
         </RouterLink>
       </div>
 
@@ -71,7 +71,7 @@ const active = computed(() => {
         class="h-full flex max-md:hidden items-center gap-2"
         :class="cn('items-center gap-0')"
       >
-        <SyoraLink
+        <RunableLink
           v-for="{ to, label, icon } in navigationLinks"
           :key="to"
           :class="{
@@ -84,7 +84,7 @@ const active = computed(() => {
         >
           <UIcon :name="icon" class="size-4" />
           {{ label }}
-        </SyoraLink>
+        </RunableLink>
       </nav>
 
       <!-- <NavigationMenu class="max-lg:hidden h-full hidden">

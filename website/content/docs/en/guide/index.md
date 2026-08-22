@@ -1,9 +1,9 @@
 ---
 title: Guide
-description: Build, render, extend, and ship a Syora application.
+description: Build, render, extend, and ship a Runable application.
 ---
 
-This guide explains how to use Syora in a real application. Each page starts from a concrete need and shows the code to write.
+This guide explains how to use Runable in a real application. Each page starts from a concrete need and shows the code to write.
 
 ## Build the interface
 
@@ -26,7 +26,7 @@ These pages cover data, SSR, and HTML metadata.
 | Choose between SSR and CSR | <a href="/docs/guide/rendering-modes.md">SSR and CSR</a> |
 | Define titles, SEO, and structured data | <a href="/docs/guide/head-and-seo.md">Head and SEO</a> |
 
-## Extend Syora
+## Extend Runable
 
 Use auto-imports for application code, plugins to initialize Vue, and modules to distribute a complete set of conventions.
 

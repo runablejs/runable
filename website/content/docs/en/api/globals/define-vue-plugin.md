@@ -1,6 +1,6 @@
 ---
 title: defineVuePlugin
-description: Declare a Syora plugin with injections, dependencies, and application hooks.
+description: Declare a Runable plugin with injections, dependencies, and application hooks.
 ---
 
 The short form receives a setup function directly:

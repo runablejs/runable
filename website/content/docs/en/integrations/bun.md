@@ -1,19 +1,19 @@
 ---
 title: Bun
-description: Use Syora's Fetch API adapter with Bun.serve().
+description: Use Runable's Fetch API adapter with Bun.serve().
 ---
 
 ## Installation
 
 ```bash
-bun add @syora/core vue vue-router
+bun add runable vue vue-router
 ```
 
 ## Configuration
 
 ```ts
 // server.ts
-import { bun } from "@syora/core/adapters/bun";
+import { bun } from "runable/adapters/bun";
 
 Bun.serve({
   port: 3000,
@@ -26,7 +26,7 @@ Bun.serve({
 To keep API routes, use the adapter as a fallback:
 
 ```ts
-const renderSyora = bun();
+const renderRunable = bun();
 
 Bun.serve({
   async fetch(request) {
@@ -35,7 +35,7 @@ Bun.serve({
       return Response.json({ status: "ok" });
     }
 
-    return renderSyora(request);
+    return renderRunable(request);
   },
 });
 ```

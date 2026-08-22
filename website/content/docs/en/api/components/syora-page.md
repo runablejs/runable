@@ -1,13 +1,13 @@
 ---
-title: SyoraPage
+title: RunablePage
 description: Display the component associated with the current Vue Router route.
 ---
 
-`SyoraPage` is Syora's facade for `RouterView`. It forwards its props, attributes, and slots to the Vue Router component.
+`RunablePage` is Runable's facade for `RouterView`. It forwards its props, attributes, and slots to the Vue Router component.
 
 ```vue
 <template>
-  <SyoraPage />
+  <RunablePage />
 </template>
 ```
 
@@ -21,9 +21,9 @@ description: Display the component associated with the current Vue Router route.
 The default slot receives `Component` and `route`:
 
 ```vue
-<SyoraPage v-slot="{ Component, route }">
+<RunablePage v-slot="{ Component, route }">
   <Transition :name="String(route.meta.transition ?? 'fade')">
     <component :is="Component" />
   </Transition>
-</SyoraPage>
+</RunablePage>
 ```
