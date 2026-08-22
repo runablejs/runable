@@ -44,6 +44,11 @@ useHead({
   title: page.value?.meta.title,
   meta: [{ name: "description", content: page.value?.meta.description }],
 });
+
+useSeoMeta({
+  ogTitle: page.value?.meta.title,
+  ogDescription: page.value?.meta.description,
+});
 </script>
 
 <template>

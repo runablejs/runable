@@ -25,6 +25,11 @@ watch(
       title: props.page?.meta.title,
       meta: [{ name: "description", content: props.page?.meta.description }],
     });
+
+    useSeoMeta({
+      ogTitle: props.page?.meta.title,
+      ogDescription: props.page?.meta.description,
+    });
   },
   { immediate: true },
 );

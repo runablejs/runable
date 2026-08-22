@@ -14,7 +14,7 @@
     "@nestjs/common": "catalog:",
     "@nestjs/core": "catalog:",
     "@nestjs/platform-express": "catalog:",
-    "@runable/cli": "workspace:*",
+    "@runablejs/cli": "workspace:*",
     "runable": "workspace:*",
     "express": "catalog:",
     "fastify": "catalog:",

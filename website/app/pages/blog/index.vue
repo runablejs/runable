@@ -34,6 +34,12 @@ useHead({
     },
   ],
 });
+
+useSeoMeta({
+  ogTitle: "Blog",
+  ogDescription:
+    "Product updates, technical deep dives, and practical notes from the people building Runable.",
+});
 </script>
 
 <template>

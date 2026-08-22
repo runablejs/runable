@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { toArray } from "@/utils/to-array.js";
-import { useAsyncState } from "@vueuse/core";
 import BlogPage from "~/components/BlogPage.vue";
 
 const route = useRoute();

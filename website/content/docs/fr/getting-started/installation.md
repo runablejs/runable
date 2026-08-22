@@ -22,22 +22,22 @@ L'exemple de cette page utilise Express et TypeScript. Le même principe s'appli
 
 ```bash [pnpm]
 pnpm add runable vue vue-router express
-pnpm add -D @runable/cli tsx typescript @types/node @types/express
+pnpm add -D @runablejs/cli tsx typescript @types/node @types/express
 ```
 
 ```bash [npm]
 npm install runable vue vue-router express
-npm install --save-dev @runable/cli tsx typescript @types/node @types/express
+npm install --save-dev @runablejs/cli tsx typescript @types/node @types/express
 ```
 
 ```bash [yarn]
 yarn add runable vue vue-router express
-yarn add --dev @runable/cli tsx typescript @types/node @types/express
+yarn add --dev @runablejs/cli tsx typescript @types/node @types/express
 ```
 
 ```bash [Bun]
 bun add runable vue vue-router express
-bun add --dev @runable/cli tsx typescript @types/node @types/express
+bun add --dev @runablejs/cli tsx typescript @types/node @types/express
 ```
 
 ::

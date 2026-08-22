@@ -38,6 +38,12 @@ useHead({
     },
   ],
 });
+
+useSeoMeta({
+  ogTitle: "Build the Vue app you want, keep the backend you chose",
+  ogDescription:
+    "Runable is a Vue framework for teams that want the conventions and developer experience of a meta-framework without adopting a specific server runtime.",
+});
 </script>
 
 <template>

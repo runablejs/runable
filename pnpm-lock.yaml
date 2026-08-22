@@ -559,7 +559,7 @@ importers:
 
   packages/create-syora:
     dependencies:
-      '@runable/cli':
+      '@runablejs/cli':
         specifier: workspace:^
         version: link:../cli
 
@@ -713,7 +713,7 @@ importers:
       '@nestjs/platform-express':
         specifier: 'catalog:'
         version: 11.1.29(@nestjs/common@11.1.29(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.29)
-      '@runable/cli':
+      '@runablejs/cli':
         specifier: workspace:*
         version: link:../packages/cli
       express:

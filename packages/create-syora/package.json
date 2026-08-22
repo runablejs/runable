@@ -7,7 +7,7 @@
     "create-runable": "./bin/create-runable.mjs"
   },
   "dependencies": {
-    "@runable/cli": "workspace:^"
+    "@runablejs/cli": "workspace:^"
   },
   "publishConfig": {
     "access": "public"

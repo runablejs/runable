@@ -258,8 +258,8 @@ export async function updatePackageJson(): Promise<void> {
     pkg.dependencies["vue-router"] = "^4.5.0";
   }
 
-  if (!pkg.devDependencies["@runable/cli"]) {
-    pkg.devDependencies["@runable/cli"] = "latest";
+  if (!pkg.devDependencies["@runablejs/cli"]) {
+    pkg.devDependencies["@runablejs/cli"] = "latest";
   }
 
   if (!pkg.scripts["app:build"]) {
@@ -429,7 +429,7 @@ export async function createPackageJson(
       //   "runable": "latest",
     },
     devDependencies: {
-      //   "@runable/cli": "latest",
+      //   "@runablejs/cli": "latest",
       typescript: "^6.0.3",
     },
     engines: {

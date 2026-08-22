@@ -23,7 +23,7 @@ description: Declare scripts, dependencies, and runtime constraints for a Runabl
     "vue-router": "latest"
   },
   "devDependencies": {
-    "@runable/cli": "latest",
+    "@runablejs/cli": "latest",
     "@types/express": "latest",
     "tsx": "latest",
     "typescript": "latest",

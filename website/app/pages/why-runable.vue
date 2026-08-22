@@ -31,6 +31,12 @@ useHead({
     },
   ],
 });
+
+useSeoMeta({
+  ogTitle: "Why Runable",
+  ogDescription:
+    "Runable gives Vue applications the structure of a meta-framework while leaving HTTP, APIs, and infrastructure in your hands.",
+});
 </script>
 
 <template>

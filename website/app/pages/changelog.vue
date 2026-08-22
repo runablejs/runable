@@ -96,6 +96,12 @@ useHead({
     },
   ],
 });
+
+useSeoMeta({
+  ogTitle: "Changelog",
+  ogDescription:
+    "New features, improvements, fixes, and the decisions shaping the framework.",
+});
 </script>
 
 <template>

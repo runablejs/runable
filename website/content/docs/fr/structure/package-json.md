@@ -23,7 +23,7 @@ description: Déclarez les scripts, dépendances et contraintes runtime d'un pro
     "vue-router": "latest"
   },
   "devDependencies": {
-    "@runable/cli": "latest",
+    "@runablejs/cli": "latest",
     "@types/express": "latest",
     "tsx": "latest",
     "typescript": "latest",

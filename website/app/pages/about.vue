@@ -40,6 +40,12 @@ useHead({
     },
   ],
 });
+
+useSeoMeta({
+  ogTitle: "About",
+  ogDescription:
+    "An independent open-source project exploring how productive Vue conventions can work with any backend.",
+});
 </script>
 
 <template>

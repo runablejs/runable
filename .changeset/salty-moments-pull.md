@@ -1,5 +1,5 @@
 ---
-"@runable/cli": patch
+"@runablejs/cli": patch
 ---
 
 clean code
