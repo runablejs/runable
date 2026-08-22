@@ -1,10 +1,10 @@
 import { defineCommand } from "citty";
-import { build } from "@syora/core";
+import { build } from "runable";
 
 export default defineCommand({
   meta: {
     name: "build",
-    description: "Build Syora for production deployment",
+    description: "Build Runable for production deployment",
   },
   args: {},
 

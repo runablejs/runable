@@ -1,0 +1,13 @@
+@theme inline {
+  --font-display: var(--ui-font-display);
+  --font-body: var(--ui-font-body);
+  --font-mono: var(--ui-font-mono);
+}
+
+:root {
+  --ui-font-display:
+    "Fraunces", "Source Serif 4", "Tiempos Text", Georgia, serif;
+  --ui-font-body: "Inter", "Geist", "Helvetica Neue", Arial, sans-serif;
+  --ui-font-mono:
+    "JetBrains Mono", "SF Mono", "Fira Code", "Cascadia Code", monospace;
+}

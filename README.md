@@ -1,75 +1,51 @@
-# Syora
+<p dir="auto"><a href="https://runable.netlify.app" rel="nofollow"><img width="830" height="213" src="https://github.com/runablejs/runable/raw/dev/.github/assets/cover.png" alt="Nuxt banner" style="max-width: 100%; height: auto; max-height: 213px;"></a></p>
 
-> **The Vue framework that brings the Nuxt developer experience to any backend.**
+# Runable
 
-Syora is a framework designed to create modern Vue applications without imposing a specific server runtime.
 
-It offers the complete developer experience that makes Nuxt so successful—file-system based routing, layouts, middlewares, auto-imports, asynchronous data fetching, SSR, modules, and much more—while leaving you free to run your application on **any HTTP server**.
 
-Whether your backend relies on Fastify, NestJS, AdonisJS, Koa, Express, Hono, Nitro, Bun, Deno, or your own custom server, Syora integrates naturally into your architecture.
+### Build the Vue app you want. Keep the backend you chose.
 
-## Why Syora?
+Runable brings the developer experience of a Vue meta-framework to **any backend**.
 
-Modern applications often require a backend framework tailored to their specific needs.
+File-system routing, layouts, middleware, auto-imports, SSR, data loading, plugins, and modules—without requiring a specific server runtime.
 
-Fastify offers excellent performance, NestJS provides an enterprise-oriented architecture, AdonisJS delivers a comprehensive framework, and many teams already rely on technologies that are perfectly integrated into their infrastructure.
+Use the backend that fits your application: **Fastify, NestJS, AdonisJS, Express, Hono, Koa, Bun, Deno**, or your own HTTP server.
 
-However, adopting Nuxt also implies adopting Nitro.
+## Your backend should be a choice
 
-Although Nitro is an excellent runtime, this coupling forces developers to make a difficult choice:
+Vue gives you flexibility. Meta-frameworks give you conventions. Until now, getting both often meant accepting the server runtime selected by the frontend framework—or splitting one application into two projects.
 
-- Use Vue.js on its own and give up the exceptional Nuxt developer experience.
+Runable offers another path.
 
-- Split the application into two distinct projects (backend + frontend), at the cost of a more complex architecture and duplicated logic.
+Your backend keeps ownership of HTTP, APIs, authentication, and business logic. Runable adds the structured Vue application experience around it.
 
-**Syora eliminates this compromise.**
+```text
+Your backend  +  Runable  +  Vue
+     ↓             ↓        ↓
+Your architecture. One application. A better developer experience.
+```
 
-It brings the entire Nuxt developer experience directly to Vue, while remaining completely independent of the server runtime.
+## What you get
 
-You keep your backend.
+- The conventions developers love in modern Vue frameworks
+- Server-side rendering and seamless hydration
+- A module system for building and sharing integrations
+- First-class TypeScript support and generated types
+- Freedom to run on the server stack your team already trusts
 
-You keep your architecture.
+## Discover Runable
 
-You keep your developer experience.
+See how Runable works, explore supported runtimes, and build your first application on the official website.
 
-## Features
+### [Explore Runable →](https://runable.netlify.app)
 
-- [x] File-system based routing
-- [x] Auto-imports
-- [x] Layouts
-- [x] Route middlewares
-- [x] Asynchronous data fetching
-- [x] Server-Side Rendering (SSR)
-- [x] Hydration
-- [x] Module system
-- [x] Plugin system
-- [x] Page metadata
-- [x] Runtime Presets
-- [x] No dependency on a specific backend
-- [x] 💚 Powered by Vue
+[Why Runable?](https://runable.netlify.app/why-runable) · [Documentation](https://runable.netlify.app/docs) · [Blog](https://runable.netlify.app/blog) · [Changelog](https://runable.netlify.app/changelog)
 
-## Compatible With Your Favorite Backend
+> Runable is currently in alpha. The project is evolving quickly and feedback is welcome.
 
-Syora does not replace your backend.
+## Open source
 
-It integrates with it.
+Runable is developed in public and released under the [MIT License](./LICENSE).
 
-- Fastify
-- NestJS
-- AdonisJS
-- Koa
-- Express
-- Hono
-- H3
-- Bun
-- Deno
-- Node.js HTTP
-- ...and any technology capable of handling HTTP requests.
-
-## Documentation
-
-The documentation is currently a work in progress.
-
-## License
-
-MIT
+[View on GitHub](https://github.com/runablejs/runable) · [Report an issue](https://github.com/runablejs/runable/issues) · [Sponsor the project](https://github.com/sponsors/domutala)

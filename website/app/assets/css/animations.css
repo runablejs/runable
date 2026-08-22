@@ -1,0 +1,185 @@
+/* ================================================
+   SCROLL REVEAL — États hidden / visible
+   ================================================ */
+
+.sr-hidden {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.sr-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Variantes de direction */
+.sr-hidden-left {
+  opacity: 0;
+  transform: translateX(-16px);
+}
+
+.sr-visible-left {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.sr-hidden-right {
+  opacity: 0;
+  transform: translateX(16px);
+}
+
+.sr-visible-right {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Variante subtile (moins de décalage) */
+.sr-hidden-subtle {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.sr-visible-subtle {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ================================================
+   DRAW — Tracé SVG
+   ================================================ */
+
+.sr-draw {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+
+.sr-draw-visible {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset var(--runable-duration-slow, 300ms)
+    var(--runable-ease-draw, cubic-bezier(0.65, 0, 0.45, 1));
+}
+
+/* ================================================
+   PROGRESS — Ligne de chargement
+   ================================================ */
+
+@keyframes runable-progress {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+.animate-progress {
+  animation: runable-progress 2s var(--runable-ease-default, ease-out) forwards;
+}
+
+.animate-progress-slow {
+  animation: runable-progress 3s var(--runable-ease-default, ease-out) forwards;
+}
+
+/* ================================================
+   FADE UP — Apparition simple
+   ================================================ */
+
+@keyframes runable-fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: runable-fade-up var(--runable-duration-base, 200ms)
+    var(--runable-ease-smooth, cubic-bezier(0.4, 0, 0.2, 1)) forwards;
+}
+
+/* ================================================
+   SLIDE IN — Panneau latéral
+   ================================================ */
+
+@keyframes runable-slide-in {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in {
+  animation: runable-slide-in var(--runable-duration-base, 200ms)
+    var(--runable-ease-smooth, cubic-bezier(0.4, 0, 0.2, 1)) forwards;
+}
+
+/* ================================================
+   PULSE — Skeleton loading
+   ================================================ */
+
+@keyframes runable-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-runable {
+  animation: runable-pulse 2s
+    var(--runable-ease-smooth, cubic-bezier(0.4, 0, 0.2, 1)) infinite;
+}
+
+/* ================================================
+   CHECK DRAW — Coche manuscrite
+   ================================================ */
+
+@keyframes runable-check-draw {
+  0% {
+    stroke-dashoffset: 24;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-check {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  animation: runable-check-draw var(--runable-duration-slow, 300ms)
+    var(--runable-ease-draw, cubic-bezier(0.65, 0, 0.45, 1)) forwards;
+}
+
+/* ================================================
+   UNDERLINE DRAW — Soulignement animé
+   ================================================ */
+
+.underline-draw {
+  position: relative;
+  text-decoration: none;
+}
+
+.underline-draw::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--runable-duration-instant, 100ms)
+    var(--runable-ease-default, ease-out);
+}
+
+.underline-draw:hover::after {
+  transform: scaleX(1);
+}

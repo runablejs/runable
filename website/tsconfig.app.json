@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "moduleDetection": "force",
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "noImplicitThis": true,
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "useDefineForClassFields": true,
+
+    // Recommended
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "libReplacement": false,
+    "skipLibCheck": true,
+
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+
+    "types": [],
+
+    "paths": {
+      "@/*": ["../packages/runable/src/*"],
+      "~/*": ["./app/*"],
+      "#build": ["./.app"],
+      "#build/*": ["./.app/*"]
+    }
+  },
+
+  "vueCompilerOptions": {
+    "plugins": [
+      "vue-router/volar/sfc-route-blocks",
+      "vue-router/volar/sfc-typed-router"
+    ]
+  },
+
+  "include": [".app/**/*.d.ts", "app/**/*", "runable.config.ts"]
+}

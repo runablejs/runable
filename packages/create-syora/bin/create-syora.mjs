@@ -7,9 +7,9 @@ const require = createRequire(import.meta.url);
 
 let cliPath;
 try {
-  cliPath = require.resolve("@syora/cli/dist/index.js");
+  cliPath = require.resolve("@runablejs/cli/dist/index.js");
 } catch {
-  console.error("Cannot find @syora/cli");
+  console.error("Cannot find @runablejs/cli");
   process.exit(1);
 }
 

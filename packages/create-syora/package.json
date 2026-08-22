@@ -1,13 +1,13 @@
 {
-  "name": "create-syora",
+  "name": "create-runable",
   "version": "1.0.0-alpha.1",
-  "description": "Create a Syora project",
+  "description": "Create a Runable project",
   "type": "module",
   "bin": {
-    "create-syora": "./bin/create-syora.mjs"
+    "create-runable": "./bin/create-runable.mjs"
   },
   "dependencies": {
-    "@syora/cli": "workspace:^"
+    "@runablejs/cli": "workspace:^"
   },
   "publishConfig": {
     "access": "public"

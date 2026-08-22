@@ -1,10 +1,13 @@
 {
-  "name": "syora-framework",
+  "name": "runable-framework",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "pnpm --filter './packages/**' build",
-    "play:dev": "pnpm --filter syora-playground dev"
+    "play:dev": "pnpm --filter runable-playground dev",
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview"
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.0",
@@ -25,5 +28,6 @@
       "name": "pnpm",
       "version": "11.10.0"
     }
-  }
+  },
+  "dependencies": {}
 }

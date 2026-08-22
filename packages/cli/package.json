@@ -1,6 +1,6 @@
 {
-  "name": "@syora/cli",
-  "version": "1.0.0-alpha.1",
+  "name": "@runablejs/cli",
+  "version": "1.0.0-alpha.3",
   "private": false,
   "license": "MIT",
   "type": "module",
@@ -15,7 +15,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "syora": "./dist/index.js"
+    "runable": "./dist/index.js"
   },
   "files": [
     "dist"
@@ -23,32 +23,35 @@
   "scripts": {
     "build": "tsdown",
     "prepublish": "pnpm build",
-    "syora": "tsx src/index.ts"
+    "runable": "tsx src/index.ts",
+    "app:build": "runable build",
+    "app:prepare": "runable prepare"
   },
   "dependencies": {
-    "@clack/prompts": "^1.5.1",
-    "@syora/core": "workspace:^",
-    "consola": "^3.4.2",
-    "dayjs": "^1.11.21",
-    "esbuild": "^0.28.0",
-    "giget": "^3.2.0",
-    "lodash": "^4.18.1",
-    "nypm": "^0.6.6",
-    "pkg-types": "^2.3.1",
-    "std-env": "^4.1.0",
-    "tinyclip": "^0.1.14",
-    "tinyexec": "^1.2.4",
-    "tsx": "^4.22.4",
-    "zod": "^4.4.3"
+    "@clack/prompts": "catalog:",
+    "runable": "workspace:^",
+    "consola": "catalog:",
+    "dayjs": "catalog:",
+    "esbuild": "catalog:",
+    "giget": "catalog:",
+    "lodash": "catalog:",
+    "magicast": "catalog:",
+    "nypm": "catalog:",
+    "pkg-types": "catalog:",
+    "std-env": "catalog:",
+    "tinyclip": "catalog:",
+    "tinyexec": "catalog:",
+    "tsx": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "^22.19.19",
-    "citty": "^0.2.2",
-    "pkg": "^5.8.1",
-    "tsdown": "^0.22.14",
-    "tsx": "^4.21.0",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.65.0"
+    "@types/node": "catalog:",
+    "citty": "catalog:",
+    "pkg": "catalog:",
+    "tsdown": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
   },
   "engines": {
     "node": ">=20.0.0",

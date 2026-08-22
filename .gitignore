@@ -14,7 +14,7 @@ pids
 
 # Build output
 dist/
-build/
+/build/
 coverage/
 .tmp/
 temp/
@@ -23,6 +23,7 @@ temp/
 
 # Cache
 .cache/
+.netlify/
 .eslintcache
 .parcel-cache/
 .vite/
@@ -56,3 +57,5 @@ dist-ssr/
 # Certificates
 *.pem
 *.key
+
+bugs

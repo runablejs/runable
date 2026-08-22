@@ -1,5 +1,5 @@
 ---
-"@syora/cli": patch
+"@runablejs/cli": patch
 ---
 
 clean code
