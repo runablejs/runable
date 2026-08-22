@@ -1,5 +1,5 @@
 [build]
-  command = "pnpm --filter runable build && pnpm --filter @runable/cli build && pnpm --filter runable-website build"
+  command = "pnpm --filter runable-website build"
   publish = "website/.output/client"
 
 [build.environment]
