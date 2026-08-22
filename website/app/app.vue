@@ -9,13 +9,6 @@ import { Toaster } from "~/components/ui/sonner";
     <ConfigProvider>
       <TooltipProvider>
         <RunableLayout>
-          <div
-            class="border-b text-foredeground px-4 py-1 text-center bg-background"
-          >
-            Runable is currently in alpha. APIs may evolve as we refine the
-            framework toward its first stable release.
-          </div>
-
           <RunablePage />
         </RunableLayout>
       </TooltipProvider>
