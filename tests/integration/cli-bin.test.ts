@@ -41,6 +41,6 @@ describe("@runablejs/cli bin", () => {
       result.status,
       `direct exec of the bin failed:\nstdout: ${result.stdout}\nstderr: ${result.stderr}`,
     ).toBe(0);
-    expect(result.stdout).toContain("runable create|prepare|build");
+    expect(result.stdout).toContain("runable create|prepare|build|skills");
   });
 });

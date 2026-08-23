@@ -136,6 +136,23 @@ describe("@runablejs/cli npm tarball", () => {
     // relative to the installed package, not the monorepo).
     expect(pack.files).toContain("templates/default/AGENTS.md");
   });
+
+  it("ships every skills/runable-*/SKILL.md next to dist/ and templates/", () => {
+    // Regression guard: "files" must list "skills", and
+    // scripts/copy-skills.ts must actually run before packing — or
+    // `runable skills install` is broken for every real npm install (see
+    // packages/cli/src/commands/skills/bundle.ts, which resolves this
+    // directory relative to the installed package).
+    const skillDirs = readdirSync(path.join(REPO_ROOT, "skills"), {
+      withFileTypes: true,
+    }).filter((entry) => entry.isDirectory());
+
+    expect(skillDirs.length).toBeGreaterThan(0);
+
+    for (const entry of skillDirs) {
+      expect(pack.files).toContain(`skills/${entry.name}/SKILL.md`);
+    }
+  });
 });
 
 describe("create-runable npm tarball", () => {
