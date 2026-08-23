@@ -64,8 +64,6 @@ Use `useHeadSafe()` instead of `useHead()` when a value comes from user input or
 ## Structured data with useSchemaOrg
 
 ```ts
-import { defineWebPage } from "@unhead/schema-org";
-
 useSchemaOrg([
   defineWebPage({
     name: "Projects",
@@ -74,7 +72,7 @@ useSchemaOrg([
 ]);
 ```
 
-`useSchemaOrg()` itself is auto-imported, but the Schema.org node helpers (`defineWebPage`, and similar) are not — import the ones a page needs explicitly from `@unhead/schema-org` unless the project's configuration already exposes them globally.
+`useSchemaOrg()` and every Schema.org node helper it takes (`defineWebPage`, `defineWebSite`, `defineOrganization`, `definePerson`, `defineArticle`, `defineBreadcrumb`, and the rest of `@unhead/schema-org`'s node helpers) are all auto-imported — no explicit import is needed for any of them.
 
 ## Direct Unhead access
 
@@ -85,7 +83,7 @@ useSchemaOrg([
 - Passing a plain value instead of a getter to `useSeoMeta()` for data that changes — the tag won't update.
 - Duplicating the same global `title`/`description` in every page instead of setting it once in `runable.config.ts`'s `head` and overriding only what's page-specific.
 - Using `useHead()` with unsanitized user-provided content instead of `useHeadSafe()`.
-- Calling a Schema.org node helper (`defineWebPage`, etc.) without importing it — it is not auto-imported like `useSchemaOrg()` itself.
+- Adding an unnecessary `import { defineWebPage } from "@unhead/schema-org"` (or any other node helper) — these are auto-imported the same way `useSchemaOrg()` is.
 
 ## When another skill is needed
 
