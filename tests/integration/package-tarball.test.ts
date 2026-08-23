@@ -129,6 +129,13 @@ describe("@runablejs/cli npm tarball", () => {
   it("does not leave the `runable` workspace dependency unresolved", () => {
     expectWorkspaceRangeWasRewritten(pack.packageJson.dependencies?.runable, "runable");
   });
+
+  it("ships the AGENTS.md template used to scaffold new projects", () => {
+    // Regression guard: "files" must list "templates", or `runable create`
+    // is broken for every real npm install (it resolves this template
+    // relative to the installed package, not the monorepo).
+    expect(pack.files).toContain("templates/default/AGENTS.md");
+  });
 });
 
 describe("create-runable npm tarball", () => {
