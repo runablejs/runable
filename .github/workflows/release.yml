@@ -8,9 +8,7 @@ on:
 # Reset permissions at the workflow level; each job declares exactly what it
 # needs below. Publishing to npm via Trusted Publishing (OIDC) never uses a
 # stored NPM_TOKEN.
-permissions:
-  contents: write
-  pull-requests: write
+permissions: {}
 
 concurrency:
   group: release-${{ github.ref }}
