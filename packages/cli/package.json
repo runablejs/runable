@@ -39,7 +39,6 @@
   },
   "dependencies": {
     "@clack/prompts": "catalog:",
-    "runable": "workspace:^",
     "consola": "catalog:",
     "dayjs": "catalog:",
     "esbuild": "catalog:",
@@ -58,6 +57,7 @@
     "@types/node": "catalog:",
     "citty": "catalog:",
     "pkg": "catalog:",
+    "runable": "workspace:^",
     "tsdown": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
