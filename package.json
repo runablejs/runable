@@ -9,8 +9,9 @@
     "docs:build": "vitepress build",
     "docs:preview": "vitepress preview",
     "lint": "pnpm -r --if-present run lint",
-    "typecheck": "pnpm -r --if-present run typecheck",
-    "test": "pnpm -r --if-present run test",
+    "typecheck": "pnpm -r --if-present run typecheck && tsc --noEmit -p tests/tsconfig.json",
+    "test": "vitest run",
+    "test:integration": "vitest run tests/integration",
     "ci:local": "pnpm lint && pnpm build && pnpm typecheck && pnpm test",
     "changeset": "changeset",
     "version-packages": "changeset version && pnpm install --no-frozen-lockfile",
@@ -28,7 +29,8 @@
     "globals": "^17.7.0",
     "jiti": "^2.7.0",
     "typescript": "^5.7.2",
-    "typescript-eslint": "^8.63.0"
+    "typescript-eslint": "^8.63.0",
+    "vitest": "^4.1.11"
   },
   "packageManager": "pnpm@11.10.0",
   "devEngines": {
