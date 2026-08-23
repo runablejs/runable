@@ -5,7 +5,25 @@ import { fileURLToPath } from "node:url";
 import { SITE_URL } from "../../app/lib/site-config.js";
 import { parseFrontmatter } from "./frontmatter.js";
 import { getNavOrderIndex } from "./nav-order.js";
+import { normalizeLlmsMarkdown } from "./normalize.js";
 import { llmsSections, type LlmsSection } from "./sections.js";
+
+/**
+ * Category index pages excluded from llms-full.txt because, on inspection,
+ * their content is purely a navigational summary of pages already fully
+ * included elsewhere in the document (tables of links, no unique technical
+ * explanation) — including them would just duplicate those links.
+ *
+ * This is a manually curated, inspected list, not "every index.md": other
+ * index pages (structure/index.md's directory tree, api/components,
+ * api/composables, api/globals index pages' reference tables) contain real
+ * documentary content with no links to duplicate, and stay included.
+ */
+export const LLMS_FULL_EXCLUDED_SLUGS = new Set<string>([
+  "guide/index",
+  "integrations/index",
+  "api/index",
+]);
 
 /** Doc categories included in llms-full.txt, in output order — every page
  * under website/content/docs/en/<category>/** is included automatically,
@@ -200,11 +218,13 @@ function comparePages(
 /** Builds llms-full.txt: the complete EN technical documentation
  * (getting-started/, guide/, structure/, integrations/, api/) as one
  * Markdown document. Unlike llms.txt, this is exhaustive — every page in
- * those categories is included automatically, no allow-list — so adding a
- * new page under one of them requires no change here. There is exactly one
- * `# ` heading in the whole document; each page becomes a `###` section
- * using the same `title`/`description`/`body` already extracted by
- * `collectDocPages()`. */
+ * those categories is included automatically, no allow-list (except the
+ * inspected, purely-navigational index pages in
+ * `LLMS_FULL_EXCLUDED_SLUGS`) — so adding a new page under one of them
+ * requires no change here. There is exactly one `# ` heading in the whole
+ * document; each page becomes a `###` section, its body normalized by
+ * `normalizeLlmsMarkdown()` (website-engine syntax stripped, internal
+ * headings shifted to nest under the `###`) — see normalize.ts. */
 export function buildLlmsFullTxt(pages: Map<string, DocPage>): string {
   const navOrder = getNavOrderIndex();
   const lines: string[] = [];
@@ -224,6 +244,7 @@ export function buildLlmsFullTxt(pages: Map<string, DocPage>): string {
   for (const category of LLMS_FULL_CATEGORIES) {
     const categoryPages = [...pages.values()]
       .filter((page) => pageCategory(page.slug) === category.dir)
+      .filter((page) => !LLMS_FULL_EXCLUDED_SLUGS.has(page.slug))
       .sort((a, b) => comparePages(a, b, navOrder));
 
     if (categoryPages.length === 0) continue;
@@ -232,7 +253,10 @@ export function buildLlmsFullTxt(pages: Map<string, DocPage>): string {
     lines.push(`## ${category.title}`);
 
     for (const page of categoryPages) {
-      const body = page.body.trim();
+      const body = normalizeLlmsMarkdown(page.body, {
+        siteUrl: SITE_URL,
+        headingShift: 2,
+      }).trim();
       const description = page.description;
       // Skip the description when the body already opens with it verbatim,
       // to avoid printing the same sentence twice in a row.

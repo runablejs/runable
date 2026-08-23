@@ -8,6 +8,7 @@ import {
   buildLlmsFullTxt,
   collectDocPages,
   generateLlmsArtifacts,
+  LLMS_FULL_EXCLUDED_SLUGS,
 } from "../../website/scripts/llms/generate.js";
 
 /** Strips fenced code blocks before scanning for headings, so a literal
@@ -78,15 +79,83 @@ describe("llms-full.txt generation", () => {
     // some page bodies.
     expect(llmsFullTxt).not.toMatch(/^---\r?\ntitle:/m);
   });
+
+  it("contains no website-engine-specific syntax outside fenced code blocks", () => {
+    const withoutFences = llmsFullTxt.replace(/```[\s\S]*?```/g, "");
+
+    expect(withoutFences).not.toContain("::u-tip");
+    expect(withoutFences).not.toContain("::u-code-group");
+    expect(withoutFences).not.toContain("<u-icon");
+    expect(withoutFences).not.toMatch(/^variant:/m);
+    expect(withoutFences).not.toContain('class="py-');
+  });
+
+  it("nests a page's own headings under its ### wrapper instead of making them siblings of the category", () => {
+    // getting-started/installation.md has "## Prerequisites" in its body.
+    const installationIndex = llmsFullTxt.indexOf("### Installation");
+    expect(installationIndex).toBeGreaterThan(-1);
+
+    const nextPageIndex = llmsFullTxt.indexOf("### Quick Start", installationIndex);
+    const installationSection = llmsFullTxt.slice(installationIndex, nextPageIndex);
+
+    expect(installationSection).toContain("#### Prerequisites");
+    expect(installationSection).not.toMatch(/^## Prerequisites$/m);
+  });
+
+  it("converts a real admonition and a real internal link from the source docs", () => {
+    // getting-started/installation.md ends with a "::u-tip" (title "Alpha
+    // CLI") and an <a href="/docs/getting-started/quickstart.md"> link.
+    expect(llmsFullTxt).toContain("> **Alpha CLI:**");
+    expect(llmsFullTxt).toContain(
+      "[Quick Start](https://runable.netlify.app/docs/getting-started/quickstart.md)",
+    );
+  });
+});
+
+describe("llms-full.txt navigation-only index pages", () => {
+  const pages = collectDocPages();
+  const llmsFullTxt = buildLlmsFullTxt(pages);
+
+  it("excludes guide/index.md, integrations/index.md, and api/index.md — purely navigational, no unique content", () => {
+    expect(LLMS_FULL_EXCLUDED_SLUGS).toEqual(
+      new Set(["guide/index", "integrations/index", "api/index"]),
+    );
+
+    for (const slug of LLMS_FULL_EXCLUDED_SLUGS) {
+      const page = pages.get(slug);
+      expect(page, `expected ${slug} to still exist as a source page`).toBeDefined();
+      expect(countHeadingOccurrences(llmsFullTxt, page!.title)).toBe(0);
+    }
+  });
+
+  it("keeps other index pages that were inspected and found to hold real content", () => {
+    // structure/index.md has a unique directory-tree diagram; the api/*
+    // sub-index pages have reference tables not repeated elsewhere and no
+    // links to already-included pages — none of these are pure navigation.
+    for (const slug of [
+      "structure/index",
+      "api/components/index",
+      "api/composables/index",
+      "api/globals/index",
+    ]) {
+      expect(LLMS_FULL_EXCLUDED_SLUGS.has(slug)).toBe(false);
+
+      const page = pages.get(slug);
+      expect(page, `expected ${slug} to exist`).toBeDefined();
+      expect(countHeadingOccurrences(llmsFullTxt, page!.title)).toBe(1);
+    }
+  });
 });
 
 describe("llms-full.txt exhaustiveness", () => {
   const pages = collectDocPages();
   const llmsFullTxt = buildLlmsFullTxt(pages);
 
-  it("includes every page from the five technical categories exactly once", () => {
-    const technicalPages = [...pages.values()].filter((page) =>
-      CATEGORY_DIRS.includes(page.slug.split("/")[0]),
+  it("includes every non-excluded page from the five technical categories exactly once", () => {
+    const technicalPages = [...pages.values()].filter(
+      (page) =>
+        CATEGORY_DIRS.includes(page.slug.split("/")[0]) &&
+        !LLMS_FULL_EXCLUDED_SLUGS.has(page.slug),
     );
     expect(technicalPages.length).toBeGreaterThan(0);
 
