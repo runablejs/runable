@@ -3,6 +3,7 @@ import MDC from "v-content/components/MDC.js";
 import { toArray } from "@/utils/to-array.js";
 import DocsToc from "~/components/DocsToc.vue";
 import { Skeleton } from "~/components/ui/skeleton";
+import { SITE_URL } from "~/lib/site-config.js";
 
 const route = useRoute();
 
@@ -43,6 +44,15 @@ const { data: page, pending } = await useAsyncData(
 useHead({
   title: page.value?.meta.title,
   meta: [{ name: "description", content: page.value?.meta.description }],
+  link: page.value
+    ? [
+        {
+          rel: "alternate",
+          type: "text/markdown",
+          href: `${SITE_URL}/docs/${slugs.value.join("/")}.md`,
+        },
+      ]
+    : [],
 });
 
 useSeoMeta({
