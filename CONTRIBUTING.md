@@ -133,6 +133,6 @@ publish` publishes it under the default `latest` dist-tag.
 | `pnpm changeset`            | Interactively record what you changed and how (patch/minor/major).           |
 | `pnpm changeset status`     | Show which packages currently have pending changesets, without changing anything. |
 | `pnpm version-packages`     | Apply pending changesets: bump versions, update changelogs, refresh the lockfile. Only ever run by the `version` job in `release.yml` — you don't need this locally. |
-| `pnpm release`              | Build every publishable package, then `changeset publish`. A manual/local fallback for an emergency publish (requires `npm login` first); the automated pipeline publishes through `changesets/action/pack` + `changesets/action/publish` (OIDC) instead. |
-| `pnpm ci`                   | Run the same lint/typecheck/test/build sequence as CI, locally.              |
+| `pnpm release:local`        | Build every publishable package, then `changeset publish`. A manual/local fallback for an emergency publish (requires `npm login` first); the automated pipeline publishes through `changesets/action/pack` + `changesets/action/publish` (OIDC) instead. |
+| `pnpm ci:local`             | Run the same lint/typecheck/test/build sequence as CI, locally. (Named `ci:local`, not `ci` — `pnpm ci` is pnpm's own built-in alias for `clean-install` and would silently shadow a script named `ci`.) |
 | `pnpm build`                | Build `runable` and `@runablejs/cli` (the packages with a build step).       |

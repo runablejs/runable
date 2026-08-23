@@ -11,10 +11,10 @@
     "lint": "pnpm -r --if-present run lint",
     "typecheck": "pnpm -r --if-present run typecheck",
     "test": "pnpm -r --if-present run test",
-    "ci": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "ci:local": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "changeset": "changeset",
     "version-packages": "changeset version && pnpm install --no-frozen-lockfile",
-    "release": "pnpm build && changeset publish"
+    "release:local": "pnpm build && changeset publish"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^1.0.0",

@@ -39,7 +39,10 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: 22
+          # Node 22 is Maintenance LTS since 2025-10-21; Node 24 has been
+          # Active LTS since 2025-10-28 and is already what this repo's own
+          # tsconfig (@tsconfig/node24) and @types/node target.
+          node-version: 24
           cache: pnpm
 
       - name: Install dependencies
@@ -72,7 +75,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
           cache: pnpm
 
       - name: Install dependencies
@@ -84,6 +87,11 @@ jobs:
           script: pnpm version-packages
           commit-message: "chore(release): version packages"
           pr-title: "chore(release): version packages"
+        env:
+          # @changesets/changelog-github needs this to resolve PR/commit
+          # authors when writing CHANGELOG.md entries. Without it,
+          # `pnpm version-packages` fails outright (verified locally).
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # Case 2, step 1: the release PR was just merged (no changesets left) —
   # build every publishable package and pack it into a tarball. This job
@@ -109,7 +117,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
           # This job's output is what gets published — never restore a
           # dependency cache into the job that produces the shipped artifact.
           package-manager-cache: false
@@ -149,17 +157,15 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: 22
+          # Node 24 bundles npm >= 11.5.1 (verified: Node 24.19.0 ships npm
+          # 11.17.0), which already satisfies npm Trusted Publishing's
+          # minimum (npm >= 11.5.1 per npm's own docs). No separate global
+          # npm upgrade is needed on top of this.
+          node-version: 24
           package-manager-cache: false
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      # npm Trusted Publishing (OIDC) requires npm CLI >= 11.5.1, newer than
-      # what may ship with Node 22. Upgraded explicitly and predictably so
-      # publishing never silently falls back to a failed auth attempt.
-      - name: Ensure npm supports Trusted Publishing (OIDC)
-        run: npm install -g npm@latest
 
       - name: Publish packages
         uses: changesets/action/publish@v2
