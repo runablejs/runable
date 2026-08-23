@@ -107,6 +107,7 @@
     "@nestjs/common": "catalog:",
     "@nestjs/core": "catalog:",
     "@nestjs/platform-express": "catalog:",
+    "@types/estree": "catalog:",
     "@types/express": "catalog:",
     "@types/koa": "catalog:",
     "@types/lodash": "catalog:",

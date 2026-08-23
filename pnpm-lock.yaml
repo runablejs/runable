@@ -295,6 +295,9 @@ catalogs:
     '@tsdown/css':
       specifier: ^0.22.14
       version: 0.22.14
+    '@types/estree':
+      specifier: ^1.0.9
+      version: 1.0.9
     '@types/express':
       specifier: ^5.0.6
       version: 5.0.6
@@ -668,6 +671,9 @@ importers:
       '@nestjs/platform-express':
         specifier: 'catalog:'
         version: 11.1.29(@nestjs/common@11.1.29(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.29)
+      '@types/estree':
+        specifier: 'catalog:'
+        version: 1.0.9
       '@types/express':
         specifier: 'catalog:'
         version: 5.0.6

@@ -71,7 +71,7 @@ export function defineConfig(config: RunableConfig): RunableConfig {
 export function defineModule<
   OptionsT extends Record<string, any> = Record<string, any>,
 >(moduleDef: ModuleDefinition<OptionsT>): ModuleDefinition<OptionsT> {
-  moduleDef._isRunableModule = true;
+  (moduleDef as ResolvedConfig)._isRunableModule = true;
 
   return moduleDef;
 }
@@ -301,7 +301,8 @@ function resolveAllConfigs(entries: Map<string, RawEntry>): {
     const rConfig = resolveConfig(config);
     rConfig._name = entry.name;
     rConfig._configFile = entry.configFile;
-    rConfig._isRunableModule = entry.loaded._isRunableModule as boolean;
+    rConfig._isRunableModule = (entry.loaded as ResolvedConfig)
+      ._isRunableModule as boolean;
     rConfig._dependents = [...entry.dependents];
     rConfig._index = entry.index;
 
