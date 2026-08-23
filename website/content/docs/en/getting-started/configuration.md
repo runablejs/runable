@@ -22,22 +22,24 @@ export default defineConfig({});
 
 Without additional options, Runable uses this structure:
 
-| Option | Default | Purpose |
-| --- | --- | --- |
-| `appDir` | `app` | Root of Vue sources |
-| `output` | `.app` | Files generated for development and typing |
-| `distdir` | `.output` | Production build |
-| `publicDir` | `public` | Assets served as-is |
-| `ssr` | `true` | Enables server rendering |
-| `pages` | `app/pages` | Page files |
-| `layouts` | `app/layouts` | Available layouts |
-| `components` | `app/components` | Auto-registered components |
-| `composables` | `app/composables` | Auto-imported composables |
-| `globals` | `app/globals` | Auto-imported global functions |
-| `middlewares` | `app/middlewares` | Navigation middleware |
-| `plugins` | `app/plugins` | Application plugins |
-| `css` | `[]` | Global stylesheets |
-| `modules` | `[]` | Loaded Runable modules |
+| Option | Type | Default | Purpose |
+| --- | --- | --- | --- |
+| `appDir` | `string` | `app` | Root of Vue sources |
+| `output` | `string` | `.app` | Files generated for development and typing |
+| `distdir` | `string` | `.output` | Production build |
+| `publicDir` | `string \| false` | `public` | Assets served as-is |
+| `ssr` | `boolean` | `true` | Enables server rendering |
+| `pages` | `string \| array` | `app/pages` | Page files |
+| `layouts` | `string \| array` | `app/layouts` | Available layouts |
+| `components` | `string \| array` | `app/components` | Auto-registered components |
+| `composables` | `string \| array` | `app/composables` | Auto-imported composables |
+| `globals` | `string \| array` | `app/globals` | Auto-imported global functions |
+| `middlewares` | `string \| array` | `app/middlewares` | Navigation middleware |
+| `plugins` | `string \| array` | `app/plugins` | Application plugins |
+| `css` | `string \| array` | `[]` | Global stylesheets |
+| `modules` | `string[]` | `[]` | Loaded Runable modules |
+
+The full option set, with its exact TypeScript shape, is the `RunableConfig` interface in `packages/runable/src/config/types.ts`.
 
 Relative paths are resolved from the directory containing the configuration.
 

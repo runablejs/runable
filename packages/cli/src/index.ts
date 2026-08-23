@@ -10,6 +10,7 @@ const commands = {
   // dev: () => import('./commands/dev').then((m) => m.default),
   prepare: () => import("./commands/prepare").then((m) => m.default),
   build: () => import("./commands/build").then((m) => m.default),
+  skills: () => import("./commands/skills/index.js").then((m) => m.default),
   // cleanup: () => import('./commands/cleanup').then((m) => m.default),
   // info: () => import('./commands/info').then((m) => m.default),
 };

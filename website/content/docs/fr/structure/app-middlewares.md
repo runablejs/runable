@@ -7,7 +7,7 @@ Un middleware s'exécute pendant une navigation Vue Router. Utilisez-le pour vé
 
 ```ts
 // app/middlewares/auth.ts
-export default defineRouterMiddleware((to) => {
+export default defineVueMiddleware((to) => {
   const user = useCurrentUser();
 
   if (!user.value && to.path !== "/login") {

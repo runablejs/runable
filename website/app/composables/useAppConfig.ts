@@ -421,6 +421,44 @@ export function useAppConfig() {
               },
             ],
           },
+          {
+            name: "CLI",
+            code: "cli",
+            href: "/docs/guide/cli",
+            icon: "tabler:terminal-2",
+            children: [
+              {
+                name: "Overview",
+                code: "cli-overview",
+                href: "/docs/guide/cli",
+                icon: "tabler:info-circle",
+              },
+              {
+                name: "Create",
+                code: "cli-create",
+                href: "/docs/guide/cli/create",
+                icon: "tabler:folder-plus",
+              },
+              {
+                name: "Prepare",
+                code: "cli-prepare",
+                href: "/docs/guide/cli/prepare",
+                icon: "tabler:refresh",
+              },
+              {
+                name: "Build",
+                code: "cli-build",
+                href: "/docs/guide/cli/build",
+                icon: "tabler:package",
+              },
+              {
+                name: "AI Skills",
+                code: "cli-skills",
+                href: "/docs/guide/cli/skills",
+                icon: "tabler:robot",
+              },
+            ],
+          },
         ],
       },
 

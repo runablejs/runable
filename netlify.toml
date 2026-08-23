@@ -6,6 +6,21 @@
   NODE_VERSION = "24.12.0"
   PNPM_VERSION = "11.10.0"
 
+[[headers]]
+  for = "/llms.txt"
+  [headers.values]
+    Content-Type = "text/markdown; charset=utf-8"
+
+[[headers]]
+  for = "/llms-full.txt"
+  [headers.values]
+    Content-Type = "text/markdown; charset=utf-8"
+
+[[headers]]
+  for = "/docs/**/*.md"
+  [headers.values]
+    Content-Type = "text/markdown; charset=utf-8"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

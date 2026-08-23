@@ -11,6 +11,8 @@ import {
   type Plugin,
 } from "v-content";
 
+import { SITE_URL } from "./app/lib/site-config.js";
+
 import type { Element } from "hast";
 import { visit } from "unist-util-visit";
 
@@ -99,7 +101,10 @@ export default defineConfig({
         content: "Build the Vue app you want. Keep the backend you chose",
       },
     ],
-    link: [{ rel: "icon", href: "/favicon.svg" }],
+    link: [
+      { rel: "icon", href: "/favicon.svg" },
+      { rel: "describedby", href: `${SITE_URL}/llms.txt` },
+    ],
   },
 
   components: [

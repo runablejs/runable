@@ -21,6 +21,11 @@ temp/
 .output
 .app
 
+# Copied at build time from the repo-root skills/ (the single editorial
+# source) into the CLI package for publishing — see
+# packages/cli/scripts/copy-skills.ts. Not the repo-root skills/ itself.
+/packages/cli/skills/
+
 # Cache
 .cache/
 .netlify/

@@ -5,6 +5,16 @@ description: Generate client and server bundles, then run Runable without a Vite
 
 The production build generates the client and, when SSR is enabled, a server bundle. Runable then uses these files without starting the Vite development server.
 
+::u-tip
+---
+variant: info
+title: Simpler equivalent
+---
+
+<a href="/docs/guide/cli/build.md">`runable build`</a> runs this same `loadConfig()` + `buildProduction()` sequence for you. Write your own build script, as shown below, only when you need to run other steps around it.
+
+::
+
 ## Create the build script
 
 ```ts

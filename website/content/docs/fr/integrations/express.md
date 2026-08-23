@@ -33,6 +33,9 @@ app.listen(3000);
 ## Réutiliser une instance
 
 ```ts
+import { createRunableApp } from "runable";
+import { express } from "runable/adapters/express";
+
 const runableApp = createRunableApp();
 
 app.use(express({ runableApp }));

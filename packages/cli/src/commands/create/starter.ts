@@ -12,6 +12,7 @@ import {
   askPackageManager,
   askInstallDeps,
   installDependenciesIfWanted,
+  copyAgentsFile,
 } from "./shared.js";
 
 export interface StarterProjectAnswers {
@@ -101,7 +102,8 @@ function printSummary(answers: StarterProjectAnswers): void {
 /**
  * Runs the "start with a starter" flow: collects the project name,
  * framework, and package manager, scaffolds a new directory from the
- * matching starter template, then installs dependencies if requested.
+ * matching starter template, adds AGENTS.md, then installs dependencies if
+ * requested.
  */
 export async function handleStarterProject() {
   consola.start("Mode: Start with a starter");
@@ -119,6 +121,7 @@ export async function handleStarterProject() {
   const projectDir = resolve(process.cwd(), projectName);
   await mkdir(projectDir, { recursive: true });
   await copyStarterTemplate(framework, projectDir);
+  await copyAgentsFile(projectDir);
 
   if (installDeps) {
     await installDependenciesIfWanted(packageManager, installDeps, projectDir);

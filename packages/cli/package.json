@@ -27,10 +27,13 @@
     "runable": "./dist/index.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "templates",
+    "starters",
+    "skills"
   ],
   "scripts": {
-    "build": "tsdown",
+    "build": "tsx scripts/copy-skills.ts && tsdown",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "prepublishOnly": "pnpm build",
     "runable": "tsx src/index.ts",

@@ -225,6 +225,37 @@ export async function copyAppTemplate(targetDir: string): Promise<void> {
 }
 
 /**
+ * Copies the AI-agent instructions file (`AGENTS.md`) to the project root,
+ * prompting to overwrite if one already exists. Every project scaffolded by
+ * `create` should ship one so coding agents (Claude Code, Codex, Cursor,
+ * Gemini CLI, ...) understand Runable's conventions without guessing.
+ */
+export async function copyAgentsFile(targetDir: string): Promise<void> {
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+  const templatePath = resolve(__dirname, "../../../templates/default/AGENTS.md");
+
+  if (!existsSync(templatePath)) return;
+
+  const targetPath = resolve(targetDir, "AGENTS.md");
+
+  if (existsSync(targetPath)) {
+    const shouldOverwrite = await p.confirm({
+      message: "AGENTS.md already exists. Overwrite?",
+      initialValue: false,
+    });
+
+    if (p.isCancel(shouldOverwrite) || !shouldOverwrite) {
+      consola.info("Skipping AGENTS.md generation.");
+      return;
+    }
+  }
+
+  await mkdir(targetDir, { recursive: true });
+  await cp(templatePath, targetPath, { force: true });
+  consola.success("Created AGENTS.md");
+}
+
+/**
  * Adds Runable's runtime/dev dependencies and build scripts to the
  * `package.json` in the current directory, without touching anything
  * already declared there. No-op (with a warning) if no `package.json` is
@@ -510,10 +541,11 @@ export async function handleSharedAnswers() {
 
 /**
  * Finishes scaffolding a project/module from `handleSharedAnswers`'s
- * result: copies the app template, generates `runable.config.ts`, writes or
- * updates `package.json` (`createPackageJson` for a module — `moduleName`
- * is then required — or `updatePackageJson` for a regular project), copies
- * the server entry if requested, then installs dependencies.
+ * result: copies the app template, adds AGENTS.md, generates
+ * `runable.config.ts`, writes or updates `package.json`
+ * (`createPackageJson` for a module — `moduleName` is then required — or
+ * `updatePackageJson` for a regular project), copies the server entry if
+ * requested, then installs dependencies.
  */
 export async function afterAnswer(
   cwd: string,
@@ -525,6 +557,7 @@ export async function afterAnswer(
 ) {
   const appDirResolved = resolve(cwd, answers.appDir);
   await copyAppTemplate(appDirResolved);
+  await copyAgentsFile(cwd);
 
   await writeRunableConfig(answers._config, {
     identifier: isModule ? "defineModule" : "defineConfig",

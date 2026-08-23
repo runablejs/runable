@@ -24,7 +24,7 @@ Vous pouvez aussi scanner un dossier :
 
 ```ts
 export default defineConfig({
-  css: [{ path: "app/css", recursive: true }],
+  css: [{ dirs: "app/css" }],
 });
 ```
 

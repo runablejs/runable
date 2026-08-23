@@ -27,7 +27,7 @@ These files tell TypeScript and your editor which components, functions, routes,
 pnpm app:prepare
 ```
 
-Run this command after installing the project and in CI before type checking when `.app/` does not exist yet.
+Run this command after installing the project and in CI before type checking when `.app/` does not exist yet. See <a href="/docs/guide/cli/prepare.md">`runable prepare`</a> for the command itself.
 
 The internal `#build` alias points to this directory. It lets the runtime and extensions reference generated files without depending on the configured `output` name.
 

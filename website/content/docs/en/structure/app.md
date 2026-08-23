@@ -21,6 +21,8 @@ app/
 
 Every item is optional. A minimal application can contain only `app/pages/index.vue`.
 
+`css/` is an organizational convention only — unlike the other directories, Runable does not scan it automatically. Declare each stylesheet explicitly in `runable.config.ts`'s `css` option (see <a href="/docs/structure/app-css.md">app/css</a>).
+
 ## Use another name
 
 ```ts

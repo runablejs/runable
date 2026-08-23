@@ -67,10 +67,15 @@ With Runable, you own the HTTP entry point:
 
 ```ts
 // server.ts
+import Express from "express";
 import { express } from "runable/adapters/express";
+
+const server = Express();
 
 server.get("/api/users", usersController);
 server.use(express());
+
+server.listen(3000);
 ```
 
 You decide middleware order, API routes, observability, and server startup. The adapter initializes Runable and handles requests that reach it.

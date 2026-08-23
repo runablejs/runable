@@ -21,10 +21,15 @@ Runable does not automatically start your application server. You create the ser
 
 ```ts
 // server.ts
+import Express from "express";
 import { express } from "runable/adapters/express";
+
+const server = Express();
 
 server.get("/api/orders", ordersController);
 server.use(express());
+
+server.listen(3000);
 ```
 
 You control the order. Place API routes before the Runable adapter so the backend handles them first.
@@ -173,7 +178,7 @@ app/pages/
 ├── index.vue            → /
 ├── account.vue          → /account
 ├── users/[id].vue       → /users/:id
-└── docs/[...slug].vue   → /docs/:slug(.*)
+└── docs/[...slug].vue   → /docs/:slug*
 ```
 
 `definePageMeta()` supplements file-name conventions:
