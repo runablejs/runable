@@ -1,5 +1,6 @@
+import { parse as parseYaml } from "yaml";
+
 const FRONTMATTER_RE = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/;
-const FIELD_RE = /^(title|description):\s*(.*)$/;
 
 export interface ParsedMarkdown {
   title?: string;
@@ -7,21 +8,23 @@ export interface ParsedMarkdown {
   body: string;
 }
 
-/** Minimal frontmatter reader for `title`/`description` — matches the parser
- * used by tests/integration/docs-content.test.ts. No YAML dependency. */
+/** Reads `title`/`description` from a page's frontmatter using a real YAML
+ * parser — quoted strings, multiline `>`/`|` scalars, and `:` inside values
+ * all parse correctly, unlike a line-by-line regex. Only the `---` fence
+ * boundaries are matched by regex; the frontmatter block itself is parsed
+ * as YAML. */
 export function parseFrontmatter(content: string): ParsedMarkdown {
   const match = content.match(FRONTMATTER_RE);
   if (!match) return { body: content };
 
   const [, frontmatter, body] = match;
+  const data = (parseYaml(frontmatter) ?? {}) as Record<string, unknown>;
+
   const result: ParsedMarkdown = { body };
 
-  for (const line of frontmatter.split(/\r?\n/)) {
-    const fieldMatch = line.match(FIELD_RE);
-    if (!fieldMatch) continue;
-
-    const [, key, rawValue] = fieldMatch;
-    result[key as "title" | "description"] = rawValue.trim();
+  if (typeof data.title === "string") result.title = data.title.trim();
+  if (typeof data.description === "string") {
+    result.description = data.description.trim();
   }
 
   return result;

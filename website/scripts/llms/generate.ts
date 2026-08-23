@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 import { SITE_URL } from "../../app/lib/site-config.js";
 import { parseFrontmatter } from "./frontmatter.js";
-import { llmsSections } from "./sections.js";
+import { llmsSections, type LlmsSection } from "./sections.js";
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 
@@ -70,10 +70,41 @@ export function markdownUrl(slug: string): string {
   return `${SITE_URL}/docs/${slug}.md`;
 }
 
-/** Builds the llms.txt content. Throws if `llmsSections` references a slug
- * that doesn't resolve to a real page, so a renamed/removed doc page fails
- * the build instead of publishing a dead link (see sections.ts). */
+/** Throws if the same slug is listed in more than one section (or twice in
+ * the same one) — each page belongs in exactly one place in llms.txt. */
+export function assertNoDuplicateSlugs(sections: LlmsSection[]): void {
+  const sectionsBySlug = new Map<string, string[]>();
+
+  for (const section of sections) {
+    for (const ref of section.pages) {
+      const titles = sectionsBySlug.get(ref.slug) ?? [];
+      titles.push(section.title);
+      sectionsBySlug.set(ref.slug, titles);
+    }
+  }
+
+  const duplicates = [...sectionsBySlug.entries()].filter(
+    ([, titles]) => titles.length > 1,
+  );
+  if (duplicates.length === 0) return;
+
+  const details = duplicates
+    .map(([slug, titles]) => `"${slug}" (in: ${titles.join(", ")})`)
+    .join("; ");
+
+  throw new Error(
+    `website/scripts/llms/sections.ts lists the same page more than once — ` +
+      `each slug must appear in exactly one section. Duplicated: ${details}.`,
+  );
+}
+
+/** Builds the llms.txt content. Throws if `llmsSections` lists the same
+ * slug twice (see `assertNoDuplicateSlugs`), or references a slug that
+ * doesn't resolve to a real page, so a renamed/removed doc page fails the
+ * build instead of publishing a dead link (see sections.ts). */
 export function buildLlmsTxt(pages: Map<string, DocPage>): string {
+  assertNoDuplicateSlugs(llmsSections);
+
   const lines: string[] = [];
 
   lines.push("# Runable");

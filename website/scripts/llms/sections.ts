@@ -29,11 +29,9 @@ export const llmsSections: LlmsSection[] = [
   {
     title: "Getting Started",
     pages: [
-      { slug: "getting-started/why-runable" },
       { slug: "getting-started/installation" },
       { slug: "getting-started/quickstart" },
       { slug: "getting-started/concepts" },
-      { slug: "getting-started/vs-nuxt" },
     ],
   },
   {

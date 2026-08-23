@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
 import {
+  assertNoDuplicateSlugs,
   buildLlmsTxt,
   buildPublicMarkdown,
   collectDocPages,
@@ -14,7 +15,7 @@ import {
   markdownUrl,
   type DocPage,
 } from "../../website/scripts/llms/generate.js";
-import { llmsSections } from "../../website/scripts/llms/sections.js";
+import { llmsSections, type LlmsSection } from "../../website/scripts/llms/sections.js";
 
 const LINK_RE = /\[([^\]]+)\]\(([^)]+)\)/g;
 
@@ -62,6 +63,16 @@ describe("llms.txt generation", () => {
   it("only lists slugs that exist in sections.ts (no accidental duplicates)", () => {
     const allSlugs = llmsSections.flatMap((s) => s.pages.map((p) => p.slug));
     expect(new Set(allSlugs).size).toBe(allSlugs.length);
+  });
+
+  it("excludes why-runable and vs-nuxt from the curated selection, but still exposes their .md", () => {
+    const allSlugs = llmsSections.flatMap((s) => s.pages.map((p) => p.slug));
+
+    expect(allSlugs).not.toContain("getting-started/why-runable");
+    expect(allSlugs).not.toContain("getting-started/vs-nuxt");
+
+    expect(pages.has("getting-started/why-runable")).toBe(true);
+    expect(pages.has("getting-started/vs-nuxt")).toBe(true);
   });
 
   describe("links", () => {
@@ -118,6 +129,32 @@ describe("llms.txt generation", () => {
     brokenPages.delete(firstSlug);
 
     expect(() => buildLlmsTxt(brokenPages)).toThrow(/no matching file exists/);
+  });
+
+  it("the real sections.ts has no duplicate slugs", () => {
+    expect(() => assertNoDuplicateSlugs(llmsSections)).not.toThrow();
+  });
+
+  it("detects a slug duplicated across two different sections", () => {
+    const withDuplicate: LlmsSection[] = [
+      { title: "Core Concepts", pages: [{ slug: "guide/plugins" }] },
+      { title: "Extending Runable", pages: [{ slug: "guide/plugins" }] },
+    ];
+
+    expect(() => assertNoDuplicateSlugs(withDuplicate)).toThrow(
+      /guide\/plugins.*Core Concepts.*Extending Runable/s,
+    );
+  });
+
+  it("detects a slug duplicated twice within the same section", () => {
+    const withDuplicate: LlmsSection[] = [
+      {
+        title: "Core Concepts",
+        pages: [{ slug: "guide/routing" }, { slug: "guide/routing" }],
+      },
+    ];
+
+    expect(() => assertNoDuplicateSlugs(withDuplicate)).toThrow(/guide\/routing/);
   });
 });
 
