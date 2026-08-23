@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   ci:
-    name: Install, typecheck, test, build
+    name: Install, lint, build, typecheck, test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -45,11 +45,15 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      # Build before typecheck: @runablejs/cli imports the public runtime
+      # of `runable` (`import { build } from "runable"`) and is typechecked
+      # against its published artifacts (dist/index.d.ts), not its sources.
+      # On a clean checkout those artifacts don't exist until this runs.
+      - name: Build
+        run: pnpm build
+
       - name: Typecheck
         run: pnpm typecheck
 
       - name: Test
         run: pnpm test
-
-      - name: Build
-        run: pnpm build

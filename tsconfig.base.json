@@ -9,10 +9,6 @@
     "noEmit": true,
     "strict": true,
 
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
-
-    "paths": {
-      "runable": ["./packages/runable/src/index.ts"]
-    }
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo"
   }
 }
