@@ -54,8 +54,8 @@ export function collectFreeIdentifiers(
       "typescript",
       "jsx",
       "decorators-legacy",
-      "importAttributes",
-      "topLevelAwait",
+      "importAttributes" as any,
+      "topLevelAwait" as any,
     ],
   });
 
