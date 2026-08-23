@@ -64,12 +64,18 @@ const routes = await inspector.getRoutes(); // reflects the new state
 
 There's no background watcher — `refresh()` is explicit, so the Inspector stays cheap to create and doesn't hold a file watcher open for callers that only need a one-off snapshot (a CLI command, a test).
 
+## What "read-only" actually guarantees
+
+An Inspector never writes to disk (not even `.app/`, which `runable prepare`/`build` do write to), never changes `process.cwd()`, and never touches the process-wide cache `loadConfig()`/`useConfig()`/`useAllConfigs()` use elsewhere in your process (a live dev server running alongside it is unaffected, in both directions). Because of that, several Inspectors — even for different projects — can be created, used, and refreshed concurrently without interfering with each other.
+
+"Read-only" does **not** mean "never executes project code". Resolving a project's configuration executes every `runable.config.*` file in its module graph, including each module's `setup()` hook — this is unavoidable (loading a config file *is* running it; there's no static alternative) and, for `setup()` specifically, deliberate: a module's `setup()` is part of what Runable itself resolves a project's configuration with, so skipping it would make the Inspector answer a different question than "how does Runable actually see this project". What the Inspector never does is execute a **page** or **plugin** file — those need a live Vue app/router to run meaningfully, so their metadata (`definePageMeta()`, a plugin's `name`/`enforce`/`dependsOn`) is read statically from source instead of imported.
+
 ::u-tip
 ---
 variant: info
 title: What the Inspector deliberately does not do
 ---
 
-It never starts a Vite dev server, never writes to your project (routes/layouts/plugins/modules are all read from already-resolved config, not rescanned from scratch), and never executes a plugin file just to read its metadata — a plugin's `name`/`enforce`/`dependsOn` are read statically from source, the same way `definePageMeta()` already is. Diagnostics, route resolution against a live request, and IDE/MCP integrations are intentionally left for tooling built on top of this API, not part of it.
+It never starts a Vite dev server, never rescans routes/layouts/plugins/modules from scratch outside of already-resolved config, and never executes a page or plugin file just to read its metadata. Diagnostics, route resolution against a live request, and IDE/MCP integrations are intentionally left for tooling built on top of this API, not part of it.
 
 ::

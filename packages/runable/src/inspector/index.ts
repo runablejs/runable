@@ -9,35 +9,38 @@
  * per-domain modules in this directory for what each one reuses from
  * Runable's real pipeline vs. computes statically, and why.
  *
- * Two constraints inherited from Runable's own config loader, not
- * introduced by the Inspector:
+ * ### What "read-only" actually means here
  *
- * 1. `loadConfig()` (`config/load.ts`) resolves relative to
- *    `process.cwd()`, not an arbitrary directory — there is no lower-level
- *    entry point that accepts one. To inspect a `rootDir` other than the
- *    current working directory, this module briefly `process.chdir()`s
- *    into it for the duration of a single `loadConfig()` call and restores
- *    the previous cwd immediately after (the same pattern Runable's own
- *    regression tests already use — see `tests/regressions/config.test.ts`).
- *    Since `process.chdir()` is process-global, two Inspector instances
- *    resolving concurrently in the same process (or the Inspector racing
- *    a live dev server's own `loadConfig()` call) can interleave — fine
- *    for the CLI/test/single-project-per-process use this targets today,
- *    a real constraint for a future multi-project host.
- * 2. `loadConfig()`'s resolved config graph is a permanent, process-wide
- *    singleton (`unloadConfig()` in `config/load.ts`, added alongside this
- *    module, is the only way to clear it). `refresh()` clears and reloads
- *    it — which means a second, concurrently-live consumer of Runable's
- *    config in the same process (again, a live dev server) would lose its
- *    own cached config when this Inspector refreshes. Not a concern for
- *    the CLI/MCP/test-runner scenarios this is built for (their own
- *    process' only Runable consumer), worth knowing before embedding an
- *    Inspector inside a long-running multi-tenant host process.
+ * An Inspector never writes to disk, never mutates `process.cwd()`, and
+ * never touches `loadConfig()`'s process-wide cache (`useConfig()` /
+ * `useAllConfigs()` / `getModuleOptions()`, and a live dev server's own
+ * `loadConfig()` call, are completely unaffected by creating, using, or
+ * refreshing an Inspector — and vice versa). This is possible because
+ * config resolution is built on `resolveConfigGraph()`
+ * (`config/load.ts`), a separate primitive from `loadConfig()` that
+ * returns a fresh, isolated result with none of `loadConfig()`'s extra
+ * behavior (permanent cache, `modules-options.d.ts` generation). Two
+ * Inspectors — even for two different projects — can be created, used,
+ * and refreshed concurrently without interfering with each other.
+ *
+ * "Read-only" does *not* mean "never executes project code": resolving
+ * the config graph executes every `runable.config.*` file in the module
+ * graph, including each module's `setup()` hook — this is unavoidable
+ * (`c12Load` imports config files; config resolution is code, not static
+ * data) and, for `setup()` specifically, deliberate: skipping it would
+ * make the Inspector resolve a *different* graph than `loadConfig()`
+ * actually resolves for the same project (see `resolveConfigGraph()`'s
+ * doc for exactly which channels — `_runtime`, `process.env` — that
+ * affects today, and for a documented-but-currently-broken one it
+ * doesn't). What the Inspector *never* does is execute a *page* or
+ * *plugin* file: those need a live Vue app/router to run meaningfully,
+ * and their metadata (`definePageMeta`, a plugin's `name`/`enforce`/
+ * `dependsOn`) is read statically instead (see `routes.js`/`plugins.js`).
  */
 
 import { resolve as resolvePath } from "node:path";
 
-import { loadConfig, unloadConfig, useAllConfigs } from "@/config/load.js";
+import { resolveConfigGraph } from "@/config/load.js";
 import type { ResolvedConfig } from "@/config/types.js";
 
 import { assertRunableProject } from "./detect.js";
@@ -76,33 +79,21 @@ interface InspectorState {
   allConfigs: ResolvedConfig[];
 }
 
-/** Loads (or reloads) the config graph for `rootDir`, working around
- * `loadConfig()` only ever resolving relative to `process.cwd()` — see the
- * module doc above. */
+/** Resolves (or re-resolves, on `refresh()`) this Inspector's own state
+ * from `resolveConfigGraph(rootDir)` — a fresh call every time, isolated
+ * from `loadConfig()`'s cache and from any other Inspector instance. */
 async function resolveState(rootDir: string): Promise<InspectorState> {
-  const previousCwd = process.cwd();
-  const needsChdir = previousCwd !== rootDir;
-
+  let graph;
   try {
-    if (needsChdir) process.chdir(rootDir);
-    unloadConfig();
-    await loadConfig();
+    graph = await resolveConfigGraph(rootDir);
   } catch (error) {
     throw new RunableInspectorError(
-      `Failed to load the Runable config for "${rootDir}": ${(error as Error).message}`,
+      `Failed to resolve the Runable config for "${rootDir}": ${(error as Error).message}`,
       { cause: error },
     );
-  } finally {
-    if (needsChdir) process.chdir(previousCwd);
   }
 
-  const allConfigs = useAllConfigs();
-  const main = allConfigs.find((c) => c._name === "__main") ?? allConfigs[0];
-  if (!main) {
-    throw new RunableInspectorError(`No resolved config was found for "${rootDir}".`);
-  }
-
-  return { main, allConfigs };
+  return { main: graph.main, allConfigs: graph.all };
 }
 
 function aggregate<T>(configs: ResolvedConfig[], pick: (config: ResolvedConfig) => T[]): T[] {

@@ -8,11 +8,14 @@ import {
   writeFixtureFile,
 } from "../fixtures.js";
 
-// `createRunableInspector()` drives `loadConfig()`, which caches into a
-// module-level singleton (see packages/runable/src/config/load.ts) — every
-// test below gets an isolated module instance via `vi.resetModules()` + a
-// fresh dynamic `import("runable/inspector")`, matching the pattern already
-// used in config.test.ts.
+// `createRunableInspector()` resolves through `resolveConfigGraph()`
+// (packages/runable/src/config/load.ts), a side-effect-free primitive with
+// no module-level cache of its own — most tests below don't strictly need
+// module isolation anymore, but still get a fresh instance via
+// `vi.resetModules()` + a fresh dynamic `import("runable/inspector")`,
+// matching the pattern already used in config.test.ts. A few tests
+// specifically need to *share* a module instance with `loadConfig()`'s own
+// cache (the "global cache" tests below) — those import directly instead.
 const originalCwd = process.cwd();
 
 async function freshInspector() {
@@ -193,6 +196,50 @@ definePageMeta({ name: "my-account", path: "/account/settings", middleware: ["au
           meta: { middleware: ["auth"] },
         },
       ]);
+    } finally {
+      cleanupFixtureDir(dir);
+    }
+  });
+
+  it("aggregates pages contributed by a module, not just the main app", async () => {
+    // Matches the real pipeline's own aggregation (vite/config.ts pushes
+    // every config's `pages` — main app and every module — into one
+    // combined routesFolder list for a single VueRouter() instance).
+    const dir = fixtureWithRunable("inspector-routes-module-");
+    try {
+      writeFixtureFile(
+        dir,
+        "runable.config.ts",
+        `import { defineConfig } from "runable";
+export default defineConfig({ modules: ["./modules/blog"] });
+`,
+      );
+      writeFixtureFile(dir, "app/pages/index.vue", "<template><div>home</div></template>");
+      writeFixtureFile(
+        dir,
+        "modules/blog/runable.config.ts",
+        `import { defineModule } from "runable";
+export default defineModule({
+  meta: { name: "blog" },
+  pages: ["./pages"],
+});
+`,
+      );
+      writeFixtureFile(
+        dir,
+        "modules/blog/pages/posts.vue",
+        "<template><div>posts</div></template>",
+      );
+
+      const { createRunableInspector } = await freshInspector();
+      const inspector = await createRunableInspector({ rootDir: dir });
+      const routes = await inspector.getRoutes();
+
+      expect(routes.map((r) => r.name).sort()).toEqual(["index", "posts"]);
+      expect(routes.find((r) => r.name === "posts")).toMatchObject({
+        path: "/posts",
+        file: "modules/blog/pages/posts.vue",
+      });
     } finally {
       cleanupFixtureDir(dir);
     }
@@ -407,6 +454,291 @@ describe("createRunableInspector() - works without a pre-existing .app/", () => 
 
       expect(routes).toEqual([{ name: "index", path: "/", file: "app/pages/index.vue" }]);
     } finally {
+      cleanupFixtureDir(dir);
+    }
+  });
+});
+
+describe("createRunableInspector() - does not write to disk", () => {
+  it("never creates .app/modules-options.d.ts or any other generated file", async () => {
+    // Regression guard: loadConfig() (the runtime pipeline) unconditionally
+    // writes .app/modules-options.d.ts via generateModulesOptionsDts() —
+    // that's a real, load-bearing side effect of loadConfig(), just not
+    // one the Inspector's read-only contract can afford to inherit. The
+    // Inspector resolves config through resolveConfigGraph() instead,
+    // which never calls generateModulesOptionsDts() at all — this test is
+    // what actually locks that in, rather than trusting the module doc.
+    const dir = fixtureWithRunable("inspector-no-writes-");
+    try {
+      writeFixtureFile(
+        dir,
+        "runable.config.ts",
+        `import { defineConfig } from "runable";
+export default defineConfig({ modules: ["./modules/analytics"] });
+`,
+      );
+      writeFixtureFile(dir, "app/pages/index.vue", "<template><div>home</div></template>");
+      writeFixtureFile(dir, "app/layouts/default.vue", "<template><slot /></template>");
+      writeFixtureFile(
+        dir,
+        "app/middlewares/auth.ts",
+        "export default defineVueMiddleware((to, from) => {});",
+      );
+      writeFixtureFile(
+        dir,
+        "app/plugins/analytics.ts",
+        `import { defineVuePlugin } from "runable";
+export default defineVuePlugin({ name: "analytics", setup() {} });
+`,
+      );
+      writeFixtureFile(dir, "app/components/BaseButton.vue", "<template><button /></template>");
+      writeFixtureFile(
+        dir,
+        "modules/analytics/runable.config.ts",
+        `import { defineModule } from "runable";
+export default defineModule({ meta: { name: "analytics" }, configKey: "analytics" });
+`,
+      );
+      expect(existsSync(path.join(dir, ".app"))).toBe(false);
+
+      const { createRunableInspector } = await freshInspector();
+      const inspector = await createRunableInspector({ rootDir: dir });
+
+      await inspector.getProject();
+      await inspector.getConfig();
+      await inspector.getRoutes();
+      await inspector.getLayouts();
+      await inspector.getMiddlewares();
+      await inspector.getPlugins();
+      await inspector.getModules();
+      await inspector.getAutoImports();
+      await inspector.refresh();
+      await inspector.getRoutes();
+
+      expect(
+        existsSync(path.join(dir, ".app")),
+        ".app/ was created by createRunableInspector()/refresh() — the Inspector must not write generated output",
+      ).toBe(false);
+    } finally {
+      cleanupFixtureDir(dir);
+    }
+  });
+});
+
+describe("createRunableInspector() - no process.chdir()", () => {
+  it("inspects rootDir without ever changing process.cwd(), even from a different cwd", async () => {
+    const dir = fixtureWithRunable("inspector-no-chdir-");
+    const elsewhere = createFixtureDir("inspector-elsewhere-");
+    try {
+      writeFixtureFile(dir, "runable.config.ts", baseConfig());
+      writeFixtureFile(dir, "app/pages/index.vue", "<template><div>home</div></template>");
+
+      process.chdir(elsewhere);
+      const cwdBeforeCreate = process.cwd();
+
+      const { createRunableInspector } = await freshInspector();
+      const inspector = await createRunableInspector({ rootDir: dir });
+      expect(process.cwd()).toBe(cwdBeforeCreate);
+
+      const routes = await inspector.getRoutes();
+      expect(routes).toEqual([{ name: "index", path: "/", file: "app/pages/index.vue" }]);
+      expect(process.cwd()).toBe(cwdBeforeCreate);
+
+      writeFixtureFile(dir, "app/pages/about.vue", "<template><div>about</div></template>");
+      await inspector.refresh();
+      expect(process.cwd()).toBe(cwdBeforeCreate);
+
+      const after = await inspector.getRoutes();
+      expect(after.map((r) => r.name).sort()).toEqual(["about", "index"]);
+    } finally {
+      cleanupFixtureDir(dir);
+      cleanupFixtureDir(elsewhere);
+    }
+  });
+});
+
+describe("createRunableInspector() - does not disturb loadConfig()'s global cache", () => {
+  it("leaves another loadConfig() consumer's cached config untouched across create()/refresh()", async () => {
+    // Before the refactor, the Inspector called unloadConfig() on every
+    // create()/refresh(), which would silently blow away a *different*,
+    // unrelated loadConfig() consumer's cache (e.g. a live dev server) in
+    // the same process. resolveConfigGraph() never touches that cache at
+    // all, so this must no longer happen.
+    const projectA = fixtureWithRunable("inspector-global-cache-a-");
+    const projectB = fixtureWithRunable("inspector-global-cache-b-");
+    try {
+      writeFixtureFile(projectA, "runable.config.ts", baseConfig());
+      writeFixtureFile(projectA, "app/pages/index.vue", "<template><div>a</div></template>");
+      writeFixtureFile(projectB, "runable.config.ts", baseConfig());
+      writeFixtureFile(projectB, "app/pages/index.vue", "<template><div>b</div></template>");
+
+      vi.resetModules();
+      const runable = await import("runable");
+      const { createRunableInspector } = await import("runable/inspector");
+
+      // An unrelated loadConfig() consumer for project A — same mechanism
+      // a live dev server would use, resolved from process.cwd().
+      process.chdir(projectA);
+      await runable.loadConfig();
+      const configABefore = runable.useConfig();
+      expect(configABefore.appDir).toBe(path.join(projectA, "app"));
+
+      // An Inspector for a *different* project, created and refreshed from
+      // a *different* cwd.
+      process.chdir(originalCwd);
+      const inspector = await createRunableInspector({ rootDir: projectB });
+      await inspector.refresh();
+      const project = await inspector.getProject();
+      expect(project.rootDir).toBe(projectB);
+
+      // Project A's cache must be the exact same object — proof the
+      // Inspector never cleared it.
+      expect(runable.useConfig()).toBe(configABefore);
+    } finally {
+      cleanupFixtureDir(projectA);
+      cleanupFixtureDir(projectB);
+    }
+  });
+});
+
+describe("createRunableInspector() - isolation between concurrent inspectors", () => {
+  it("resolves two different projects concurrently without cross-contamination", async () => {
+    const projectA = fixtureWithRunable("inspector-isolation-a-");
+    const projectB = fixtureWithRunable("inspector-isolation-b-");
+    try {
+      writeFixtureFile(projectA, "runable.config.ts", baseConfig());
+      writeFixtureFile(projectA, "app/pages/index.vue", "<template><div>a</div></template>");
+      writeFixtureFile(projectA, "app/pages/alpha.vue", "<template><div>alpha</div></template>");
+
+      writeFixtureFile(projectB, "runable.config.ts", baseConfig());
+      writeFixtureFile(projectB, "app/pages/index.vue", "<template><div>b</div></template>");
+      writeFixtureFile(projectB, "app/pages/beta.vue", "<template><div>beta</div></template>");
+
+      const { createRunableInspector } = await freshInspector();
+
+      const [inspectorA, inspectorB] = await Promise.all([
+        createRunableInspector({ rootDir: projectA }),
+        createRunableInspector({ rootDir: projectB }),
+      ]);
+
+      const [routesA, routesB] = await Promise.all([
+        inspectorA.getRoutes(),
+        inspectorB.getRoutes(),
+      ]);
+
+      expect(routesA.map((r) => r.name).sort()).toEqual(["alpha", "index"]);
+      expect(routesB.map((r) => r.name).sort()).toEqual(["beta", "index"]);
+
+      const [projectResultA, projectResultB] = await Promise.all([
+        inspectorA.getProject(),
+        inspectorB.getProject(),
+      ]);
+      expect(projectResultA.rootDir).toBe(projectA);
+      expect(projectResultB.rootDir).toBe(projectB);
+    } finally {
+      cleanupFixtureDir(projectA);
+      cleanupFixtureDir(projectB);
+    }
+  });
+});
+
+describe("createRunableInspector() - module setup() behavior", () => {
+  it("runs module setup() hooks — a static plugin/component/etc. a module declares is visible without setup() running at all", async () => {
+    // A module's *own* `plugins`/`components`/`layouts`/etc. fields (set
+    // directly in its runable.config.*, not from inside setup()) go
+    // through the normal config-resolution step and are visible via
+    // useAllConfigs() regardless of setup() — this is the common,
+    // well-tested way a module contributes one. This test is the control:
+    // it isolates what setup() itself is responsible for from what static
+    // module config already provides, so the next test's assertion is
+    // actually about setup(), not about module contributions in general.
+    const dir = fixtureWithRunable("inspector-module-static-plugin-");
+    try {
+      writeFixtureFile(
+        dir,
+        "runable.config.ts",
+        `import { defineConfig } from "runable";
+export default defineConfig({ modules: ["./modules/analytics"] });
+`,
+      );
+      writeFixtureFile(dir, "app/pages/index.vue", "<template><div>home</div></template>");
+      writeFixtureFile(
+        dir,
+        "modules/analytics/runable.config.ts",
+        `import { defineModule } from "runable";
+export default defineModule({
+  meta: { name: "analytics" },
+  plugins: ["./runtime/plugin.ts"],
+});
+`,
+      );
+      writeFixtureFile(
+        dir,
+        "modules/analytics/runtime/plugin.ts",
+        `import { defineVuePlugin } from "runable";
+export default defineVuePlugin({ name: "analytics-plugin", setup() {} });
+`,
+      );
+
+      const { createRunableInspector } = await freshInspector();
+      const inspector = await createRunableInspector({ rootDir: dir });
+      const plugins = await inspector.getPlugins();
+
+      expect(plugins.some((p) => p.name === "analytics-plugin")).toBe(true);
+    } finally {
+      cleanupFixtureDir(dir);
+    }
+  });
+
+  it("runs module setup() hooks — their effects are visible in the Inspector's result", async () => {
+    // Locks in the architectural decision documented on resolveConfigGraph()
+    // (config/load.ts): setup() hooks DO run while resolving the graph.
+    // Demonstrated here via the one verifiably-working setup()-driven
+    // side channel that reaches the Inspector's output today: a module
+    // can set a RUN_PUBLIC_* env var from setup() (the pattern documented
+    // in the Guide's Modules page), which loadRuntimeEnv() then picks up.
+    //
+    // Note: `defineModule`'s own JSDoc also documents
+    // `config.plugins.push(...)` as a way for setup() to register a
+    // plugin directly on the main config — auditing this while writing
+    // this test surfaced that this specific pattern is currently broken
+    // against the *real* pipeline too (config.plugins expects
+    // already-resolved ResolvedScanDirFile objects, not raw path strings;
+    // pushing a string crashes `prepare()` identically to how it would
+    // have crashed the Inspector) — a pre-existing bug unrelated to this
+    // refactor, left unfixed here since it's out of scope, but real.
+    const dir = fixtureWithRunable("inspector-module-setup-env-");
+    try {
+      writeFixtureFile(
+        dir,
+        "runable.config.ts",
+        `import { defineConfig } from "runable";
+export default defineConfig({ modules: ["./modules/analytics"] });
+`,
+      );
+      writeFixtureFile(dir, "app/pages/index.vue", "<template><div>home</div></template>");
+      writeFixtureFile(
+        dir,
+        "modules/analytics/runable.config.ts",
+        `import { defineModule } from "runable";
+export default defineModule<{ endpoint: string }>({
+  meta: { name: "analytics" },
+  configKey: "analytics",
+  defaults: { endpoint: "https://default.example.com" },
+  setup(options) {
+    process.env.RUN_PUBLIC_ANALYTICS_ENDPOINT ??= options.endpoint;
+  },
+});
+`,
+      );
+
+      const { createRunableInspector } = await freshInspector();
+      const inspector = await createRunableInspector({ rootDir: dir });
+      const config = await inspector.getConfig();
+
+      expect(config.runtime.public.analyticsEndpoint).toBe("https://default.example.com");
+    } finally {
+      delete process.env.RUN_PUBLIC_ANALYTICS_ENDPOINT;
       cleanupFixtureDir(dir);
     }
   });

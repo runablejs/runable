@@ -17,13 +17,16 @@ import type {
 /**
  * Module-level cache of resolved configs, keyed by module name.
  * The root app config is stored under the reserved key `"__main"`.
+ *
+ * Only `loadConfig()` and its own consumers (`useConfig()`,
+ * `useAllConfigs()`, `getModuleOptions()`) touch this — `resolveConfigGraph()`
+ * below is a separate, side-effect-free primitive that never reads or
+ * writes it. See `resolveConfigGraph()`'s doc for why this split exists.
  */
 let cachedConfigs: Record<string, ResolvedConfig> | undefined;
 
-/** Memoizes `getModuleDir` by name so repeated references only touch the filesystem once. */
-let moduleDirCache: Map<string, string> | undefined;
-
-/** Maps every declared module reference to the canonical name used in `cachedConfigs`. */
+/** Maps every declared module reference to the canonical name used in `cachedConfigs`.
+ * Populated by `loadConfig()` only — see `resolveConfigGraph()`. */
 let moduleNameAliases: Map<string, string> | undefined;
 
 /**
@@ -112,18 +115,20 @@ function resolveModuleName(name: string, dirCwd: string): string {
  * Resolves a module name to the directory its `runable.config` should be
  * loaded from.
  * - `./relative/path` -> resolved directly against `parentCwd`.
- * - bare package name -> resolved via `require.resolve` against
- *   `process.cwd()`, then `dist/` is appended, since Runable modules are
- *   expected to publish their built config output there rather than raw
- *   source.
+ * - bare package name -> resolved from `parentCwd` (the config that
+ *   declared it, not necessarily the project root — this matters for a
+ *   module declared by another, non-root module), then `dist/` is
+ *   appended, since Runable modules are expected to publish their built
+ *   config output there rather than raw source.
  *
- * Synchronous and memoized by name, so a module referenced by several
- * parents only hits `require.resolve` / `existsSync` once.
+ * Synchronous and memoized by name in the caller-supplied `cache`, so a
+ * module referenced by several parents only hits `require.resolve` /
+ * `existsSync` once. The cache is a parameter (not module-level state) so
+ * concurrent resolutions for different projects — see
+ * `resolveConfigGraph()` — never share or race on it.
  */
-function getModuleDir(name: string, parentCwd: string): string {
-  moduleDirCache ??= new Map();
-
-  const cached = moduleDirCache.get(name);
+function getModuleDir(name: string, parentCwd: string, cache: Map<string, string>): string {
+  const cached = cache.get(name);
   if (cached) return cached;
 
   let cwd: string | undefined;
@@ -132,7 +137,7 @@ function getModuleDir(name: string, parentCwd: string): string {
 
   if (!cwd) {
     try {
-      const packageJsonPath = resolvePackageDir(name);
+      const packageJsonPath = resolvePackageDir(name, parentCwd);
       cwd = join(packageJsonPath, "dist");
     } catch {
       // Package not found in node_modules — fall through to the error below.
@@ -145,7 +150,7 @@ function getModuleDir(name: string, parentCwd: string): string {
     );
   }
 
-  moduleDirCache.set(name, cwd);
+  cache.set(name, cwd);
   return cwd;
 }
 
@@ -153,9 +158,19 @@ function getModuleDir(name: string, parentCwd: string): string {
  * Loads the full module graph (main config + every module it transitively
  * depends on) into a flat `name -> RawEntry` map. Siblings load in parallel
  * via the `inFlight` map, which also serves as the sole dedup mechanism.
+ *
+ * Every piece of mutable bookkeeping (`entries`, `inFlight`, `dependencies`,
+ * `moduleDirCache`) is either local to this call or passed in explicitly —
+ * this function touches no module-level state, so two concurrent calls for
+ * two different `rootCwd`s (see `resolveConfigGraph()`) never interfere.
+ * `moduleNameAliases` is the one exception: it's an output parameter,
+ * populated only when the caller passes one (`loadConfig()` does, to keep
+ * `getModuleOptions()` working; `resolveConfigGraph()` doesn't need it).
  */
 async function loadAllConfigs(
-  rootCwd?: string,
+  rootCwd: string,
+  moduleDirCache: Map<string, string>,
+  moduleNameAliases?: Map<string, string>,
 ): Promise<Map<string, RawEntry>> {
   const entries = new Map<string, RawEntry>();
   const inFlight = new Map<string, Promise<RawEntry>>();
@@ -231,7 +246,7 @@ async function loadAllConfigs(
 
         await Promise.all(
           childModules.map((childName) =>
-            load(childName, getModuleDir(childName, entryCwd), resolvedName),
+            load(childName, getModuleDir(childName, entryCwd, moduleDirCache), resolvedName),
           ),
         );
 
@@ -369,7 +384,17 @@ function resolveAllConfigs(entries: Map<string, RawEntry>): {
  * on B depends on A) are caught via `visiting` instead of deadlocking.
  * ------------------------------------------------------------------------ */
 
-async function runSetups(pendingSetups: PendingSetup[]) {
+/**
+ * Runs every module's `setup()`, passing each one the *main* app's
+ * resolved config (`mainConfig`) as its second argument — matching
+ * `defineModule`'s documented contract (`config.plugins.push(...)`
+ * mutates the app's own plugin list, not the module's). `mainConfig` is
+ * passed in explicitly rather than read from the global `cachedConfigs`
+ * singleton, so this function has no dependency on `loadConfig()`'s cache
+ * and can run against a freshly-resolved, uncached graph — see
+ * `resolveConfigGraph()`.
+ */
+async function runSetups(pendingSetups: PendingSetup[], mainConfig: ResolvedConfig) {
   const byName = new Map(pendingSetups.map((p) => [p.config._name, p]));
   const done = new Map<string, Promise<void>>();
   const visiting = new Set<string>();
@@ -390,13 +415,10 @@ async function runSetups(pendingSetups: PendingSetup[]) {
 
     const promise = (async () => {
       await Promise.all(pending.dependOn.map(run));
-      const _config = await pending.setup?.(
-        pending.options,
-        cachedConfigs?.__main ?? pending.config,
-      );
+      const _config = await pending.setup?.(pending.options, mainConfig);
 
-      if (_config && cachedConfigs?.__main) {
-        merge(cachedConfigs.__main._runtime, _config._runtime);
+      if (_config) {
+        merge(mainConfig._runtime, _config._runtime);
       }
     })();
 
@@ -414,21 +436,117 @@ async function runSetups(pendingSetups: PendingSetup[]) {
   }
 }
 
+/** Result of `resolveConfigGraph()` — the main app's config plus the full graph (main + every module), sorted by load order. */
+export interface ConfigGraph {
+  /** The main app's resolved config — same object as `all.find(c => c._name === "__main")`. */
+  main: ResolvedConfig;
+  /** Every resolved config in the graph (main + modules), sorted by load order (`_index`). */
+  all: ResolvedConfig[];
+}
+
 /**
- * Clears the cached config graph populated by `loadConfig()`, so the next
- * call re-reads every `runable.config.*` file and re-runs every module's
- * `setup` from scratch instead of returning the stale cache.
+ * Resolves the full config graph for a project — the main config, every
+ * module it transitively depends on, their options, and module `setup()`
+ * hooks — as a **fresh, isolated, in-memory result**. Unlike `loadConfig()`
+ * below, it:
+ *
+ * - never touches `loadConfig()`'s process-wide cache (`useConfig()` /
+ *   `useAllConfigs()` / `getModuleOptions()` are unaffected by it, and it's
+ *   unaffected by them — two calls, even concurrent ones for different
+ *   `rootDir`s, never interfere);
+ * - never writes `modules-options.d.ts` or any other generated file —
+ *   that's a build-output concern (`generateModulesOptionsDts()`),
+ *   unrelated to what the graph itself resolves to;
+ * - never depends on `process.cwd()` — `rootDir` is threaded explicitly
+ *   through every step of module discovery, including bare-package module
+ *   resolution (`getModuleDir`), which previously read `process.cwd()`
+ *   implicitly.
+ *
+ * `loadConfig()` is `resolveConfigGraph(process.cwd())` plus the extra
+ * runtime behavior real Runable execution needs on top (a permanent cache,
+ * generated types). `runable/inspector` calls this function directly
+ * instead, precisely to avoid those extras — see its module doc for the
+ * full read-only contract this enables.
+ *
+ * ### Why module `setup()` hooks still run here
+ *
+ * Modules are Runable's documented mechanism for a package to shape a
+ * consuming project's config (see `defineModule`'s doc above) — `setup()`
+ * is that mechanism's hook. Two concrete, currently-working channels
+ * reach the resolved graph through it: the object it can return gets
+ * merged into the main config's `_runtime` (used by `useRuntime()`), and
+ * anything it writes to `process.env` (e.g. a `RUN_PUBLIC_*` var, the
+ * pattern the Guide documents) is visible to any *later* env read in the
+ * same process — including the Inspector's own `getConfig()`, which reads
+ * env after this function has already run every setup(). Skipping
+ * `setup()` would make this function diverge from what `loadConfig()`
+ * actually resolves for the exact same project, breaking the "one source
+ * of truth" this function exists to provide — not a theoretical concern,
+ * a determinism one: a graph resolved with setups skipped is a
+ * *different* graph, not just an incomplete one.
+ *
+ * (`defineModule`'s own doc also shows a module pushing a plugin path
+ * directly onto `config.plugins` from `setup()` — auditing this found
+ * that pattern doesn't actually work against the real pipeline either,
+ * `config.plugins` expects already-resolved entries, not raw path
+ * strings, so this isn't a channel that currently reaches `getPlugins()`
+ * in practice, whether or not `setup()` runs. Pre-existing, unrelated to
+ * this split — left as-is.)
+ *
+ * This isn't the same category of risk as executing a *page* or *plugin*
+ * file (which nothing in Runable's own config resolution does, and the
+ * Inspector deliberately never does either): those need a live Vue
+ * app/router to run meaningfully, and their metadata is readable
+ * statically instead. A module's `runable.config.*`, by contrast, is
+ * already unconditionally executed just to discover the module graph in
+ * the first place (`c12Load` imports it — there's no static alternative,
+ * config resolution is inherently code, not data) — `setup()` is a
+ * function from that same already-trusted, already-executed file, not a
+ * new category of code. It's still real code execution with real
+ * side-effect potential (env var writes, and in principle anything else a
+ * plain JS function can do) — a deliberate, documented tradeoff, not a
+ * free lunch.
+ */
+export async function resolveConfigGraph(
+  rootDir: string = process.cwd(),
+  options?: { moduleNameAliases?: Map<string, string> },
+): Promise<ConfigGraph> {
+  const moduleDirCache = new Map<string, string>();
+  const entries = await loadAllConfigs(rootDir, moduleDirCache, options?.moduleNameAliases);
+  const { resolved, pendingSetups } = resolveAllConfigs(entries);
+
+  const main = resolved.__main;
+  if (!main) {
+    throw new Error(`Failed to resolve a Runable config graph for "${rootDir}".`);
+  }
+
+  await runSetups(pendingSetups, main);
+
+  const all = Object.values(resolved).sort((a, b) => a._index - b._index);
+  return { main, all };
+}
+
+/**
+ * Clears the config graph cached by `loadConfig()`, so the next call
+ * re-resolves the whole project (re-reads every `runable.config.*` file,
+ * re-runs every module's `setup()`) from scratch instead of returning the
+ * stale cache.
  *
  * `loadConfig()` is otherwise a permanent, process-wide singleton (by
  * design — the config graph doesn't change once resolved), so this is the
  * only supported way to observe a config/module/page change made after the
- * first `loadConfig()` call in a given process. Consumers that hold onto
- * derived state (routes, layouts, ...) computed before this call must
- * recompute it themselves afterwards.
+ * first `loadConfig()` call in a given process, for consumers built
+ * directly on `loadConfig()`/`useConfig()`/`useAllConfigs()`. Consumers
+ * that hold onto derived state (routes, layouts, ...) computed before this
+ * call must recompute it themselves afterwards.
+ *
+ * `runable/inspector` does not use this — an Inspector holds its own state
+ * from `resolveConfigGraph()` and refreshes it by calling that again, so
+ * one Inspector refreshing never clears state a *different* `loadConfig()`
+ * consumer (e.g. a live dev server) in the same process is relying on.
  */
 export function unloadConfig() {
   cachedConfigs = undefined;
-  moduleDirCache = undefined;
   moduleNameAliases = undefined;
 }
 
@@ -439,21 +557,22 @@ export function unloadConfig() {
 export async function loadConfig() {
   if (cachedConfigs) return;
 
-  // Clear any stale module directory resolutions before this fresh load.
-  moduleDirCache = undefined;
   moduleNameAliases = new Map();
 
-  const entries = await loadAllConfigs();
-  const { resolved, pendingSetups } = resolveAllConfigs(entries);
+  let graph: ConfigGraph;
+  try {
+    graph = await resolveConfigGraph(process.cwd(), { moduleNameAliases });
+  } catch (error) {
+    moduleNameAliases = undefined;
+    throw error;
+  }
 
-  cachedConfigs = resolved;
+  cachedConfigs = Object.fromEntries(graph.all.map((config) => [config._name, config]));
 
   try {
     await generateModulesOptionsDts();
-    await runSetups(pendingSetups);
   } catch (error) {
     cachedConfigs = undefined;
-    moduleDirCache = undefined;
     moduleNameAliases = undefined;
     throw error;
   }
