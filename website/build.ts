@@ -8,10 +8,10 @@ import { generateLlmsArtifacts } from "./scripts/llms/generate.js";
 await build();
 
 const config = useConfig();
-const { llmsTxtPath, markdownPaths } = generateLlmsArtifacts(
+const { llmsTxtPath, llmsFullTxtPath, markdownPaths } = generateLlmsArtifacts(
   join(config.distdir, "client"),
 );
 
 console.log(
-  `✅ Generated ${llmsTxtPath} and ${markdownPaths.length} Markdown doc pages`,
+  `✅ Generated ${llmsTxtPath}, ${llmsFullTxtPath}, and ${markdownPaths.length} Markdown doc pages`,
 );

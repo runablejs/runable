@@ -12,6 +12,11 @@
     Content-Type = "text/markdown; charset=utf-8"
 
 [[headers]]
+  for = "/llms-full.txt"
+  [headers.values]
+    Content-Type = "text/markdown; charset=utf-8"
+
+[[headers]]
   for = "/docs/**/*.md"
   [headers.values]
     Content-Type = "text/markdown; charset=utf-8"
