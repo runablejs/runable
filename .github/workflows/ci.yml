@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+  push:
+    branches:
+      - dev
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: Install, lint, build, typecheck, test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          # Node 22 is Maintenance LTS since 2025-10-21; Node 24 has been
+          # Active LTS since 2025-10-28 and is already what this repo's own
+          # tsconfig (@tsconfig/node24) and @types/node target.
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # No-ops today (no eslint config / no test files yet in the repo) and
+      # automatically start running real checks the day a package defines
+      # its own "lint"/"test" script — see `--if-present` in the root scripts.
+      - name: Lint
+        run: pnpm lint
+
+      # Build before typecheck: @runablejs/cli imports the public runtime
+      # of `runable` (`import { build } from "runable"`) and is typechecked
+      # against its published artifacts (dist/index.d.ts), not its sources.
+      # On a clean checkout those artifacts don't exist until this runs.
+      - name: Build
+        run: pnpm build
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
