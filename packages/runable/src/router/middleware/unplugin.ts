@@ -18,7 +18,7 @@ export interface RouterMiddlewaresOptions {
   dirs: ResolvedScanDirFile[];
 }
 
-function resolveMiddleware(filePath: string, parentDir: string) {
+export function resolveMiddleware(filePath: string, parentDir: string) {
   filePath = removeFileExtension(filePath);
 
   if (filePath !== parentDir) filePath = relative(parentDir, filePath);

@@ -19,6 +19,11 @@
       "import": "./dist/index.js",
       "require": "./dist/index.js"
     },
+    "./inspector": {
+      "types": "./dist/inspector/index.d.ts",
+      "import": "./dist/inspector/index.js",
+      "require": "./dist/inspector/index.js"
+    },
     "./adapters/adonis": {
       "types": "./dist/adapters/adonis.d.ts",
       "import": "./dist/adapters/adonis.js",

@@ -1,11 +1,11 @@
 import { resolve } from "node:path";
-import kebabCase from "lodash/kebabCase.js";
 
 import VueRouter from "vue-router/vite";
 import merge from "lodash/merge.js";
 
 import { PagesOptions } from "./pages.js";
 import { extractPageMeta } from "./extract-page-meta.js";
+import { normalizeRouteName } from "./route-name.js";
 
 export function buildRoutes(options: Required<PagesOptions>) {
   return VueRouter({
@@ -27,14 +27,7 @@ export function buildRoutes(options: Required<PagesOptions>) {
       if (!route.component) return;
 
       if (typeof route.name === "string") {
-        route.name = kebabCase(route.name);
-        const re = /.*\/index.(vue|ts|js|mjs)$/gm;
-
-        if (re.test(route.component) && !route.name.endsWith("-index")) {
-          route.name = [...route.name.split("-").filter(Boolean), "index"].join(
-            "-",
-          );
-        }
+        route.name = normalizeRouteName(route.name, route.component);
       }
 
       const meta = extractPageMeta(route.component);
