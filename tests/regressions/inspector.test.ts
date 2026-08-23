@@ -9,10 +9,14 @@ import {
 } from "../fixtures.js";
 
 // `createRunableInspector()` resolves through `resolveConfigGraph()`
-// (packages/runable/src/config/load.ts), a side-effect-free primitive with
-// no module-level cache of its own — most tests below don't strictly need
-// module isolation anymore, but still get a fresh instance via
-// `vi.resetModules()` + a fresh dynamic `import("runable/inspector")`,
+// (packages/runable/src/config/load.ts), which has no module-level cache
+// of its own — it doesn't touch loadConfig()'s cache, generate Runable
+// files, or depend on process.cwd(). It does still execute the project's
+// runable.config.* files and module setup() hooks, ordinary project code
+// that can have its own side effects — see resolveConfigGraph()'s and the
+// Inspector's own doc for the precise contract. Most tests below don't
+// strictly need module isolation anymore, but still get a fresh instance
+// via `vi.resetModules()` + a fresh dynamic `import("runable/inspector")`,
 // matching the pattern already used in config.test.ts. A few tests
 // specifically need to *share* a module instance with `loadConfig()`'s own
 // cache (the "global cache" tests below) — those import directly instead.
@@ -459,7 +463,7 @@ describe("createRunableInspector() - works without a pre-existing .app/", () => 
   });
 });
 
-describe("createRunableInspector() - does not write to disk", () => {
+describe("createRunableInspector() - does not generate Runable files", () => {
   it("never creates .app/modules-options.d.ts or any other generated file", async () => {
     // Regression guard: loadConfig() (the runtime pipeline) unconditionally
     // writes .app/modules-options.d.ts via generateModulesOptionsDts() —
@@ -468,6 +472,12 @@ describe("createRunableInspector() - does not write to disk", () => {
     // Inspector resolves config through resolveConfigGraph() instead,
     // which never calls generateModulesOptionsDts() at all — this test is
     // what actually locks that in, rather than trusting the module doc.
+    //
+    // Scope: this only covers files *Runable itself* would generate. It
+    // doesn't and can't prove "nothing on disk changes" in general — the
+    // fixture's own runable.config.*/module setup() run as part of
+    // resolution and could in principle write files of their own; see
+    // resolveConfigGraph()'s doc for why the Inspector isn't a sandbox.
     const dir = fixtureWithRunable("inspector-no-writes-");
     try {
       writeFixtureFile(
@@ -603,6 +613,12 @@ describe("createRunableInspector() - does not disturb loadConfig()'s global cach
 
 describe("createRunableInspector() - isolation between concurrent inspectors", () => {
   it("resolves two different projects concurrently without cross-contamination", async () => {
+    // Scope: this proves isolation of Runable's own resolved state (each
+    // Inspector's routes/project result matches its own project, not the
+    // other's). It's not a claim that arbitrary code the two projects'
+    // runable.config.*/setup() run can't interact through the shared
+    // Node.js process (process.env, globalThis, ...) — see
+    // resolveConfigGraph()'s doc.
     const projectA = fixtureWithRunable("inspector-isolation-a-");
     const projectB = fixtureWithRunable("inspector-isolation-b-");
     try {

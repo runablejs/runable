@@ -20,8 +20,9 @@ import type {
  *
  * Only `loadConfig()` and its own consumers (`useConfig()`,
  * `useAllConfigs()`, `getModuleOptions()`) touch this — `resolveConfigGraph()`
- * below is a separate, side-effect-free primitive that never reads or
- * writes it. See `resolveConfigGraph()`'s doc for why this split exists.
+ * below never reads or writes it (it's a separate primitive precisely so
+ * it doesn't have to). See `resolveConfigGraph()`'s doc for why this split
+ * exists and for what it does and doesn't guarantee.
  */
 let cachedConfigs: Record<string, ResolvedConfig> | undefined;
 
@@ -56,18 +57,29 @@ export function defineConfig(config: RunableConfig): RunableConfig {
 /**
  * Identity helper for authoring a Runable module's `runable.config.*` file.
  * Builds on top of `defineConfig`: a module can declare everything a regular
- * config can (plugins, components, layouts...), plus `configKey`/`defaults`
- * to expose typed, overridable options, a `setup` hook invoked once every
- * config in the graph has been resolved (see `runSetups`), and `dependOn` /
- * `enforce` to order that hook relative to other modules' setups.
+ * config can (plugins, components, layouts...) — including a `plugins`
+ * array, resolved from the module's own directory — plus `configKey`/
+ * `defaults` to expose typed, overridable options, a `setup` hook invoked
+ * once every config in the graph has been resolved (see `runSetups`), and
+ * `dependOn` / `enforce` to order that hook relative to other modules'
+ * setups.
+ *
+ * `setup()` does *not* accept new entries pushed onto `config.plugins` (or
+ * `config.components`/`.layouts`/etc.) — those fields expect the
+ * already-resolved shape `resolveConfig()` produces from the module's own
+ * declared fields, not a raw path string added after the fact. Declare a
+ * module's plugins/components/etc. as regular fields instead (see the
+ * example below); use `setup()` for options-driven side effects that don't
+ * fit that shape, e.g. a default derived from `options`.
  *
  * @example
  * export default defineModule<{ prefix: string }>({
  *   meta: { name: "my-module" },
  *   configKey: "myModule",
  *   defaults: { prefix: "/api" },
- *   setup(options, config) {
- *     config.plugins.push(resolve(__dirname, "runtime/plugin.js"));
+ *   plugins: ["./runtime/plugin.js"],
+ *   setup(options) {
+ *     process.env.RUN_PUBLIC_API_PREFIX ??= options.prefix;
  *   },
  * });
  */
@@ -386,13 +398,13 @@ function resolveAllConfigs(entries: Map<string, RawEntry>): {
 
 /**
  * Runs every module's `setup()`, passing each one the *main* app's
- * resolved config (`mainConfig`) as its second argument — matching
- * `defineModule`'s documented contract (`config.plugins.push(...)`
- * mutates the app's own plugin list, not the module's). `mainConfig` is
- * passed in explicitly rather than read from the global `cachedConfigs`
- * singleton, so this function has no dependency on `loadConfig()`'s cache
- * and can run against a freshly-resolved, uncached graph — see
- * `resolveConfigGraph()`.
+ * resolved config (`mainConfig`) as its second argument — any mutation a
+ * `setup()` makes to it (or, more commonly, to `process.env`, or via its
+ * return value's `_runtime`, see `defineModule`'s doc) applies to the
+ * *app's* config, not the module's own. `mainConfig` is passed in
+ * explicitly rather than read from the global `cachedConfigs` singleton,
+ * so this function has no dependency on `loadConfig()`'s cache and can run
+ * against a freshly-resolved, uncached graph — see `resolveConfigGraph()`.
  */
 async function runSetups(pendingSetups: PendingSetup[], mainConfig: ResolvedConfig) {
   const byName = new Map(pendingSetups.map((p) => [p.config._name, p]));
@@ -447,15 +459,19 @@ export interface ConfigGraph {
 /**
  * Resolves the full config graph for a project — the main config, every
  * module it transitively depends on, their options, and module `setup()`
- * hooks — as a **fresh, isolated, in-memory result**. Unlike `loadConfig()`
- * below, it:
+ * hooks — as a **fresh, uncached, in-memory result, independent of
+ * `loadConfig()`'s state**. This is not the same as "side-effect-free" or
+ * "pure": it does execute `runable.config.*` and every module's `setup()`
+ * (see below), which is project/module code, not data, and may perform
+ * its own side effects. What this function itself guarantees is narrower
+ * and specific to *Runable's own* state — unlike `loadConfig()` below, it:
  *
  * - never touches `loadConfig()`'s process-wide cache (`useConfig()` /
  *   `useAllConfigs()` / `getModuleOptions()` are unaffected by it, and it's
  *   unaffected by them — two calls, even concurrent ones for different
  *   `rootDir`s, never interfere);
- * - never writes `modules-options.d.ts` or any other generated file —
- *   that's a build-output concern (`generateModulesOptionsDts()`),
+ * - never writes `modules-options.d.ts` or any other Runable-generated
+ *   file — that's a build-output concern (`generateModulesOptionsDts()`),
  *   unrelated to what the graph itself resolves to;
  * - never depends on `process.cwd()` — `rootDir` is threaded explicitly
  *   through every step of module discovery, including bare-package module
@@ -466,7 +482,8 @@ export interface ConfigGraph {
  * runtime behavior real Runable execution needs on top (a permanent cache,
  * generated types). `runable/inspector` calls this function directly
  * instead, precisely to avoid those extras — see its module doc for the
- * full read-only contract this enables.
+ * full read-only contract this enables (and for what "read-only" does and
+ * doesn't cover once project code is involved).
  *
  * ### Why module `setup()` hooks still run here
  *
@@ -485,13 +502,15 @@ export interface ConfigGraph {
  * a determinism one: a graph resolved with setups skipped is a
  * *different* graph, not just an incomplete one.
  *
- * (`defineModule`'s own doc also shows a module pushing a plugin path
+ * (`defineModule`'s own doc used to show a module pushing a plugin path
  * directly onto `config.plugins` from `setup()` — auditing this found
- * that pattern doesn't actually work against the real pipeline either,
- * `config.plugins` expects already-resolved entries, not raw path
- * strings, so this isn't a channel that currently reaches `getPlugins()`
- * in practice, whether or not `setup()` runs. Pre-existing, unrelated to
- * this split — left as-is.)
+ * that pattern doesn't actually work against the real pipeline, `config.
+ * plugins` expects already-resolved entries, not raw path strings, so it
+ * was never a channel that reached `getPlugins()` in practice, whether or
+ * not `setup()` runs. The doc now shows the pattern that does work
+ * (declaring `plugins` as a regular field); this pre-existing runtime gap
+ * — `setup()` can't append a plugin this way — is otherwise unrelated to
+ * this split and left as-is.)
  *
  * This isn't the same category of risk as executing a *page* or *plugin*
  * file (which nothing in Runable's own config resolution does, and the

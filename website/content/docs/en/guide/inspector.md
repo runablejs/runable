@@ -66,9 +66,18 @@ There's no background watcher — `refresh()` is explicit, so the Inspector stay
 
 ## What "read-only" actually guarantees
 
-An Inspector never writes to disk (not even `.app/`, which `runable prepare`/`build` do write to), never changes `process.cwd()`, and never touches the process-wide cache `loadConfig()`/`useConfig()`/`useAllConfigs()` use elsewhere in your process (a live dev server running alongside it is unaffected, in both directions). Because of that, several Inspectors — even for different projects — can be created, used, and refreshed concurrently without interfering with each other.
+"Read-only" describes what the Inspector **itself** does, not a sandbox around the project it inspects:
 
-"Read-only" does **not** mean "never executes project code". Resolving a project's configuration executes every `runable.config.*` file in its module graph, including each module's `setup()` hook — this is unavoidable (loading a config file *is* running it; there's no static alternative) and, for `setup()` specifically, deliberate: a module's `setup()` is part of what Runable itself resolves a project's configuration with, so skipping it would make the Inspector answer a different question than "how does Runable actually see this project". What the Inspector never does is execute a **page** or **plugin** file — those need a live Vue app/router to run meaningfully, so their metadata (`definePageMeta()`, a plugin's `name`/`enforce`/`dependsOn`) is read statically from source instead of imported.
+- The Inspector itself does not generate or modify a Runable project/build file — not even `.app/`, which `runable prepare`/`build` do write to.
+- It does not mutate `process.cwd()`.
+- It does not touch the process-wide cache `loadConfig()`/`useConfig()`/`useAllConfigs()` use elsewhere in your process — a live dev server running alongside it is unaffected, in both directions.
+- Because of that, Inspector instances don't share Runable's resolved configuration state or caches, and don't interfere with each other through `process.cwd()`.
+
+None of that means "never executes project code", and the Inspector is **not a sandbox**. Resolving a project's configuration executes every `runable.config.*` file in its module graph, including each module's `setup()` hook — this is unavoidable (loading a config file *is* running it; there's no static alternative) and, for `setup()` specifically, deliberate: a module's `setup()` is part of what Runable itself resolves a project's configuration with, so skipping it would make the Inspector answer a different question than "how does Runable actually see this project". `runable.config.*` is already trusted, project-owned code — resolving it isn't running something foreign.
+
+That code runs in your Node.js process, though, so its side effects are real: `process.env` writes, filesystem writes, `globalThis` or third-party-singleton mutation from a module's `setup()` are all possible, and are outside the Inspector's isolation guarantee — two Inspectors running concurrently can still observe or race on each other's *project* code's side effects, even though neither can observe or disturb the other's Runable-owned state.
+
+What the Inspector never executes itself is a **page** or **plugin** file — those need a live Vue app/router to run meaningfully, so their metadata (`definePageMeta()`, a plugin's `name`/`enforce`/`dependsOn`) is read statically from source instead of imported.
 
 ::u-tip
 ---

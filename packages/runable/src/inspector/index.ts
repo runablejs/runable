@@ -11,31 +11,45 @@
  *
  * ### What "read-only" actually means here
  *
- * An Inspector never writes to disk, never mutates `process.cwd()`, and
- * never touches `loadConfig()`'s process-wide cache (`useConfig()` /
- * `useAllConfigs()` / `getModuleOptions()`, and a live dev server's own
- * `loadConfig()` call, are completely unaffected by creating, using, or
- * refreshing an Inspector — and vice versa). This is possible because
- * config resolution is built on `resolveConfigGraph()`
- * (`config/load.ts`), a separate primitive from `loadConfig()` that
- * returns a fresh, isolated result with none of `loadConfig()`'s extra
- * behavior (permanent cache, `modules-options.d.ts` generation). Two
- * Inspectors — even for two different projects — can be created, used,
- * and refreshed concurrently without interfering with each other.
+ * "Read-only" describes the Inspector's *own* behavior, not a sandbox
+ * around the project it inspects:
  *
- * "Read-only" does *not* mean "never executes project code": resolving
- * the config graph executes every `runable.config.*` file in the module
- * graph, including each module's `setup()` hook — this is unavoidable
- * (`c12Load` imports config files; config resolution is code, not static
- * data) and, for `setup()` specifically, deliberate: skipping it would
- * make the Inspector resolve a *different* graph than `loadConfig()`
- * actually resolves for the same project (see `resolveConfigGraph()`'s
- * doc for exactly which channels — `_runtime`, `process.env` — that
- * affects today, and for a documented-but-currently-broken one it
- * doesn't). What the Inspector *never* does is execute a *page* or
- * *plugin* file: those need a live Vue app/router to run meaningfully,
- * and their metadata (`definePageMeta`, a plugin's `name`/`enforce`/
- * `dependsOn`) is read statically instead (see `routes.js`/`plugins.js`).
+ * - The Inspector itself never generates or modifies a Runable project/
+ *   build file (not even `.app/`), never changes `process.cwd()`, and
+ *   never touches `loadConfig()`'s process-wide cache (`useConfig()` /
+ *   `useAllConfigs()` / `getModuleOptions()`, and a live dev server's own
+ *   `loadConfig()` call, are unaffected by creating, using, or refreshing
+ *   an Inspector — and vice versa). This is possible because config
+ *   resolution is built on `resolveConfigGraph()` (`config/load.ts`), a
+ *   separate primitive from `loadConfig()` with none of its extra
+ *   behavior (permanent cache, `modules-options.d.ts` generation).
+ * - Two Inspectors — even for two different projects — don't share
+ *   Runable's resolved config state or caches and don't interfere through
+ *   `process.cwd()`.
+ *
+ * Neither of those means "never executes project code", and the
+ * Inspector is not a sandbox: resolving the config graph executes every
+ * `runable.config.*` file in the module graph, including each module's
+ * `setup()` hook — this is unavoidable (`c12Load` imports config files;
+ * config resolution is code, not static data) and, for `setup()`
+ * specifically, deliberate: skipping it would make the Inspector resolve
+ * a *different* graph than `loadConfig()` actually resolves for the same
+ * project (see `resolveConfigGraph()`'s doc for exactly which channels —
+ * `_runtime`, `process.env` — actually reach the resolved graph today,
+ * and for one that doesn't despite once being documented as if it did).
+ * That executed code is ordinary
+ * project/module configuration — no more "arbitrary" than
+ * `runable.config.*` itself already is — and it runs in this same Node.js
+ * process, so whatever side effects it performs (`process.env` writes,
+ * filesystem writes, `globalThis`/third-party-singleton mutation) are
+ * real and are outside the Inspector's isolation guarantee: two
+ * Inspectors running concurrently can still observe or race on each
+ * other's project code's side effects, even though neither can observe
+ * or disturb the other's Runable-owned state. What the Inspector *never*
+ * does itself is execute a *page* or *plugin* file: those need a live Vue
+ * app/router to run meaningfully, and their metadata (`definePageMeta`, a
+ * plugin's `name`/`enforce`/`dependsOn`) is read statically instead (see
+ * `routes.js`/`plugins.js`).
  */
 
 import { resolve as resolvePath } from "node:path";
