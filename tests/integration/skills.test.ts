@@ -99,6 +99,13 @@ function validateSkillDir(skillDir: string): string[] {
     );
   }
 
+  const body = raw.slice(fenceMatch[0].length).trim();
+  if (!body) {
+    errors.push(
+      `${skillMdPath}: SKILL.md must contain Markdown instructions after the frontmatter`,
+    );
+  }
+
   return errors;
 }
 
@@ -170,6 +177,39 @@ describe("skill validator", () => {
 
     const errors = validateSkillDir(skillDir);
     expect(errors.some((e) => e.includes('"description" is required'))).toBe(true);
+  });
+
+  it("rejects a skill with an empty body", () => {
+    const skillDir = makeSkill(
+      "empty-body",
+      ["---", "name: empty-body", "description: A skill with no instructions.", "---"].join("\n"),
+    );
+
+    const errors = validateSkillDir(skillDir);
+    expect(
+      errors.some((e) => e.includes("must contain Markdown instructions after the frontmatter")),
+    ).toBe(true);
+  });
+
+  it("rejects a skill whose body is only whitespace/blank lines", () => {
+    const skillDir = makeSkill(
+      "whitespace-body",
+      [
+        "---",
+        "name: whitespace-body",
+        "description: A skill with a whitespace-only body.",
+        "---",
+        "",
+        "   ",
+        "\t",
+        "",
+      ].join("\n"),
+    );
+
+    const errors = validateSkillDir(skillDir);
+    expect(
+      errors.some((e) => e.includes("must contain Markdown instructions after the frontmatter")),
+    ).toBe(true);
   });
 
   it("rejects invalid YAML frontmatter with an explicit error", () => {
