@@ -91,10 +91,15 @@ Avec Runable, le point d'entrée HTTP vous appartient :
 
 ```ts
 // server.ts
+import Express from "express";
 import { express } from "runable/adapters/express";
+
+const server = Express();
 
 server.get("/api/users", usersController);
 server.use(express());
+
+server.listen(3000);
 ```
 
 Vous décidez de l'ordre des middlewares, des routes API, de l'observabilité et du démarrage du serveur. L'adaptateur initialise Runable et prend en charge les requêtes qui lui parviennent.

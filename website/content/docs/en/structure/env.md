@@ -7,7 +7,7 @@ Runable loads environment files for the active Vite mode and variables already p
 
 ## Declare variables
 
-Runable recognizes three prefixes: `RUN_`, and `VITE_`. Prefer `RUN_` in new projects to distinguish Runable configuration clearly.
+Runable recognizes two prefixes: `RUN_` and `VITE_`. Prefer `RUN_` in new projects to distinguish Runable configuration clearly.
 
 ```dotenv
 # Available in the browser and during SSR
@@ -73,7 +73,7 @@ Restart the development server after adding or renaming a variable to regenerate
 
 ## Direct access with import.meta.env
 
-Runable also replaces static accesses using the `RUN_` and `RUN_` prefixes:
+Runable also replaces static accesses using the `RUN_` and `VITE_` prefixes:
 
 ```ts
 const apiBase = import.meta.env.RUN_PUBLIC_API_BASE;
@@ -90,7 +90,7 @@ surface: solid
 title: Never put a secret in a public variable
 ---
 
-Every `RUN_PUBLIC_*`, `RUN_PUBLIC_*`, or `VITE_PUBLIC_*` variable is bundled for the client. Treat its value as public.
+Every `RUN_PUBLIC_*` or `VITE_PUBLIC_*` variable is bundled for the client. Treat its value as public.
 
 Also avoid the `VITE_` prefix for secrets: Vite exposes `VITE_*` variables through `import.meta.env` independently of the object built by `useRuntime()`.
 

@@ -22,22 +22,24 @@ export default defineConfig({});
 
 Sans option supplémentaire, Runable utilise cette structure :
 
-| Option | Valeur par défaut | Rôle |
-| --- | --- | --- |
-| `appDir` | `app` | Racine des sources Vue |
-| `output` | `.app` | Fichiers générés pour le développement et le typage |
-| `distdir` | `.output` | Build de production |
-| `publicDir` | `public` | Assets servis tels quels |
-| `ssr` | `true` | Active le rendu serveur |
-| `pages` | `app/pages` | Fichiers de pages |
-| `layouts` | `app/layouts` | Layouts disponibles |
-| `components` | `app/components` | Composants auto-enregistrés |
-| `composables` | `app/composables` | Composables auto-importés |
-| `globals` | `app/globals` | Fonctions globales auto-importées |
-| `middlewares` | `app/middlewares` | Middlewares de navigation |
-| `plugins` | `app/plugins` | Plugins applicatifs |
-| `css` | `[]` | Feuilles de style globales |
-| `modules` | `[]` | Modules Runable chargés |
+| Option | Type | Valeur par défaut | Rôle |
+| --- | --- | --- | --- |
+| `appDir` | `string` | `app` | Racine des sources Vue |
+| `output` | `string` | `.app` | Fichiers générés pour le développement et le typage |
+| `distdir` | `string` | `.output` | Build de production |
+| `publicDir` | `string \| false` | `public` | Assets servis tels quels |
+| `ssr` | `boolean` | `true` | Active le rendu serveur |
+| `pages` | `string \| array` | `app/pages` | Fichiers de pages |
+| `layouts` | `string \| array` | `app/layouts` | Layouts disponibles |
+| `components` | `string \| array` | `app/components` | Composants auto-enregistrés |
+| `composables` | `string \| array` | `app/composables` | Composables auto-importés |
+| `globals` | `string \| array` | `app/globals` | Fonctions globales auto-importées |
+| `middlewares` | `string \| array` | `app/middlewares` | Middlewares de navigation |
+| `plugins` | `string \| array` | `app/plugins` | Plugins applicatifs |
+| `css` | `string \| array` | `[]` | Feuilles de style globales |
+| `modules` | `string[]` | `[]` | Modules Runable chargés |
+
+L'ensemble complet des options, avec leur forme TypeScript exacte, est l'interface `RunableConfig` dans `packages/runable/src/config/types.ts`.
 
 Les chemins relatifs sont résolus depuis le dossier qui contient la configuration.
 

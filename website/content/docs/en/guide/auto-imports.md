@@ -5,7 +5,7 @@ description: Automatically use application components, composables, and global f
 
 Runable generates the required imports from three collections. Your files remain modular without repeating imports in every component.
 
-## Components
+## Auto-imported components
 
 Files in `app/components/` are available in templates:
 
@@ -32,7 +32,7 @@ export default defineComponent({
 
 The explicit name takes precedence over the file name.
 
-## Composables
+## Auto-imported composables
 
 Every export from `app/composables/` can be used in Vue scripts:
 
@@ -52,7 +52,7 @@ const currency = useCurrency();
 </script>
 ```
 
-## Globals
+## Auto-imported globals
 
 Place functions that do not depend on the Vue lifecycle in `app/globals/`:
 
@@ -67,7 +67,7 @@ export function formatDate(value: string) {
 
 ```ts
 export default defineConfig({
-  components: ["app/components", { path: "ui", prefix: "Ui" }],
+  components: ["app/components", { dirs: "app/components/ui", prefix: "Ui" }],
   composables: ["app/composables", "shared/composables"],
   globals: ["app/globals", "shared/utils"],
 });

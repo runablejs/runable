@@ -5,7 +5,7 @@ description: Utilisez automatiquement les composants, composables et fonctions g
 
 Runable génère les imports nécessaires à partir de trois collections. Vous gardez des fichiers modulaires sans répéter les imports dans chaque composant.
 
-## Composants
+## Composants auto-importés
 
 Les fichiers de `app/components/` sont disponibles dans les templates :
 
@@ -32,7 +32,7 @@ export default defineComponent({
 
 Le nom explicite prend le dessus sur celui du fichier.
 
-## Composables
+## Composables auto-importés
 
 Chaque export de `app/composables/` peut être utilisé dans les scripts Vue :
 
@@ -52,7 +52,7 @@ const currency = useCurrency();
 </script>
 ```
 
-## Globales
+## Globales auto-importées
 
 Placez dans `app/globals/` les fonctions qui ne dépendent pas du cycle de vie Vue :
 
@@ -67,7 +67,7 @@ export function formatDate(value: string) {
 
 ```ts
 export default defineConfig({
-  components: ["app/components", { path: "ui", prefix: "Ui" }],
+  components: ["app/components", { dirs: "app/components/ui", prefix: "Ui" }],
   composables: ["app/composables", "shared/composables"],
   globals: ["app/globals", "shared/utils"],
 });

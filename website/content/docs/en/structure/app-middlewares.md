@@ -7,7 +7,7 @@ Middleware runs during Vue Router navigation. Use it to check a session, redirec
 
 ```ts
 // app/middlewares/auth.ts
-export default defineRouterMiddleware((to) => {
+export default defineVueMiddleware((to) => {
   const user = useCurrentUser();
 
   if (!user.value && to.path !== "/login") {

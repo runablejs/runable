@@ -7,7 +7,7 @@ Runable charge les fichiers d'environnement du mode Vite actif et les variables 
 
 ## Déclarer les variables
 
-Runable reconnaît trois préfixes : `RUN_`, et `VITE_`. Préférez `RUN_` dans un nouveau projet pour distinguer clairement la configuration Runable.
+Runable reconnaît deux préfixes : `RUN_` et `VITE_`. Préférez `RUN_` dans un nouveau projet pour distinguer clairement la configuration Runable.
 
 ```dotenv
 # Disponible dans le navigateur et pendant le SSR
@@ -73,7 +73,7 @@ Relancez le serveur de développement après l'ajout ou le renommage d'une varia
 
 ## Accès direct avec import.meta.env
 
-Runable remplace aussi les accès statiques utilisant les préfixes `RUN_` et `RUN_` :
+Runable remplace aussi les accès statiques utilisant les préfixes `RUN_` et `VITE_` :
 
 ```ts
 const apiBase = import.meta.env.RUN_PUBLIC_API_BASE;
@@ -90,7 +90,7 @@ surface: solid
 title: Ne placez aucun secret dans une variable publique
 ---
 
-Toute variable `RUN_PUBLIC_*`, `RUN_PUBLIC_*` ou `VITE_PUBLIC_*` est intégrée au bundle client. Considérez sa valeur comme publique.
+Toute variable `RUN_PUBLIC_*` ou `VITE_PUBLIC_*` est intégrée au bundle client. Considérez sa valeur comme publique.
 
 Évitez également le préfixe `VITE_` pour un secret : Vite expose nativement ses variables `VITE_*` via `import.meta.env`, indépendamment de l'objet construit par `useRuntime()`.
 

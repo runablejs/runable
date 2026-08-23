@@ -10,7 +10,7 @@ app/pages/
 ├── index.vue             → /
 ├── about.vue             → /about
 ├── users/[id].vue        → /users/:id
-└── docs/[...slug].vue    → /docs/:slug(.*)
+└── docs/[...slug].vue    → /docs/:slug*
 ```
 
 Créez une page comme un composant Vue normal :
