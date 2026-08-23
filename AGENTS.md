@@ -83,5 +83,11 @@ hand; edit `src/` and rebuild. The same applies to `.app/`/`.output/` inside
 2. `pnpm test` (or at least `pnpm test:regression` if you touched a
    previously-fixed bug's area)
 3. `pnpm build`
+4. If the change affects a published package (`runable`, `@runablejs/cli`,
+   or `create-runable`), add a Changeset (`pnpm changeset`) **in the same
+   change** — not as a follow-up. Docs-only, test-only, CI/tooling-only, or
+   `playground`/`website`-only changes don't need one. See CONTRIBUTING.md's
+   "When do I need a changeset?" for the patch/minor/major split. A change
+   that needed one isn't done until it exists.
 
-`pnpm ci:local` runs all of the above (plus lint) in one command.
+`pnpm ci:local` runs 1–3 above (plus lint) in one command.

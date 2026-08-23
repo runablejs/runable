@@ -55,6 +55,11 @@ Add one whenever a change affects what a consumer of `runable`,
 `@runablejs/cli`, or `create-runable` experiences: bug fixes, new options,
 behavior changes, dependency bumps that affect the public surface, etc.
 
+Create it **as part of the same change** — don't defer it to a follow-up
+commit or PR. If a change needs a changeset, it isn't finished until the
+changeset exists alongside it (patch/minor/major keep the meaning described
+above).
+
 ### When can I skip it?
 
 - Changes scoped to `playground` or `website` only.
