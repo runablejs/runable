@@ -30,9 +30,11 @@ pnpm changeset
    - **patch** — bug fix, internal improvement, docs, anything that doesn't
      change the public API.
    - **minor** — a new, backwards-compatible feature or API addition.
-   - **major** — a breaking change. While the project is in `alpha`
-     (see below), reserve this for changes you'd call a breaking change once
-     the package is stable — it still bumps the alpha counter, not `1.0.0`.
+   - **major** — a breaking change to the public API.
+
+   These keep their normal SemVer meaning even while the project is in
+   `alpha`/`beta` — see [Prereleases](#prereleases) below for how that
+   interacts with the `-alpha.N`/`-beta.N` suffix.
 
 Then write a short, user-facing description. It is copied straight into the
 package's `CHANGELOG.md`, so write it for someone installing the package,
@@ -103,28 +105,129 @@ PR → CI (install, lint/typecheck/test/build) → merge into dev → …
 ## Prereleases
 
 The project is currently in `alpha` (Changesets is in **pre mode**, tag
-`alpha` — see `.changeset/pre.json`). While this is active, `changeset
-version` bumps versions as `1.0.0-alpha.N` instead of jumping to a stable
-`1.0.0`, and `changeset publish` publishes those versions under the `alpha`
-npm dist-tag instead of `latest`. You don't need to do anything differently
-day-to-day — `pnpm changeset` works exactly as described above.
+`alpha` — see `.changeset/pre.json`). This doesn't change your day-to-day
+use of `pnpm changeset`: `patch`/`minor`/`major` always keep their normal
+SemVer meaning — they determine the *target* version Changesets is
+computing towards. Prerelease mode just appends a `-alpha.N` (or
+`-beta.N`) suffix on top of that target once `changeset version` runs:
 
-When the project is ready to move to a `beta`, run once, in its own PR:
+```text
+changeset
+   │
+   ├── patch
+   ├── minor
+   └── major
+        │
+        ▼
+  target version (SemVer)
+        │
+        ▼
+  prerelease mode active?
+        │
+        ▼
+ <target version>-alpha.N
+```
+
+So keep choosing `patch` for a compatible fix, `minor` for a compatible
+feature, and `major` for a breaking change exactly as you would outside
+prerelease mode — Changesets takes care of turning that into the right
+`-alpha.N`/`-beta.N` counter itself.
+
+### Moving from `alpha` to `beta`
+
+Changing the prerelease tag mid-prerelease does **not** go through `pre
+exit`. Per the [official Changesets prerelease guide](https://changesets.dev/guide/prereleases),
+the supported way to move between prerelease stages (`alpha` → `beta` →
+`rc`, etc.) is to edit the `"tag"` field in `.changeset/pre.json` directly:
+
+```diff
+ {
+   "mode": "pre",
+-  "tag": "alpha"
++  "tag": "beta"
+ }
+```
+
+Do this in its own dedicated PR (no unrelated changes bundled in), and
+commit it normally:
+
+```bash
+git add .changeset/pre.json
+git commit -m "chore: move prerelease tag from alpha to beta"
+git push
+```
+
+The cycle looks like this:
+
+```text
+alpha
+  │
+  ▼
+edit .changeset/pre.json: "tag": "alpha" → "beta"
+  │
+  ▼
+merge that PR into main
+  │
+  ▼
+next Changesets release cycle (version job, then publish)
+  │
+  ▼
+versions become 1.0.0-beta.N
+```
+
+The exact starting counter (`beta.0` or otherwise) depends on Changesets'
+internal state at that point — don't assume a specific number in advance.
+
+### Moving from prerelease to stable
+
+To leave prerelease mode entirely, run once, in its own PR:
 
 ```bash
 pnpm changeset pre exit
-pnpm changeset pre enter beta
 ```
 
-And later, to go fully stable:
+This only records the *intent* to exit prerelease mode in
+`.changeset/pre.json` — it doesn't version or publish anything by itself.
+The next regular release cycle (Release PR, then merge) is what actually
+produces the stable version:
+
+```text
+alpha
+  │
+  ▼
+beta
+  │
+  ▼
+pnpm changeset pre exit
+  │
+  ▼
+Release PR (next Changesets release cycle)
+  │
+  ▼
+stable release (e.g. 1.0.0)
+  │
+  ▼
+published under the npm "latest" dist-tag
+```
+
+### npm dist-tags
+
+Changesets keeps the npm dist-tag in sync with the Changesets prerelease
+tag automatically — nothing to configure on the npm side:
+
+| Changesets pre tag  | npm dist-tag |
+| -------------------- | ------------ |
+| `alpha`               | `alpha`      |
+| `beta`                | `beta`       |
+| *(not in pre mode)*   | `latest`     |
+
+In practice:
 
 ```bash
-pnpm changeset pre exit
+pnpm add runable@alpha   # during the current alpha phase
+pnpm add runable@beta    # once the tag has moved to beta
+pnpm add runable         # once stable — resolves to the "latest" tag
 ```
-
-After exiting pre mode, the next `changeset version` run produces the real
-`1.0.0` (or whatever the accumulated changesets call for), and `changeset
-publish` publishes it under the default `latest` dist-tag.
 
 ## Commands reference
 
