@@ -35,6 +35,16 @@ export const llmsSections: LlmsSection[] = [
     ],
   },
   {
+    title: "CLI",
+    pages: [
+      { slug: "guide/cli/index" },
+      { slug: "guide/cli/create" },
+      { slug: "guide/cli/prepare" },
+      { slug: "guide/cli/build" },
+      { slug: "guide/cli/skills" },
+    ],
+  },
+  {
     title: "Core Concepts",
     pages: [
       { slug: "guide/routing" },

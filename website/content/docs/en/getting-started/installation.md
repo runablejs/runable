@@ -16,6 +16,16 @@ Use a Node.js version supported by `runable`:
 
 This page uses Express and TypeScript. The same principle applies to other backends.
 
+::u-tip
+---
+variant: info
+title: Prefer an automated setup?
+---
+
+The steps below are manual, to show exactly what's involved. <a href="/docs/guide/cli/create.md">`runable create`</a> automates most of them interactively.
+
+::
+
 ## Install dependencies
 
 ::u-code-group
@@ -57,7 +67,7 @@ Configure development, type preparation, and the production build:
 }
 ```
 
-`runable prepare` generates files required during development. `runable build` produces the application build.
+`runable prepare` generates files required during development. `runable build` produces the application build. See <a href="/docs/guide/cli/index.md">CLI</a> for the full command reference.
 
 ## Create the configuration
 
