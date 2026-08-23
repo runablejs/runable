@@ -415,6 +415,24 @@ async function runSetups(pendingSetups: PendingSetup[]) {
 }
 
 /**
+ * Clears the cached config graph populated by `loadConfig()`, so the next
+ * call re-reads every `runable.config.*` file and re-runs every module's
+ * `setup` from scratch instead of returning the stale cache.
+ *
+ * `loadConfig()` is otherwise a permanent, process-wide singleton (by
+ * design — the config graph doesn't change once resolved), so this is the
+ * only supported way to observe a config/module/page change made after the
+ * first `loadConfig()` call in a given process. Consumers that hold onto
+ * derived state (routes, layouts, ...) computed before this call must
+ * recompute it themselves afterwards.
+ */
+export function unloadConfig() {
+  cachedConfigs = undefined;
+  moduleDirCache = undefined;
+  moduleNameAliases = undefined;
+}
+
+/**
  * Loads the main config and all its modules into `cachedConfigs`. Idempotent:
  * subsequent calls are a no-op once a cache already exists.
  */

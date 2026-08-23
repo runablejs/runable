@@ -66,7 +66,7 @@ type LayoutEntry = { parent: string; file: string; dtsImportPath: string };
  */
 const sharedLayouts: Record<string, LayoutEntry> = {};
 
-function getLayoutName(filePath: string, parentDir: string): string {
+export function getLayoutName(filePath: string, parentDir: string): string {
   filePath = removeFileExtension(filePath);
   if (parentDir !== filePath) filePath = path.relative(parentDir, filePath);
 

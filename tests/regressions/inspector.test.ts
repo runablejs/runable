@@ -1,0 +1,511 @@
+import { describe, it, expect, afterEach, vi } from "vitest";
+import path from "node:path";
+import { existsSync } from "node:fs";
+import {
+  createFixtureDir,
+  cleanupFixtureDir,
+  linkWorkspacePackage,
+  writeFixtureFile,
+} from "../fixtures.js";
+
+// `createRunableInspector()` drives `loadConfig()`, which caches into a
+// module-level singleton (see packages/runable/src/config/load.ts) — every
+// test below gets an isolated module instance via `vi.resetModules()` + a
+// fresh dynamic `import("runable/inspector")`, matching the pattern already
+// used in config.test.ts.
+const originalCwd = process.cwd();
+
+async function freshInspector() {
+  vi.resetModules();
+  return import("runable/inspector");
+}
+
+function fixtureWithRunable(prefix: string) {
+  const dir = createFixtureDir(prefix);
+  linkWorkspacePackage(dir, "runable", "packages/runable");
+  return dir;
+}
+
+function baseConfig(extra = "") {
+  return `import { defineConfig } from "runable";\nexport default defineConfig({${extra}});\n`;
+}
+
+afterEach(() => {
+  process.chdir(originalCwd);
+});
+
+describe("createRunableInspector() - project detection", () => {
+  it("resolves a valid Runable project", async () => {
+    const dir = fixtureWithRunable("inspector-valid-");
+    try {
+      writeFixtureFile(dir, "runable.config.ts", baseConfig());
+      writeFixtureFile(dir, "app/pages/index.vue", "<template><div>home</div></template>");
+
+      const { createRunableInspector } = await freshInspector();
+      const inspector = await createRunableInspector({ rootDir: dir });
+      const project = await inspector.getProject();
+
+      expect(project.rootDir).toBe(dir);
+      expect(project.paths.appDir).toBe("app");
+    } finally {
+      cleanupFixtureDir(dir);
+    }
+  });
+
+  it("rejects a directory with no runable.config.* with an explicit, exploitable error", async () => {
+    const dir = createFixtureDir("inspector-no-project-");
+    try {
+      const { createRunableInspector, RunableInspectorError } = await freshInspector();
+
+      await expect(createRunableInspector({ rootDir: dir })).rejects.toThrow(
+        RunableInspectorError,
+      );
+      await expect(createRunableInspector({ rootDir: dir })).rejects.toThrow(
+        /No Runable project found/i,
+      );
+    } finally {
+      cleanupFixtureDir(dir);
+    }
+  });
+
+  it("does not search parent directories for a config file", async () => {
+    const parent = fixtureWithRunable("inspector-parent-");
+    try {
+      writeFixtureFile(parent, "runable.config.ts", baseConfig());
+      const child = path.join(parent, "nested/child");
+      writeFixtureFile(child, ".keep", "");
+
+      const { createRunableInspector, RunableInspectorError } = await freshInspector();
+      await expect(createRunableInspector({ rootDir: child })).rejects.toThrow(
+        RunableInspectorError,
+      );
+    } finally {
+      cleanupFixtureDir(parent);
+    }
+  });
+});
+
+describe("createRunableInspector() - getProject()/getConfig() custom directories", () => {
+  it("reflects a custom pages/layouts directory", async () => {
+    const dir = fixtureWithRunable("inspector-custom-dirs-");
+    try {
+      writeFixtureFile(
+        dir,
+        "runable.config.ts",
+        baseConfig(`pages: ["src/views"], layouts: ["src/layouts"]`),
+      );
+      writeFixtureFile(dir, "src/views/index.vue", "<template><div>home</div></template>");
+      writeFixtureFile(dir, "src/layouts/default.vue", "<template><slot /></template>");
+
+      const { createRunableInspector } = await freshInspector();
+      const inspector = await createRunableInspector({ rootDir: dir });
+
+      const routes = await inspector.getRoutes();
+      expect(routes).toEqual([{ name: "index", path: "/", file: "src/views/index.vue" }]);
+
+      const layouts = await inspector.getLayouts();
+      expect(layouts).toEqual([{ name: "default", file: "src/layouts/default.vue" }]);
+    } finally {
+      cleanupFixtureDir(dir);
+    }
+  });
+});
+
+describe("createRunableInspector() - getRoutes()", () => {
+  it("matches the real vue-router/vite pipeline for index/dynamic/optional/catch-all/nested routes", async () => {
+    // Ground truth for this fixture's expected paths/names was captured by
+    // actually running the real pipeline (packages/runable's `prepare()`)
+    // against the same file layout and reading its generated
+    // `.app/router-routes.d.ts` — not guessed at. See routes.ts's module
+    // doc for why this can't just delegate to the real pipeline directly.
+    const dir = fixtureWithRunable("inspector-routes-");
+    try {
+      writeFixtureFile(dir, "runable.config.ts", baseConfig());
+      writeFixtureFile(dir, "app/pages/index.vue", "<template><div>home</div></template>");
+      writeFixtureFile(dir, "app/pages/users.vue", "<template><router-view /></template>");
+      writeFixtureFile(dir, "app/pages/users/index.vue", "<template><div>users</div></template>");
+      writeFixtureFile(dir, "app/pages/users/[id].vue", "<template><div>user</div></template>");
+      writeFixtureFile(
+        dir,
+        "app/pages/blog/[[slug]].vue",
+        "<template><div>blog</div></template>",
+      );
+      writeFixtureFile(
+        dir,
+        "app/pages/docs/[...path].vue",
+        "<template><div>docs</div></template>",
+      );
+
+      const { createRunableInspector } = await freshInspector();
+      const inspector = await createRunableInspector({ rootDir: dir });
+      const routes = await inspector.getRoutes();
+
+      const byName = Object.fromEntries(routes.map((r) => [r.name, r]));
+
+      expect(byName["index"]).toMatchObject({ path: "/", file: "app/pages/index.vue" });
+      expect(byName["users"]).toMatchObject({ path: "/users", file: "app/pages/users.vue" });
+      expect(byName["users-index"]).toMatchObject({
+        path: "/users",
+        file: "app/pages/users/index.vue",
+        parent: "app/pages/users.vue",
+      });
+      expect(byName["users-id"]).toMatchObject({
+        path: "/users/:id",
+        file: "app/pages/users/[id].vue",
+        parent: "app/pages/users.vue",
+      });
+      expect(byName["blog-slug"]).toMatchObject({
+        path: "/blog/:slug?",
+        file: "app/pages/blog/[[slug]].vue",
+      });
+      expect(byName["docs-path"]).toMatchObject({
+        path: "/docs/:path(.*)",
+        file: "app/pages/docs/[...path].vue",
+      });
+    } finally {
+      cleanupFixtureDir(dir);
+    }
+  });
+
+  it("reflects definePageMeta() name/path/middleware overrides", async () => {
+    const dir = fixtureWithRunable("inspector-route-meta-");
+    try {
+      writeFixtureFile(dir, "runable.config.ts", baseConfig());
+      writeFixtureFile(
+        dir,
+        "app/pages/account.vue",
+        `<script setup>
+definePageMeta({ name: "my-account", path: "/account/settings", middleware: ["auth"] });
+</script>
+<template><div>account</div></template>
+`,
+      );
+
+      const { createRunableInspector } = await freshInspector();
+      const inspector = await createRunableInspector({ rootDir: dir });
+      const routes = await inspector.getRoutes();
+
+      expect(routes).toEqual([
+        {
+          name: "my-account",
+          path: "/account/settings",
+          file: "app/pages/account.vue",
+          meta: { middleware: ["auth"] },
+        },
+      ]);
+    } finally {
+      cleanupFixtureDir(dir);
+    }
+  });
+});
+
+describe("createRunableInspector() - getMiddlewares()", () => {
+  it("distinguishes named and .global middlewares", async () => {
+    const dir = fixtureWithRunable("inspector-middlewares-");
+    try {
+      writeFixtureFile(dir, "runable.config.ts", baseConfig());
+      writeFixtureFile(dir, "app/pages/index.vue", "<template><div>home</div></template>");
+      writeFixtureFile(
+        dir,
+        "app/middlewares/auth.ts",
+        "export default defineVueMiddleware((to, from) => {});",
+      );
+      writeFixtureFile(
+        dir,
+        "app/middlewares/logger.global.ts",
+        "export default defineVueMiddleware((to, from) => {});",
+      );
+
+      const { createRunableInspector } = await freshInspector();
+      const inspector = await createRunableInspector({ rootDir: dir });
+      const middlewares = await inspector.getMiddlewares();
+
+      const byName = Object.fromEntries(middlewares.map((m) => [m.name, m]));
+      expect(byName["auth"]).toEqual({
+        name: "auth",
+        file: "app/middlewares/auth.ts",
+        global: false,
+      });
+      expect(byName["logger"]).toEqual({
+        name: "logger",
+        file: "app/middlewares/logger.global.ts",
+        global: true,
+      });
+    } finally {
+      cleanupFixtureDir(dir);
+    }
+  });
+});
+
+describe("createRunableInspector() - getPlugins()", () => {
+  it("statically extracts name/enforce/dependsOn without executing the plugin", async () => {
+    const dir = fixtureWithRunable("inspector-plugins-");
+    try {
+      writeFixtureFile(dir, "runable.config.ts", baseConfig());
+      writeFixtureFile(dir, "app/pages/index.vue", "<template><div>home</div></template>");
+      writeFixtureFile(
+        dir,
+        "app/plugins/analytics.ts",
+        `import { defineVuePlugin } from "runable";
+export default defineVuePlugin({
+  name: "analytics",
+  enforce: "post",
+  dependsOn: ["auth"],
+  setup(app) {
+    throw new Error("must never run: the Inspector must not execute plugin files");
+  },
+});
+`,
+      );
+      writeFixtureFile(
+        dir,
+        "app/plugins/anonymous.ts",
+        `import { defineVuePlugin } from "runable";
+export default defineVuePlugin({
+  setup(app) {},
+});
+`,
+      );
+
+      const { createRunableInspector } = await freshInspector();
+      const inspector = await createRunableInspector({ rootDir: dir });
+      const plugins = await inspector.getPlugins();
+
+      expect(plugins).toEqual(
+        expect.arrayContaining([
+          {
+            name: "analytics",
+            enforce: "post",
+            dependsOn: ["auth"],
+            file: "app/plugins/analytics.ts",
+          },
+          { file: "app/plugins/anonymous.ts" },
+        ]),
+      );
+    } finally {
+      cleanupFixtureDir(dir);
+    }
+  });
+});
+
+describe("createRunableInspector() - getModules()", () => {
+  it("lists a local module with its configKey", async () => {
+    const dir = fixtureWithRunable("inspector-modules-");
+    try {
+      writeFixtureFile(
+        dir,
+        "runable.config.ts",
+        `import { defineConfig } from "runable";
+export default defineConfig({ modules: ["./modules/analytics"] });
+`,
+      );
+      writeFixtureFile(dir, "app/pages/index.vue", "<template><div>home</div></template>");
+      writeFixtureFile(
+        dir,
+        "modules/analytics/runable.config.ts",
+        `import { defineModule } from "runable";
+export default defineModule<{ token: string }>({
+  meta: { name: "analytics" },
+  configKey: "analytics",
+  defaults: { token: "dev" },
+});
+`,
+      );
+
+      const { createRunableInspector } = await freshInspector();
+      const inspector = await createRunableInspector({ rootDir: dir });
+      const modules = await inspector.getModules();
+
+      expect(modules).toEqual([
+        {
+          name: "analytics",
+          configKey: "analytics",
+          source: "modules/analytics/runable.config.ts",
+          kind: "local",
+        },
+      ]);
+    } finally {
+      cleanupFixtureDir(dir);
+    }
+  });
+});
+
+describe("createRunableInspector() - getAutoImports()", () => {
+  it("lists a local component and composable", async () => {
+    const dir = fixtureWithRunable("inspector-auto-imports-");
+    try {
+      writeFixtureFile(dir, "runable.config.ts", baseConfig());
+      writeFixtureFile(dir, "app/pages/index.vue", "<template><div>home</div></template>");
+      writeFixtureFile(
+        dir,
+        "app/components/BaseButton.vue",
+        "<template><button><slot /></button></template>",
+      );
+      writeFixtureFile(
+        dir,
+        "app/composables/useCurrency.ts",
+        "export function useCurrency() { return { format: (n: number) => `$${n}` }; }",
+      );
+
+      const { createRunableInspector } = await freshInspector();
+      const inspector = await createRunableInspector({ rootDir: dir });
+      const autoImports = await inspector.getAutoImports();
+
+      expect(autoImports.components).toContainEqual({
+        name: "BaseButton",
+        file: "app/components/BaseButton.vue",
+      });
+      expect(autoImports.composables).toContainEqual({
+        name: "useCurrency",
+        file: "app/composables/useCurrency.ts",
+      });
+      // Runable's own built-in composables are part of what's really
+      // available in the project without an import, so they show up too.
+      expect(autoImports.composables.some((c) => c.name === "useRuntime")).toBe(true);
+    } finally {
+      cleanupFixtureDir(dir);
+    }
+  });
+});
+
+describe("createRunableInspector() - runtime privacy", () => {
+  it("never returns a private runtime value, only its key name", async () => {
+    const dir = fixtureWithRunable("inspector-runtime-privacy-");
+    try {
+      writeFixtureFile(dir, "runable.config.ts", baseConfig());
+      writeFixtureFile(dir, "app/pages/index.vue", "<template><div>home</div></template>");
+      writeFixtureFile(
+        dir,
+        ".env",
+        "RUN_PUBLIC_API_BASE=/api\nRUN_SECRET_KEY=super-secret-value\n",
+      );
+
+      const { createRunableInspector } = await freshInspector();
+      const inspector = await createRunableInspector({ rootDir: dir });
+      const config = await inspector.getConfig();
+
+      expect(config.runtime.public).toEqual({ apiBase: "/api" });
+      expect(config.runtime.privateKeys).toContain("secretKey");
+      expect(JSON.stringify(config)).not.toContain("super-secret-value");
+    } finally {
+      cleanupFixtureDir(dir);
+    }
+  });
+});
+
+describe("createRunableInspector() - works without a pre-existing .app/", () => {
+  it("resolves a project that has never been prepared/built", async () => {
+    const dir = fixtureWithRunable("inspector-no-app-dir-");
+    try {
+      writeFixtureFile(dir, "runable.config.ts", baseConfig());
+      writeFixtureFile(dir, "app/pages/index.vue", "<template><div>home</div></template>");
+      expect(existsSync(path.join(dir, ".app"))).toBe(false);
+
+      const { createRunableInspector } = await freshInspector();
+      const inspector = await createRunableInspector({ rootDir: dir });
+      const routes = await inspector.getRoutes();
+
+      expect(routes).toEqual([{ name: "index", path: "/", file: "app/pages/index.vue" }]);
+    } finally {
+      cleanupFixtureDir(dir);
+    }
+  });
+});
+
+describe("createRunableInspector() - refresh()", () => {
+  it("reflects a page added after the Inspector was created", async () => {
+    const dir = fixtureWithRunable("inspector-refresh-");
+    try {
+      writeFixtureFile(dir, "runable.config.ts", baseConfig());
+      writeFixtureFile(dir, "app/pages/index.vue", "<template><div>home</div></template>");
+
+      const { createRunableInspector } = await freshInspector();
+      const inspector = await createRunableInspector({ rootDir: dir });
+
+      const before = await inspector.getRoutes();
+      expect(before.map((r) => r.name)).toEqual(["index"]);
+
+      writeFixtureFile(dir, "app/pages/about.vue", "<template><div>about</div></template>");
+      await inspector.refresh();
+
+      const after = await inspector.getRoutes();
+      expect(after.map((r) => r.name).sort()).toEqual(["about", "index"]);
+    } finally {
+      cleanupFixtureDir(dir);
+    }
+  });
+});
+
+describe("createRunableInspector() - serialization", () => {
+  it("every getter's result survives JSON.stringify() unchanged", async () => {
+    const dir = fixtureWithRunable("inspector-serialization-");
+    try {
+      writeFixtureFile(
+        dir,
+        "runable.config.ts",
+        `import { defineConfig } from "runable";
+export default defineConfig({
+  modules: ["./modules/analytics"],
+  head: { title: "Fixture" },
+});
+`,
+      );
+      writeFixtureFile(dir, "app/pages/index.vue", "<template><div>home</div></template>");
+      writeFixtureFile(dir, "app/pages/users/[id].vue", "<template><div>user</div></template>");
+      writeFixtureFile(dir, "app/layouts/default.vue", "<template><slot /></template>");
+      writeFixtureFile(
+        dir,
+        "app/middlewares/auth.global.ts",
+        "export default defineVueMiddleware((to, from) => {});",
+      );
+      writeFixtureFile(
+        dir,
+        "app/plugins/analytics.ts",
+        `import { defineVuePlugin } from "runable";
+export default defineVuePlugin({ name: "analytics", setup() {} });
+`,
+      );
+      writeFixtureFile(
+        dir,
+        "app/components/BaseButton.vue",
+        "<template><button /></template>",
+      );
+      writeFixtureFile(
+        dir,
+        "app/composables/useCurrency.ts",
+        "export function useCurrency() { return 1; }",
+      );
+      writeFixtureFile(
+        dir,
+        "modules/analytics/runable.config.ts",
+        `import { defineModule } from "runable";
+export default defineModule({ meta: { name: "analytics" } });
+`,
+      );
+
+      const { createRunableInspector } = await freshInspector();
+      const inspector = await createRunableInspector({ rootDir: dir });
+
+      const results = {
+        project: await inspector.getProject(),
+        config: await inspector.getConfig(),
+        routes: await inspector.getRoutes(),
+        layouts: await inspector.getLayouts(),
+        middlewares: await inspector.getMiddlewares(),
+        plugins: await inspector.getPlugins(),
+        modules: await inspector.getModules(),
+        autoImports: await inspector.getAutoImports(),
+      };
+
+      for (const [key, value] of Object.entries(results)) {
+        expect(() => JSON.stringify(value), `${key} failed to serialize`).not.toThrow();
+        expect(
+          JSON.parse(JSON.stringify(value)),
+          `${key} round-trip changed shape`,
+        ).toEqual(value);
+      }
+    } finally {
+      cleanupFixtureDir(dir);
+    }
+  });
+});

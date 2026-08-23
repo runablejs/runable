@@ -87,7 +87,7 @@ function resolvePackageImport(moduleName: string) {
  * touches the filesystem output, so several configs can call this against
  * the same shared accumulator without clobbering each other.
  */
-function resolveConfigImports(config: GlobalConfig | undefined): Import[] {
+export function resolveConfigImports(config: GlobalConfig | undefined): Import[] {
   const rawImports = config?.imports ?? [];
   const entries = Array.isArray(rawImports) ? rawImports : [rawImports];
   const imports: Import[] = [];

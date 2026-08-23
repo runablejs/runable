@@ -459,6 +459,12 @@ export function useAppConfig() {
               },
             ],
           },
+          {
+            name: "Inspector",
+            code: "inspector",
+            href: "/docs/guide/inspector",
+            icon: "tabler:search",
+          },
         ],
       },
 

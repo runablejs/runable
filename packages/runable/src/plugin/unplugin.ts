@@ -70,7 +70,7 @@ interface PluginEntry {
  */
 const sharedPlugins: Record<string, PluginEntry> = {};
 
-function getPluginVariableName(filePath: string, parentDir: string): string {
+export function getPluginVariableName(filePath: string, parentDir: string): string {
   filePath = removeFileExtension(filePath);
 
   if (filePath !== parentDir) filePath = relative(parentDir, filePath);
@@ -81,7 +81,7 @@ function getPluginVariableName(filePath: string, parentDir: string): string {
 }
 
 /** `foo.server.ts` -> "server", `foo.client.ts` -> "client", anything else -> "universal" (loaded in both builds). */
-function getPluginEnvironment(filePath: string): PluginEnvironment {
+export function getPluginEnvironment(filePath: string): PluginEnvironment {
   if (/\.server\.(ts|js)$/.test(filePath)) return "server";
   if (/\.client\.(ts|js)$/.test(filePath)) return "client";
   return "universal";

@@ -12,6 +12,7 @@ describe("runable package.json `exports` match its built output", () => {
     // from package.json itself (e.g. a bad merge).
     const expectedSubpaths = [
       ".",
+      "./inspector",
       "./adapters/adonis",
       "./adapters/bun",
       "./adapters/deno",

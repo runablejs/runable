@@ -67,7 +67,11 @@ export const llmsSections: LlmsSection[] = [
   },
   {
     title: "Extending Runable",
-    pages: [{ slug: "guide/plugins" }, { slug: "guide/auto-imports" }],
+    pages: [
+      { slug: "guide/plugins" },
+      { slug: "guide/auto-imports" },
+      { slug: "guide/inspector" },
+    ],
   },
   {
     title: "Server Runtimes",
