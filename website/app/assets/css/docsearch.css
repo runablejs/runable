@@ -70,6 +70,7 @@
   border-radius: 0;
   background: transparent;
   box-shadow: none;
+  justify-content: center;
 }
 
 .runable-docsearch .DocSearch-Button:hover {
@@ -92,6 +93,10 @@
 
 .DocSearch-Modal {
   @apply sm:border;
+}
+
+.DocSearch-Screen-Icon svg {
+  stroke: currentColor;
 }
 
 .DocSearch-Logo svg .cls-1,

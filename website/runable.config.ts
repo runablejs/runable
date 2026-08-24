@@ -123,7 +123,7 @@ export default defineConfig({
     "~": join(import.meta.dirname, "./app"),
   },
 
-  ssr: false,
+  ssr: true,
 
   vite: {
     plugins: [
