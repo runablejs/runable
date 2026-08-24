@@ -6,7 +6,7 @@ Fastify, NestJS, AdonisJS, Hono, Koa, or a custom server) owns HTTP, APIs,
 and business logic; Runable adds routing, layouts, SSR, and auto-imports for
 the Vue layer around it.
 
-Docs: https://runable.netlify.app/docs
+Docs: https://runablejs.com/docs
 
 ## Project structure
 

@@ -18,7 +18,7 @@ project's own `AGENTS.md` instead — it documents different conventions.
 - `playground/` — a private, unpublished app for manually exercising the
   framework. Not part of the public API.
 - `website/` — the private, unpublished marketing/docs site
-  ([runable.netlify.app](https://runable.netlify.app)).
+  ([runablejs.com](https://runablejs.com)).
 - `tests/` — root-level integration and regression tests (see below).
 - `bugs/` — local-only notes on past bugs, excluded from git. Never rely on
   it existing; never commit to it.

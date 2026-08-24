@@ -22,7 +22,13 @@ function countTopLevelHeadings(markdown: string): number {
   return (withoutCodeFences(markdown).match(/^# .+$/gm) ?? []).length;
 }
 
-const CATEGORY_DIRS = ["getting-started", "guide", "structure", "integrations", "api"];
+const CATEGORY_DIRS = [
+  "getting-started",
+  "guide",
+  "structure",
+  "integrations",
+  "api",
+];
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -95,8 +101,14 @@ describe("llms-full.txt generation", () => {
     const installationIndex = llmsFullTxt.indexOf("### Installation");
     expect(installationIndex).toBeGreaterThan(-1);
 
-    const nextPageIndex = llmsFullTxt.indexOf("### Quick Start", installationIndex);
-    const installationSection = llmsFullTxt.slice(installationIndex, nextPageIndex);
+    const nextPageIndex = llmsFullTxt.indexOf(
+      "### Quick Start",
+      installationIndex,
+    );
+    const installationSection = llmsFullTxt.slice(
+      installationIndex,
+      nextPageIndex,
+    );
 
     expect(installationSection).toContain("#### Prerequisites");
     expect(installationSection).not.toMatch(/^## Prerequisites$/m);
@@ -107,7 +119,7 @@ describe("llms-full.txt generation", () => {
     // CLI") and an <a href="/docs/getting-started/quickstart.md"> link.
     expect(llmsFullTxt).toContain("> **Alpha CLI:**");
     expect(llmsFullTxt).toContain(
-      "[Quick Start](https://runable.netlify.app/docs/getting-started/quickstart.md)",
+      "[Quick Start](https://runablejs.com/docs/getting-started/quickstart.md)",
     );
   });
 });
@@ -123,7 +135,10 @@ describe("llms-full.txt navigation-only index pages", () => {
 
     for (const slug of LLMS_FULL_EXCLUDED_SLUGS) {
       const page = pages.get(slug);
-      expect(page, `expected ${slug} to still exist as a source page`).toBeDefined();
+      expect(
+        page,
+        `expected ${slug} to still exist as a source page`,
+      ).toBeDefined();
       expect(countHeadingOccurrences(llmsFullTxt, page!.title)).toBe(0);
     }
   });
