@@ -45,7 +45,12 @@ export function loadRuntimeEnv({
   if (!envs) {
     // `processEnv: {}` keeps dotenv from mutating the global `process.env`;
     // we merge it ourselves below so already-exported shell vars still win.
-    merge(parsed, loadDotenvFile({ path, processEnv: {} }).parsed);
+    // `quiet: true` keeps it from writing its own "injected env (...) from
+    // .env" notice straight to stdout on every call — this is a library
+    // used from arbitrary host processes (including, notably, an MCP
+    // server whose stdout is reserved for a wire protocol), so it must
+    // never assume stdout is free for its own informational output.
+    merge(parsed, loadDotenvFile({ path, processEnv: {}, quiet: true }).parsed);
   } else {
     merge(parsed, envs);
   }
