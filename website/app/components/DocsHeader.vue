@@ -5,6 +5,7 @@ import { useSidebar } from "./ui/sidebar/utils.ts";
 import Logo from "./navbar-components/Logo.vue";
 import ModeSwitcher from "./ModeSwitcher.vue";
 import GithubLink from "./GithubLink.vue";
+// import DocsSearch from "./DocsSearch.vue";
 
 const props = defineProps<{
   class?: HTMLAttributes["class"];
@@ -102,7 +103,11 @@ onBeforeUnmount(() => {
       </nav>
 
       <!-- Right side -->
-      <div class="flex flex-1 items-center justify-end gap- ml-auto">
+      <div class="ml-auto flex flex-1 items-center justify-end gap-2">
+        <!-- <ClientOnly>
+          <DocsSearch />
+        </ClientOnly> -->
+
         <template v-if="showExtra">
           <ClientOnly>
             <ModeSwitcher class="rounded-none" />

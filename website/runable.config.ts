@@ -100,6 +100,10 @@ export default defineConfig({
         name: "description",
         content: "Build the Vue app you want. Keep the backend you chose",
       },
+      {
+        name: "algolia-site-verification",
+        content: "F2949F185B8C208C",
+      },
     ],
     link: [
       { rel: "icon", href: "/favicon.svg" },
