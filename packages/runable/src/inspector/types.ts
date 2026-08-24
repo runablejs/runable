@@ -34,6 +34,26 @@ export interface RunableInspector {
   getModules(): Promise<InspectorModule[]>;
   /** Auto-imported components, composables, and globals. */
   getAutoImports(): Promise<InspectorAutoImports>;
+  /**
+   * Resolves an absolute path against the routes `getRoutes()` would
+   * return, using Vue Router's own matcher — the same matching semantics
+   * (dynamic/optional/catch-all params, nested routes, custom
+   * `definePageMeta({ path, name })` overrides) a real navigation would
+   * get, without starting a Vite dev server or rendering anything.
+   *
+   * `path` must start with `"/"` (throws `RunableInspectorError`
+   * otherwise). Returns `null` — never throws — when no route matches.
+   *
+   * @example
+   * ```ts
+   * const match = await inspector.resolveRoute("/users/42");
+   * if (match) {
+   *   console.log(match.route.file); // "app/pages/users/[id].vue"
+   *   console.log(match.params); // { id: "42" }
+   * }
+   * ```
+   */
+  resolveRoute(path: string): Promise<InspectorRouteMatch | null>;
 
   /**
    * Re-resolves the project from disk, so subsequent calls reflect changes
@@ -124,6 +144,24 @@ export interface InspectorRoute {
     /** Any other statically-declared `definePageMeta()` field not covered above. */
     [key: string]: unknown;
   };
+}
+
+// --- resolveRoute() ----------------------------------------------------------
+
+export interface InspectorRouteMatch {
+  /** The `InspectorRoute` (exactly as `getRoutes()` returns it) that matched. */
+  route: InspectorRoute;
+  /**
+   * Params extracted from the matched path — same shape Vue Router itself
+   * produces: a plain string for a single segment (`:id`), a string array
+   * for a repeatable/catch-all one (`:slug(.*)` matching multiple
+   * segments).
+   */
+  params: Record<string, string | string[]>;
+  /** Parsed query string, e.g. `{ tab: "profile" }` for `?tab=profile`. */
+  query: Record<string, string | (string | null)[] | null>;
+  /** Fragment identifier, including the leading `#` — `""` when absent. */
+  hash: string;
 }
 
 // --- getLayouts() ------------------------------------------------------------
