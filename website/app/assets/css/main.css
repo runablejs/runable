@@ -7,11 +7,13 @@
 /* @plugin "tailwindcss-animate"; */
 @import "tw-animate-css";
 @import "vue-sonner/style.css";
+
 @import "./shiki.css";
 @import "./animations.css";
 @import "./typography.css";
 @import "./font.css";
 @import "./doc.scss";
+@import "./docsearch.css";
 
 @custom-variant dark (&:is(.dark *));
 @custom-variant fixed (&:is(.layout-fixed *));
