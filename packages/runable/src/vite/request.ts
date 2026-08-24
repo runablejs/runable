@@ -1,4 +1,4 @@
-import { join, resolve } from "node:path";
+import { isAbsolute, join, resolve } from "node:path";
 import { Readable } from "node:stream";
 import type {
   IncomingMessage,
@@ -55,9 +55,13 @@ async function viteRequest({
       );
       template = await vite.transformIndexHtml(url, template);
     } else {
-      const manifest = (await import(
+      const manifestModule = (await import(
         join(config.distdir, "manifest.js")
-      )) as Record<string, string>;
+      )) as { default?: Record<string, string> } & Record<string, unknown>;
+      const manifest = (manifestModule.default ?? manifestModule) as Record<
+        string,
+        string
+      >;
 
       // // --- Prod : tout est déjà en mémoire, embarqué au build ---
       const templateContent = manifest.html;
@@ -79,7 +83,11 @@ async function viteRequest({
         );
       }
 
-      render = (await import(entryLoader)).render;
+      const serverEntry = isAbsolute(entryLoader)
+        ? entryLoader
+        : join(config.distdir, "server", entryLoader);
+
+      render = (await import(serverEntry)).render;
     }
 
     if (!config.ssr) {
@@ -94,7 +102,6 @@ async function viteRequest({
     }
 
     if (vite) render = (await vite.ssrLoadModule(entryPath)).render;
-    else render = (await import(entryPath)).render;
 
     const rendered = await render({ url, template });
 

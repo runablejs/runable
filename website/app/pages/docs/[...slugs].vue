@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import MDC from "v-content/components/MDC.js";
-import { toArray } from "@/utils/to-array.js";
 import DocsToc from "~/components/DocsToc.vue";
 import { Skeleton } from "~/components/ui/skeleton";
 import { SITE_URL } from "~/lib/site-config.js";
+import { toArray } from "~/utils/to-array";
 
 const route = useRoute();
 

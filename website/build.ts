@@ -1,13 +1,17 @@
+import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-import { useConfig } from "@/config/index.js";
-import { build } from "@/vite/index.js";
+import { useConfig, build } from "runable";
 
 import { generateLlmsArtifacts } from "./scripts/llms/generate.js";
 
 await build();
 
 const config = useConfig();
+await writeFile(
+  join(config.distdir, "server", "package.json"),
+  `${JSON.stringify({ type: "module" }, null, 2)}\n`,
+);
 const { llmsTxtPath, llmsFullTxtPath, markdownPaths } = generateLlmsArtifacts(
   join(config.distdir, "client"),
 );

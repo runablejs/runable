@@ -1,9 +1,9 @@
 import { join, resolve } from "node:path";
 
+import { defineConfig } from "runable";
 import tailwindcss from "@tailwindcss/vite";
 import vContent from "v-content/vite";
 
-import { defineConfig } from "@/index.js";
 import {
   defineCollection,
   rehypeList,
@@ -126,6 +126,10 @@ export default defineConfig({
   ssr: true,
 
   vite: {
+    ...(process.env.NODE_ENV === "production"
+      ? { ssr: { noExternal: true, external: ["better-sqlite3"] } }
+      : {}),
+
     plugins: [
       tailwindcss(),
 

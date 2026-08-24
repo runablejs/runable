@@ -21,3 +21,11 @@ index aa5b1fd17c6682edc26863c12b09c6b7d70e465a..ee95908cb4e774388f008b5a2d647d0e
  	if (_token !== token) {
  		token = _token;
  		seeded.clear();
+@@ -34,6 +28,6 @@ async function initDb({ path = ".content.db", filename = "content.db" }) {
+ 	} else {
+ 		const { createServerDb } = await import("./server.js");
+-		db = createServerDb(path);
++		db = createServerDb(process.env.LAMBDA_TASK_ROOT ? "/tmp/content.db" : path);
+ 	}
+ 	return db;
+ }

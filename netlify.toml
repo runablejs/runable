@@ -1,10 +1,24 @@
 [build]
-  command = "pnpm --filter runable-website build"
+  command = "pnpm --filter runable build && pnpm --filter runable-website app:build && node website/scripts/stage-netlify-output.mjs"
   publish = "website/.output/client"
 
 [build.environment]
   NODE_VERSION = "24.12.0"
   PNPM_VERSION = "11.10.0"
+  NODE_ENV = "production"
+
+[functions]
+  directory = "website/netlify/functions"
+  node_bundler = "esbuild"
+  included_files = [
+    ".output/manifest.js",
+    ".output/server/**"
+  ]
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/index"
+  status = 200
 
 [[headers]]
   for = "/llms.txt"
@@ -15,13 +29,3 @@
   for = "/llms-full.txt"
   [headers.values]
     Content-Type = "text/markdown; charset=utf-8"
-
-[[headers]]
-  for = "/docs/**/*.md"
-  [headers.values]
-    Content-Type = "text/markdown; charset=utf-8"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200

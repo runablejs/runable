@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch server.ts",
-    "build": "tsx ./build.ts"
+    "dev": "tsx watch dev.ts",
+    "app:build": "NODE_ENV=production tsx ./build.ts"
   },
   "dependencies": {
     "@docsearch/css": "^5.0.3",

@@ -3,15 +3,12 @@ import { createApp } from "./main.js";
 import { useRouter } from "../app/composables/router.js";
 import type { SSRContext } from "./switcher.js";
 import { transformHtmlTemplate } from "@unhead/vue/server";
-import { loadConfig } from "@/config/load.js";
 import { dehydrateAsyncData } from "@/async-data/ssr.js";
 import { serializeState } from "@/async-data/serialize.js";
 import { getAppErrorState } from "@/error/plugin.js";
 import { callWithAppCtx } from "@/context/context.js";
 
 export async function render(ssrContext: SSRContext) {
-  await loadConfig();
-
   const { app, head } = await createApp(true);
 
   return callWithAppCtx(app, async () => {

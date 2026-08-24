@@ -1,8 +1,5 @@
-import { hono } from "@/adapters/hono";
-
-// server.ts
+import { hono } from "runable/adapters/hono";
 import { Hono } from "hono";
-import { serve } from "@hono/node-server";
 
 const app = new Hono();
 
@@ -12,4 +9,4 @@ app.get("/api/health", (context) => {
   return context.json({ status: "ok" });
 });
 
-serve({ fetch: app.fetch, port: 3000 });
+export default app;

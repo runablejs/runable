@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { toArray } from "@/utils/to-array.js";
 import BlogPage from "~/components/BlogPage.vue";
+import { toArray } from "~/utils/to-array";
 
 const route = useRoute();
 

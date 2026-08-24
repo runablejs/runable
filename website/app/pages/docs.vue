@@ -4,7 +4,7 @@ import SidebarInset from "~/components/ui/sidebar/SidebarInset.vue";
 import DocsSidebar from "~/components/DocsSidebar.vue";
 
 import DocsHeader from "~/components/DocsHeader.vue";
-import { toArray } from "@/utils/to-array.js";
+import { toArray } from "~/utils/to-array";
 
 const route = useRouter().currentRoute;
 
@@ -14,7 +14,7 @@ watch(
     if (route.value.name === "docs") {
       navigateTo({
         name: "docs-slugs",
-        params: { slugs: "getting-started/installation" },
+        params: { slugs: ["getting-started", "installation"].join("/") },
         replace: true,
       });
     }
