@@ -65,9 +65,7 @@ function changelogEntry(packageName) {
   const changelog = readFileSync(changelogPath, "utf8");
   const escapedVersion = version.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const match = changelog.match(
-    new RegExp(
-      `(?:^|\\n)## ${escapedVersion}\\s*\\n([\\s\\S]*?)(?=\\n## |$)`,
-    ),
+    new RegExp(`(?:^|\\n)## ${escapedVersion}\\s*\\n([\\s\\S]*?)(?=\\n## |$)`),
   );
 
   if (!match) {
@@ -119,7 +117,7 @@ if (changedPackages.length === 0) {
 }
 
 const packageSections = changedPackages.flatMap(({ name, changelog }) => [
-  `### ${name} ${version}`,
+  `## ${name} ${version}`,
   "",
   changelog,
   "",
@@ -136,7 +134,7 @@ for (const { changelog } of changedPackages) {
 
 const contributorSection = contributors.size
   ? [
-      "### Contributors",
+      "## Contributors",
       "",
       ...[...contributors]
         .sort(([left], [right]) => left.localeCompare(right))
@@ -148,7 +146,7 @@ const contributorSection = contributors.size
 const notes = [
   `${version} is the next Runable ${releaseKind}.`,
   "",
-  "### Changelog",
+  "## Changelog",
   "",
   previousTag
     ? `[compare changes](https://github.com/${repository}/compare/${previousTag}...${tag})`
