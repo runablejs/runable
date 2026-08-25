@@ -39,9 +39,35 @@ function isActive(href: string) {
     <!-- class="sticky top-[calc(var(--header-height)+0.6rem)] z-30 hidden h-[calc(100svh-10rem)] overflow-hidden overscroll-none bg-transparent [--sidebar-menu-width:--spacing(56)] lg:flex" -->
     <!-- collapsible="none"
     variant="floating" -->
+
     <SidebarContent
       class="w-(--sidebar-menu-width) scroll-fade scrollbar-none overflow-x-hidden pl-2.5 pt-12 bg-background"
     >
+      <SidebarGroup class="md:hidden">
+        <SidebarGroupContent>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                v-for="{ name, href, icon } in nav"
+                :key="name"
+                :is-active="isActive(href)"
+                as-child
+                class="relative h-6 px-1 w-fit rounded-none overflow-visible border border-transparent text-[1rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md data-[active=true]:border-accent data-[active=true]:bg-accent 3xl:fixed:w-full 3xl:fixed:max-w-48"
+              >
+                <!-- :is-active="isActive(item.href)" -->
+                <RunableLink :to="href">
+                  <span
+                    class="absolute inset-0 flex w-(--sidebar-menu-width) bg-transparent"
+                  />
+                  <UIcon :name="icon" />
+                  {{ name }}
+                </RunableLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
+
       <SidebarGroup v-if="isStructure">
         <SidebarGroupContent>
           <SidebarMenu>

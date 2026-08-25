@@ -3,4 +3,4 @@
  * unrelated product (a different company's AI agent) — do not use it here.
  * Centralized so it's never guessed or duplicated across the codebase.
  */
-export const SITE_URL = "https://runable.netlify.app";
+export const SITE_URL = "https://runablejs.com";

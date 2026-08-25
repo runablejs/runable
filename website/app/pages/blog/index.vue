@@ -127,6 +127,7 @@ useSeoMeta({
             class="object-cover object-top w-full h-full transform transition-transform duration-200 group-hover/blog-post:scale-110"
           />
         </div>
+
         <div class="relative p-7 pointer-events-none flex flex-col h-full">
           <div
             class="absolute left-0 top-8 w-0.75 h-10 bg-accent dark:bg-accent rounded-r-md"

@@ -3,52 +3,51 @@ import { createApp } from "./main.js";
 import { useRouter } from "../app/composables/router.js";
 import type { SSRContext } from "./switcher.js";
 import { transformHtmlTemplate } from "@unhead/vue/server";
-import { loadConfig } from "@/config/load.js";
 import { dehydrateAsyncData } from "@/async-data/ssr.js";
 import { serializeState } from "@/async-data/serialize.js";
 import { getAppErrorState } from "@/error/plugin.js";
+import { callWithAppCtx } from "@/context/context.js";
 
 export async function render(ssrContext: SSRContext) {
-  await loadConfig();
-
   const { app, head } = await createApp(true);
-  const router = useRouter();
 
-  const { pathname, search, hash } = new URL(
-    ssrContext.url ?? "/",
-    "http://ssr-internal",
-  );
-  await router.push(pathname + search + hash);
-  await router.isReady();
+  return callWithAppCtx(app, async () => {
+    const router = useRouter();
 
-  let html: string;
+    const { pathname, search, hash } = new URL(
+      ssrContext.url ?? "/",
+      "http://ssr-internal",
+    );
+    await router.push(pathname + search + hash);
+    await router.isReady();
 
-  try {
-    html = await renderToString(app, {});
-  } catch (error) {
-    const errorState = getAppErrorState(app);
-    if (!errorState) throw error;
+    let html: string;
 
-    errorState.showError(error, {
-      source: "vue",
-      info: "server-render",
-    });
+    try {
+      html = await renderToString(app, {});
+    } catch (error) {
+      const errorState = getAppErrorState(app);
+      if (!errorState) throw error;
 
-    // Render again: RunableApp now selects the error component instead of
-    // the component tree that failed during the first pass.
-    html = await renderToString(app, {});
-  }
+      errorState.showError(error, {
+        source: "vue",
+        info: "server-render",
+      });
 
-  // Extract + serialize the async-data cache for this request
-  const asyncDataState = dehydrateAsyncData(app);
-  const asyncDataScript = `<script>window.__ASYNC_DATA__=${serializeState(asyncDataState)}</script>`;
+      // Render again: RunableApp now selects the error component instead of
+      // the component tree that failed during the first pass.
+      html = await renderToString(app, {});
+    }
 
-  const rendered = transformHtmlTemplate(
-    head as any,
-    ssrContext.template
-      .replace(`<!--app-html-->`, html ?? "")
-      .replace(`</body>`, `${asyncDataScript}</body>`),
-  );
+    // Extract + serialize the async-data cache for this request
+    const asyncDataState = dehydrateAsyncData(app);
+    const asyncDataScript = `<script>window.__ASYNC_DATA__=${serializeState(asyncDataState)}</script>`;
 
-  return rendered;
+    return transformHtmlTemplate(
+      head as any,
+      ssrContext.template
+        .replace(`<!--app-html-->`, html ?? "")
+        .replace(`</body>`, `${asyncDataScript}</body>`),
+    );
+  });
 }

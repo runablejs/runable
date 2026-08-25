@@ -18,7 +18,7 @@ import { UnheadSchemaOrg } from "@unhead/schema-org/vue";
 import { layoutPlugin } from "../layout/plugin.js";
 import { useConfig } from "@/app/composables/config.js";
 import { createErrorCapture } from "../error/plugin.js";
-import { setAppCtx } from "@/context/context.js";
+import { callWithAppCtx, setAppCtx } from "@/context/context.js";
 
 export async function createApp(isSsr = false) {
   const config = useConfig();
@@ -58,16 +58,21 @@ export async function createApp(isSsr = false) {
     head = createHeadClient(headOptions);
   }
 
+  const install = async () => {
+    app.use(appContextPlugin);
+    app.use(router);
+    app.use(createErrorCapture());
+    app.use(layoutPlugin);
+    await installPlugins(app);
+    app.use(createAsyncData());
+    app.use(head);
+    app.use(components);
+
+    return { app, head };
+  };
+
+  if (isSsr) return callWithAppCtx(app, install);
+
   setAppCtx(app);
-
-  app.use(appContextPlugin);
-  app.use(router);
-  app.use(createErrorCapture());
-  app.use(layoutPlugin);
-  await installPlugins(app);
-  app.use(createAsyncData());
-  app.use(head);
-  app.use(components);
-
-  return { app, head };
+  return install();
 }

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import MDC from "v-content/components/MDC.js";
-import { toArray } from "@/utils/to-array.js";
 import DocsToc from "~/components/DocsToc.vue";
 import { Skeleton } from "~/components/ui/skeleton";
 import { SITE_URL } from "~/lib/site-config.js";
+import { toArray } from "~/utils/to-array";
 
 const route = useRoute();
 
@@ -17,27 +17,34 @@ const slugs = computed(() => {
     .filter(Boolean);
 });
 
-function queryPage() {
-  const contentPath = `/${slugs.value.join("/")}`.replace(/\.md$/, "");
+const path = computed(() => {
+  return `/${slugs.value.join("/")}`
+    .replace(/\.md$/, "")
+    .replace(/\/$/, "")
+    .replace(/\/index$/, "");
+});
 
+function queryPage() {
   switch (slugs.value[0]) {
     case "getting-started":
-      return queryCollection("gettingStarted").path(contentPath).first();
+      return queryCollection("gettingStarted").path(path.value).first();
     case "structure":
-      return queryCollection("structure").path(contentPath).first();
+      return queryCollection("structure").path(path.value).first();
     case "guide":
-      return queryCollection("guide").path(contentPath).first();
+      return queryCollection("guide").path(path.value).first();
+    case "mcp":
+      return queryCollection("mcp").path(path.value).first();
     case "integrations":
-      return queryCollection("integrations").path(contentPath).first();
+      return queryCollection("integrations").path(path.value).first();
     case "api":
-      return queryCollection("api").path(contentPath).first();
+      return queryCollection("api").path(path.value).first();
     default:
       return Promise.resolve(undefined);
   }
 }
 
-const { data: page, pending } = await useAsyncData(
-  `docs:${slugs.value.join("/")}`,
+const { data: page, status } = await useAsyncData(
+  `docs:${path.value}`,
   queryPage,
 );
 
@@ -49,7 +56,7 @@ useHead({
         {
           rel: "alternate",
           type: "text/markdown",
-          href: `${SITE_URL}/docs/${slugs.value.join("/")}.md`,
+          href: `${SITE_URL}/docs/${path.value}`,
         },
       ]
     : [],
@@ -63,9 +70,9 @@ useSeoMeta({
 
 <template>
   <div
-    v-if="pending"
+    v-if="status === 'pending'"
     data-slot="docs-skeleton"
-    class="flex scroll-mt-24 items-stretch pb-8 xl:w-full"
+    class="flex w-full min-w-0 max-w-full scroll-mt-24 items-stretch overflow-x-clip pb-8"
     aria-busy="true"
     aria-live="polite"
   >
@@ -75,7 +82,7 @@ useSeoMeta({
       <div class="h-(--top-spacing) shrink-0" />
 
       <div
-        class="mx-auto flex w-full max-w-3xl min-w-0 flex-1 flex-col gap-6 px-4 py-6 lg:py-8"
+        class="mx-auto flex w-full max-w-3xl min-w-0 flex-1 flex-col gap-6 overflow-hidden px-4 py-6 lg:py-8"
       >
         <div class="flex flex-col gap-3">
           <Skeleton class="h-9 w-3/5 sm:w-2/5" />
@@ -120,13 +127,13 @@ useSeoMeta({
   <div
     v-else-if="page"
     data-slot="docs"
-    class="flex scroll-mt-24 items-stretch pb-8 text-[1.05rem] sm:text-[15px] xl:w-full"
+    class="flex w-full min-w-0 max-w-full scroll-mt-24 items-stretch overflow-x-clip pb-8 text-[1.05rem] sm:text-[15px]"
   >
     <div class="flex min-w-0 flex-1 flex-col">
       <div class="h-(--top-spacing) shrink-0" />
 
       <div
-        class="mx-auto flex w-full max-w-3xl min-w-0 flex-1 flex-col gap-6 px-4 py-6 text-foreground lg:py-8 dark:text-foreground"
+        class="mx-auto flex w-full max-w-3xl min-w-0 flex-1 flex-col gap-6 overflow-hidden px-4 py-6 text-foreground lg:py-8 dark:text-foreground"
       >
         <div class="flex flex-col gap-2">
           <div class="flex flex-col gap-2">
@@ -187,7 +194,7 @@ useSeoMeta({
           </div> -->
         </div>
 
-        <div class="v-content space-y-3">
+        <div class="v-content min-w-0 max-w-full space-y-3">
           <MDC :value="page.html" />
         </div>
         <!-- <MDC
@@ -198,12 +205,11 @@ useSeoMeta({
     </div>
 
     <div
-      class="sticky top-[calc(var(--header-height)+1px)] z-30 ml-auto hidden h-[calc(100svh-var(--header-height)-var(--footer-height))] flex-col gap-4 overflow-hidden overscroll-none pb-8 xl:flex"
+      class="sticky top-[calc(var(--header-height)+1px)] z-30 ml-auto hidden w-72 h-[calc(100svh-var(--header-height)-var(--footer-height))] flex-col gap-4 overflow-hidden overscroll-none pb-8 xl:flex"
     >
       <div class="h-(--top-spacing) shrink-0" />
-      <div v-if="page.toc" class="no-scrollbar overflow-y-auto px-6">
-        <DocsToc :page />
-        <!-- <DocsTableOfContents :toc="page.body.toc" /> -->
+      <div class="no-scrollbar overflow-y-auto px-6">
+        <DocsToc v-if="page.toc" :page />
         <div class="h-12" />
       </div>
       <div class="flex flex-1 flex-col gap-12 px-6">

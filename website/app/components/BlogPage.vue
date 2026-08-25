@@ -12,6 +12,7 @@ import {
 
 import type { ResolvedPageEntry } from "v-content";
 import BlogAuthors from "./BlogAuthors.vue";
+import DocsToc from "./DocsToc.vue";
 
 const props = defineProps<{
   page?: ResolvedPageEntry | null;
@@ -65,46 +66,57 @@ watch(
     </div>
   </div>
 
-  <article
+  <div
     v-else-if="page"
     data-slot="blog"
-    class="mx-auto w-full max-w-4xl flex flex-1 flex-col gap-8 px-4 py-10 text-[1.05rem] text-foreground sm:text-[15px] lg:py-16"
+    class="mx-auto flex w-full max-w-7xl flex-1 justify-center"
   >
-    <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink as-child>
-            <RunableLink to="/blog"> Blog </RunableLink>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>
-            {{ page.meta.title }}
-          </BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
+    <article
+      class="flex min-w-0 w-full max-w-4xl flex-1 flex-col gap-8 px-4 py-10 text-[1.05rem] text-foreground sm:text-[15px] lg:py-16"
+    >
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink as-child>
+              <RunableLink to="/blog"> Blog </RunableLink>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>
+              {{ page.meta.title }}
+            </BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
 
-    <header class="flex flex-col gap-3">
-      <h1
-        v-if="page.meta.title"
-        class="scroll-m-24 text-3xl font-semibold tracking-tight sm:text-4xl"
-      >
-        {{ page.meta.title }}
-      </h1>
-      <p
-        v-if="page.meta.description"
-        class="text-[1.05rem] text-muted-foreground sm:text-base sm:text-balance"
-      >
-        {{ page.meta.description }}
-      </p>
+      <header class="flex flex-col gap-3">
+        <h1
+          v-if="page.meta.title"
+          class="scroll-m-24 text-3xl font-semibold tracking-tight sm:text-4xl"
+        >
+          {{ page.meta.title }}
+        </h1>
+        <p
+          v-if="page.meta.description"
+          class="text-[1.05rem] text-muted-foreground sm:text-base sm:text-balance"
+        >
+          {{ page.meta.description }}
+        </p>
 
-      <BlogAuthors :page />
-    </header>
+        <BlogAuthors :page />
+      </header>
 
-    <div class="v-content space-y-3">
-      <MDC :value="page.html" />
-    </div>
-  </article>
+      <div class="v-content space-y-3">
+        <MDC :value="page.html" />
+      </div>
+    </article>
+
+    <aside
+      v-if="page.toc?.length"
+      class="sticky top-[calc(var(--header-height)+1px)] hidden h-[calc(100svh-var(--header-height))] w-72 shrink-0 overflow-y-auto px-6 py-16 xl:block"
+    >
+      <DocsToc :page />
+    </aside>
+  </div>
 </template>

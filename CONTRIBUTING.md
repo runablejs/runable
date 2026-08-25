@@ -98,9 +98,11 @@ PR → CI (install, lint/typecheck/test/build) → merge into dev → …
    - **No changesets left** (the Release PR was just merged) → the `pack`
      job builds every package (`pnpm build`) and packs the publishable ones
      into tarballs, then the `publish` job pushes those tarballs to npm
-     (private packages are never published), tags each published package as
-     `<name>@<version>`, and creates a matching GitHub Release from its
-     changelog entry.
+     (private packages are never published). The three public packages form
+     a Changesets fixed group, so they share one framework version. Changesets
+     keeps a `<name>@<version>` tag for each package, while the workflow
+     creates a single GitHub Release tagged `v<version>` with a changelog
+     section for every published package.
 3. **Publishing uses npm Trusted Publishing (OIDC)** — no `NPM_TOKEN` is
    stored anywhere. Only the `publish` job gets an OIDC token (`id-token:
    write`); it authenticates to npm using its GitHub Actions identity, and

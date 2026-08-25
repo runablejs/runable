@@ -572,8 +572,13 @@ export function unloadConfig() {
 /**
  * Loads the main config and all its modules into `cachedConfigs`. Idempotent:
  * subsequent calls are a no-op once a cache already exists.
+ *
+ * Set `generateTypes` to `false` in read-only runtime environments. Build
+ * and preparation tools keep the default behavior and generate module types.
  */
-export async function loadConfig() {
+export async function loadConfig(
+  options: { generateTypes?: boolean } = {},
+) {
   if (cachedConfigs) return;
 
   moduleNameAliases = new Map();
@@ -588,12 +593,14 @@ export async function loadConfig() {
 
   cachedConfigs = Object.fromEntries(graph.all.map((config) => [config._name, config]));
 
-  try {
-    await generateModulesOptionsDts();
-  } catch (error) {
-    cachedConfigs = undefined;
-    moduleNameAliases = undefined;
-    throw error;
+  if (options.generateTypes !== false) {
+    try {
+      await generateModulesOptionsDts();
+    } catch (error) {
+      cachedConfigs = undefined;
+      moduleNameAliases = undefined;
+      throw error;
+    }
   }
 }
 

@@ -1,9 +1,9 @@
 import { join, resolve } from "node:path";
 
+import { defineConfig } from "runable";
 import tailwindcss from "@tailwindcss/vite";
 import vContent from "v-content/vite";
 
-import { defineConfig } from "@/index.js";
 import {
   defineCollection,
   rehypeList,
@@ -100,6 +100,10 @@ export default defineConfig({
         name: "description",
         content: "Build the Vue app you want. Keep the backend you chose",
       },
+      {
+        name: "algolia-site-verification",
+        content: "F2949F185B8C208C",
+      },
     ],
     link: [
       { rel: "icon", href: "/favicon.svg" },
@@ -115,13 +119,16 @@ export default defineConfig({
   css: ["./app/assets/css/main.css"],
 
   alias: {
-    "@": join(import.meta.dirname, "../packages/runable/src"),
     "~": join(import.meta.dirname, "./app"),
   },
 
-  ssr: false,
+  ssr: true,
 
   vite: {
+    ...(process.env.NODE_ENV === "production"
+      ? { ssr: { noExternal: true, external: ["better-sqlite3"] } }
+      : {}),
+
     plugins: [
       tailwindcss(),
 
@@ -141,6 +148,7 @@ export default defineConfig({
           gettingStarted: defineDocsCollection("en", "getting-started"),
           structure: defineDocsCollection("en", "structure"),
           guide: defineDocsCollection("en", "guide"),
+          mcp: defineDocsCollection("en", "mcp"),
           integrations: defineDocsCollection("en", "integrations"),
           api: defineDocsCollection("en", "api"),
 

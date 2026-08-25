@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { cn } from "~/lib/utils.ts";
-import GithubLink from "./GithubLink.vue";
 import ModeSwitcher from "./ModeSwitcher.vue";
 import Logo from "./navbar-components/Logo.vue";
 import MobileNav from "./MobileNav.vue";
@@ -16,6 +15,11 @@ const navigationLinks = [
     label: "Docs",
     to: "/docs",
     icon: "tabler:book-2",
+  },
+  {
+    label: "Work with AI",
+    to: "/work-with-ai",
+    icon: "tabler:robot",
   },
   {
     label: "Blog",
@@ -114,12 +118,23 @@ const active = computed(() => {
       </NavigationMenu> -->
 
       <!-- Right side -->
-      <div class="flex flex-1 items-center justify-end gap-">
+      <div class="flex flex-1 items-center justify-end gap- h-full">
         <ClientOnly>
           <ModeSwitcher class="rounded-none" />
         </ClientOnly>
 
-        <GithubLink class="rounded-none" />
+        <UGithubLink v-slot="{ href }">
+          <UButton
+            as-child
+            size="sm"
+            variant="ghost"
+            class="h-full rounded-none"
+          >
+            <a :href target="_blank" rel="noreferrer">
+              <UIcon name="simple-icons:github" />
+            </a>
+          </UButton>
+        </UGithubLink>
 
         <MobileNav :nav="navigationLinks" />
       </div>

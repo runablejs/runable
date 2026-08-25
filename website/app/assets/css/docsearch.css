@@ -1,0 +1,106 @@
+@import "@docsearch/css";
+
+:root {
+  --docsearch-primary-color: var(--accent);
+  --docsearch-primary-dark-color: var(--accent);
+  --docsearch-soft-primary-color: color-mix(
+    in oklch,
+    var(--accent) 14%,
+    transparent
+  );
+  --docsearch-text-color: var(--foreground);
+  --docsearch-secondary-text-color: var(--muted-foreground);
+  --docsearch-muted-color: var(--muted-foreground);
+  --docsearch-subtle-color: var(--border);
+  --docsearch-icon-color: var(--muted-foreground);
+  --docsearch-focus-color: var(--accent);
+  --docsearch-highlight-color: var(--accent);
+  --docsearch-background-color: var(--muted);
+  --docsearch-container-background: color-mix(
+    in oklch,
+    var(--background) 82%,
+    transparent
+  );
+  --docsearch-modal-background: var(--background);
+  --docsearch-search-button-background: transparent;
+  --docsearch-search-button-text-color: var(--muted-foreground);
+  --docsearch-searchbox-background: var(--muted);
+  --docsearch-searchbox-focus-background: var(--background);
+  --docsearch-hit-background: var(--card);
+  --docsearch-hit-color: var(--foreground);
+  --docsearch-hit-focus-background: var(--muted);
+  --docsearch-key-background: var(--muted);
+  --docsearch-key-color: var(--muted-foreground);
+  --docsearch-footer-background: var(--card);
+  --docsearch-popover-background: var(--popover);
+  --docsearch-code-block-background: var(--code);
+  --docsearch-logo-color: var(--color-foreground);
+  --docsearch-modal-radius: var(--border);
+}
+
+.dark {
+  --docsearch-primary-color: var(--accent);
+  --docsearch-primary-dark-color: var(--accent);
+  --docsearch-text-color: var(--foreground);
+  --docsearch-secondary-text-color: var(--muted-foreground);
+  --docsearch-subtle-color: var(--border);
+  --docsearch-background-color: var(--muted);
+  --docsearch-container-background: color-mix(
+    in oklch,
+    var(--background) 82%,
+    transparent
+  );
+  --docsearch-modal-background: var(--background);
+  --docsearch-search-button-background: transparent;
+  --docsearch-searchbox-background: var(--muted);
+  --docsearch-searchbox-focus-background: var(--background);
+  --docsearch-hit-background: var(--card);
+  --docsearch-hit-color: var(--foreground);
+  --docsearch-hit-focus-background: var(--muted);
+  --docsearch-key-background: var(--muted);
+  --docsearch-footer-background: var(--card);
+  --docsearch-popover-background: var(--popover);
+  --docsearch-code-block-background: var(--code);
+}
+
+.runable-docsearch .DocSearch-Button {
+  height: 2.25rem;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  justify-content: center;
+}
+
+.runable-docsearch .DocSearch-Button:hover {
+  border-color: var(--accent);
+  background: var(--muted);
+  box-shadow: none;
+}
+
+@media (max-width: 767px) {
+  .runable-docsearch .DocSearch-Button {
+    width: 2.25rem;
+    padding: 0;
+  }
+
+  .runable-docsearch .DocSearch-Button-Placeholder,
+  .runable-docsearch .DocSearch-Button-Keys {
+    display: none;
+  }
+}
+
+.DocSearch-Modal {
+  @apply sm:border;
+}
+
+.DocSearch-Screen-Icon svg {
+  stroke: currentColor;
+}
+
+.DocSearch-Logo svg .cls-1,
+.DocSearch-Logo svg .cls-2,
+.DocSearch-Logo svg path {
+  fill: currentColor !important;
+}

@@ -96,17 +96,20 @@ onMounted(() => {
           "
         >
           <UButton variant="default" size="lg" as-child>
-            <RunableLink to="/why-runable">
-              Why Runable?
+            <RunableLink to="/docs/getting-started/installation">
+              Get Started
               <UIcon name="tabler:arrow-right" class="size-4" />
             </RunableLink>
           </UButton>
 
-          <UButton variant="outline" size="lg" as-child>
-            <RunableLink to="/docs/getting-started/installation">
-              Get Started
-            </RunableLink>
-          </UButton>
+          <UGithubLink v-slot="{ href }">
+            <UButton variant="ghost" size="lg" as-child>
+              <a :href target="blang">
+                Star on Github
+                <UIcon name="simple-icons:github" class="size-4" />
+              </a>
+            </UButton>
+          </UGithubLink>
         </div>
       </div>
 
@@ -194,10 +197,5 @@ server.listen(<span class="text-accent">3000</span>);</code></pre>
         </div>
       </div>
     </div>
-
-    <div
-      class="absolute bottom-0 right-0 hidden h-1 w-1/3 bg-accent sm:block"
-      aria-hidden="true"
-    />
   </section>
 </template>

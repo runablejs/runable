@@ -62,6 +62,10 @@ import { RunableInspectorError } from "./errors.js";
 import { resolveInspectorProject } from "./project.js";
 import { resolveInspectorConfig } from "./config.js";
 import { resolveInspectorRoutes } from "./routes.js";
+import {
+  createInspectorRouteMatcher,
+  type InspectorRouteMatcher,
+} from "./resolve-route.js";
 import { resolveInspectorLayouts } from "./layouts.js";
 import { resolveInspectorMiddlewares } from "./middlewares.js";
 import { resolveInspectorPlugins } from "./plugins.js";
@@ -135,7 +139,18 @@ export async function createRunableInspector(
     plugins?: InspectorPlugin[];
     modules?: InspectorModule[];
     autoImports?: InspectorAutoImports;
+    routeMatcher?: InspectorRouteMatcher;
   } = {};
+
+  // Shared by getRoutes() and resolveRoute() so the latter's matcher is
+  // always built from the exact same (possibly already-cached) route list
+  // getRoutes() would return, never a second, independent resolution.
+  function getCachedRoutes(): InspectorRoute[] {
+    return (cache.routes ??= resolveInspectorRoutes(
+      rootDir,
+      aggregate(state.allConfigs, (c) => c.pages),
+    ));
+  }
 
   return {
     async getProject() {
@@ -147,10 +162,7 @@ export async function createRunableInspector(
     },
 
     async getRoutes() {
-      return (cache.routes ??= resolveInspectorRoutes(
-        rootDir,
-        aggregate(state.allConfigs, (c) => c.pages),
-      ));
+      return getCachedRoutes();
     },
 
     async getLayouts() {
@@ -196,6 +208,13 @@ export async function createRunableInspector(
         });
       }
       return cache.autoImports;
+    },
+
+    async resolveRoute(path) {
+      const matcher = (cache.routeMatcher ??= createInspectorRouteMatcher(
+        getCachedRoutes(),
+      ));
+      return matcher.resolve(path);
     },
 
     async refresh() {

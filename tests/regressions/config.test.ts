@@ -51,6 +51,7 @@ export default defineModule<{ active: boolean }>({
   configKey: "myModule",
   defaults: { active: true },
 });
+
 `,
       );
 
@@ -63,6 +64,30 @@ export default defineModule<{ active: boolean }>({
 
       expect(byPath).toEqual({ active: true });
       expect(byName).toEqual({ active: true });
+    } finally {
+      cleanupFixtureDir(dir);
+    }
+  });
+});
+
+describe("production runtime config loading", () => {
+  it("can resolve config without writing generated types", async () => {
+    const dir = fixtureWithRunable("runtime-config-");
+    try {
+      writeFixtureFile(
+        dir,
+        "runable.config.ts",
+        `import { defineConfig } from "runable";
+export default defineConfig({ ssr: true });
+`,
+      );
+
+      process.chdir(dir);
+      const { loadConfig, useConfig } = await freshRunable();
+      await loadConfig({ generateTypes: false });
+
+      expect(useConfig().ssr).toBe(true);
+      expect(existsSync(path.join(dir, ".app/modules-options.d.ts"))).toBe(false);
     } finally {
       cleanupFixtureDir(dir);
     }

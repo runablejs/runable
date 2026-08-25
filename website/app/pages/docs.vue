@@ -4,7 +4,7 @@ import SidebarInset from "~/components/ui/sidebar/SidebarInset.vue";
 import DocsSidebar from "~/components/DocsSidebar.vue";
 
 import DocsHeader from "~/components/DocsHeader.vue";
-import { toArray } from "@/utils/to-array.js";
+import { toArray } from "~/utils/to-array";
 
 const route = useRouter().currentRoute;
 
@@ -14,7 +14,7 @@ watch(
     if (route.value.name === "docs") {
       navigateTo({
         name: "docs-slugs",
-        params: { slugs: "getting-started/installation" },
+        params: { slugs: ["getting-started", "installation"].join("/") },
         replace: true,
       });
     }
@@ -45,11 +45,11 @@ const blockCode = computed(() => {
   <SidebarProvider class="flex flex-col">
     <DocsHeader />
 
-    <div class="flex flex-1">
+    <div class="flex min-w-0 max-w-full flex-1 overflow-x-clip">
       <DocsSidebar :block-code />
 
-      <SidebarInset class="">
-        <div class="h-full w-full">
+      <SidebarInset class="min-w-0 max-w-full overflow-x-clip">
+        <div class="h-full w-full min-w-0 max-w-full">
           <RunablePage :key="$route.path" />
         </div>
       </SidebarInset>

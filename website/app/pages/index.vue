@@ -130,14 +130,14 @@ useSeoMeta({
     </header> -->
 
   <!-- Navigator latéral -->
-  <SectionNavigator />
+  <!-- <SectionNavigator /> -->
 
   <!-- Contenu principal — wrappers avec ID pour le navigator -->
   <main>
-    <div class="border- text-foredeground px-4 py-1 text-center bg-background">
+    <!-- <div class="border- text-foredeground px-4 py-1 text-center bg-background">
       Runable is currently in alpha. APIs may evolve as we refine the framework
       toward its first stable release.
-    </div>
+    </div> -->
 
     <div id="section-hero" data-nav-section>
       <HeroSection />

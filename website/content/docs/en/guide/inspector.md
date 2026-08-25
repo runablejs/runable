@@ -41,6 +41,23 @@ const { components, composables, globals } = await inspector.getAutoImports();
 
 File paths are relative to `rootDir` (a file outside it, e.g. a dependency package, stays absolute) — pair them with `project.rootDir` to get an absolute path back.
 
+## Resolving a route
+
+Given a path, `resolveRoute()` answers "which route matches this, and with what params?" — using Vue Router's own matcher against the routes `getRoutes()` would return, so dynamic (`:id`), optional (`:slug?`), catch-all (`:slug(.*)`), and nested routes all resolve exactly as a real navigation would.
+
+```ts
+const match = await inspector.resolveRoute("/users/42");
+
+if (match) {
+  console.log(match.route.file); // "app/pages/users/[id].vue"
+  console.log(match.params); // { id: "42" }
+}
+```
+
+`path` must be absolute (start with `/`); anything else rejects with a `RunableInspectorError`. When nothing matches, `resolveRoute()` returns `null` — it never throws for that. A `?query` and `#hash` on `path` are parsed and returned (`match.query`, `match.hash`) but don't affect which route matches; matching itself only considers the path.
+
+Like every other getter, `resolveRoute()` reflects the state as of the last `refresh()` — it doesn't reach out to the filesystem on every call.
+
 ## Configuration and runtime privacy
 
 `getConfig()` returns a stable, public subset of the resolved configuration — not Runable's full internal config object, which carries Vite plugins, functions, and other values that don't belong on a public boundary.
@@ -85,6 +102,6 @@ variant: info
 title: What the Inspector deliberately does not do
 ---
 
-It never starts a Vite dev server, never rescans routes/layouts/plugins/modules from scratch outside of already-resolved config, and never executes a page or plugin file just to read its metadata. Diagnostics, route resolution against a live request, and IDE/MCP integrations are intentionally left for tooling built on top of this API, not part of it.
+It never starts a Vite dev server, never rescans routes/layouts/plugins/modules from scratch outside of already-resolved config, and never executes a page or plugin file just to read its metadata. `resolveRoute()` matches against already-discovered routes; it doesn't change how those routes are discovered. Broader diagnostics and IDE/MCP integrations are intentionally left for tooling built on top of this API, not part of it.
 
 ::

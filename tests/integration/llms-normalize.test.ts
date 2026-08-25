@@ -9,7 +9,7 @@ import {
   stripCodeGroupContainers,
 } from "../../website/scripts/llms/normalize.js";
 
-const SITE_URL = "https://runable.netlify.app";
+const SITE_URL = "https://runablejs.com";
 
 describe("shiftHeadings", () => {
   it("shifts an H2 to H4 (## -> ####)", () => {
@@ -21,9 +21,14 @@ describe("shiftHeadings", () => {
   });
 
   it("leaves headings inside a fenced code block untouched", () => {
-    const input = ["Text before.", "```md", "# Not a real heading", "## Also not", "```", "## Real heading"].join(
-      "\n",
-    );
+    const input = [
+      "Text before.",
+      "```md",
+      "# Not a real heading",
+      "## Also not",
+      "```",
+      "## Real heading",
+    ].join("\n");
 
     const result = shiftHeadings(input, 2);
 
@@ -47,7 +52,9 @@ describe("shiftHeadings", () => {
   });
 
   it("does not treat a line without a space after # as a heading", () => {
-    expect(shiftHeadings("#no-space-not-a-heading", 2)).toBe("#no-space-not-a-heading");
+    expect(shiftHeadings("#no-space-not-a-heading", 2)).toBe(
+      "#no-space-not-a-heading",
+    );
   });
 });
 
@@ -86,7 +93,11 @@ describe("normalizeAdmonitions", () => {
     ].join("\n");
 
     expect(normalizeAdmonitions(input)).toBe(
-      ["> **Two paragraphs:** First paragraph.", ">", "> Second paragraph."].join("\n"),
+      [
+        "> **Two paragraphs:** First paragraph.",
+        ">",
+        "> Second paragraph.",
+      ].join("\n"),
     );
   });
 
@@ -172,7 +183,18 @@ describe("normalizeAdmonitions", () => {
   });
 
   it("leaves an admonition-like block inside a fenced code block untouched", () => {
-    const input = ["```md", "::u-tip", "---", "title: Example", "---", "", "Body.", "", "::", "```"].join("\n");
+    const input = [
+      "```md",
+      "::u-tip",
+      "---",
+      "title: Example",
+      "---",
+      "",
+      "Body.",
+      "",
+      "::",
+      "```",
+    ].join("\n");
 
     expect(normalizeAdmonitions(input)).toBe(input);
   });
@@ -239,14 +261,21 @@ describe("normalizeDecorativeHtml", () => {
   });
 
   it("does not touch HTML shown inside a fenced code block", () => {
-    const input = ["```vue", "<div>", "  <header>My application</header>", "</div>", "```"].join("\n");
+    const input = [
+      "```vue",
+      "<div>",
+      "  <header>My application</header>",
+      "</div>",
+      "```",
+    ].join("\n");
     expect(normalizeDecorativeHtml(input)).toBe(input);
   });
 });
 
 describe("normalizeLinks", () => {
   it("converts a site-relative <a href> into an absolute Markdown link", () => {
-    const input = 'See <a href="/docs/getting-started/installation.md">Installation</a> for details.';
+    const input =
+      'See <a href="/docs/getting-started/installation.md">Installation</a> for details.';
     expect(normalizeLinks(input, SITE_URL)).toBe(
       `See [Installation](${SITE_URL}/docs/getting-started/installation.md) for details.`,
     );
@@ -254,16 +283,23 @@ describe("normalizeLinks", () => {
 
   it("keeps an already-absolute href as-is", () => {
     const input = '<a href="https://example.com/page">External</a>';
-    expect(normalizeLinks(input, SITE_URL)).toBe("[External](https://example.com/page)");
+    expect(normalizeLinks(input, SITE_URL)).toBe(
+      "[External](https://example.com/page)",
+    );
   });
 
   it("leaves an existing Markdown link untouched", () => {
-    const input = "See [Installation](/docs/getting-started/installation.md) for details.";
+    const input =
+      "See [Installation](/docs/getting-started/installation.md) for details.";
     expect(normalizeLinks(input, SITE_URL)).toBe(input);
   });
 
   it("does not transform a link shown inside a fenced code block", () => {
-    const input = ["```html", '<a href="/docs/example.md">Example</a>', "```"].join("\n");
+    const input = [
+      "```html",
+      '<a href="/docs/example.md">Example</a>',
+      "```",
+    ].join("\n");
     expect(normalizeLinks(input, SITE_URL)).toBe(input);
   });
 });
@@ -289,15 +325,22 @@ describe("normalizeLlmsMarkdown (full pipeline)", () => {
       "",
       "::",
       "",
-      "See <a href=\"/docs/getting-started/quickstart.md\">Quick Start</a> next.",
+      'See <a href="/docs/getting-started/quickstart.md">Quick Start</a> next.',
     ].join("\n");
 
-    const result = normalizeLlmsMarkdown(body, { siteUrl: SITE_URL, headingShift: 2 });
+    const result = normalizeLlmsMarkdown(body, {
+      siteUrl: SITE_URL,
+      headingShift: 2,
+    });
 
     expect(result).toContain("#### Prerequisites");
     expect(result).toContain("##### Node.js");
-    expect(result).toContain("> **Alpha CLI:** The interactive command is still evolving.");
-    expect(result).toContain(`[Quick Start](${SITE_URL}/docs/getting-started/quickstart.md)`);
+    expect(result).toContain(
+      "> **Alpha CLI:** The interactive command is still evolving.",
+    );
+    expect(result).toContain(
+      `[Quick Start](${SITE_URL}/docs/getting-started/quickstart.md)`,
+    );
     expect(result).not.toContain("::u-tip");
     expect(result).not.toContain("variant:");
   });

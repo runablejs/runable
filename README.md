@@ -1,5 +1,5 @@
 <p dir="auto">
-     <a href="https://runable.netlify.app" rel="nofollow">
+     <a href="https://runablejs.com" rel="nofollow">
           <img src="https://github.com/runablejs/runable/raw/main/.github/assets/cover.png" alt="Runable cover" style="max-width: 100%; height: auto;">
      </a>
 </p>
@@ -42,9 +42,9 @@ Your architecture. One application. A better developer experience.
 
 See how Runable works, explore supported runtimes, and build your first application on the official website.
 
-### [Explore Runable →](https://runable.netlify.app)
+### [Explore Runable →](https://runablejs.com)
 
-[Why Runable?](https://runable.netlify.app/why-runable) · [Documentation](https://runable.netlify.app/docs) · [Blog](https://runable.netlify.app/blog) · [Changelog](https://runable.netlify.app/changelog)
+[Why Runable?](https://runablejs.com/why-runable) · [Documentation](https://runablejs.com/docs) · [Blog](https://runablejs.com/blog) · [Changelog](https://runablejs.com/changelog)
 
 > Runable is currently in alpha. The project is evolving quickly and feedback is welcome.
 

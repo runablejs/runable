@@ -5,9 +5,8 @@
   "scripts": {
     "build": "pnpm --filter './packages/**' build",
     "play:dev": "pnpm --filter runable-playground dev",
-    "docs:dev": "vitepress dev",
-    "docs:build": "vitepress build",
-    "docs:preview": "vitepress preview",
+    "website:dev": "pnpm --filter runable-website dev",
+    "website:build": "pnpm --filter runable-website dev",
     "lint": "pnpm -r --if-present run lint",
     "typecheck": "pnpm -r --if-present run typecheck && tsc --noEmit -p tests/tsconfig.json && tsc --noEmit -p tests/tsconfig.vitest-config.json",
     "test": "vitest run",
@@ -37,6 +36,7 @@
     "typescript-eslint": "^8.63.0",
     "vitest": "^4.1.11",
     "vue": "catalog:",
+    "vue-router": "catalog:",
     "yaml": "^2.9.0"
   },
   "packageManager": "pnpm@11.10.0",
