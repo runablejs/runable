@@ -65,7 +65,9 @@ function changelogEntry(packageName) {
   const changelog = readFileSync(changelogPath, "utf8");
   const escapedVersion = version.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const match = changelog.match(
-    new RegExp(`^## ${escapedVersion}\\s*\\n([\\s\\S]*?)(?=^## |$)`, "m"),
+    new RegExp(
+      `(?:^|\\n)## ${escapedVersion}\\s*\\n([\\s\\S]*?)(?=\\n## |$)`,
+    ),
   );
 
   if (!match) {
