@@ -46,7 +46,7 @@ async function viteRequest({
   const headers: OutgoingHttpHeaders = vite?.config.server.headers ?? {};
 
   try {
-    let render: (typeof import("../entry/switcher.js"))["render"];
+    let render: (typeof import("../entry/switcher.js"))["render"] | undefined;
 
     if (vite) {
       // --- Dev : lecture dynamique via le serveur Vite ---
@@ -102,6 +102,10 @@ async function viteRequest({
     }
 
     if (vite) render = (await vite.ssrLoadModule(entryPath)).render;
+
+    if (!render) {
+      throw new Error("The server entry does not export a render function.");
+    }
 
     const rendered = await render({ url, template });
 
