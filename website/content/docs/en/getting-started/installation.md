@@ -149,7 +149,6 @@ Supported frameworks are not runtime dependencies of `runable`. Install the one 
 ## Start the project
 
 ```bash
-pnpm app:prepare
 pnpm dev
 ```
 

@@ -100,7 +100,7 @@ const active = computed(() => {
           }"
           variant="ghost"
           :to="to"
-          class="px-1.5 hover:bg-accent hover:text-accent-foreground h-full justify-center rounded-none font-medium text-sm flex items-center gap-2 whitespace-nowrap"
+          class="px-2 hover:bg-accent hover:text-accent-foreground h-full justify-center rounded-none font-medium text-sm flex items-center gap-2 whitespace-nowrap"
         >
           <UIcon :name="icon" class="size-4" />
           {{ label }}

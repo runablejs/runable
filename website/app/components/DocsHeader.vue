@@ -82,7 +82,7 @@ onBeforeUnmount(() => {
 
       <!-- Middle area -->
       <nav
-        class="h-full max-md:hidden flex items-center gap-2"
+        class="h-full max-md:hidden flex items-center"
         :class="cn('items-center gap-0', props.class)"
       >
         <RunableLink
@@ -94,7 +94,7 @@ onBeforeUnmount(() => {
           }"
           variant="ghost"
           :to="href"
-          class="px-1.5 hover:text-primary hover:bg-border h-full justify-center rounded-none font-medium text-sm flex items-center gap-2 whitespace-nowrap"
+          class="px-2 hover:text-primary hover:bg-border h-full justify-center rounded-none font-medium text-sm flex items-center gap-2 whitespace-nowrap border-x border-transparent hover:border-accent"
         >
           <UIcon :name="icon" class="size-4" />
           {{ name }}
