@@ -181,6 +181,7 @@ export default defineConfig({
     worker: { format: "es" },
 
     optimizeDeps: {
+      include: ["extend"],
       exclude: ["@sqlite.org/sqlite-wasm"],
     },
   },

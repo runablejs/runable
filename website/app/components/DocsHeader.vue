@@ -4,7 +4,7 @@ import { cn } from "~/lib/utils";
 import { useSidebar } from "./ui/sidebar/utils.ts";
 import Logo from "./navbar-components/Logo.vue";
 import ModeSwitcher from "./ModeSwitcher.vue";
-import DocsSearch from "./DocsSearch.vue";
+import ContentSearch from "./ContentSearch.vue";
 
 const props = defineProps<{
   class?: HTMLAttributes["class"];
@@ -104,7 +104,7 @@ onBeforeUnmount(() => {
       <!-- Right side -->
       <div class="ml-auto flex flex-1 items-center justify-end gap-1 h-full">
         <ClientOnly>
-          <DocsSearch />
+          <ContentSearch />
         </ClientOnly>
 
         <template v-if="showExtra">
