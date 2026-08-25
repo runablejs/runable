@@ -6,8 +6,12 @@ import merge from "lodash/merge.js";
 import { PagesOptions } from "./pages.js";
 import { extractPageMeta } from "./extract-page-meta.js";
 import { normalizeRouteName } from "./route-name.js";
+import type { EditableRouteTreeNode } from "./types.js";
 
-export function buildRoutes(options: Required<PagesOptions>) {
+export function buildRoutes(
+  options: Required<PagesOptions>,
+  extendRoutes?: (routes: EditableRouteTreeNode) => void | Promise<void>,
+) {
   return VueRouter({
     dts: resolve(options.output, "router-routes.d.ts"),
 
@@ -22,6 +26,10 @@ export function buildRoutes(options: Required<PagesOptions>) {
         },
       };
     }),
+
+    async beforeWriteFiles(root) {
+      await extendRoutes?.(root as unknown as EditableRouteTreeNode);
+    },
 
     async extendRoute(route) {
       if (!route.component) return;

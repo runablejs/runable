@@ -98,6 +98,7 @@ export function resolveConfig(config: RunableConfig & { cwd: string }) {
     globals: _globals,
     composables: _composables,
     pages: _pages,
+    extendRoutes: config.extendRoutes,
     middlewares: _middlewares,
     plugins: _plugins,
     css: _css,
