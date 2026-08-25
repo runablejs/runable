@@ -1,5 +1,19 @@
 # runable
 
+## 1.0.0-alpha.6
+
+### Minor Changes
+
+- [#49](https://github.com/runablejs/runable/pull/49) [`9a99a77`](https://github.com/runablejs/runable/commit/9a99a77b87d51fc7d48c3adb7621c0d6f73104c4) Thanks [@domutala](https://github.com/domutala)! - Add `resolveRoute(path)` to `runable/inspector`: given an absolute path, resolves it against the project's routes using Vue Router's own matcher (the same one a real navigation would use), returning the matched `InspectorRoute` plus extracted `params`/`query`/`hash`, or `null` if nothing matches. Supports dynamic, optional, and catch-all params, nested routes, and `definePageMeta({ path, name })` overrides. Like every other Inspector getter, it reflects state as of the last `refresh()`.
+
+### Patch Changes
+
+- [#49](https://github.com/runablejs/runable/pull/49) [`10421c7`](https://github.com/runablejs/runable/commit/10421c750b224c72503dc4edde1909b93f8a1a5e) Thanks [@domutala](https://github.com/domutala)! - Validate that dynamically loaded server entries export a render function before handling SSR requests.
+
+- [#49](https://github.com/runablejs/runable/pull/49) [`377d8e1`](https://github.com/runablejs/runable/commit/377d8e18c4f31580da5bbcc69c3241524d588454) Thanks [@domutala](https://github.com/domutala)! - Isolate the application context for concurrent SSR requests, avoid generated type writes and redundant configuration loading during production rendering, and resolve production manifest exports and server entry paths correctly.
+
+- [#49](https://github.com/runablejs/runable/pull/49) [`6910aaf`](https://github.com/runablejs/runable/commit/6910aaf1d0757ac4e7e03b562a847a871c4cfdde) Thanks [@domutala](https://github.com/domutala)! - Fix `loadRuntimeEnv()` (used internally when resolving runtime config, e.g. by `runable/inspector`'s `getConfig()`) unconditionally writing an "injected env (...) from .env" notice to stdout via `dotenv` whenever a project's `.env` file defines any `RUN_`/`VITE_`-prefixed variable. This is now passed `quiet: true`, so loading runtime env stays silent on stdout — important for any host process that reserves stdout for something else, such as an MCP server speaking JSON-RPC over stdio.
+
 ## 1.0.0-alpha.4
 
 ### Minor Changes

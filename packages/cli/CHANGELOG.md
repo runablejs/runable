@@ -1,5 +1,16 @@
 # @runablejs/cli
 
+## 1.0.0-alpha.6
+
+### Minor Changes
+
+- [#49](https://github.com/runablejs/runable/pull/49) [`8ea56a0`](https://github.com/runablejs/runable/commit/8ea56a0eabf34859434651acf7840f1de9af7baf) Thanks [@domutala](https://github.com/domutala)! - Add a runable mcp command that starts the @runablejs/mcp installation from the current Runable project.
+
+### Patch Changes
+
+- Updated dependencies [[`10421c7`](https://github.com/runablejs/runable/commit/10421c750b224c72503dc4edde1909b93f8a1a5e), [`377d8e1`](https://github.com/runablejs/runable/commit/377d8e18c4f31580da5bbcc69c3241524d588454), [`6910aaf`](https://github.com/runablejs/runable/commit/6910aaf1d0757ac4e7e03b562a847a871c4cfdde), [`9a99a77`](https://github.com/runablejs/runable/commit/9a99a77b87d51fc7d48c3adb7621c0d6f73104c4)]:
+  - runable@1.0.0-alpha.6
+
 ## 1.0.0-alpha.5
 
 ### Minor Changes
