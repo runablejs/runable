@@ -1,4 +1,4 @@
-import type { Ref, WatchSource } from "vue";
+import type { MaybeRefOrGetter, Ref, WatchSource } from "vue";
 import type { RequestManager } from "./RequestManager.js";
 
 // ============================================================================
@@ -45,9 +45,21 @@ export interface AsyncDataOptions<Data, TransformedData = Data> {
   /** Durée de vie spécifique au cache de cette requête en ms. */
   ttl?: number;
   /** Fonction pour fournir une valeur par défaut avant la résolution. */
-  default?: () => TransformedData;
+  default?: () => TransformedData | Ref<TransformedData>;
   /** Fonction pour modifier ou filtrer la donnée avant de la stocker. */
-  transform?: (data: Data) => TransformedData;
+  transform?: (data: Data) => TransformedData | Promise<TransformedData>;
+  pick?: string[];
+  deep?: boolean;
+  dedupe?: "cancel" | "defer";
+  timeout?: number;
+  enabled?: MaybeRefOrGetter<boolean>;
+  /** Include resolved data in the SSR hydration payload. */
+  serialize?: boolean;
+  getCachedData?: (
+    key: string,
+    context: AsyncDataContext,
+    info: { cause: "initial" | "refresh:manual" | "watch" },
+  ) => TransformedData | undefined;
   /**
    * Tableau de sources réactives (Refs, Reactive, ou getters).
    * Le changement d'une de ces sources redéclenchera automatiquement la requête.
@@ -66,18 +78,25 @@ export interface AsyncDataOptions<Data, TransformedData = Data> {
  * @template ErrorType - Le type de l'erreur interceptée.
  */
 export interface AsyncDataResult<Data, ErrorType = Error> {
-  /** La donnée réactive. `null` si non résolue et sans option `default`. */
-  data: Ref<Data | null>;
+  /** La donnée réactive. `undefined` si non résolue et sans option `default`. */
+  data: Ref<Data>;
   /** Raccourci pour status === 'pending'. */
   pending: Ref<boolean>;
   /** L'objet erreur si la requête échoue. */
-  error: Ref<ErrorType | null>;
+  error: Ref<ErrorType | undefined>;
   /** L'état précis de la machine à états. */
   status: Ref<AsyncDataStatus>;
   /** Méthode pour forcer une nouvelle exécution manuelle de la requête. */
-  execute: () => Promise<void>;
+  execute: (options?: AsyncDataExecuteOptions) => Promise<void>;
   /** Alias sémantique de execute(). */
-  refresh: () => Promise<void>;
+  refresh: (options?: AsyncDataExecuteOptions) => Promise<void>;
+  clear: () => void;
+}
+
+export interface AsyncDataExecuteOptions {
+  dedupe?: "cancel" | "defer";
+  timeout?: number;
+  signal?: AbortSignal;
 }
 
 // ============================================================================
