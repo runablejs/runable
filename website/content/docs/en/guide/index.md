@@ -40,6 +40,16 @@ Use auto-imports for application code, plugins to initialize Vue, and modules to
 
 Finish with <a href="/docs/guide/runtime-config.md">runtime configuration</a>, <a href="/docs/guide/css-and-assets.md">styles and assets</a>, then the <a href="/docs/guide/production-build.md">production build</a>.
 
+## Work with AI coding agents
+
+Runable provides two complementary ways to give an agent reliable framework context.
+
+| Need | Page |
+| --- | --- |
+| Install task-specific Runable instructions | <a href="/docs/guide/cli/skills.md">AI Skills</a> |
+| Give an agent a live view of the project | <a href="/docs/mcp/index.md">Runable MCP</a> |
+| Inspect the resolved project from TypeScript | <a href="/docs/guide/inspector.md">Inspector</a> |
+
 ::u-tip
 ---
 variant: info

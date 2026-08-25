@@ -14,13 +14,16 @@ const slugs = computed(() => {
     .filter(Boolean);
 });
 
-const contentPath = computed(() => {
-  return `/${slugs.value.join("/")}`.replace(/\.md$/, "");
+const path = computed(() => {
+  return `/${slugs.value.join("/")}`
+    .replace(/\.md$/, "")
+    .replace(/\/$/, "")
+    .replace(/\/index$/, "");
 });
 
 const { data: page, pending } = await useAsyncData(
   `blog:${slugs.value.join("/")}`,
-  () => queryCollection("blog").path(contentPath.value).first(),
+  () => queryCollection("blog").path(path.value).first(),
 );
 </script>
 

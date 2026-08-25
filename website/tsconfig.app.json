@@ -24,7 +24,6 @@
     "types": [],
 
     "paths": {
-      "@/*": ["../packages/runable/src/*"],
       "~/*": ["./app/*"],
       "#build": ["./.app"],
       "#build/*": ["./.app/*"]

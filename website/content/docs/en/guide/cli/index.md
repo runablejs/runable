@@ -1,9 +1,9 @@
 ---
 title: CLI
-description: The runable command line — scaffold a project, regenerate framework internals, build for production, and install Agent Skills.
+description: The runable command line — scaffold, prepare, and build projects, then connect Runable to AI coding tools.
 ---
 
-`@runablejs/cli` provides the `runable` command. It scaffolds a project, regenerates Runable's internal types and registries, produces a production build, and installs Agent Skills for AI coding agents.
+`@runablejs/cli` provides the `runable` command. It scaffolds a project, regenerates Runable's internal types and registries, produces a production build, installs Agent Skills, and starts the project-local MCP server.
 
 ## Commands
 
@@ -12,6 +12,7 @@ description: The runable command line — scaffold a project, regenerate framewo
 | <a href="/docs/guide/cli/create.md">`runable create`</a> | Scaffold a new Runable project, or add Runable to an existing backend |
 | <a href="/docs/guide/cli/prepare.md">`runable prepare`</a> | Regenerate `.app/` — types, routes, and auto-import registries |
 | <a href="/docs/guide/cli/build.md">`runable build`</a> | Produce the production client (and server, when SSR is enabled) bundle |
+| <a href="/docs/guide/cli/mcp.md">`runable mcp`</a> | Start the project-local MCP server for AI coding agents |
 | <a href="/docs/guide/cli/skills.md">`runable skills install`</a> | Install Runable's Agent Skills for your AI coding agent |
 | <a href="/docs/guide/cli/skills.md">`runable skills list`</a> | List the Agent Skills bundled with the installed CLI version |
 

@@ -94,6 +94,7 @@ allowBuilds:
   esbuild: true
   maplibre-gl: true
   vue-demi: true
+  workerd: true
 
 minimumReleaseAgeExclude:
   - "@runable/vue@1.0.0"

@@ -4,7 +4,6 @@ import { cn } from "~/lib/utils";
 import { useSidebar } from "./ui/sidebar/utils.ts";
 import Logo from "./navbar-components/Logo.vue";
 import ModeSwitcher from "./ModeSwitcher.vue";
-import GithubLink from "./GithubLink.vue";
 import DocsSearch from "./DocsSearch.vue";
 
 const props = defineProps<{
@@ -103,7 +102,7 @@ onBeforeUnmount(() => {
       </nav>
 
       <!-- Right side -->
-      <div class="ml-auto flex flex-1 items-center justify-end gap-1">
+      <div class="ml-auto flex flex-1 items-center justify-end gap-1 h-full">
         <ClientOnly>
           <DocsSearch />
         </ClientOnly>
@@ -113,7 +112,18 @@ onBeforeUnmount(() => {
             <ModeSwitcher class="rounded-none" />
           </ClientOnly>
 
-          <GithubLink class="rounded-none" />
+          <UGithubLink v-slot="{ href }">
+            <UButton
+              as-child
+              size="sm"
+              variant="ghost"
+              class="h-full rounded-none"
+            >
+              <a :href target="_blank" rel="noreferrer">
+                <UIcon name="simple-icons:github" />
+              </a>
+            </UButton>
+          </UGithubLink>
         </template>
       </div>
     </div>

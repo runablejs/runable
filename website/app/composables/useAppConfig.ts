@@ -452,6 +452,12 @@ export function useAppConfig() {
                 icon: "tabler:package",
               },
               {
+                name: "MCP",
+                code: "cli-mcp",
+                href: "/docs/guide/cli/mcp",
+                icon: "tabler:plug-connected",
+              },
+              {
                 name: "AI Skills",
                 code: "cli-skills",
                 href: "/docs/guide/cli/skills",
@@ -464,6 +470,51 @@ export function useAppConfig() {
             code: "inspector",
             href: "/docs/guide/inspector",
             icon: "tabler:search",
+          },
+        ],
+      },
+
+      {
+        name: "MCP",
+        code: "mcp",
+        href: "/docs/mcp",
+        icon: "thesvg:mcp-model-context-protocol",
+        children: [
+          {
+            name: "Installation",
+            code: "mcp-installation",
+            href: "/docs/mcp/installation",
+            icon: "tabler:download",
+          },
+          {
+            name: "Client Setup",
+            code: "mcp-clients",
+            href: "/docs/mcp/clients",
+            icon: "tabler:devices",
+          },
+          {
+            name: "Tools",
+            code: "mcp-tools",
+            href: "/docs/mcp/tools",
+            icon: "tabler:tool",
+          },
+          {
+            name: "Security",
+            code: "mcp-security",
+            href: "/docs/mcp/security",
+            icon: "tabler:shield-lock",
+          },
+          {
+            name: "Compatibility",
+            code: "mcp-compatibility",
+            href: "/docs/mcp/compatibility",
+            icon: "tabler:versions",
+          },
+          {
+            name: "Troubleshooting",
+            code: "mcp-troubleshooting",
+            href: "/docs/mcp/troubleshooting",
+            icon: "tabler:lifebuoy",
           },
         ],
       },

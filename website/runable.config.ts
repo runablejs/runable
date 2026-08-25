@@ -119,7 +119,6 @@ export default defineConfig({
   css: ["./app/assets/css/main.css"],
 
   alias: {
-    "@": join(import.meta.dirname, "../packages/runable/src"),
     "~": join(import.meta.dirname, "./app"),
   },
 
@@ -149,6 +148,7 @@ export default defineConfig({
           gettingStarted: defineDocsCollection("en", "getting-started"),
           structure: defineDocsCollection("en", "structure"),
           guide: defineDocsCollection("en", "guide"),
+          mcp: defineDocsCollection("en", "mcp"),
           integrations: defineDocsCollection("en", "integrations"),
           api: defineDocsCollection("en", "api"),
 

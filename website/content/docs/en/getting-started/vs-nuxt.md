@@ -11,11 +11,11 @@ Nuxt provides a complete application around Nitro. Runable adds a Vue applicatio
 
 ```text
 Nuxt                          Runable
-┌──────────────────────┐      ┌────────────────────────────┐
-│ Vue application      │      │ Your backend               │
-│ Nuxt                 │      │ Express, Fastify, Hono…    │
-│ Nitro                │      │ └─ Runable ─ Vue application │
-└──────────────────────┘      └────────────────────────────┘
+┌──────────────────────┐      ┌───────────────────────────────┐
+│ Vue application      │      │ Your backend                  │
+│ Nuxt                 │      │ Express, Fastify, Hono…       │
+│ Nitro                │      │ └─ Runable ─ Vue application  │
+└──────────────────────┘      └───────────────────────────────┘
 ```
 
 ## Quick comparison

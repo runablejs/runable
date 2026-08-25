@@ -1,4 +1,12 @@
 .v-content {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+
+  > * {
+    max-width: 100%;
+  }
+
   /* Doc-optimized typography - readable, clear hierarchy */
 
   /* margin: auto;
@@ -65,7 +73,18 @@
   }
 
   .table-container {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
     margin-top: 1rem;
+  }
+
+  img,
+  video,
+  svg {
+    max-width: 100%;
+    height: auto;
   }
 
   /* Code elements */

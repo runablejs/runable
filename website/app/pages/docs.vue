@@ -45,11 +45,11 @@ const blockCode = computed(() => {
   <SidebarProvider class="flex flex-col">
     <DocsHeader />
 
-    <div class="flex flex-1">
+    <div class="flex min-w-0 max-w-full flex-1 overflow-x-clip">
       <DocsSidebar :block-code />
 
-      <SidebarInset class="">
-        <div class="h-full w-full">
+      <SidebarInset class="min-w-0 max-w-full overflow-x-clip">
+        <div class="h-full w-full min-w-0 max-w-full">
           <RunablePage :key="$route.path" />
         </div>
       </SidebarInset>
