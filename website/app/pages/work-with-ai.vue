@@ -1,119 +1,51 @@
 <script setup lang="ts">
+const signals = [
+  {
+    label: "Framework method",
+    title: "Agent Skills",
+    description:
+      "Focused instructions teach the agent Runable's APIs, conventions, and safe editing rules.",
+    icon: "tabler:sparkles",
+    accent: false,
+  },
+  {
+    label: "Project facts",
+    title: "Runable MCP",
+    description:
+      "Read-only tools expose the routes, configuration, extensions, and diagnostics resolved right now.",
+    icon: "thesvg:mcp-model-context-protocol",
+    accent: true,
+  },
+];
+
 const skills = [
-  [
-    "runable-project",
-    "Project",
-    "Project structure and safe modification rules.",
-    "tabler:folders",
-  ],
-  [
-    "runable-pages",
-    "Pages",
-    "Routes, layouts, middleware, and navigation.",
-    "tabler:route",
-  ],
-  [
-    "runable-data-fetching",
-    "Data fetching",
-    "SSR-aware data loading, cache, and errors.",
-    "tabler:database",
-  ],
-  [
-    "runable-configuration",
-    "Configuration",
-    "Environment, assets, styles, and builds.",
-    "tabler:settings",
-  ],
-  [
-    "runable-extend",
-    "Extend",
-    "Modules, plugins, and auto-imports.",
-    "tabler:blocks",
-  ],
-  [
-    "runable-head",
-    "Head",
-    "Metadata, SEO, and structured data.",
-    "tabler:world-www",
-  ],
-  [
-    "runable-integrations",
-    "Integrations",
-    "Backend adapters and server integration.",
-    "tabler:plug-connected",
-  ],
+  ["project", "Understand the project"],
+  ["pages", "Build routes and layouts"],
+  ["data-fetching", "Load SSR-aware data"],
+  ["configuration", "Configure and ship"],
+  ["extend", "Use modules and plugins"],
+  ["head", "Manage SEO and metadata"],
+  ["integrations", "Connect the backend"],
 ] as const;
 
-const workflow = [
-  [
-    "01",
-    "Install once",
-    "Run the CLI in your project and select the coding agents your team uses.",
-  ],
-  [
-    "02",
-    "Ask naturally",
-    "Describe the change. Your agent loads only the Runable Skill relevant to the task.",
-  ],
-  [
-    "03",
-    "Review real code",
-    "The agent follows version-matched instructions, your project structure, and Runable's actual APIs.",
-  ],
-] as const;
-
-const mcpTools = [
-  [
-    "get_project",
-    "Project identity, Runable version, SSR mode, and resolved paths.",
-    "tabler:folder-code",
-  ],
-  [
-    "get_config",
-    "Resolved configuration without exposing private runtime values.",
-    "tabler:settings-code",
-  ],
-  [
-    "get_routes",
-    "The complete route tree exactly as Runable resolves it.",
-    "tabler:route",
-  ],
-  [
-    "get_extensions",
-    "Layouts, middleware, plugins, modules, and auto-imports.",
-    "tabler:blocks",
-  ],
-  [
-    "resolve_route",
-    "The route, params, query, and metadata matched by any URL.",
-    "tabler:route-alt-left",
-  ],
-  [
-    "diagnose",
-    "Concrete issues such as broken references and duplicates.",
-    "tabler:stethoscope",
-  ],
-  [
-    "search_api",
-    "Local, offline search across the official Runable documentation.",
-    "tabler:book-2",
-  ],
-  [
-    "refresh",
-    "Fresh inspection data after project files change.",
-    "tabler:refresh",
-  ],
+const tools = [
+  "get_project",
+  "get_config",
+  "get_routes",
+  "get_extensions",
+  "resolve_route",
+  "diagnose",
+  "search_api",
+  "refresh",
 ] as const;
 
 const agents = [
-  ["OpenAI Codex", "simple-icons:openai"],
+  ["Codex", "simple-icons:openai"],
   ["Claude Code", "simple-icons:claude"],
   ["Cursor", "simple-icons:cursor"],
   ["GitHub Copilot", "simple-icons:githubcopilot"],
   ["Gemini CLI", "simple-icons:googlegemini"],
   ["Cline", "tabler:terminal-2"],
-  ["OpenCode", "tabler:code"],
-  ["Agent Skills compatible", "tabler:sparkles"],
 ] as const;
 
 useHead({
@@ -122,7 +54,7 @@ useHead({
     {
       name: "description",
       content:
-        "Give your AI coding agent version-matched instructions for building safely with Runable.",
+        "Give AI coding agents Runable's framework knowledge and a live, read-only view of your project.",
     },
   ],
 });
@@ -130,594 +62,447 @@ useHead({
 useSeoMeta({
   ogTitle: "Work with AI · Runable",
   ogDescription:
-    "Give your AI coding agent version-matched instructions for building safely with Runable.",
+    "Give AI coding agents Runable's framework knowledge and a live, read-only view of your project.",
 });
 </script>
 
 <template>
-  <div class="overflow-hidden">
-    <section class="border-b border-border">
+  <main class="overflow-hidden">
+    <section class="relative border-b border-border">
       <div
-        class="mx-auto grid max-w-7xl lg:min-h-180 lg:grid-cols-[1.08fr_0.92fr]"
+        aria-hidden="true"
+        class="absolute inset-0 opacity-[0.045] dark:opacity-[0.08]"
+        style="
+          background-image:
+            linear-gradient(to right, currentColor 1px, transparent 1px),
+            linear-gradient(to bottom, currentColor 1px, transparent 1px);
+          background-size: 64px 64px;
+          mask-image: linear-gradient(to bottom, black, transparent 88%);
+        "
+      />
+
+      <div
+        class="relative mx-auto grid min-h-[calc(100svh-var(--header-height))] max-w-7xl lg:grid-cols-[1.05fr_0.95fr]"
       >
         <div
-          class="flex flex-col justify-between px-6 py-16 sm:px-10 lg:border-r lg:border-border lg:px-14 lg:py-20"
+          class="flex flex-col justify-between px-6 py-14 sm:px-10 lg:border-r lg:border-border lg:px-12 lg:py-16"
         >
           <div
             class="flex items-center justify-between font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground"
           >
-            <span>Runable × AI</span><span>Agent Skills / 01</span>
+            <span>Runable × AI</span>
+            <span>Context / 01</span>
           </div>
 
           <div class="my-20 lg:my-12">
             <p
-              class="mb-6 font-mono text-xs uppercase tracking-[0.2em] text-accent"
+              class="mb-6 w-max bg-accent px-3 py-1 font-mono text-xs uppercase tracking-[0.18em] text-accent-foreground"
             >
-              Less guessing. Better code.
+              Framework-aware by design
             </p>
             <h1
-              class="max-w-3xl text-5xl font-bold leading-[1.02] tracking-tight sm:text-6xl xl:text-7xl"
+              class="max-w-4xl font-display text-5xl font-bold leading-[1.01] tracking-[-0.045em] sm:text-6xl xl:text-7xl"
             >
-              Give your coding agent the
-              <span class="text-accent">right context.</span>
+              AI should learn your framework
+              <em class="font-display italic text-accent"
+                >before it edits your project.</em
+              >
             </h1>
             <p
-              class="mt-8 max-w-xl text-lg leading-relaxed text-muted-foreground"
+              class="mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground"
             >
-              Agent Skills teach your tools how Runable works. The Runable MCP
-              gives them a live, read-only view of the project they are
-              changing.
+              Runable gives coding agents two things generic model knowledge
+              cannot: precise framework instructions and the resolved state of
+              the application in front of them.
             </p>
-            <div class="mt-10 flex flex-wrap gap-3">
+
+            <div class="mt-10 flex flex-col gap-3 sm:flex-row">
               <UButton size="lg" as-child>
-                <RunableLink to="/docs/guide/cli/skills"
-                  >Install Agent Skills
-                  <UIcon name="tabler:arrow-right" class="size-4"
-                /></RunableLink>
+                <RunableLink to="/docs/guide/cli/skills">
+                  Install Agent Skills
+                  <UIcon name="tabler:arrow-right" class="size-4" />
+                </RunableLink>
               </UButton>
               <UButton variant="outline" size="lg" as-child>
-                <RunableLink to="/docs/getting-started/quickstart"
-                  >Start with Runable</RunableLink
-                >
+                <RunableLink to="/docs/mcp">Connect the MCP</RunableLink>
               </UButton>
             </div>
           </div>
 
           <div
-            class="flex flex-wrap gap-x-8 gap-y-3 border-t border-border pt-6 font-mono text-xs text-muted-foreground"
+            class="grid grid-cols-3 border-l border-t border-border font-mono text-[10px] uppercase tracking-widest text-muted-foreground"
           >
-            <span>Agent Skills</span><span>Project-aware MCP</span
-            ><span>Read-only inspection</span>
+            <span class="border-b border-r border-border p-3">Open format</span>
+            <span class="border-b border-r border-border p-3">Read only</span>
+            <span class="border-b border-r border-border p-3">Project local</span>
           </div>
         </div>
 
-        <div class="relative flex items-center bg-muted/30 px-6 py-16 sm:px-12">
-          <div
-            aria-hidden="true"
-            class="absolute inset-y-0 left-1/2 border-l border-dashed border-border"
-          />
-          <div
-            aria-hidden="true"
-            class="absolute inset-x-0 top-1/2 border-t border-dashed border-border"
-          />
-          <div
-            class="relative mx-auto w-full max-w-lg border border-border bg-background shadow-xl"
-          >
-            <div
-              class="flex items-center gap-2 border-b border-border px-4 py-3"
-            >
-              <span class="size-2 bg-muted-foreground/35" /><span
-                class="size-2 bg-muted-foreground/35"
-              /><span class="size-2 bg-accent" />
-              <span
-                class="ml-auto font-mono text-[10px] uppercase tracking-widest text-muted-foreground"
-                >Agent session</span
-              >
-            </div>
-            <div class="space-y-6 p-5 sm:p-7">
+        <div
+          class="relative flex items-center bg-background/80 px-6 py-16 sm:px-10 lg:px-12"
+        >
+          <div class="mx-auto w-full max-w-lg">
+            <div class="border border-border bg-background shadow-2xl">
               <div
-                class="ml-auto max-w-[88%] border border-border bg-muted/60 p-4"
+                class="flex h-11 items-center justify-between border-b border-border bg-muted/50 px-4"
               >
-                <p
+                <div class="flex gap-1.5" aria-hidden="true">
+                  <span class="size-2 bg-muted-foreground/25" />
+                  <span class="size-2 bg-muted-foreground/25" />
+                  <span class="size-2 bg-accent" />
+                </div>
+                <span
                   class="font-mono text-[10px] uppercase tracking-widest text-muted-foreground"
+                  >agent / runable</span
                 >
-                  You
-                </p>
-                <p class="mt-2 text-sm leading-relaxed">
-                  Add a protected dashboard page and load the current user on
-                  the server.
-                </p>
               </div>
-              <div class="max-w-[92%] border border-accent/60 bg-accent/5 p-4">
-                <div class="flex items-center gap-2 text-accent">
-                  <UIcon name="tabler:sparkles" class="size-4" />
-                  <p class="font-mono text-[10px] uppercase tracking-widest">
-                    Loading Runable context
+
+              <div class="p-5 sm:p-7">
+                <div class="border-l-2 border-accent pl-4">
+                  <p
+                    class="font-mono text-[10px] uppercase tracking-widest text-muted-foreground"
+                  >
+                    Request
+                  </p>
+                  <p class="mt-2 text-sm leading-relaxed sm:text-base">
+                    Add a protected account page and load the current user
+                    during SSR.
                   </p>
                 </div>
-                <div class="mt-4 space-y-2 font-mono text-xs">
-                  <p class="flex items-center gap-2">
-                    <UIcon
-                      name="tabler:check"
-                      class="size-4 text-accent"
-                    />runable-pages
-                  </p>
-                  <p class="flex items-center gap-2">
-                    <UIcon
-                      name="tabler:check"
-                      class="size-4 text-accent"
-                    />runable-data-fetching
-                  </p>
+
+                <div class="my-7 h-px bg-border" />
+
+                <div class="space-y-5 font-mono text-xs">
+                  <div class="grid grid-cols-[1.5rem_1fr_auto] items-center gap-3">
+                    <span class="flex size-6 items-center justify-center bg-accent/10 text-accent">
+                      <UIcon name="tabler:sparkles" class="size-4" />
+                    </span>
+                    <span>load runable-pages</span>
+                    <span class="text-accent">ready</span>
+                  </div>
+                  <div class="grid grid-cols-[1.5rem_1fr_auto] items-center gap-3">
+                    <span class="flex size-6 items-center justify-center bg-accent/10 text-accent">
+                      <UIcon name="thesvg:mcp-model-context-protocol" class="size-4" />
+                    </span>
+                    <span>get_routes</span>
+                    <span class="text-muted-foreground">12 routes</span>
+                  </div>
+                  <div class="grid grid-cols-[1.5rem_1fr_auto] items-center gap-3">
+                    <span class="flex size-6 items-center justify-center bg-accent/10 text-accent">
+                      <UIcon name="thesvg:mcp-model-context-protocol" class="size-4" />
+                    </span>
+                    <span>get_extensions</span>
+                    <span class="text-muted-foreground">auth found</span>
+                  </div>
+                  <div class="grid grid-cols-[1.5rem_1fr_auto] items-center gap-3">
+                    <span class="flex size-6 items-center justify-center bg-accent/10 text-accent">
+                      <UIcon name="tabler:file-plus" class="size-4" />
+                    </span>
+                    <span>app/pages/account.vue</span>
+                    <span class="text-accent">create</span>
+                  </div>
+                </div>
+
+                <div
+                  class="mt-7 flex items-center gap-3 border border-accent/40 bg-accent/5 p-4 text-sm"
+                >
+                  <UIcon name="tabler:shield-check" class="size-5 shrink-0 text-accent" />
+                  <span>Uses existing auth middleware. Generated files stay untouched.</span>
                 </div>
               </div>
-              <div
-                class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-3 border-t border-border pt-5 text-xs"
-              >
-                <span class="font-mono text-muted-foreground">CREATE</span
-                ><span>app/pages/dashboard.vue</span>
-                <span class="font-mono text-muted-foreground">USE</span
-                ><span>definePageMeta · useAsyncData</span>
-                <span class="font-mono text-muted-foreground">KEEP</span
-                ><span>.app generated output untouched</span>
-              </div>
+            </div>
+
+            <div
+              class="ml-6 flex items-center justify-between border-x border-b border-border bg-muted/40 px-4 py-3 font-mono text-[10px] uppercase tracking-widest text-muted-foreground"
+            >
+              <span>Method + facts</span>
+              <span class="text-accent">Context complete</span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section
-      class="border-b border-border bg-muted/20 px-6 py-20 sm:px-10 lg:py-28"
-    >
+    <section class="border-b border-border px-6 py-24 sm:px-10 lg:py-32">
       <div class="mx-auto max-w-6xl">
-        <div class="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
-          <div>
-            <p class="font-mono text-xs uppercase tracking-[0.2em] text-accent">
-              Live project context
-            </p>
-            <h2 class="mt-4 text-3xl font-bold tracking-tight sm:text-5xl">
-              Your project can speak for itself.
-            </h2>
-          </div>
-          <div class="flex items-end">
-            <p class="max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              The official Runable MCP gives your coding agent a structured,
-              read-only view of the application. It reads through
-              <code class="font-mono text-sm text-foreground"
-                >runable/inspector</code
-              >, resolved from the project itself, so every answer reflects the
-              Runable version you actually use.
-            </p>
-          </div>
-        </div>
-
-        <div
-          class="relative mt-16 border border-border bg-background p-5 sm:p-8 lg:p-10"
-        >
-          <div
-            aria-hidden="true"
-            class="absolute -right-px -top-px size-3 border border-accent bg-background"
-          />
-          <div
-            class="grid items-stretch lg:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr]"
-          >
-            <div
-              class="flex min-h-36 flex-col justify-between border border-border p-5"
-            >
-              <UIcon name="tabler:sparkles" class="size-6 text-accent" />
-              <div>
-                <p
-                  class="font-mono text-[10px] uppercase tracking-widest text-muted-foreground"
-                >
-                  Client
-                </p>
-                <p class="mt-2 font-semibold">AI coding agent</p>
-              </div>
-            </div>
-            <div
-              class="flex h-12 items-center justify-center lg:h-auto lg:w-12"
-            >
-              <UIcon
-                name="tabler:arrow-right"
-                class="hidden size-5 text-muted-foreground lg:block"
-              />
-              <UIcon
-                name="tabler:arrow-down"
-                class="size-5 text-muted-foreground lg:hidden"
-              />
-            </div>
-            <div
-              class="flex min-h-36 flex-col justify-between border border-accent bg-accent p-5 text-accent-foreground"
-            >
-              <UIcon name="thesvg:mcp-model-context-protocol" class="size-6" />
-              <div>
-                <p
-                  class="font-mono text-[10px] uppercase tracking-widest opacity-65"
-                >
-                  Protocol layer
-                </p>
-                <p class="mt-2 font-semibold">Runable MCP</p>
-              </div>
-            </div>
-            <div
-              class="flex h-12 items-center justify-center lg:h-auto lg:w-12"
-            >
-              <UIcon
-                name="tabler:arrow-right"
-                class="hidden size-5 text-muted-foreground lg:block"
-              />
-              <UIcon
-                name="tabler:arrow-down"
-                class="size-5 text-muted-foreground lg:hidden"
-              />
-            </div>
-            <div
-              class="flex min-h-36 flex-col justify-between border border-border p-5"
-            >
-              <UIcon name="tabler:scan" class="size-6 text-accent" />
-              <div>
-                <p
-                  class="font-mono text-[10px] uppercase tracking-widest text-muted-foreground"
-                >
-                  Source of truth
-                </p>
-                <p class="mt-2 font-semibold">Runable Inspector</p>
-              </div>
-            </div>
-            <div
-              class="flex h-12 items-center justify-center lg:h-auto lg:w-12"
-            >
-              <UIcon
-                name="tabler:arrow-right"
-                class="hidden size-5 text-muted-foreground lg:block"
-              />
-              <UIcon
-                name="tabler:arrow-down"
-                class="size-5 text-muted-foreground lg:hidden"
-              />
-            </div>
-            <div
-              class="flex min-h-36 flex-col justify-between border border-border p-5"
-            >
-              <UIcon name="tabler:folder-code" class="size-6 text-accent" />
-              <div>
-                <p
-                  class="font-mono text-[10px] uppercase tracking-widest text-muted-foreground"
-                >
-                  Reality
-                </p>
-                <p class="mt-2 font-semibold">Your project</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-8 grid border-l border-t border-border sm:grid-cols-3">
-            <div
-              class="flex items-center gap-3 border-b border-r border-border p-4"
-            >
-              <UIcon name="tabler:lock" class="size-5 text-accent" /><span
-                class="font-mono text-xs"
-                >Read-only tools</span
-              >
-            </div>
-            <div
-              class="flex items-center gap-3 border-b border-r border-border p-4"
-            >
-              <UIcon name="tabler:terminal-2" class="size-5 text-accent" /><span
-                class="font-mono text-xs"
-                >Local stdio transport</span
-              >
-            </div>
-            <div
-              class="flex items-center gap-3 border-b border-r border-border p-4"
-            >
-              <UIcon name="tabler:key-off" class="size-5 text-accent" /><span
-                class="font-mono text-xs"
-                >Private values withheld</span
-              >
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-16 grid gap-12 lg:grid-cols-[0.65fr_1.35fr] lg:gap-20">
-          <div class="flex flex-col justify-between">
-            <div>
-              <p
-                class="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground"
-              >
-                Eight focused tools
-              </p>
-              <h3 class="mt-4 text-2xl font-bold tracking-tight sm:text-3xl">
-                Ask about structure. Resolve a URL. Diagnose the project.
-              </h3>
-              <p class="mt-5 leading-relaxed text-muted-foreground">
-                The agent receives structured facts it can act on, without
-                scanning generated output or guessing how the application was
-                assembled.
-              </p>
-            </div>
-            <div class="mt-8 border border-border">
-              <p
-                class="border-b border-background/15 px-5 py-3 font-mono text-[10px] uppercase tracking-widest opacity-55"
-              >
-                Add to your project
-              </p>
-              <code class="block overflow-x-auto px-5 py-5 font-mono text-sm"
-                ><span class="text-accent">$</span> npm install -D
-                @runablejs/mcp</code
-              >
-            </div>
-          </div>
-
-          <div class="grid border-l border-t border-border sm:grid-cols-2">
-            <article
-              v-for="tool in mcpTools"
-              :key="tool[0]"
-              class="border-b border-r border-border bg-background p-5 transition-colors hover:bg-accent/5"
-            >
-              <div class="flex items-center justify-between gap-4">
-                <UIcon :name="tool[2]" class="size-5 text-accent" />
-                <UIcon
-                  name="tabler:arrow-up-right"
-                  class="size-4 text-muted-foreground"
-                />
-              </div>
-              <code class="mt-7 block font-mono text-sm font-semibold">{{
-                tool[0]
-              }}</code>
-              <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
-                {{ tool[1] }}
-              </p>
-            </article>
-          </div>
-        </div>
-
-        <div
-          class="mt-16 grid border border-accent bg-background lg:grid-cols-2"
-        >
-          <div class="border-b border-accent/40 p-7 lg:border-b-0 lg:border-r">
-            <p class="font-mono text-xs uppercase tracking-[0.2em] text-accent">
-              Agent Skills provide the method
-            </p>
-            <p class="mt-4 text-xl font-semibold">
-              “How should this be built with Runable?”
-            </p>
-          </div>
-          <div class="p-7">
-            <p class="font-mono text-xs uppercase tracking-[0.2em] text-accent">
-              Runable MCP provides the facts
-            </p>
-            <p class="mt-4 text-xl font-semibold">
-              “How is this project configured right now?”
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="border-b border-border px-6 py-20 sm:px-10 lg:py-28">
-      <div class="mx-auto max-w-6xl">
-        <div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+        <div class="grid gap-12 lg:grid-cols-[0.62fr_1.38fr] lg:gap-24">
           <div>
             <p
               class="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground"
             >
-              Context changes the result
+              The missing context
             </p>
-            <h2 class="mt-4 text-3xl font-bold tracking-tight sm:text-5xl">
-              Your agent is capable. It still needs to know the framework.
-            </h2>
+            <p class="mt-4 font-mono text-xs text-muted-foreground">01 / 04</p>
           </div>
-          <p class="self-end text-lg leading-relaxed text-muted-foreground">
-            AI coding tools know Vue, but Runable has its own APIs, boundaries,
-            and generated conventions. Agent Skills turn that knowledge into
-            project-level instructions your whole team can share.
-          </p>
-        </div>
+          <div>
+            <h2
+              class="max-w-4xl font-display text-3xl font-bold leading-tight tracking-tight sm:text-5xl"
+            >
+              A model may know Vue. It does not automatically know
+              <em class="font-display italic text-accent">your Runable app.</em>
+            </h2>
+            <p
+              class="mt-8 max-w-3xl text-lg leading-relaxed text-muted-foreground"
+            >
+              Without explicit context, an agent can invent framework APIs,
+              edit generated output, overlook existing middleware, or assume
+              Runable owns the backend. More model intelligence does not fix
+              missing project information.
+            </p>
 
-        <div class="mt-16 grid border-l border-t border-border md:grid-cols-3">
-          <article class="border-b border-r border-border p-8">
-            <UIcon name="tabler:route-off" class="size-7 text-accent" />
-            <h3 class="mt-8 text-xl font-semibold">No invented conventions</h3>
-            <p class="mt-3 leading-relaxed text-muted-foreground">
-              The agent stops confusing Runable with another Vue framework or
-              suggesting APIs that do not exist.
-            </p>
-          </article>
-          <article class="border-b border-r border-border p-8">
-            <UIcon name="tabler:file-check" class="size-7 text-accent" />
-            <h3 class="mt-8 text-xl font-semibold">Safer changes</h3>
-            <p class="mt-3 leading-relaxed text-muted-foreground">
-              It knows which files belong to you, which are generated, and which
-              conventions keep the project predictable.
-            </p>
-          </article>
-          <article class="border-b border-r border-border p-8">
-            <UIcon name="tabler:server" class="size-7 text-accent" />
-            <h3 class="mt-8 text-xl font-semibold">
-              The right server boundary
-            </h3>
-            <p class="mt-3 leading-relaxed text-muted-foreground">
-              It understands that Runable integrates with your HTTP server
-              instead of replacing it.
-            </p>
-          </article>
+            <div class="mt-12 grid border-l border-t border-border md:grid-cols-3">
+              <div class="border-b border-r border-border p-6">
+                <p class="font-mono text-xs text-accent">01</p>
+                <p class="mt-6 font-semibold">No framework guessing</p>
+                <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  Use APIs and conventions that actually exist.
+                </p>
+              </div>
+              <div class="border-b border-r border-border p-6">
+                <p class="font-mono text-xs text-accent">02</p>
+                <p class="mt-6 font-semibold">No blind file scanning</p>
+                <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  Read Runable's resolved view of the application.
+                </p>
+              </div>
+              <div class="border-b border-r border-border p-6">
+                <p class="font-mono text-xs text-accent">03</p>
+                <p class="mt-6 font-semibold">No stale assumptions</p>
+                <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  Refresh the project state after a change.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <section
-      class="border-b border-border bg-muted/25 px-6 py-20 sm:px-10 lg:py-28"
-    >
+    <section class="border-b border-border bg-muted/20 px-6 py-24 sm:px-10 lg:py-32">
       <div class="mx-auto max-w-6xl">
-        <div class="max-w-3xl">
-          <p class="font-mono text-xs uppercase tracking-[0.2em] text-accent">
-            Knowledge, split by task
-          </p>
-          <h2 class="mt-4 text-3xl font-bold tracking-tight sm:text-5xl">
-            Load only what the work requires.
+        <div class="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
+          <div>
+            <p
+              class="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground"
+            >
+              Two sources of context
+            </p>
+            <p class="mt-4 font-mono text-xs text-muted-foreground">02 / 04</p>
+          </div>
+          <h2 class="font-display text-3xl font-bold tracking-tight sm:text-5xl">
+            Instructions tell the agent how.<br />Inspection tells it what is true.
           </h2>
-          <p class="mt-6 text-lg leading-relaxed text-muted-foreground">
-            An agent working on SEO does not need backend adapter rules. Focused
-            Skills keep its context useful and its changes precise.
-          </p>
         </div>
 
-        <div
-          class="mt-14 grid border-l border-t border-border sm:grid-cols-2 lg:grid-cols-4"
-        >
+        <div class="mt-14 grid border-l border-t border-border lg:grid-cols-2">
           <article
-            v-for="skill in skills"
-            :key="skill[0]"
-            class="min-h-56 border-b border-r border-border bg-background p-6 transition-colors hover:bg-accent/5"
+            v-for="signal in signals"
+            :key="signal.title"
+            class="relative flex min-h-96 flex-col justify-between border-b border-r p-7 sm:p-10"
+            :class="
+              signal.accent
+                ? 'border-accent bg-accent text-accent-foreground'
+                : 'border-border bg-background'
+            "
           >
-            <div class="flex items-start justify-between gap-4">
-              <UIcon :name="skill[3]" class="size-6 text-accent" /><span
-                class="font-mono text-[10px] uppercase tracking-widest text-muted-foreground"
-                >Skill</span
+            <div class="flex items-start justify-between gap-6">
+              <span
+                class="flex size-12 items-center justify-center border"
+                :class="
+                  signal.accent
+                    ? 'border-accent-foreground/30'
+                    : 'border-border text-accent'
+                "
               >
+                <UIcon :name="signal.icon" class="size-6" />
+              </span>
+              <span
+                class="font-mono text-[10px] uppercase tracking-[0.2em]"
+                :class="signal.accent ? 'opacity-65' : 'text-muted-foreground'"
+              >
+                {{ signal.label }}
+              </span>
             </div>
-            <h3 class="mt-10 text-lg font-semibold">{{ skill[1] }}</h3>
-            <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
-              {{ skill[2] }}
-            </p>
-            <p
-              class="mt-5 break-all font-mono text-[10px] text-muted-foreground"
-            >
-              {{ skill[0] }}
-            </p>
-          </article>
-          <div
-            class="flex min-h-56 flex-col justify-between border-b border-r border-accent bg-accent p-6 text-accent-foreground"
-          >
-            <UIcon name="tabler:plus" class="size-6" />
-            <div>
-              <p class="text-lg font-semibold">Built to evolve</p>
-              <p class="mt-2 text-sm leading-relaxed opacity-75">
-                The collection grows with Runable while staying matched to your
-                installed CLI version.
+
+            <div class="mt-24 max-w-lg">
+              <h3 class="font-display text-3xl font-semibold sm:text-4xl">
+                {{ signal.title }}
+              </h3>
+              <p
+                class="mt-5 text-lg leading-relaxed"
+                :class="signal.accent ? 'opacity-75' : 'text-muted-foreground'"
+              >
+                {{ signal.description }}
               </p>
             </div>
-          </div>
+          </article>
+        </div>
+
+        <div
+          class="grid border-x border-b border-border bg-background md:grid-cols-[1fr_auto_1fr]"
+        >
+          <p class="p-5 text-center font-mono text-xs text-muted-foreground">
+            “How should I build this?”
+          </p>
+          <div class="hidden w-px bg-border md:block" />
+          <p class="p-5 text-center font-mono text-xs text-muted-foreground">
+            “How is this project built?”
+          </p>
         </div>
       </div>
     </section>
 
-    <section class="border-b border-border px-6 py-20 sm:px-10 lg:py-28">
+    <section class="border-b border-border px-6 py-24 sm:px-10 lg:py-32">
       <div class="mx-auto max-w-6xl">
-        <div class="grid gap-16 lg:grid-cols-[0.75fr_1.25fr] lg:gap-24">
+        <div class="grid gap-14 lg:grid-cols-[0.62fr_1.38fr] lg:gap-24">
           <div>
             <p
               class="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground"
             >
-              From install to implementation
+              Built-in coverage
             </p>
-            <h2 class="mt-4 text-3xl font-bold tracking-tight sm:text-5xl">
-              A short setup. Better instructions on every task.
-            </h2>
+            <p class="mt-4 font-mono text-xs text-muted-foreground">03 / 04</p>
           </div>
-          <ol class="border-t border-border">
-            <li
-              v-for="step in workflow"
-              :key="step[0]"
-              class="grid gap-4 border-b border-border py-7 sm:grid-cols-[4rem_1fr] sm:gap-6"
-            >
-              <span class="font-mono text-xs text-accent">{{ step[0] }}</span>
+
+          <div>
+            <div class="grid gap-8 md:grid-cols-2 md:gap-12">
               <div>
-                <h3 class="text-xl font-semibold">{{ step[1] }}</h3>
-                <p class="mt-2 leading-relaxed text-muted-foreground">
-                  {{ step[2] }}
-                </p>
+                <div class="flex items-center justify-between border-b border-border pb-4">
+                  <h2 class="font-display text-2xl font-bold">Seven Skills</h2>
+                  <span class="font-mono text-xs text-accent">METHOD</span>
+                </div>
+                <div class="divide-y divide-border">
+                  <div
+                    v-for="(skill, index) in skills"
+                    :key="skill[0]"
+                    class="grid grid-cols-[2rem_1fr] gap-3 py-4"
+                  >
+                    <span class="font-mono text-[10px] text-muted-foreground">0{{ index + 1 }}</span>
+                    <div>
+                      <code class="font-mono text-xs text-accent">runable-{{ skill[0] }}</code>
+                      <p class="mt-1 text-sm text-muted-foreground">{{ skill[1] }}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </li>
-          </ol>
-        </div>
-        <div class="mt-16 grid border border-border lg:grid-cols-[1fr_auto]">
-          <div class="min-w-0 p-6 sm:p-8">
-            <p
-              class="font-mono text-[10px] uppercase tracking-[0.2em] opacity-55"
-            >
-              Terminal
-            </p>
-            <code
-              class="mt-4 block overflow-x-auto font-mono text-sm sm:text-base"
-              ><span class="text-accent">$</span> runable skills install</code
-            >
+
+              <div>
+                <div class="flex items-center justify-between border-b border-border pb-4">
+                  <h2 class="font-display text-2xl font-bold">Eight MCP tools</h2>
+                  <span class="font-mono text-xs text-accent">FACTS</span>
+                </div>
+                <div class="grid grid-cols-2 border-l border-t border-border mt-4">
+                  <div
+                    v-for="tool in tools"
+                    :key="tool"
+                    class="flex min-h-20 items-center border-b border-r border-border p-4"
+                  >
+                    <code class="break-all font-mono text-xs">{{ tool }}</code>
+                  </div>
+                </div>
+                <div class="mt-5 flex flex-wrap gap-x-5 gap-y-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <span>stdio only</span>
+                  <span>read only</span>
+                  <span>private values withheld</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-12 flex flex-col gap-3 sm:flex-row">
+              <UButton variant="outline" as-child>
+                <RunableLink to="/docs/guide/cli/skills">Explore Agent Skills</RunableLink>
+              </UButton>
+              <UButton variant="outline" as-child>
+                <RunableLink to="/docs/mcp/tools">Explore MCP tools</RunableLink>
+              </UButton>
+            </div>
           </div>
-          <p
-            class="flex max-w-md items-center border-t border-background/20 p-6 text-sm leading-relaxed opacity-70 lg:border-l lg:border-t-0 lg:p-8"
-          >
-            Skills are regular project files. Commit them so every contributor
-            works from the same Runable instructions.
-          </p>
         </div>
       </div>
     </section>
 
-    <section class="border-b border-border px-6 py-20 sm:px-10 lg:py-28">
-      <div class="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:gap-20">
-        <div>
+    <section class="border-b border-border bg-foreground text-background">
+      <div class="mx-auto grid max-w-7xl lg:grid-cols-[0.82fr_1.18fr]">
+        <div class="border-background/15 px-6 py-20 sm:px-10 lg:border-r lg:px-12 lg:py-24">
           <p class="font-mono text-xs uppercase tracking-[0.2em] text-accent">
-            Use the tools you already have
+            Setup / 04
           </p>
-          <h2 class="mt-4 text-3xl font-bold tracking-tight sm:text-5xl">
-            One open format. Multiple coding agents.
+          <h2 class="mt-5 font-display text-4xl font-bold tracking-tight sm:text-5xl">
+            Add context to the project, not to every prompt.
           </h2>
-          <p
-            class="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground"
-          >
-            Select one agent or several. The CLI installs each Skill in the
-            correct shared or agent-specific directory.
+          <p class="mt-6 max-w-xl text-lg leading-relaxed opacity-65">
+            Skills are committed with the codebase. The MCP server runs locally
+            and inspects the Runable installation already used by the project.
           </p>
         </div>
-        <div class="grid border-l border-t border-border sm:grid-cols-2">
-          <div
-            v-for="agent in agents"
-            :key="agent[0]"
-            class="flex items-center gap-4 border-b border-r border-border p-5"
-          >
-            <UIcon :name="agent[1]" class="size-5 text-accent" /><span
-              class="text-sm font-medium"
-              >{{ agent[0] }}</span
-            >
+
+        <div class="grid border-background/15 sm:grid-cols-2 lg:border-l-0">
+          <div class="border-b border-background/15 p-7 sm:border-r lg:p-10">
+            <div class="flex items-center justify-between gap-5">
+              <span class="font-mono text-[10px] uppercase tracking-widest opacity-50">01 / Skills</span>
+              <UIcon name="tabler:sparkles" class="size-5 text-accent" />
+            </div>
+            <code class="mt-12 block whitespace-nowrap font-mono text-sm"><span class="text-accent">$</span> runable skills install</code>
+            <p class="mt-5 text-sm leading-relaxed opacity-55">
+              Select the coding agents used by your team, then commit the generated Skill directories.
+            </p>
+          </div>
+          <div class="border-b border-background/15 p-7 lg:p-10">
+            <div class="flex items-center justify-between gap-5">
+              <span class="font-mono text-[10px] uppercase tracking-widest opacity-50">02 / MCP</span>
+              <UIcon name="thesvg:mcp-model-context-protocol" class="size-5 text-accent" />
+            </div>
+            <code class="mt-12 block whitespace-nowrap font-mono text-sm"><span class="text-accent">$</span> pnpm add -D @runablejs/mcp</code>
+            <p class="mt-5 text-sm leading-relaxed opacity-55">
+              Connect your MCP client to the project-local <code class="text-background">runable mcp</code> command.
+            </p>
           </div>
         </div>
       </div>
     </section>
 
     <section class="px-6 py-20 sm:px-10 lg:py-28">
-      <div
-        class="mx-auto grid max-w-6xl border border-border lg:grid-cols-[1fr_auto]"
-      >
-        <div class="p-8 sm:p-12 lg:p-16">
-          <p class="font-mono text-xs uppercase tracking-[0.2em] text-accent">
-            Ready when your agent is
-          </p>
-          <h2
-            class="mt-5 max-w-3xl text-3xl font-bold tracking-tight sm:text-5xl"
-          >
-            Keep the speed of AI. Add the precision of Runable.
-          </h2>
-          <p
-            class="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground"
-          >
-            Install the Skills from your current CLI, commit them with the
-            project, and start asking for real features.
-          </p>
+      <div class="mx-auto max-w-6xl">
+        <div class="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
+          <div>
+            <p class="font-mono text-xs uppercase tracking-[0.2em] text-accent">
+              Your agent, your choice
+            </p>
+            <h2 class="mt-4 font-display text-3xl font-bold tracking-tight sm:text-5xl">
+              Use the coding tools already in your workflow.
+            </h2>
+          </div>
+          <div class="grid grid-cols-2 border-l border-t border-border sm:grid-cols-3">
+            <div
+              v-for="agent in agents"
+              :key="agent[0]"
+              class="flex min-h-24 flex-col justify-between border-b border-r border-border p-4"
+            >
+              <UIcon :name="agent[1]" class="size-5 text-accent" />
+              <span class="mt-5 text-sm font-medium">{{ agent[0] }}</span>
+            </div>
+          </div>
         </div>
-        <div
-          class="flex flex-col justify-center gap-3 border-t border-border bg-muted/30 p-8 lg:min-w-72 lg:border-l lg:border-t-0"
-        >
-          <UButton size="lg" as-child
-            ><RunableLink to="/docs/guide/cli/skills"
-              >Read the Skills guide
-              <UIcon name="tabler:arrow-right" class="size-4" /></RunableLink
-          ></UButton>
-          <UButton variant="outline" size="lg" as-child
-            ><RunableLink to="/docs">Explore the docs</RunableLink></UButton
-          >
+
+        <div class="mt-16 grid border border-border lg:grid-cols-[1fr_auto]">
+          <div class="p-8 sm:p-12">
+            <p class="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+              Start with reliable context
+            </p>
+            <h2 class="mt-4 max-w-3xl font-display text-3xl font-bold tracking-tight sm:text-4xl">
+              Let the agent move fast without asking it to guess.
+            </h2>
+          </div>
+          <div class="flex flex-col justify-center gap-3 border-t border-border bg-muted/25 p-8 lg:min-w-72 lg:border-l lg:border-t-0">
+            <UButton size="lg" as-child>
+              <RunableLink to="/docs/guide/cli/skills">Install the Skills</RunableLink>
+            </UButton>
+            <UButton variant="outline" size="lg" as-child>
+              <RunableLink to="/docs/mcp">Set up the MCP</RunableLink>
+            </UButton>
+          </div>
         </div>
       </div>
     </section>
-  </div>
+  </main>
 </template>

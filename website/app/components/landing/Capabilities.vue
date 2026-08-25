@@ -94,12 +94,12 @@ const groups = [
       "Extend the framework without giving up Vue, Vite, TypeScript, or the backend stack your team already uses.",
     items: [
       {
-        title: "Module system",
+        title: "Modules",
         description: "Package and share reusable Runable features.",
         icon: "tabler:blocks",
       },
       {
-        title: "Plugin system",
+        title: "Vue Plugin",
         description: "Connect behavior to the application lifecycle.",
         icon: "tabler:plug-connected",
       },
@@ -319,7 +319,7 @@ const capabilityCount = groups.reduce(
           developer experience.
         </p>
         <UButton variant="outline" size="lg" as-child>
-          <RunableLink to="/docs">
+          <RunableLink to="/docs/api">
             Explore every API
             <UIcon name="tabler:arrow-right" class="size-4" />
           </RunableLink>

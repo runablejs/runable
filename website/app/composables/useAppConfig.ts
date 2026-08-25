@@ -300,7 +300,7 @@ export function useAppConfig() {
             name: "Custom",
             code: "custom",
             href: "/docs/integrations/custom",
-            icon: "logos:typescript-icon",
+            icon: "lucide:code-xml",
           },
         ],
       },
