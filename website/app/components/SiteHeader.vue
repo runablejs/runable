@@ -20,6 +20,11 @@ const navigationLinks = [
     icon: "tabler:book-2",
   },
   {
+    label: "Modules",
+    to: "/modules",
+    icon: "tabler:blocks",
+  },
+  {
     label: "Work with AI",
     to: "/work-with-ai",
     icon: "tabler:robot",

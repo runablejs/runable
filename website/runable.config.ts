@@ -88,6 +88,17 @@ function defineAuthorsCollection() {
   });
 }
 
+function defineModulesCollection() {
+  return defineCollection({
+    type: "page",
+    source: {
+      include: "**/*.md",
+      exclude: "**/*.draft.md",
+      cwd: "modules",
+    },
+  });
+}
+
 export default defineConfig({
   head: {
     titleTemplate: "%s %separator %siteName",
@@ -154,6 +165,7 @@ export default defineConfig({
 
           blog: defineBlogCollection("en"),
           authors: defineAuthorsCollection(),
+          modules: defineModulesCollection(),
         },
       }),
     ],

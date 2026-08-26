@@ -19,6 +19,16 @@ import type {
 export interface RunableConfig {
   // --- Project root ---------------------------------------------------
 
+  /**
+   * Extends the main application configuration after every config and module
+   * has been resolved. The second argument contains this config's resolved
+   * options. Mutate the main config and return nothing, or return a replacement.
+   */
+  extendConfig?: (
+    config: ResolvedConfig,
+    options: any,
+  ) => Promisable<ResolvedConfig | void>;
+
   /** Directory containing the Vue.js application's source code. */
   appDir?: string;
 
@@ -177,6 +187,15 @@ export interface ModuleDefinition<
   enforce?: "pre" | "post";
 
   /**
+   * Extends the main application config with this module's resolved options.
+   * Runs before module setup hooks.
+   */
+  extendConfig?: (
+    config: ResolvedConfig,
+    options: OptionsT,
+  ) => ResolvedConfig | void;
+
+  /**
    * Runs once the module's options are resolved (`defaults` merged with the
    * consumer's overrides). Use it to mutate/extend `config` — register
    * plugins, components dirs, globals, etc.
@@ -192,6 +211,8 @@ export interface ModuleDefinition<
  * `_index` is internal bookkeeping, not part of the user-facing config.
  */
 export type ResolvedConfig = {
+  /** Extends the main application configuration before module setup hooks run. */
+  extendConfig: RunableConfig["extendConfig"];
   /** Absolute path to the directory containing the Vue.js application's source code. */
   appDir: string;
   /** Resolved build output mode/format. */

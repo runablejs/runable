@@ -139,7 +139,11 @@ function resolveModuleName(name: string, dirCwd: string): string {
  * concurrent resolutions for different projects — see
  * `resolveConfigGraph()` — never share or race on it.
  */
-function getModuleDir(name: string, parentCwd: string, cache: Map<string, string>): string {
+function getModuleDir(
+  name: string,
+  parentCwd: string,
+  cache: Map<string, string>,
+): string {
   const cached = cache.get(name);
   if (cached) return cached;
 
@@ -258,7 +262,11 @@ async function loadAllConfigs(
 
         await Promise.all(
           childModules.map((childName) =>
-            load(childName, getModuleDir(childName, entryCwd, moduleDirCache), resolvedName),
+            load(
+              childName,
+              getModuleDir(childName, entryCwd, moduleDirCache),
+              resolvedName,
+            ),
           ),
         );
 
@@ -383,7 +391,30 @@ function resolveAllConfigs(entries: Map<string, RawEntry>): {
 }
 
 /* ------------------------------------------------------------------------ *
- * Phase 3 — setup
+ * Phase 3 — config extension
+ *
+ * Every extendConfig hook runs after the complete graph has been resolved,
+ * but before any module setup. Each hook receives the main application config
+ * and may mutate it or replace it by returning another ResolvedConfig.
+ * ------------------------------------------------------------------------ */
+
+async function runConfigExtensions(
+  resolved: Record<string, ResolvedConfig>,
+  mainConfig: ResolvedConfig,
+): Promise<ResolvedConfig> {
+  let main = mainConfig;
+
+  const configs = Object.values(resolved).sort((a, b) => a._index - b._index);
+
+  for (const config of configs) {
+    main = (await config.extendConfig?.(main, config._options ?? {})) ?? main;
+  }
+
+  return main;
+}
+
+/* ------------------------------------------------------------------------ *
+ * Phase 4 — setup
  *
  * Every config in the graph is resolved and every module's `_options`
  * already reflects all of its dependents. Setups run in three sequential
@@ -406,7 +437,10 @@ function resolveAllConfigs(entries: Map<string, RawEntry>): {
  * so this function has no dependency on `loadConfig()`'s cache and can run
  * against a freshly-resolved, uncached graph — see `resolveConfigGraph()`.
  */
-async function runSetups(pendingSetups: PendingSetup[], mainConfig: ResolvedConfig) {
+async function runSetups(
+  pendingSetups: PendingSetup[],
+  mainConfig: ResolvedConfig,
+) {
   const byName = new Map(pendingSetups.map((p) => [p.config._name, p]));
   const done = new Map<string, Promise<void>>();
   const visiting = new Set<string>();
@@ -531,13 +565,21 @@ export async function resolveConfigGraph(
   options?: { moduleNameAliases?: Map<string, string> },
 ): Promise<ConfigGraph> {
   const moduleDirCache = new Map<string, string>();
-  const entries = await loadAllConfigs(rootDir, moduleDirCache, options?.moduleNameAliases);
+  const entries = await loadAllConfigs(
+    rootDir,
+    moduleDirCache,
+    options?.moduleNameAliases,
+  );
   const { resolved, pendingSetups } = resolveAllConfigs(entries);
-
-  const main = resolved.__main;
+  let main = resolved.__main;
   if (!main) {
-    throw new Error(`Failed to resolve a Runable config graph for "${rootDir}".`);
+    throw new Error(
+      `Failed to resolve a Runable config graph for "${rootDir}".`,
+    );
   }
+
+  main = await runConfigExtensions(resolved, main);
+  resolved.__main = main;
 
   await runSetups(pendingSetups, main);
 
@@ -576,9 +618,7 @@ export function unloadConfig() {
  * Set `generateTypes` to `false` in read-only runtime environments. Build
  * and preparation tools keep the default behavior and generate module types.
  */
-export async function loadConfig(
-  options: { generateTypes?: boolean } = {},
-) {
+export async function loadConfig(options: { generateTypes?: boolean } = {}) {
   if (cachedConfigs) return;
 
   moduleNameAliases = new Map();
@@ -591,7 +631,9 @@ export async function loadConfig(
     throw error;
   }
 
-  cachedConfigs = Object.fromEntries(graph.all.map((config) => [config._name, config]));
+  cachedConfigs = Object.fromEntries(
+    graph.all.map((config) => [config._name, config]),
+  );
 
   if (options.generateTypes !== false) {
     try {
