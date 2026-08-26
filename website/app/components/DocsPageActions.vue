@@ -93,10 +93,7 @@ function copyMcpUrl() {
           />
         </UButton>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        class="[--accent:var(--muted)] [--accent-foreground:var(--foreground)]"
-      >
+      <DropdownMenuContent align="end">
         <DropdownMenuItem @select="copyMarkdownLink">
           <UIcon
             :name="copiedAction === 'link' ? 'tabler:check' : 'tabler:link'"
