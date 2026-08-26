@@ -3,6 +3,7 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { REPO_ROOT, readJson } from "../helpers.js";
+import { cleanupFixtureDir, createFixtureDir } from "../fixtures.js";
 
 /**
  * Regression coverage for a broken published CLI: dist/index.js had no
@@ -42,5 +43,38 @@ describe("@runablejs/cli bin", () => {
       `direct exec of the bin failed:\nstdout: ${result.stdout}\nstderr: ${result.stderr}`,
     ).toBe(0);
     expect(result.stdout).toContain("runable create|prepare|build|mcp|skills");
+  });
+
+  it("documents the direct module creation flag", () => {
+    const result = spawnSync(binPath, ["create", "--help"], {
+      encoding: "utf8",
+    });
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain("--module");
+    expect(result.stdout).toContain("Create a reusable Runable module");
+  });
+
+  it("creates module framework packages as development dependencies", async () => {
+    const targetDir = createFixtureDir("cli-module-package-");
+
+    try {
+      const { createPackageJson } = await import(
+        "../../packages/cli/dist/commands/create/shared.js"
+      );
+      await createPackageJson(targetDir, "runable-example");
+
+      const pkg = JSON.parse(
+        readFileSync(path.join(targetDir, "package.json"), "utf8"),
+      );
+      expect(pkg.dependencies).toBeUndefined();
+      expect(pkg.devDependencies).toMatchObject({
+        runable: "latest",
+        vue: "^3.5.0",
+        "vue-router": "^5.2.0",
+      });
+    } finally {
+      cleanupFixtureDir(targetDir);
+    }
   });
 });

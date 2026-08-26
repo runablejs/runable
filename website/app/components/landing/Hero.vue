@@ -66,10 +66,8 @@ onMounted(() => {
               transform 300ms ease-out;
           "
         >
-          Build the Vue app you want.
-          <em class="font-display italic text-accent"
-            >Keep the backend you chose.</em
-          >
+          All the Vue conventions.
+          <em class="font-display italic text-accent">Your server runtime.</em>
         </h1>
 
         <p
@@ -81,9 +79,9 @@ onMounted(() => {
               transform 300ms ease-out;
           "
         >
-          Runable is a Vue framework for teams that want the conventions and
-          developer experience of a meta-framework without adopting a specific
-          server runtime.
+          Build complete Vue applications with file-system routing, SSR, data
+          fetching, modules, and generated types—on the backend runtime that
+          fits your project.
         </p>
 
         <div

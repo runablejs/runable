@@ -308,9 +308,13 @@ export function generateLlmsArtifacts(outDir: string): GenerateResult {
 
   const markdownPaths: string[] = [];
   for (const page of pages.values()) {
+    const markdown = buildPublicMarkdown(page);
     const target = join(outDir, "docs", `${page.slug}.md`);
+    const rawTarget = join(outDir, "raw", "docs", page.slug);
     mkdirSync(dirname(target), { recursive: true });
-    writeFileSync(target, buildPublicMarkdown(page), "utf8");
+    mkdirSync(dirname(rawTarget), { recursive: true });
+    writeFileSync(target, markdown, "utf8");
+    writeFileSync(rawTarget, markdown, "utf8");
     markdownPaths.push(target);
   }
 

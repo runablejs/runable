@@ -4,7 +4,7 @@ import { cn } from "~/lib/utils";
 import { useSidebar } from "./ui/sidebar/utils.ts";
 import Logo from "./navbar-components/Logo.vue";
 import ModeSwitcher from "./ModeSwitcher.vue";
-import DocsSearch from "./DocsSearch.vue";
+import ContentSearch from "./ContentSearch.vue";
 
 const props = defineProps<{
   class?: HTMLAttributes["class"];
@@ -82,7 +82,7 @@ onBeforeUnmount(() => {
 
       <!-- Middle area -->
       <nav
-        class="h-full max-md:hidden flex items-center gap-2"
+        class="h-full max-md:hidden flex items-center"
         :class="cn('items-center gap-0', props.class)"
       >
         <RunableLink
@@ -94,7 +94,7 @@ onBeforeUnmount(() => {
           }"
           variant="ghost"
           :to="href"
-          class="px-1.5 hover:text-primary hover:bg-border h-full justify-center rounded-none font-medium text-sm flex items-center gap-2 whitespace-nowrap"
+          class="px-2 hover:text-primary hover:bg-border h-full justify-center rounded-none font-medium text-sm flex items-center gap-2 whitespace-nowrap border-x border-transparent hover:border-accent"
         >
           <UIcon :name="icon" class="size-4" />
           {{ name }}
@@ -104,7 +104,7 @@ onBeforeUnmount(() => {
       <!-- Right side -->
       <div class="ml-auto flex flex-1 items-center justify-end gap-1 h-full">
         <ClientOnly>
-          <DocsSearch />
+          <ContentSearch />
         </ClientOnly>
 
         <template v-if="showExtra">

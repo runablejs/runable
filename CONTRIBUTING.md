@@ -102,7 +102,10 @@ PR → CI (install, lint/typecheck/test/build) → merge into dev → …
      a Changesets fixed group, so they share one framework version. Changesets
      keeps a `<name>@<version>` tag for each package, while the workflow
      creates a single GitHub Release tagged `v<version>` with a changelog
-     section for every published package.
+     section for each package with user-facing changes. Packages bumped only
+     to align the fixed group or update an internal dependency are omitted
+     from the release notes. Contributors credited by those changelog entries
+     are deduplicated and listed at the end of the release.
 3. **Publishing uses npm Trusted Publishing (OIDC)** — no `NPM_TOKEN` is
    stored anywhere. Only the `publish` job gets an OIDC token (`id-token:
    write`); it authenticates to npm using its GitHub Actions identity, and

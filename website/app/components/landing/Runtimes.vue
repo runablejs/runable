@@ -19,55 +19,54 @@ onMounted(() => {
 
 const runtimeServers = [
   {
-    ref: "RT.01",
-    name: "Node HTTP",
-    icon: "simple-icons:nodedotjs",
-  },
-  {
-    ref: "RT.02",
     name: "Fastify",
     icon: "simple-icons:fastify",
+    to: "/docs/integrations/fastify",
   },
   {
-    ref: "RT.03",
     name: "NestJS",
     icon: "simple-icons:nestjs",
+    to: "/docs/integrations/nestjs",
   },
   {
-    ref: "RT.04",
     name: "Koa",
     icon: "simple-icons:koa",
+    to: "/docs/integrations/koa",
   },
   {
-    ref: "RT.05",
     name: "Express",
     icon: "simple-icons:express",
+    to: "/docs/integrations/express",
   },
   {
-    ref: "RT.06",
     name: "Hono",
     icon: "simple-icons:hono",
+    to: "/docs/integrations/hono",
   },
   // {
-  //   ref: "RT.07",
   //   name: "Nitro",
   //   icon: "unjs:nitro",
   //   code: "nitro",
   // },
   {
-    ref: "RT.08",
     name: "AdonisJS",
     icon: "simple-icons:adonisjs",
+    to: "/docs/integrations/adonisjs",
   },
   {
-    ref: "RT.09",
     name: "Deno",
     icon: "simple-icons:deno",
+    to: "/docs/integrations/deno",
   },
   {
-    ref: "RT.10",
     name: "Bun",
     icon: "simple-icons:bun",
+    to: "/docs/integrations/bun",
+  },
+  {
+    name: "Custom",
+    icon: "lucide:code-xml",
+    to: "/docs/integrations/custom",
   },
 ];
 </script>
@@ -102,10 +101,12 @@ const runtimeServers = [
         ref="runtimeGridRef"
         class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3"
       >
-        <article
-          v-for="rt in runtimeServers"
-          :key="rt.ref"
-          class="group relative bg-muted/10 dark:bg-muted/20 border border-border rounded-md p-6 flex flex-col items- text- transition-all duration-fast ease-default hover:border-strong hover:-translate-y-px sr-hidden"
+        <RunableLink
+          v-for="(rt, r) in runtimeServers"
+          :key="rt.name"
+          :to="rt.to"
+          :aria-label="`Read the ${rt.name} integration documentation`"
+          class="group relative bg-muted/10 dark:bg-muted/20 border border-border rounded-md p-6 flex flex-col items- text- transition-all duration-fast ease-default hover:border-strong hover:-translate-y-px sr-hiddend"
           style="
             transition:
               opacity 200ms ease-out,
@@ -119,7 +120,7 @@ const runtimeServers = [
           />
 
           <p class="font-mono text-mono-sm text-tertiary tracking-wide mb-4">
-            {{ rt.ref }}
+            RT.{{ (r + 1).toString().padStart(2, "0") }}
           </p>
 
           <div
@@ -148,7 +149,7 @@ const runtimeServers = [
           <h3 class="font-display text-h5 text-center">
             {{ rt.name }}
           </h3>
-        </article>
+        </RunableLink>
       </div>
 
       <p class="mt-7 max-w-3xl">

@@ -1,0 +1,4 @@
+<template>
+  <RunablePage />
+</template>
+

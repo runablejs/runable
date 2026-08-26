@@ -3,6 +3,9 @@ import { cn } from "~/lib/utils.ts";
 import ModeSwitcher from "./ModeSwitcher.vue";
 import Logo from "./navbar-components/Logo.vue";
 import MobileNav from "./MobileNav.vue";
+import runablePackage from "../../../packages/runable/package.json";
+
+const runableVersion = runablePackage.version;
 
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
@@ -71,10 +74,15 @@ const active = computed(() => {
 
         <RouterLink
           to="/"
-          class="flex items-center gap-2 h-full hover:bg-accent hover:text-accent-foreground pr-3"
+          class="group flex items-center gap-2 h-full hover:bg-accent hover:text-accent-foreground pr-3"
         >
           <Logo class="size-7 h-9/12" />
           <span class="font-bold text-lg">Runable</span>
+          <span
+            class="font-mono text-[10px] leading-none text-muted-foreground group-hover:text-accent-foreground/70"
+          >
+            v{{ runableVersion }}
+          </span>
         </RouterLink>
       </div>
 
@@ -92,7 +100,7 @@ const active = computed(() => {
           }"
           variant="ghost"
           :to="to"
-          class="px-1.5 hover:bg-accent hover:text-accent-foreground h-full justify-center rounded-none font-medium text-sm flex items-center gap-2 whitespace-nowrap"
+          class="px-2 hover:bg-accent hover:text-accent-foreground h-full justify-center rounded-none font-medium text-sm flex items-center gap-2 whitespace-nowrap"
         >
           <UIcon :name="icon" class="size-4" />
           {{ label }}

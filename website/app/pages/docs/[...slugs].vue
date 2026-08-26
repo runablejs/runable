@@ -1,11 +1,75 @@
 <script setup lang="ts">
 import MDC from "v-content/components/MDC.js";
+import DocsPageActions from "~/components/DocsPageActions.vue";
 import DocsToc from "~/components/DocsToc.vue";
 import { Skeleton } from "~/components/ui/skeleton";
 import { SITE_URL } from "~/lib/site-config.js";
 import { toArray } from "~/utils/to-array";
 
 const route = useRoute();
+const { nav } = useAppConfig();
+
+interface DocumentationNavItem {
+  name: string;
+  href: string;
+  description?: string;
+  icon?: string;
+  children?: readonly DocumentationNavItem[];
+}
+
+function flattenNavigation(
+  items: readonly DocumentationNavItem[],
+): DocumentationNavItem[] {
+  return items.flatMap((item) => [
+    item,
+    ...flattenNavigation(item.children ?? []),
+  ]);
+}
+
+function normalizeDocumentationHref(href: string) {
+  let decodedHref = href;
+
+  try {
+    decodedHref = decodeURIComponent(href);
+  } catch {
+    // Keep the original href when it contains malformed escape sequences.
+  }
+
+  return decodedHref.replace(/\.md$/, "").replace(/\/+$/, "") || "/docs";
+}
+
+const documentationPages = computed(() => {
+  const pagesByHref = new Map<string, DocumentationNavItem>();
+
+  for (const item of flattenNavigation(nav)) {
+    const href = normalizeDocumentationHref(item.href);
+    if (!href.startsWith("/docs/")) continue;
+
+    // Some groups point to their first child. Keeping the last occurrence
+    // preserves the page label while retaining its original position.
+    pagesByHref.set(href, { ...item, href });
+  }
+
+  return [...pagesByHref.values()];
+});
+
+const currentNavigationIndex = computed(() => {
+  const currentHref = normalizeDocumentationHref(route.path);
+  return documentationPages.value.findIndex(
+    (item: DocumentationNavItem) => item.href === currentHref,
+  );
+});
+
+const previousPage = computed(() => {
+  if (currentNavigationIndex.value <= 0) return;
+  return documentationPages.value[currentNavigationIndex.value - 1];
+});
+
+const nextPage = computed(() => {
+  const currentIndex = currentNavigationIndex.value;
+  if (currentIndex < 0) return;
+  return documentationPages.value[currentIndex + 1];
+});
 
 const slugs = computed(() => {
   const params = route.params as { slugs: string | string[] };
@@ -22,6 +86,35 @@ const path = computed(() => {
     .replace(/\.md$/, "")
     .replace(/\/$/, "")
     .replace(/\/index$/, "");
+});
+
+const documentationIndexSections = new Set([
+  "api",
+  "guide",
+  "integrations",
+  "mcp",
+  "structure",
+]);
+
+const documentationSourcePath = computed(() => {
+  const relativePath = path.value.replace(/^\//, "");
+  const isSectionIndex =
+    slugs.value.length === 1 && documentationIndexSections.has(relativePath);
+
+  return `website/content/docs/en/${relativePath}${isSectionIndex ? "/index" : ""}.md`;
+});
+
+const markdownUrl = computed(() => {
+  const markdownPath = documentationSourcePath.value.replace(
+    "website/content/docs/en/",
+    "/docs/",
+  );
+
+  return `${SITE_URL}${markdownPath}`;
+});
+
+const editOnGitHubUrl = computed(() => {
+  return `https://github.com/runablejs/runable/edit/dev/${documentationSourcePath.value}`;
 });
 
 function queryPage() {
@@ -48,6 +141,17 @@ const { data: page, status } = await useAsyncData(
   queryPage,
 );
 
+const reportIssueUrl = computed(() => {
+  const title = encodeURIComponent(
+    `[Docs] ${page.value?.meta.title ?? path.value}`,
+  );
+  const body = encodeURIComponent(
+    `Documentation page: ${SITE_URL}/docs${path.value}\n\nDescribe the issue you found:`,
+  );
+
+  return `https://github.com/runablejs/runable/issues/new?title=${title}&body=${body}`;
+});
+
 useHead({
   title: page.value?.meta.title,
   meta: [{ name: "description", content: page.value?.meta.description }],
@@ -56,7 +160,7 @@ useHead({
         {
           rel: "alternate",
           type: "text/markdown",
-          href: `${SITE_URL}/docs/${path.value}`,
+          href: markdownUrl.value,
         },
       ]
     : [],
@@ -137,16 +241,14 @@ useSeoMeta({
       >
         <div class="flex flex-col gap-2">
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between md:items-start">
+            <div class="flex items-start justify-between gap-4">
               <h1
                 class="scroll-m-24 text-3xl font-semibold tracking-tight sm:text-3xl"
               >
                 {{ page.meta.title }}
               </h1>
               <div class="docs-nav flex items-center gap-2">
-                <div class="hidden sm:block">
-                  <!-- <DocsCopyPage :page="page" /> -->
-                </div>
+                <DocsPageActions :page />
                 <!-- <Button
                   v-if="neighbours?.[0]"
                   variant="secondary"
@@ -197,6 +299,94 @@ useSeoMeta({
         <div class="v-content min-w-0 max-w-full space-y-3">
           <MDC :value="page.html" />
         </div>
+
+        <div
+          class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground"
+        >
+          <a
+            :href="reportIssueUrl"
+            target="_blank"
+            rel="noreferrer"
+            class="inline-flex items-center gap-2 transition-colors hover:text-accent"
+          >
+            <UIcon name="tabler:bug" class="size-5" aria-hidden="true" />
+            Report an issue
+          </a>
+
+          <a
+            :href="editOnGitHubUrl"
+            target="_blank"
+            rel="noreferrer"
+            class="inline-flex items-center gap-2 transition-colors hover:text-accent"
+          >
+            <UIcon name="tabler:pencil" class="size-5" aria-hidden="true" />
+            Edit this page
+          </a>
+        </div>
+
+        <nav
+          v-if="previousPage || nextPage"
+          aria-label="Documentation pagination"
+          class="mt-8 grid grid-cols-1 gap-3 pt-6 sm:grid-cols-2"
+        >
+          <RunableLink
+            v-if="previousPage"
+            :to="previousPage.href"
+            class="group flex min-w-0 flex-col gap-1 rounded-md border border-border bg-muted/10 p-4 transition-colors hover:bg-muted/30"
+            :aria-label="`Previous page: ${previousPage.name}`"
+          >
+            <span
+              class="flex items-center justify-center gap-2 font-mono text-xs uppercase tracking-wide text-muted-foreground aspect-square rounded-full border size-8 transition-transform group-hover:-translate-x-0.5 mb-3"
+            >
+              <UIcon
+                name="tabler:arrow-left"
+                class="size-4"
+                aria-hidden="true"
+              />
+            </span>
+
+            <span class="truncate font-medium text-foreground">
+              {{ previousPage.name }}
+            </span>
+
+            <p
+              v-if="previousPage.description"
+              class="line-clamp-3 font-medium text-muted-foreground"
+            >
+              {{ previousPage.description }}
+            </p>
+          </RunableLink>
+
+          <span v-else class="hidden sm:block"></span>
+
+          <RunableLink
+            v-if="nextPage"
+            :to="nextPage.href"
+            class="group flex min-w-0 flex-col items-end text-right gap-1 rounded-md border border-border bg-muted/10 p-4 transition-colors hover:bg-muted/30"
+            :aria-label="`Next page: ${nextPage.name}`"
+          >
+            <span
+              class="flex items-center justify-center gap-2 font-mono text-xs uppercase tracking-wide text-muted-foreground aspect-square rounded-full border size-8 transition-transform group-hover:translate-x-0.5 mb-3"
+            >
+              <UIcon
+                name="tabler:arrow-right"
+                class="size-4"
+                aria-hidden="true"
+              />
+            </span>
+
+            <span class="truncate font-medium text-foreground">
+              {{ nextPage.name }}
+            </span>
+
+            <p
+              v-if="nextPage.description"
+              class="line-clamp-3 font-medium text-muted-foreground"
+            >
+              {{ nextPage.description }}
+            </p>
+          </RunableLink>
+        </nav>
         <!-- <MDC
           :value="page.html"
           class="w-full flex-1 *:data-[slot=alert]:first:mt-0"

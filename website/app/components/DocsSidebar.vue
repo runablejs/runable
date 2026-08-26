@@ -79,7 +79,7 @@ function isActive(href: string) {
       <template v-else>
         <template v-for="tree in trees" :key="tree.code">
           <SidebarGroup v-if="tree.children?.length">
-            <SidebarGroupLabel class="font-medium text-muted-foreground px-1">
+            <SidebarGroupLabel class="font-medium text-muted-foreground px-2">
               {{ tree.name }}
             </SidebarGroupLabel>
             <SidebarGroupContent>
@@ -88,7 +88,7 @@ function isActive(href: string) {
                   <SidebarMenuButton
                     :is-active="isActive(item.href)"
                     as-child
-                    class="relative h-6 px-1 w-fit rounded-none overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md data-[active=true]:border-accent data-[active=true]:bg-accent 3xl:fixed:w-full 3xl:fixed:max-w-48"
+                    class="relative h-6 px-2 w-fit rounded-none overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md hover:bg-border hover:text-foreground data-[active=true]:border-l-accent data-[active=true]:text-accent data-[active=true]:bg-accent/5 3xl:fixed:w-full 3xl:fixed:max-w-48"
                   >
                     <!-- :is-active="isActive(item.href)" -->
                     <RunableLink :to="item.href">
@@ -109,7 +109,7 @@ function isActive(href: string) {
               <SidebarMenuButton
                 :is-active="isActive(tree.href)"
                 as-child
-                class="relative h-6 px-1 w-fit rounded-none overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md data-[active=true]:border-accent data-[active=true]:bg-accent 3xl:fixed:w-full 3xl:fixed:max-w-48"
+                class="relative h-6 px-2 w-fit rounded-none overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md hover:bg-border hover:text-foreground data-[active=true]:border-l-accent data-[active=true]:text-accent data-[active=true]:bg-accent/5 3xl:fixed:w-full 3xl:fixed:max-w-48"
               >
                 <!-- :is-active="isActive(item.href)" -->
                 <RunableLink :to="tree.href">

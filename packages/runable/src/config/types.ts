@@ -5,6 +5,7 @@ import type { ComponentDir, ResolvedComponentDir } from "@/components/types.js";
 import type {
   RouterOptionsRaw,
   RouterOptionsRawResolved,
+  EditableRouteTreeNode,
 } from "@/router/types.js";
 import type {
   AliasMap,
@@ -12,7 +13,7 @@ import type {
   Arrayable,
   ResolvedScanDirFile,
   Promisable,
-} from "@/utils";
+} from "@/utils/index.js";
 
 /** Shape of a `runable.config.*` file, as authored by the user. */
 export interface RunableConfig {
@@ -25,6 +26,12 @@ export interface RunableConfig {
 
   /** Routing options defining the application's pages. */
   pages?: RouterOptionsRaw[];
+
+  /**
+   * Extends the complete file-based route tree before Vue Router writes its
+   * generated routes and declarations.
+   */
+  extendRoutes?: (routes: EditableRouteTreeNode) => Promisable<void>;
 
   middlewares?: Arrayable<ComponentDir>;
 
@@ -203,6 +210,8 @@ export type ResolvedConfig = {
   composables: ResolvedScanDirFile[];
   /** Resolved routing options defining the application's pages. */
   pages: RouterOptionsRawResolved[];
+  /** Extends the complete file-based route tree before generated files are written. */
+  extendRoutes: RunableConfig["extendRoutes"];
   middlewares: ResolvedScanDirFile[];
   /** Resolved Runable plugins to load. */
   plugins: ResolvedScanDirFile[];

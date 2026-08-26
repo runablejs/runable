@@ -26,6 +26,7 @@ import globals, {
 } from "../globals/unplugin.js";
 import { ResolvedConfig } from "@/config/types.js";
 import { buildRoutes } from "@/router/builder.js";
+import type { EditableRouteTreeNode } from "@/router/types.js";
 import { PagesOptions } from "@/router/pages.js";
 import { watchConfigDirs } from "./watch-config-dirs.js";
 
@@ -169,7 +170,17 @@ export function buildViteConfig(): UserConfig {
 
   viteConfig = mergeConfig(viteConfig, _vites) as UserConfig;
 
-  viteConfig.plugins?.unshift(buildRoutes(_pages));
+  const extendRoutesHooks = orderedConfigs
+    .map((config) => config.extendRoutes)
+    .filter((hook) => hook !== undefined);
+
+  const extendRoutes = extendRoutesHooks.length
+    ? async (routes: EditableRouteTreeNode) => {
+        for (const hook of extendRoutesHooks) await hook(routes);
+      }
+    : undefined;
+
+  viteConfig.plugins?.unshift(buildRoutes(_pages, extendRoutes));
 
   return viteConfig;
 }

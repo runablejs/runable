@@ -71,7 +71,7 @@ onMounted(() => {
               to="/docs/getting-started/installation"
               class="group inline-flex items-center gap-3 font-mono text-mono bg-neutral text-inverse px-8 py-4 rounded-md transition-all duration-fast ease-default hover:bg-neutral/90 hover:-translate-y-px"
             >
-              <span>npm create runable@latest</span>
+              <span>npm install runable</span>
 
               <UIcon
                 name="tabler:arrow-right"

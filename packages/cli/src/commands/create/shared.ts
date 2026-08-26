@@ -232,7 +232,10 @@ export async function copyAppTemplate(targetDir: string): Promise<void> {
  */
 export async function copyAgentsFile(targetDir: string): Promise<void> {
   const __dirname = dirname(fileURLToPath(import.meta.url));
-  const templatePath = resolve(__dirname, "../../../templates/default/AGENTS.md");
+  const templatePath = resolve(
+    __dirname,
+    "../../../templates/default/AGENTS.md",
+  );
 
   if (!existsSync(templatePath)) return;
 
@@ -456,11 +459,11 @@ export async function createPackageJson(
       build: "runable build",
       "app:prepare": "runable prepare",
     },
-    dependencies: {
-      //   "runable": "latest",
-    },
     devDependencies: {
-      //   "@runablejs/cli": "latest",
+      "@runablejs/cli": "latest",
+      runable: "latest",
+      vue: "^3.5.0",
+      "vue-router": "^5.2.0",
       typescript: "^6.0.3",
     },
     engines: {

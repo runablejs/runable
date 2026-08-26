@@ -12,31 +12,33 @@ export default defineCommand({
     name: "create",
     description: "Create Runable project",
   },
-  args: {},
+  args: {
+    module: {
+      type: "boolean",
+      description: "Create a reusable Runable module",
+    },
+  },
 
-  async run() {
+  async run({ args }) {
     p.intro("Runable");
 
-    const projectType = await p.select({
-      message: "What do you want to create?",
-      options: [
-        {
-          value: "existing",
-          label: "Add to an existing project",
-          hint: "You already have a backend (Express, Fastify, NestJS, AdonisJS, Hono, Koa...) and you want to add the Vue layer",
-        },
-        {
-          value: "starter",
-          label: "Start with a starter",
-          hint: "Express, Fastify, NestJS, AdonisJS, Hono, Koa...",
-        },
-        {
-          value: "module",
-          label: "Create a Runable module",
-          hint: "A reusable module for the Runable ecosystem",
-        },
-      ],
-    });
+    const projectType = args.module
+      ? "module"
+      : await p.select({
+          message: "How do you want to create your project?",
+          options: [
+            {
+              value: "existing",
+              label: "Add to an existing project",
+              hint: "You already have a backend (Express, Fastify, NestJS, AdonisJS, Hono, Koa...) and you want to add the Vue layer",
+            },
+            {
+              value: "starter",
+              label: "Start with a starter",
+              hint: "Express, Fastify, NestJS, AdonisJS, Hono, Koa...",
+            },
+          ],
+        });
 
     if (p.isCancel(projectType)) {
       p.cancel("Operation cancelled.");
