@@ -1,5 +1,12 @@
 # create-runable
 
+## 1.0.0-alpha.6
+
+### Patch Changes
+
+- Updated dependencies [[`8ea56a0`](https://github.com/runablejs/runable/commit/8ea56a0eabf34859434651acf7840f1de9af7baf)]:
+  - @runablejs/cli@1.0.0-alpha.6
+
 ## 1.0.0-alpha.2
 
 ### Patch Changes
