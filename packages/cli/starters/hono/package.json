@@ -1,0 +1,8 @@
+{
+  "name": "runable-hono-starter",
+  "private": true,
+  "type": "module",
+  "scripts": { "dev": "tsx watch server.ts", "build": "runable build", "app:prepare": "runable prepare", "typecheck": "tsc --noEmit" },
+  "dependencies": { "@hono/node-server": "^2.1.0", "hono": "^4.13.1", "runable": "latest", "vue": "^3.5.40", "vue-router": "^5.2.0" },
+  "devDependencies": { "@runablejs/cli": "latest", "@types/node": "^24.13.3", "tsx": "^4.23.12", "typescript": "~6.0.3" }
+}

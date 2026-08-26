@@ -48,15 +48,20 @@ Running the command without an option presents two choices:
 The module workflow is intentionally not included in this prompt. Use the
 dedicated `--module` option when authoring a reusable module.
 
-::u-tip
----
-variant: warning
-title: Starter templates
----
+The starter workflow asks for a project name, backend framework, package
+manager, and whether dependencies should be installed. It includes complete
+templates for Express, Fastify, NestJS, AdonisJS, Hono, and Koa.
 
-The starter option is present in the menu, but no starter templates are currently bundled with the CLI. Use "Add to an existing project" if you're starting fresh with one of the supported backends.
+Each starter contains:
 
-::
+- a backend entry point with an `/api/health` route and the matching Runable adapter;
+- a Vue application with a ready-to-edit home page;
+- `runable.config.ts` with server-side rendering enabled;
+- development, build, prepare, and typecheck scripts;
+- the runtime and development dependencies required by the selected backend.
+
+After creation, start the project with the selected package manager's `dev`
+script. The generated server listens on `http://localhost:3000` by default.
 
 ## Create a Runable module
 

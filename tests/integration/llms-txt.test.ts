@@ -209,10 +209,14 @@ describe("generateLlmsArtifacts", () => {
     expect(result.markdownPaths.length).toBe(result.pages.size);
 
     const routingMdPath = join(outDir, "docs", "guide", "routing.md");
+    const routingRawPath = join(outDir, "raw", "docs", "guide", "routing");
     expect(existsSync(routingMdPath)).toBe(true);
+    expect(existsSync(routingRawPath)).toBe(true);
 
     const content = readFileSync(routingMdPath, "utf8");
+    const rawContent = readFileSync(routingRawPath, "utf8");
     expect(content.startsWith("# Routing")).toBe(true);
+    expect(rawContent).toBe(content);
   });
 
   it("every Markdown path returned actually exists on disk", () => {

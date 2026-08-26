@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import MDC from "v-content/components/MDC.js";
+import DocsPageActions from "~/components/DocsPageActions.vue";
 import DocsToc from "~/components/DocsToc.vue";
 import { Skeleton } from "~/components/ui/skeleton";
 import { SITE_URL } from "~/lib/site-config.js";
@@ -103,6 +104,15 @@ const documentationSourcePath = computed(() => {
   return `website/content/docs/en/${relativePath}${isSectionIndex ? "/index" : ""}.md`;
 });
 
+const markdownUrl = computed(() => {
+  const markdownPath = documentationSourcePath.value.replace(
+    "website/content/docs/en/",
+    "/docs/",
+  );
+
+  return `${SITE_URL}${markdownPath}`;
+});
+
 const editOnGitHubUrl = computed(() => {
   return `https://github.com/runablejs/runable/edit/dev/${documentationSourcePath.value}`;
 });
@@ -150,7 +160,7 @@ useHead({
         {
           rel: "alternate",
           type: "text/markdown",
-          href: `${SITE_URL}/docs/${path.value}`,
+          href: markdownUrl.value,
         },
       ]
     : [],
@@ -231,16 +241,14 @@ useSeoMeta({
       >
         <div class="flex flex-col gap-2">
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between md:items-start">
+            <div class="flex items-start justify-between gap-4">
               <h1
                 class="scroll-m-24 text-3xl font-semibold tracking-tight sm:text-3xl"
               >
                 {{ page.meta.title }}
               </h1>
               <div class="docs-nav flex items-center gap-2">
-                <div class="hidden sm:block">
-                  <!-- <DocsCopyPage :page="page" /> -->
-                </div>
+                <DocsPageActions :page />
                 <!-- <Button
                   v-if="neighbours?.[0]"
                   variant="secondary"

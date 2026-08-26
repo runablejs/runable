@@ -1,4 +1,4 @@
-import { cp, mkdir, stat } from "node:fs/promises";
+import { cp, mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -33,6 +33,7 @@ export async function copyStarterTemplate(
   // Starters are shipped as static folders alongside the built CLI, so this
   // is resolved relative to this compiled file rather than the source layout.
   const __dirname = dirname(fileURLToPath(import.meta.url));
+  const sharedTemplateDir = resolve(__dirname, "../../../starters/_shared");
   const templateDir = resolve(__dirname, `../../../starters/${framework}`);
 
   let templateExists = false;
@@ -71,6 +72,7 @@ export async function copyStarterTemplate(
   }
 
   await mkdir(targetDir, { recursive: true });
+  await cp(sharedTemplateDir, targetDir, { recursive: true, force: true });
   await cp(templateDir, targetDir, { recursive: true, force: true });
   consola.success(`Starter template copied to ${targetDir}`);
 }
@@ -119,8 +121,11 @@ export async function handleStarterProject() {
   const installDeps = await askInstallDeps();
 
   const projectDir = resolve(process.cwd(), projectName);
-  await mkdir(projectDir, { recursive: true });
   await copyStarterTemplate(framework, projectDir);
+  const packageJsonPath = resolve(projectDir, "package.json");
+  const packageJson = JSON.parse(await readFile(packageJsonPath, "utf8"));
+  packageJson.name = projectName;
+  await writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
   await copyAgentsFile(projectDir);
 
   if (installDeps) {
