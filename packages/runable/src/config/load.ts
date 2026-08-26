@@ -405,6 +405,7 @@ async function runConfigExtensions(
   let main = mainConfig;
 
   const configs = Object.values(resolved).sort((a, b) => a._index - b._index);
+
   for (const config of configs) {
     main = (await config.extendConfig?.(main, config._options ?? {})) ?? main;
   }
