@@ -7,6 +7,7 @@ import * as p from "@clack/prompts";
 import { consola } from "consola";
 import { parseModule, generateCode, builders } from "magicast";
 import { installDependencies, detectPackageManager } from "nypm";
+import { parseDocument } from "yaml";
 
 const CLI_PACKAGE_PATH = resolve(
   dirname(fileURLToPath(import.meta.url)),
@@ -493,12 +494,40 @@ export async function createPackageJson(
   consola.success(`Created package.json for module "${moduleName}"`);
 }
 
+/** Allows the build required by Runable's esbuild dependency in pnpm projects. */
+export async function configurePnpmBuilds(
+  packageManager: string,
+  cwd: string = process.cwd(),
+): Promise<void> {
+  if (packageManager !== "pnpm") return;
+
+  const workspacePath = resolve(cwd, "pnpm-workspace.yaml");
+  let source = "";
+
+  try {
+    source = await readFile(workspacePath, "utf8");
+  } catch (error: any) {
+    if (error?.code !== "ENOENT") throw error;
+  }
+
+  const document = parseDocument(source);
+  if (document.errors.length > 0) throw document.errors[0];
+
+  const esbuildPermission = document.getIn(["allowBuilds", "esbuild"]);
+  if (esbuildPermission === undefined || esbuildPermission === null) {
+    document.setIn(["allowBuilds", "esbuild"], true);
+    await writeFile(workspacePath, document.toString());
+  }
+}
+
 /** Installs dependencies with `packageManager` in `cwd`, unless `installDeps` is false. */
 export async function installDependenciesIfWanted(
   packageManager: string,
   installDeps: boolean,
   cwd: string = process.cwd(),
 ): Promise<void> {
+  await configurePnpmBuilds(packageManager, cwd);
+
   if (!installDeps) {
     consola.info("Skipping dependency installation.");
     return;

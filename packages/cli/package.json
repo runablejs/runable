@@ -57,6 +57,7 @@
     "tinyclip": "catalog:",
     "tinyexec": "catalog:",
     "tsx": "catalog:",
+    "yaml": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

@@ -111,4 +111,21 @@ describe("@runablejs/cli bin", () => {
       cleanupFixtureDir(targetDir);
     }
   });
+
+  it("allows esbuild when pnpm is selected", async () => {
+    const targetDir = createFixtureDir("cli-pnpm-builds-");
+
+    try {
+      const { configurePnpmBuilds } = await import(
+        "../../packages/cli/dist/commands/create/shared.js"
+      );
+      await configurePnpmBuilds("pnpm", targetDir);
+
+      expect(
+        readFileSync(path.join(targetDir, "pnpm-workspace.yaml"), "utf8"),
+      ).toContain("esbuild: true");
+    } finally {
+      cleanupFixtureDir(targetDir);
+    }
+  });
 });
