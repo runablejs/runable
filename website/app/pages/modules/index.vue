@@ -222,7 +222,7 @@ useSeoMeta({
                 {{ module.meta.title }}
               </h2>
               <p
-                class="mt-3 line-clamp-3 text-sm leading-relaxed text-muted-foreground"
+                class="my-3 line-clamp-3 text-sm leading-relaxed text-muted-foreground"
               >
                 {{ module.meta.description }}
               </p>

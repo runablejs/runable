@@ -32,7 +32,12 @@ const isOfficial = computed(
   () => packageName.value?.startsWith("@runablejs/") ?? false,
 );
 
-const installCommand = computed(() => `pnpm add -D ${packageName.value}`);
+const installCommand = computed(() => {
+  const configuredCommand = module.value?.meta.install;
+  return typeof configuredCommand === "string"
+    ? configuredCommand
+    : `pnpm add -D ${packageName.value}`;
+});
 
 const resourceLinks = computed(() => {
   if (!module.value) return [];
