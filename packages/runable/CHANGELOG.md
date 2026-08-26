@@ -1,5 +1,13 @@
 # runable
 
+## 1.0.0-alpha.7
+
+### Minor Changes
+
+- [#51](https://github.com/runablejs/runable/pull/51) [`78f1a56`](https://github.com/runablejs/runable/commit/78f1a56275dc5b9fe32e09141b0ac222e3cacaf1) Thanks [@domutala](https://github.com/domutala)! - Add an `extendRoutes` configuration hook for modifying the complete file-based route tree before Vue Router writes generated routes and declarations.
+
+- [#51](https://github.com/runablejs/runable/pull/51) [`3404609`](https://github.com/runablejs/runable/commit/34046096250242914ea90bc4b85952b840341ae2) Thanks [@domutala](https://github.com/domutala)! - Add a Nuxt-compatible `useFetch` composable with reactive requests and options, SSR-aware async data, caching, transforms, key picking, deduplication, timeouts, manual execution, and clearing.
+
 ## 1.0.0-alpha.6
 
 ### Minor Changes
