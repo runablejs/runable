@@ -1,5 +1,11 @@
 # runable
 
+## 1.0.0-alpha.9
+
+### Minor Changes
+
+- [#57](https://github.com/runablejs/runable/pull/57) [`5bed854`](https://github.com/runablejs/runable/commit/5bed854ef5541d52e008ec6b35ffbb5addd02bda) Thanks [@domutala](https://github.com/domutala)! - Add an `extendConfig` hook that can mutate or replace the fully resolved Runable configuration.
+
 ## 1.0.0-alpha.8
 
 ### Patch Changes
