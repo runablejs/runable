@@ -35,46 +35,34 @@ export const tsconfig = {
 };
 
 export function writeTsConfig() {
-  const { output, appDir, alias } = useConfig();
-  const appTsConfig = createAppTsConfig();
-
-  tsconfig.app = appTsConfig;
+  const { output, appDir, alias, _configFile, _cwd } = useConfig();
 
   Object.entries(alias ?? {}).forEach(([key, value]) => {
     if (key === "#build") return;
 
-    appTsConfig.addAlias(key, normalizeDir(relative(process.cwd(), value)));
+    tsconfig.app.addAlias(key, normalizeDir(relative(process.cwd(), value)));
   });
 
-  const relativeOutput = normalizeDir(relative(process.cwd(), output));
-  const buildDir = relativeOutput.startsWith(".")
-    ? relativeOutput
-    : `./${relativeOutput}`;
+  tsconfig.app.addAlias("#build", "./");
+  tsconfig.app.addAlias("#build/*", `./*`);
 
-  appTsConfig.addAlias("#build", buildDir);
-  appTsConfig.addAlias("#build/*", `${buildDir}/*`);
+  tsconfig.app.addInclude("./**/*.d.ts");
+  tsconfig.app.addInclude(join(normalizeDir(relative(output, appDir)), "**/*"));
 
-  appTsConfig.addInclude(`${relativeOutput.replace(/^\.\//, "")}/**/*.d.ts`);
-  appTsConfig.addInclude(
-    normalizeDir(join(relative(process.cwd(), appDir), "**/*")).replace(
-      /^\.\//,
-      "",
-    ),
-  );
-  appTsConfig.addInclude("runable.config.ts");
+  if (_configFile) {
+    tsconfig.app.addInclude(normalizeDir(relative(output, _configFile)));
+  }
 
   for (const config of useAllConfigs()) {
     if (!config._isRunableModule) continue;
+    if (!config._cwd.startsWith(_cwd)) continue;
 
-    const moduleAppDir = normalizeDir(relative(process.cwd(), config.appDir));
-    const include = moduleAppDir.startsWith(".")
-      ? moduleAppDir
-      : `./${moduleAppDir}`;
-
-    appTsConfig.addInclude(`${include}/**/*`);
+    tsconfig.app.addInclude(
+      normalizeDir(join(relative(output, config.appDir), "**/*")),
+    );
   }
 
-  const obj = appTsConfig.toObject();
+  const obj = tsconfig.app.toObject();
   Object.assign(obj, {
     vueCompilerOptions: {
       plugins: [
