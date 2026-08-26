@@ -43,4 +43,14 @@ describe("@runablejs/cli bin", () => {
     ).toBe(0);
     expect(result.stdout).toContain("runable create|prepare|build|mcp|skills");
   });
+
+  it("documents the direct module creation flag", () => {
+    const result = spawnSync(binPath, ["create", "--help"], {
+      encoding: "utf8",
+    });
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain("--module");
+    expect(result.stdout).toContain("Create a reusable Runable module");
+  });
 });

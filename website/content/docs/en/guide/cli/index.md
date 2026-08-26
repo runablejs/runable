@@ -9,7 +9,7 @@ description: The runable command line — scaffold, prepare, and build projects,
 
 | Command | Purpose |
 | --- | --- |
-| <a href="/docs/guide/cli/create.md">`runable create`</a> | Scaffold a new Runable project, or add Runable to an existing backend |
+| <a href="/docs/guide/cli/create.md">`runable create`</a> | Scaffold an application, add Runable to an existing backend, or create a module with `--module` |
 | <a href="/docs/guide/cli/prepare.md">`runable prepare`</a> | Regenerate `.app/` — types, routes, and auto-import registries |
 | <a href="/docs/guide/cli/build.md">`runable build`</a> | Produce the production client (and server, when SSR is enabled) bundle |
 | <a href="/docs/guide/cli/mcp.md">`runable mcp`</a> | Start the project-local MCP server for AI coding agents |

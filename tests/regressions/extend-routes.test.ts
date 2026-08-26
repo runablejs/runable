@@ -21,7 +21,9 @@ describe("RunableConfig.extendRoutes", () => {
     const builder = source("packages/runable/src/router/builder.ts");
     const vite = source("packages/runable/src/vite/config.ts");
 
-    expect(builder).toContain("extendRoutes(routes as unknown as EditableRouteTreeNode)");
+    expect(builder).toContain(
+      "extendRoutes?.(root as unknown as EditableRouteTreeNode)",
+    );
     expect(vite).toContain("config.extendRoutes");
     expect(vite).toContain("await hook(routes)");
     expect(vite).toContain("buildRoutes(_pages, extendRoutes)");

@@ -349,6 +349,8 @@ useSeoMeta({
             </p>
           </RunableLink>
 
+          <span v-else class="hidden sm:block"></span>
+
           <RunableLink
             v-if="nextPage"
             :to="nextPage.href"

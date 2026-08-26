@@ -3,19 +3,50 @@ title: runable create
 description: Scaffold a new Runable project, add Runable to an existing backend, or create a Runable module.
 ---
 
-`runable create` is interactive. It asks what you want to create, then a series of questions specific to that choice.
+Use `runable create` to configure a Runable application interactively. The
+command presents the application workflows and then asks only the questions
+needed for the selected workflow.
+
+::u-code-group
+
+```bash [pnpm]
+pnpm create runable@latest
+```
+
+```bash [npm]
+npm create runable@latest
+```
+
+```bash [yarn]
+yarn create runable
+```
+
+```bash [bun]
+bun create runable@latest
+```
+
+```bash [deno]
+deno -A npm:create-runable@latest
+```
+
+::
+
+If `@runablejs/cli` is already installed in the project, the equivalent command
+is:
 
 ```bash
 runable create
 ```
 
-## What to create
+## Create an application
 
-The first prompt offers three modes:
+Running the command without an option presents two choices:
 
 - **Add to an existing project** — wires Runable into a backend project you already have.
 - **Start with a starter** — scaffolds a new project from a full starter template.
-- **Create a Runable module** — scaffolds a reusable, publishable Runable module (see <a href="/docs/guide/modules.md">Modules</a>).
+
+The module workflow is intentionally not included in this prompt. Use the
+dedicated `--module` option when authoring a reusable module.
 
 ::u-tip
 ---
@@ -26,6 +57,53 @@ title: Starter templates
 The starter option is present in the menu, but no starter templates are currently bundled with the CLI. Use "Add to an existing project" if you're starting fresh with one of the supported backends.
 
 ::
+
+## Create a Runable module
+
+Pass `--module` to skip the application selector and start the module
+scaffolder directly:
+
+::u-code-group
+
+```bash [pnpm]
+pnpm create runable@latest --module
+```
+
+```bash [npm]
+npm create runable@latest -- --module
+```
+
+```bash [yarn]
+yarn create runable --module
+```
+
+```bash [bun]
+bun create runable@latest --module
+```
+
+```bash [deno]
+deno -A npm:create-runable@latest --module
+```
+
+::
+
+With a locally installed CLI, run `runable create --module`.
+
+The module workflow asks for:
+
+1. **Module name** — a valid lowercase npm package name, optionally scoped.
+2. **Config key** — the property consumers use in `runable.config.ts`; it defaults to the module name.
+3. **Directories** — `appDir`, `outputDir`, `distDir`, and `publicDir`.
+4. **Package manager** — detected from the current project when possible.
+5. **Install dependencies now?**
+
+It creates a **new directory** named after the module. The generated package
+contains the application template, `AGENTS.md`, a publishable `package.json`,
+and a `runable.config.ts` defined with `defineModule()` instead of
+`defineConfig()`.
+
+See <a href="/docs/guide/modules.md">Modules</a> for the module API and
+authoring conventions.
 
 ## Add to an existing project
 
@@ -47,9 +125,3 @@ This mode then:
 - installs dependencies, if requested.
 
 Any file that already exists (an app directory, `server.ts`, `AGENTS.md`, `runable.config.ts`) triggers an overwrite confirmation instead of being silently replaced.
-
-## Create a Runable module
-
-Prompts for a module name and a `configKey` (the key consumers use to configure the module in their own `runable.config.ts`), then the same directory/package-manager/install prompts as above.
-
-This mode creates a **new** directory named after the module — it doesn't touch the current directory — containing the app template, a fresh `package.json` (with `exports`, `files: ["dist"]`, and `build`/`app:prepare` scripts), and a `runable.config.ts` built with `defineModule()` instead of `defineConfig()`.
