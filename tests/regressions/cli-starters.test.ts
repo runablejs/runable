@@ -5,6 +5,9 @@ import { cleanupFixtureDir, createFixtureDir } from "../fixtures.js";
 
 describe("CLI starter templates", () => {
   const fixtureDirs: string[] = [];
+  const cliVersion = JSON.parse(
+    readFileSync(join(process.cwd(), "packages/cli/package.json"), "utf8"),
+  ).version;
 
   afterEach(() => {
     for (const directory of fixtureDirs.splice(0)) cleanupFixtureDir(directory);
@@ -28,11 +31,11 @@ describe("CLI starter templates", () => {
 
       const pkg = JSON.parse(readFileSync(join(target, "package.json"), "utf8"));
       expect(pkg.dependencies).toMatchObject({
-        runable: "latest",
+        runable: cliVersion,
         vue: expect.any(String),
         "vue-router": expect.any(String),
       });
-      expect(pkg.devDependencies["@runablejs/cli"]).toBe("latest");
+      expect(pkg.devDependencies["@runablejs/cli"]).toBe(cliVersion);
     });
   }
 });

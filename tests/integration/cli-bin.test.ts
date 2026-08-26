@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { REPO_ROOT, readJson } from "../helpers.js";
@@ -67,13 +67,47 @@ describe("@runablejs/cli bin", () => {
       const pkg = JSON.parse(
         readFileSync(path.join(targetDir, "package.json"), "utf8"),
       );
+      const cliVersion = JSON.parse(
+        readFileSync(
+          path.join(REPO_ROOT, "packages/cli/package.json"),
+          "utf8",
+        ),
+      ).version;
       expect(pkg.dependencies).toBeUndefined();
       expect(pkg.devDependencies).toMatchObject({
-        runable: "latest",
+        "@runablejs/cli": cliVersion,
+        runable: cliVersion,
         vue: "^3.5.0",
         "vue-router": "^5.2.0",
       });
     } finally {
+      cleanupFixtureDir(targetDir);
+    }
+  });
+
+  it("uses the CLI version when adding dependencies to an existing project", async () => {
+    const targetDir = createFixtureDir("cli-existing-package-");
+    const previousCwd = process.cwd();
+
+    try {
+      writeFileSync(
+        path.join(targetDir, "package.json"),
+        JSON.stringify({ name: "existing-project" }),
+      );
+      process.chdir(targetDir);
+
+      const { updatePackageJson } = await import(
+        "../../packages/cli/dist/commands/create/shared.js"
+      );
+      await updatePackageJson();
+
+      const generated = JSON.parse(
+        readFileSync(path.join(targetDir, "package.json"), "utf8"),
+      );
+      expect(generated.dependencies.runable).toBe(pkg.version);
+      expect(generated.devDependencies["@runablejs/cli"]).toBe(pkg.version);
+    } finally {
+      process.chdir(previousCwd);
       cleanupFixtureDir(targetDir);
     }
   });

@@ -110,6 +110,11 @@ describe("runable npm tarball", () => {
       );
     }
   });
+
+  it("declares unctx as a runtime dependency", () => {
+    expect(pack.packageJson.dependencies?.unctx).toBe("^3.0.1");
+    expect(pack.packageJson.devDependencies?.unctx).toBeUndefined();
+  });
 });
 
 describe("@runablejs/cli npm tarball", () => {

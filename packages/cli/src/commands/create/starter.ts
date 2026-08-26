@@ -13,6 +13,7 @@ import {
   askInstallDeps,
   installDependenciesIfWanted,
   copyAgentsFile,
+  getCliPackageVersion,
 } from "./shared.js";
 
 export interface StarterProjectAnswers {
@@ -74,6 +75,16 @@ export async function copyStarterTemplate(
   await mkdir(targetDir, { recursive: true });
   await cp(sharedTemplateDir, targetDir, { recursive: true, force: true });
   await cp(templateDir, targetDir, { recursive: true, force: true });
+
+  const packageJsonPath = resolve(targetDir, "package.json");
+  const packageJson = JSON.parse(await readFile(packageJsonPath, "utf8"));
+  const version = await getCliPackageVersion();
+  packageJson.dependencies = packageJson.dependencies || {};
+  packageJson.devDependencies = packageJson.devDependencies || {};
+  packageJson.dependencies.runable = version;
+  packageJson.devDependencies["@runablejs/cli"] = version;
+  await writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
+
   consola.success(`Starter template copied to ${targetDir}`);
 }
 

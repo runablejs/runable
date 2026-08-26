@@ -8,6 +8,22 @@ import { consola } from "consola";
 import { parseModule, generateCode, builders } from "magicast";
 import { installDependencies, detectPackageManager } from "nypm";
 
+const CLI_PACKAGE_PATH = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  "../../../package.json",
+);
+
+/** Reads the version shipped by the current CLI package. */
+export async function getCliPackageVersion(): Promise<string> {
+  const pkg = JSON.parse(await readFile(CLI_PACKAGE_PATH, "utf8"));
+
+  if (typeof pkg.version !== "string" || !pkg.version) {
+    throw new Error(`Invalid CLI version in ${CLI_PACKAGE_PATH}`);
+  }
+
+  return pkg.version;
+}
+
 /** Backend frameworks offered in the "existing project" and "starter" flows, with a docs link shown after creation. */
 export const frameworks = [
   { value: "express", label: "Express", docs: "https://expressjs.com/" },
@@ -281,9 +297,10 @@ export async function updatePackageJson(): Promise<void> {
   pkg.dependencies = pkg.dependencies || {};
   pkg.devDependencies = pkg.devDependencies || {};
   pkg.scripts = pkg.scripts || {};
+  const version = await getCliPackageVersion();
 
   if (!pkg.dependencies["runable"]) {
-    pkg.dependencies["runable"] = "latest";
+    pkg.dependencies["runable"] = version;
   }
   if (!pkg.dependencies["vue"]) {
     pkg.dependencies["vue"] = "^3.5.0";
@@ -293,7 +310,7 @@ export async function updatePackageJson(): Promise<void> {
   }
 
   if (!pkg.devDependencies["@runablejs/cli"]) {
-    pkg.devDependencies["@runablejs/cli"] = "latest";
+    pkg.devDependencies["@runablejs/cli"] = version;
   }
 
   if (!pkg.scripts["app:build"]) {
@@ -440,6 +457,7 @@ export async function createPackageJson(
     }
   }
 
+  const version = await getCliPackageVersion();
   const pkg = {
     name: moduleName,
     version: "1.0.0",
@@ -460,8 +478,8 @@ export async function createPackageJson(
       "app:prepare": "runable prepare",
     },
     devDependencies: {
-      "@runablejs/cli": "latest",
-      runable: "latest",
+      "@runablejs/cli": version,
+      runable: version,
       vue: "^3.5.0",
       "vue-router": "^5.2.0",
       typescript: "^6.0.3",
