@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@clack/prompts": "catalog:",
+    "citty": "catalog:",
     "consola": "catalog:",
     "dayjs": "catalog:",
     "esbuild": "catalog:",
@@ -49,6 +50,7 @@
     "lodash": "catalog:",
     "magicast": "catalog:",
     "nypm": "catalog:",
+    "pkg": "catalog:",
     "pkg-types": "catalog:",
     "runable": "workspace:^",
     "std-env": "catalog:",
@@ -59,8 +61,6 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "citty": "catalog:",
-    "pkg": "catalog:",
     "tsdown": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",

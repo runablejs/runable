@@ -522,6 +522,9 @@ importers:
       '@clack/prompts':
         specifier: 'catalog:'
         version: 1.7.0
+      citty:
+        specifier: 'catalog:'
+        version: 0.2.2
       consola:
         specifier: 'catalog:'
         version: 3.4.2
@@ -543,6 +546,9 @@ importers:
       nypm:
         specifier: 'catalog:'
         version: 0.6.9
+      pkg:
+        specifier: 'catalog:'
+        version: 5.8.1(supports-color@10.2.2)
       pkg-types:
         specifier: 'catalog:'
         version: 2.3.1
@@ -568,12 +574,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.13.3
-      citty:
-        specifier: 'catalog:'
-        version: 0.2.2
-      pkg:
-        specifier: 'catalog:'
-        version: 5.8.1(supports-color@10.2.2)
       tsdown:
         specifier: 'catalog:'
         version: 0.22.14(@tsdown/css@0.22.14)(@volar/typescript@2.4.28(typescript@6.0.3))(tsx@4.23.12)(typescript@6.0.3)(vue-tsc@3.3.9(typescript@6.0.3))
