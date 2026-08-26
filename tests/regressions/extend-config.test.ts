@@ -77,7 +77,12 @@ export default defineModule<{ domain: string }>({
       const { resolveConfigGraph } = await import("runable");
       const graph = await resolveConfigGraph(directory);
 
-      expect(graph.main.siteUrl).toBe("https://consumer.example");
+      const moduleConfig = graph.all.find(
+        (config) => config._name === "example",
+      );
+
+      expect(moduleConfig?.siteUrl).toBe("https://consumer.example");
+      expect(graph.main.siteUrl).toBeUndefined();
       expect(graph.main._runtime.public.baseUrlSeenBySetup).toBe("/extended");
     } finally {
       cleanupFixtureDir(directory);
