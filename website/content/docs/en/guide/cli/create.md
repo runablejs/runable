@@ -100,7 +100,9 @@ The module workflow asks for:
 It creates a **new directory** named after the module. The generated package
 contains the application template, `AGENTS.md`, a publishable `package.json`,
 and a `runable.config.ts` defined with `defineModule()` instead of
-`defineConfig()`.
+`defineConfig()`. Because these packages are only needed to develop and build
+the module, `runable`, `vue`, and `vue-router` are added to `devDependencies`
+rather than its runtime dependencies.
 
 See <a href="/docs/guide/modules.md">Modules</a> for the module API and
 authoring conventions.
