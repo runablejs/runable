@@ -394,23 +394,23 @@ function resolveAllConfigs(entries: Map<string, RawEntry>): {
  * Phase 3 — config extension
  *
  * Every extendConfig hook runs after the complete graph has been resolved,
- * but before any module setup. Each hook receives the main application config
- * and may mutate it or replace it by returning another ResolvedConfig.
+ * but before any module setup. Each hook receives its current resolved config
+ * and options, and may mutate the config or replace it by returning another
+ * ResolvedConfig.
  * ------------------------------------------------------------------------ */
 
-async function runConfigExtensions(
-  resolved: Record<string, ResolvedConfig>,
-  mainConfig: ResolvedConfig,
-): Promise<ResolvedConfig> {
-  let main = mainConfig;
+async function runConfigExtensions(resolved: Record<string, ResolvedConfig>) {
+  for (const key in resolved) {
+    if (!Object.hasOwn(resolved, key)) continue;
 
-  const configs = Object.values(resolved).sort((a, b) => a._index - b._index);
+    let config = resolved[key]!;
+    config =
+      (await config.extendConfig?.(config, config._options ?? {})) ?? config;
 
-  for (const config of configs) {
-    main = (await config.extendConfig?.(main, config._options ?? {})) ?? main;
+    resolved[key] = config;
   }
 
-  return main;
+  return resolved;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -570,16 +570,15 @@ export async function resolveConfigGraph(
     moduleDirCache,
     options?.moduleNameAliases,
   );
-  const { resolved, pendingSetups } = resolveAllConfigs(entries);
-  let main = resolved.__main;
-  if (!main) {
+  let { resolved, pendingSetups } = resolveAllConfigs(entries);
+  if (!resolved.__main) {
     throw new Error(
       `Failed to resolve a Runable config graph for "${rootDir}".`,
     );
   }
 
-  main = await runConfigExtensions(resolved, main);
-  resolved.__main = main;
+  resolved = await runConfigExtensions(resolved);
+  const main = resolved.__main!;
 
   await runSetups(pendingSetups, main);
 

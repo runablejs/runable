@@ -41,10 +41,12 @@ export default defineConfig({
 });
 ```
 
-Use `extendConfig` when an application or module needs access to the resolved
-main application configuration. Every hook runs before module setup hooks and
-receives its resolved options as the second argument. It may mutate the main
-configuration or return a replacement:
+Use `extendConfig` to modify an application's or module's own resolved
+configuration. Every hook runs after the complete configuration graph has been
+resolved but before module setup hooks. It receives the current resolved
+configuration as the first argument and that configuration's resolved options
+as the second argument. The hook may mutate its configuration or return a
+replacement:
 
 ```ts
 export default defineConfig({
@@ -56,5 +58,10 @@ export default defineConfig({
   },
 });
 ```
+
+For the main application configuration, the options argument is an empty
+object. A module receives its defaults merged with the consumer's overrides.
+Changes made by a module's `extendConfig` hook apply only to that module's
+resolved configuration, not to the main application configuration.
 
 See <a href="/docs/getting-started/configuration.md">Configuration</a> for all options.
