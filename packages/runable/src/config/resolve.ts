@@ -84,9 +84,11 @@ export function resolveConfig(config: RunableConfig & { cwd: string }) {
   // from it regardless of what `output` was configured to.
   let _alias = merge(config.alias ?? {}, { "#build": _output });
 
-  return {
+  const resolvedConfig = {
     cwd: _cwd,
     _cwd: _cwd,
+
+    extendConfig: config.extendConfig,
 
     appDir: _appDir,
     output: _output,
@@ -118,4 +120,6 @@ export function resolveConfig(config: RunableConfig & { cwd: string }) {
     // Keep the raw, pre-resolution config around (mirrors `defineConfig` on `ResolvedConfig`).
     defineConfig: config,
   } as unknown as ResolvedConfig;
+
+  return resolvedConfig;
 }

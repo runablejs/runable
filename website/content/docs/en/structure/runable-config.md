@@ -41,4 +41,20 @@ export default defineConfig({
 });
 ```
 
+Use `extendConfig` when an application or module needs access to the resolved
+main application configuration. Every hook runs before module setup hooks and
+receives its resolved options as the second argument. It may mutate the main
+configuration or return a replacement:
+
+```ts
+export default defineConfig({
+  extendConfig(config, _options) {
+    return {
+      ...config,
+      baseUrl: "/app",
+    };
+  },
+});
+```
+
 See <a href="/docs/getting-started/configuration.md">Configuration</a> for all options.
