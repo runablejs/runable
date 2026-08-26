@@ -1,9 +1,10 @@
 ---
 title: "@runablejs/tailwindcss"
 package: "@runablejs/tailwindcss"
+install: pnpm add -D @runablejs/tailwindcss
 description: Add Tailwind CSS 4 to a Runable application through the official Vite plugin, with source detection for every loaded module.
 category: Styling
-icon: simple-icons:tailwindcss
+icon: logos:tailwindcss-icon
 repository: https://github.com/runablejs/tailwindcss
 documentation: https://github.com/runablejs/tailwindcss#readme
 npm: https://www.npmjs.com/package/@runablejs/tailwindcss

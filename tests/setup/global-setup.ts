@@ -30,4 +30,26 @@ export default function setup() {
       "`pnpm build` failed during the test suite's global setup — see the build output above.",
     );
   }
+
+  // Vite transforms the website scripts imported by integration tests with
+  // the website's project references. Generate the ignored app tsconfig first
+  // so a clean CI checkout does not fail while collecting those test files.
+  const prepareWebsiteConfig = spawnSync(
+    process.execPath,
+    [
+      "--input-type=module",
+      "--eval",
+      'import { loadConfig, writeTsConfig } from "runable"; await loadConfig(); writeTsConfig();',
+    ],
+    {
+      cwd: path.join(REPO_ROOT, "website"),
+      stdio: "inherit",
+    },
+  );
+
+  if (prepareWebsiteConfig.status !== 0) {
+    throw new Error(
+      "Generating the website tsconfig failed during the test suite's global setup — see the output above.",
+    );
+  }
 }
