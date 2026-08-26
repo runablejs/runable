@@ -1,5 +1,11 @@
 # runable
 
+## 1.0.0-alpha.8
+
+### Patch Changes
+
+- [#53](https://github.com/runablejs/runable/pull/53) [`f6c9a82`](https://github.com/runablejs/runable/commit/f6c9a8232b3c6b29ec076808072d4d6d8c1ac44c) Thanks [@domutala](https://github.com/domutala)! - Fix generated application TypeScript configuration paths so aliases, source includes, configuration files, and local module directories resolve correctly from the build directory.
+
 ## 1.0.0-alpha.7
 
 ### Minor Changes
