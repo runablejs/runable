@@ -1,5 +1,18 @@
 # @runablejs/cli
 
+## 1.0.0-alpha.7
+
+### Minor Changes
+
+- [#51](https://github.com/runablejs/runable/pull/51) [`1e2cf51`](https://github.com/runablejs/runable/commit/1e2cf51ccf01f2f8053428bed50659e6af2682f3) Thanks [@domutala](https://github.com/domutala)! - Ship ready-to-run starter projects for Express, Fastify, NestJS, AdonisJS, Hono, and Koa.
+
+- [#51](https://github.com/runablejs/runable/pull/51) [`d289327`](https://github.com/runablejs/runable/commit/d2893277bfbe653243564ede6f810c89e6e158b1) Thanks [@domutala](https://github.com/domutala)! - Add `runable create --module` for directly scaffolding a Runable module, keep the default interactive prompt focused on application creation, and install the framework packages as module development dependencies.
+
+### Patch Changes
+
+- Updated dependencies [[`78f1a56`](https://github.com/runablejs/runable/commit/78f1a56275dc5b9fe32e09141b0ac222e3cacaf1), [`3404609`](https://github.com/runablejs/runable/commit/34046096250242914ea90bc4b85952b840341ae2)]:
+  - runable@1.0.0-alpha.7
+
 ## 1.0.0-alpha.6
 
 ### Minor Changes
