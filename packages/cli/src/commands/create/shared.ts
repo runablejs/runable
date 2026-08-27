@@ -7,6 +7,23 @@ import * as p from "@clack/prompts";
 import { consola } from "consola";
 import { parseModule, generateCode, builders } from "magicast";
 import { installDependencies, detectPackageManager } from "nypm";
+import { parseDocument } from "yaml";
+
+const CLI_PACKAGE_PATH = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  "../../../package.json",
+);
+
+/** Reads the version shipped by the current CLI package. */
+export async function getCliPackageVersion(): Promise<string> {
+  const pkg = JSON.parse(await readFile(CLI_PACKAGE_PATH, "utf8"));
+
+  if (typeof pkg.version !== "string" || !pkg.version) {
+    throw new Error(`Invalid CLI version in ${CLI_PACKAGE_PATH}`);
+  }
+
+  return pkg.version;
+}
 
 /** Backend frameworks offered in the "existing project" and "starter" flows, with a docs link shown after creation. */
 export const frameworks = [
@@ -281,9 +298,10 @@ export async function updatePackageJson(): Promise<void> {
   pkg.dependencies = pkg.dependencies || {};
   pkg.devDependencies = pkg.devDependencies || {};
   pkg.scripts = pkg.scripts || {};
+  const version = await getCliPackageVersion();
 
   if (!pkg.dependencies["runable"]) {
-    pkg.dependencies["runable"] = "latest";
+    pkg.dependencies["runable"] = version;
   }
   if (!pkg.dependencies["vue"]) {
     pkg.dependencies["vue"] = "^3.5.0";
@@ -293,7 +311,7 @@ export async function updatePackageJson(): Promise<void> {
   }
 
   if (!pkg.devDependencies["@runablejs/cli"]) {
-    pkg.devDependencies["@runablejs/cli"] = "latest";
+    pkg.devDependencies["@runablejs/cli"] = version;
   }
 
   if (!pkg.scripts["app:build"]) {
@@ -440,6 +458,7 @@ export async function createPackageJson(
     }
   }
 
+  const version = await getCliPackageVersion();
   const pkg = {
     name: moduleName,
     version: "1.0.0",
@@ -460,8 +479,8 @@ export async function createPackageJson(
       "app:prepare": "runable prepare",
     },
     devDependencies: {
-      "@runablejs/cli": "latest",
-      runable: "latest",
+      "@runablejs/cli": version,
+      runable: version,
       vue: "^3.5.0",
       "vue-router": "^5.2.0",
       typescript: "^6.0.3",
@@ -475,12 +494,40 @@ export async function createPackageJson(
   consola.success(`Created package.json for module "${moduleName}"`);
 }
 
+/** Allows the build required by Runable's esbuild dependency in pnpm projects. */
+export async function configurePnpmBuilds(
+  packageManager: string,
+  cwd: string = process.cwd(),
+): Promise<void> {
+  if (packageManager !== "pnpm") return;
+
+  const workspacePath = resolve(cwd, "pnpm-workspace.yaml");
+  let source = "";
+
+  try {
+    source = await readFile(workspacePath, "utf8");
+  } catch (error: any) {
+    if (error?.code !== "ENOENT") throw error;
+  }
+
+  const document = parseDocument(source);
+  if (document.errors.length > 0) throw document.errors[0];
+
+  const esbuildPermission = document.getIn(["allowBuilds", "esbuild"]);
+  if (esbuildPermission === undefined || esbuildPermission === null) {
+    document.setIn(["allowBuilds", "esbuild"], true);
+    await writeFile(workspacePath, document.toString());
+  }
+}
+
 /** Installs dependencies with `packageManager` in `cwd`, unless `installDeps` is false. */
 export async function installDependenciesIfWanted(
   packageManager: string,
   installDeps: boolean,
   cwd: string = process.cwd(),
 ): Promise<void> {
+  await configurePnpmBuilds(packageManager, cwd);
+
   if (!installDeps) {
     consola.info("Skipping dependency installation.");
     return;

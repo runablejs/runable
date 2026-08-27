@@ -98,6 +98,7 @@
     "syt": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
+    "unctx": "^3.0.1",
     "unhead": "catalog:",
     "unimport": "catalog:",
     "unplugin": "catalog:",
@@ -120,8 +121,7 @@
     "express": "catalog:",
     "fastify": "catalog:",
     "hono": "catalog:",
-    "koa": "catalog:",
-    "unctx": "^3.0.1"
+    "koa": "catalog:"
   },
   "engines": {
     "node": "^22.18.0 || >=24.12.0"

@@ -87,6 +87,7 @@ catalog:
   syt: ^0.2.0
   unimport: ^6.4.0
   unplugin: ^3.3.0
+  yaml: ^2.9.0
 
 allowBuilds:
   "@parcel/watcher": true
