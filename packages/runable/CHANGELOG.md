@@ -1,5 +1,11 @@
 # runable
 
+## 1.0.0-alpha.12
+
+### Patch Changes
+
+- [#63](https://github.com/runablejs/runable/pull/63) [`4dc97c8`](https://github.com/runablejs/runable/commit/4dc97c89c22e27de1ac08b93e758926307db0902) Thanks [@domutala](https://github.com/domutala)! - Ship `unctx` as a runtime dependency so installed applications can load Runable's context implementation.
+
 ## 1.0.0-alpha.11
 
 ## 1.0.0-alpha.10

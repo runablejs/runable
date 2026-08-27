@@ -1,5 +1,17 @@
 # @runablejs/cli
 
+## 1.0.0-alpha.12
+
+### Patch Changes
+
+- [#63](https://github.com/runablejs/runable/pull/63) [`4dc97c8`](https://github.com/runablejs/runable/commit/4dc97c89c22e27de1ac08b93e758926307db0902) Thanks [@domutala](https://github.com/domutala)! - Wrap the NestJS starter initialization in a `bootstrap` function.
+
+- [#63](https://github.com/runablejs/runable/pull/63) [`e5785b2`](https://github.com/runablejs/runable/commit/e5785b203b4a965a896ee3c8a3b357c6ec89757a) Thanks [@domutala](https://github.com/domutala)! - Allow esbuild dependency scripts in generated pnpm projects so dependency installation completes without manual approval.
+
+- [#63](https://github.com/runablejs/runable/pull/63) [`4dc97c8`](https://github.com/runablejs/runable/commit/4dc97c89c22e27de1ac08b93e758926307db0902) Thanks [@domutala](https://github.com/domutala)! - Use the current CLI package version for `runable` and `@runablejs/cli` when creating projects and modules.
+- Updated dependencies [[`4dc97c8`](https://github.com/runablejs/runable/commit/4dc97c89c22e27de1ac08b93e758926307db0902)]:
+  - runable@1.0.0-alpha.12
+
 ## 1.0.0-alpha.11
 
 ### Patch Changes
