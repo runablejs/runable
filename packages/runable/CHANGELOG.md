@@ -1,5 +1,11 @@
 # runable
 
+## 1.0.0-alpha.14
+
+### Patch Changes
+
+- [#67](https://github.com/runablejs/runable/pull/67) [`02ebe9a`](https://github.com/runablejs/runable/commit/02ebe9a5aca29a3f76e3cf8475fab91cc57dacb1) Thanks [@domutala](https://github.com/domutala)! - Add the internal Runable welcome component and use it as the home page of every generated starter.
+
 ## 1.0.0-alpha.13
 
 ### Patch Changes
