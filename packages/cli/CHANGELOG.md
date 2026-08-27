@@ -1,5 +1,12 @@
 # @runablejs/cli
 
+## 1.0.0-alpha.13
+
+### Patch Changes
+
+- Updated dependencies [[`1ace040`](https://github.com/runablejs/runable/commit/1ace04043a171cc735ec6f18827e860d382efc72)]:
+  - runable@1.0.0-alpha.13
+
 ## 1.0.0-alpha.12
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # runable
 
+## 1.0.0-alpha.13
+
+### Patch Changes
+
+- [#65](https://github.com/runablejs/runable/pull/65) [`1ace040`](https://github.com/runablejs/runable/commit/1ace04043a171cc735ec6f18827e860d382efc72) Thanks [@domutala](https://github.com/domutala)! - Use the ESM Lodash build in browser runtime entries so Vite can load the merge helper without CommonJS interop errors.
+
 ## 1.0.0-alpha.12
 
 ### Patch Changes
