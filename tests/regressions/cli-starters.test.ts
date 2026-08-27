@@ -29,6 +29,12 @@ describe("CLI starter templates", () => {
       expect(existsSync(join(target, "app/app.vue"))).toBe(true);
       expect(existsSync(join(target, "app/pages/index.vue"))).toBe(true);
 
+      const indexPage = readFileSync(
+        join(target, "app/pages/index.vue"),
+        "utf8",
+      );
+      expect(indexPage).toContain("<RunableWelcome />");
+
       const pkg = JSON.parse(readFileSync(join(target, "package.json"), "utf8"));
       expect(pkg.dependencies).toMatchObject({
         runable: cliVersion,
