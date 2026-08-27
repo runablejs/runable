@@ -1,5 +1,13 @@
 # @runablejs/cli
 
+## 1.0.0-alpha.11
+
+### Patch Changes
+
+- [#61](https://github.com/runablejs/runable/pull/61) [`7d64d86`](https://github.com/runablejs/runable/commit/7d64d862eb682c8b3785f4ae9d0aafbaaa39a02f) Thanks [@domutala](https://github.com/domutala)! - Ship CLI runtime packages as production dependencies so installed commands can resolve them.
+- Updated dependencies []:
+  - runable@1.0.0-alpha.11
+
 ## 1.0.0-alpha.10
 
 ### Patch Changes
