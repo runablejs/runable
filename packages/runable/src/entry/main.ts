@@ -1,5 +1,5 @@
 import * as vue from "vue";
-import merge from "lodash/merge";
+import merge from "lodash-es/merge.js";
 
 import router from "../router/plugin.js";
 import components from ":components";

@@ -67,6 +67,7 @@ catalog:
   typescript: ~6.0.3
   "@types/node": ^24.13.3
   "@types/lodash": ^4.17.24
+  "@types/lodash-es": ^4.17.12
   "@types/estree": ^1.0.9
 
   tsdown: ^0.22.14
@@ -75,6 +76,7 @@ catalog:
   npm-run-all2: ^9.0.2
 
   lodash: ^4.18.1
+  lodash-es: ^4.18.1
   dotenv: ^17.4.2
   devalue: ^5.8.2
   magic-string: ^1.0.0
