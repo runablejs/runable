@@ -115,6 +115,15 @@ describe("runable npm tarball", () => {
     expect(pack.packageJson.dependencies?.unctx).toBe("^3.0.1");
     expect(pack.packageJson.devDependencies?.unctx).toBeUndefined();
   });
+
+  it("declares the Oxc decorator helpers as a runtime dependency", () => {
+    expect(pack.packageJson.dependencies?.["@oxc-project/runtime"]).toBe(
+      "^0.147.0",
+    );
+    expect(
+      pack.packageJson.devDependencies?.["@oxc-project/runtime"],
+    ).toBeUndefined();
+  });
 });
 
 describe("@runablejs/cli npm tarball", () => {
