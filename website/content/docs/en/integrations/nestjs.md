@@ -1,6 +1,6 @@
 ---
 title: NestJS
-description: Connect Runable after the controllers of a NestJS application using Express.
+description: Register Runable as the catch-all controller of a NestJS application using Express.
 ---
 
 The current adapter targets the NestJS Express platform.
@@ -14,21 +14,19 @@ pnpm add runable vue vue-router @nestjs/common @nestjs/core @nestjs/platform-exp
 ## Configuration
 
 ```ts
-// main.ts
-import { NestFactory } from "@nestjs/core";
-import { nestjs } from "runable/adapters/nestjs";
-import { AppModule } from "./app.module.js";
+// app.module.ts
+import { Module } from "@nestjs/common";
+import { RunableModule } from "runable/adapters/nestjs";
 
-const app = await NestFactory.create(AppModule);
-
-// Register Nest controllers on Express first.
-await app.init();
-
-app.use(nestjs());
-await app.listen(3000);
+@Module({
+  imports: [RunableModule.register()],
+})
+export class AppModule {}
 ```
 
-`nestjs()` returns a function compatible with `NestMiddleware["use"]`. Calling `app.init()` before `app.use()` ensures controller routes are registered before the Runable fallback.
+`RunableModule` registers a catch-all controller. NestJS gives more specific application controllers priority, then sends unmatched requests to Runable.
+
+`register()` accepts `RunableAdapterOptions`, so you can provide an already initialized application with `RunableModule.register({ runableApp })`.
 
 ::u-tip
 ---
@@ -36,6 +34,6 @@ variant: warning
 title: Fastify is not supported by this adapter
 ---
 
-A Nest application built with `FastifyAdapter` does not expose the Express request and response objects expected by `nestjs()`.
+A Nest application built with `FastifyAdapter` does not expose the Express request and response objects expected by `RunableModule`.
 
 ::

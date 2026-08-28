@@ -5,6 +5,16 @@ description: Install Runable in an existing backend project and prepare a minima
 
 Add Runable to your backend, create the Vue directory, then connect HTTP requests to the rendering engine.
 
+## Play Online
+
+If you just want to try Runable in your browser without setting up a local project, use this online sandbox:
+
+::u-stackblitz
+---
+url: https://stackblitz.com/github/runablejs/starter
+---
+::
+
 ## Prerequisites
 
 Use a Node.js version supported by `runable`:
@@ -141,7 +151,7 @@ Supported frameworks are not runtime dependencies of `runable`. Install the one 
 | `fastify()` | `fastify` |
 | `hono()` | `hono` |
 | `koa()` | `koa` |
-| `nestjs()` | `@nestjs/common`, `@nestjs/core`, and the Express platform |
+| `RunableModule.register()` | `@nestjs/common`, `@nestjs/core`, and the Express platform |
 | `adonis()` | `@adonisjs/core` |
 | `bun()` | No additional npm dependency |
 | `deno()` | No additional npm dependency |

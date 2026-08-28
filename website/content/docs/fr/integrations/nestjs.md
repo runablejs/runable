@@ -1,6 +1,6 @@
 ---
 title: NestJS
-description: Branchez Runable après les contrôleurs d'une application NestJS utilisant Express.
+description: Enregistrez Runable comme contrôleur catch-all d'une application NestJS utilisant Express.
 ---
 
 L'adaptateur actuel cible la plateforme Express de NestJS.
@@ -14,21 +14,19 @@ pnpm add runable vue vue-router @nestjs/common @nestjs/core @nestjs/platform-exp
 ## Configuration
 
 ```ts
-// main.ts
-import { NestFactory } from "@nestjs/core";
-import { nestjs } from "runable/adapters/nestjs";
-import { AppModule } from "./app.module.js";
+// app.module.ts
+import { Module } from "@nestjs/common";
+import { RunableModule } from "runable/adapters/nestjs";
 
-const app = await NestFactory.create(AppModule);
-
-// Enregistre d'abord les contrôleurs Nest sur Express.
-await app.init();
-
-app.use(nestjs());
-await app.listen(3000);
+@Module({
+  imports: [RunableModule.register()],
+})
+export class AppModule {}
 ```
 
-`nestjs()` retourne une fonction compatible avec `NestMiddleware["use"]`. L'appel à `app.init()` avant `app.use()` garantit que les routes des contrôleurs sont enregistrées avant le fallback Runable.
+`RunableModule` enregistre un contrôleur catch-all. NestJS donne la priorité aux contrôleurs applicatifs plus spécifiques, puis transmet les requêtes sans correspondance à Runable.
+
+`register()` accepte `RunableAdapterOptions`. Vous pouvez donc fournir une application déjà initialisée avec `RunableModule.register({ runableApp })`.
 
 ::u-tip
 ---
@@ -36,7 +34,6 @@ variant: warning
 title: Fastify n'est pas pris en charge par cet adaptateur
 ---
 
-Une application Nest construite avec `FastifyAdapter` ne possède pas les objets requête/réponse Express attendus par `nestjs()`.
+Une application Nest construite avec `FastifyAdapter` ne possède pas les objets requête/réponse Express attendus par `RunableModule`.
 
 ::
-

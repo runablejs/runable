@@ -1,15 +1,49 @@
-import type { NestMiddleware } from "@nestjs/common";
+import {
+  All,
+  Controller,
+  Inject,
+  Module,
+  Next,
+  Req,
+  Res,
+  type DynamicModule,
+} from "@nestjs/common";
 import type { Request, Response, NextFunction } from "express";
 
 import { createNodeHandler, type RunableAdapterOptions } from "./shared.js";
 
-/** Creates a middleware for Nest applications using the Express platform. */
-export function nestjs(
-  options: RunableAdapterOptions = {},
-): NestMiddleware["use"] {
-  const handle = createNodeHandler(options);
+export const RUNABLE_ADAPTER_OPTIONS = Symbol("RUNABLE_ADAPTER_OPTIONS");
 
-  return (req: Request, res: Response, next: NextFunction) => {
-    void handle(req, res, next);
-  };
+@Controller()
+export class RunableController {
+  private readonly handle: ReturnType<typeof createNodeHandler>;
+
+  constructor(@Inject(RUNABLE_ADAPTER_OPTIONS) options: RunableAdapterOptions) {
+    this.handle = createNodeHandler(options);
+  }
+
+  @All("{*path}")
+  async fallback(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Next() next: NextFunction,
+  ) {
+    await this.handle(req, res, next);
+  }
+}
+
+@Module({})
+export class RunableModule {
+  static register(options: RunableAdapterOptions = {}): DynamicModule {
+    return {
+      module: RunableModule,
+      controllers: [RunableController],
+      providers: [
+        {
+          provide: RUNABLE_ADAPTER_OPTIONS,
+          useValue: options,
+        },
+      ],
+    };
+  }
 }

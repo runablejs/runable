@@ -44,7 +44,7 @@ Each adapter initializes Runable once and translates framework objects for the r
 | `fastify()` | Fastify plugin |
 | `hono()` | Hono middleware |
 | `koa()` | Koa middleware |
-| `nestjs()` | NestJS middleware on the Express platform |
+| `RunableModule.register()` | NestJS module on the Express platform |
 | `adonis()` | AdonisJS catch-all route handler |
 | `bun()` | `fetch` function for `Bun.serve()` |
 | `deno()` | `fetch` function for `Deno.serve()` |
@@ -95,13 +95,13 @@ app.listen(3000);
 ```
 
 ```ts [NestJS]
-import { NestFactory } from "@nestjs/core";
-import { nestjs } from "runable/adapters/nestjs";
-import { AppModule } from "./app.module.js";
+import { Module } from "@nestjs/common";
+import { RunableModule } from "runable/adapters/nestjs";
 
-const app = await NestFactory.create(AppModule);
-app.use(nestjs());
-await app.listen(3000);
+@Module({
+  imports: [RunableModule.register()],
+})
+export class AppModule {}
 ```
 
 ```ts [AdonisJS]

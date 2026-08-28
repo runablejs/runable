@@ -13,7 +13,7 @@ An adapter connects requests from your backend to the Runable rendering engine. 
 | Fastify | `fastify()` | Plugin |
 | Hono | `hono()` | Middleware |
 | Koa | `koa()` | Middleware |
-| NestJS | `nestjs()` | Express platform middleware |
+| NestJS | `RunableModule.register()` | Express platform module |
 | AdonisJS | `adonis()` | Catch-all handler |
 | Bun | `bun()` | Fetch API handler |
 | Deno | `deno()` | Fetch API handler |

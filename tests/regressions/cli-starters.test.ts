@@ -42,6 +42,17 @@ describe("CLI starter templates", () => {
         "vue-router": expect.any(String),
       });
       expect(pkg.devDependencies["@runablejs/cli"]).toBe(cliVersion);
+
+      if (framework === "nestjs") {
+        const appModule = readFileSync(
+          join(target, "src/app.module.ts"),
+          "utf8",
+        );
+        const main = readFileSync(join(target, "src/main.ts"), "utf8");
+
+        expect(appModule).toContain("RunableModule.register()");
+        expect(main).not.toContain("nestjs()");
+      }
     });
   }
 });
