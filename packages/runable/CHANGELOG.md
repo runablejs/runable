@@ -1,5 +1,11 @@
 # runable
 
+## 1.0.0-alpha.16
+
+### Patch Changes
+
+- [#71](https://github.com/runablejs/runable/pull/71) [`6b0b398`](https://github.com/runablejs/runable/commit/6b0b398ca2d3b8232d2be5363b1981b391a5d98a) Thanks [@domutala](https://github.com/domutala)! - Include the Oxc decorator runtime required by the compiled NestJS adapter.
+
 ## 1.0.0-alpha.15
 
 ### Minor Changes
