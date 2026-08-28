@@ -15,6 +15,12 @@ describe("CLI starter templates", () => {
 
   for (const framework of ["express", "fastify", "nestjs", "adonisjs", "hono", "koa"]) {
     it(`copies a complete ${framework} starter`, async () => {
+      expect(
+        existsSync(
+          join(process.cwd(), "packages/cli/starters", framework, ".gitignore"),
+        ),
+      ).toBe(true);
+
       const fixture = createFixtureDir(`cli-${framework}-starter-`);
       const target = join(fixture, "application");
       fixtureDirs.push(fixture);
@@ -25,6 +31,7 @@ describe("CLI starter templates", () => {
       await copyStarterTemplate(framework, target);
 
       expect(existsSync(join(target, "package.json"))).toBe(true);
+      expect(existsSync(join(target, ".gitignore"))).toBe(true);
       expect(existsSync(join(target, "runable.config.ts"))).toBe(true);
       expect(existsSync(join(target, "app/app.vue"))).toBe(true);
       expect(existsSync(join(target, "app/pages/index.vue"))).toBe(true);
@@ -42,6 +49,12 @@ describe("CLI starter templates", () => {
         "vue-router": expect.any(String),
       });
       expect(pkg.devDependencies["@runablejs/cli"]).toBe(cliVersion);
+      expect(pkg.scripts).toMatchObject({
+        "app:prepare": "runable prepare",
+        "app:build": "runable build",
+        preprepare: "runable prepare",
+        prebuild: "runable build",
+      });
 
       if (framework === "nestjs") {
         const appModule = readFileSync(
@@ -52,6 +65,17 @@ describe("CLI starter templates", () => {
 
         expect(appModule).toContain("RunableModule.register()");
         expect(main).not.toContain("nestjs()");
+      }
+
+      if (framework === "adonisjs") {
+        expect(pkg.scripts.dev).toBe("node ace serve --watch");
+        expect(pkg.scripts.lint).toBe("eslint .");
+        expect(pkg.scripts.format).toBe("prettier --write .");
+        expect(pkg.devDependencies).toHaveProperty("eslint");
+        expect(pkg.devDependencies).toHaveProperty("prettier");
+        expect(pkg.dependencies).not.toHaveProperty("@adonisjs/shield");
+        expect(pkg.dependencies).not.toHaveProperty("@adonisjs/static");
+        expect(pkg.dependencies).not.toHaveProperty("@vinejs/vine");
       }
     });
   }

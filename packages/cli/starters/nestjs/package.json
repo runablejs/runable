@@ -5,6 +5,9 @@
   "scripts": {
     "dev": "nest start --watch",
     "build": "runable build",
+    "prebuild": "runable build",
+    "preprepare": "runable prepare",
+    "app:build": "runable build",
     "server:build": "nest build",
     "app:prepare": "runable prepare",
     "typecheck": "tsc --noEmit"

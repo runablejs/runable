@@ -5,6 +5,9 @@
   "scripts": {
     "dev": "tsx watch server.ts",
     "build": "runable build",
+    "prebuild": "runable build",
+    "preprepare": "runable prepare",
+    "app:build": "runable build",
     "app:prepare": "runable prepare",
     "typecheck": "tsc --noEmit"
   },
