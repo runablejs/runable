@@ -1,28 +1,22 @@
 <p dir="auto">
-     <a href="https://runablejs.com" rel="nofollow">
-          <img src="https://github.com/runablejs/runable/raw/main/.github/assets/cover.png" alt="Runable cover" style="max-width: 100%; height: auto;">
-     </a>
+  <a href="https://runablejs.com" rel="nofollow">
+    <img src="https://github.com/runablejs/runable/raw/main/.github/assets/cover.png" alt="Runable cover" style="max-width: 100%; height: auto;">
+  </a>
 </p>
 
 # Runable
 
+### All the Vue conventions. *Your server runtime.*
 
+Build complete Vue applications with file-system routing, SSR, data fetching, modules, and generated types—on the backend runtime that fits your project.
 
-### Build the Vue app you want. Keep the backend you chose.
+## A complete Vue framework, without the runtime lock-in
 
-Runable brings the developer experience of a Vue meta-framework to **any backend**.
+Modern Vue applications benefit from conventions: file-based routing, layouts, middleware, data fetching, auto-imports, SSR, plugins, modules, and generated types.
 
-File-system routing, layouts, middleware, auto-imports, SSR, data loading, plugins, and modules—without requiring a specific server runtime.
+Runable brings these conventions together into one framework while keeping the server runtime in your hands.
 
-Use the backend that fits your application: **Fastify, NestJS, AdonisJS, Express, Hono, Koa, Bun, Deno**, or your own HTTP server.
-
-## Your backend should be a choice
-
-Vue gives you flexibility. Meta-frameworks give you conventions. Until now, getting both often meant accepting the server runtime selected by the frontend framework—or splitting one application into two projects.
-
-Runable offers another path.
-
-Your backend keeps ownership of HTTP, APIs, authentication, and business logic. Runable adds the structured Vue application experience around it.
+Use **Fastify, NestJS, AdonisJS, Express, Hono, Koa, Bun, Deno**, or your own HTTP server.
 
 ```text
 Your backend  +  Runable  +  Vue
@@ -30,17 +24,32 @@ Your backend  +  Runable  +  Vue
 Your architecture. One application. A better developer experience.
 ```
 
+One application. Vue conventions. Your architecture.
+
+## Your server runtime is an architectural choice
+
+A frontend framework should not decide how your entire server is built.
+
+Your application may need NestJS for its architecture, Fastify for performance, AdonisJS for its ecosystem, Hono for portability, or an existing HTTP server your team already operates.
+
+Runable lets that decision remain yours.
+
+The server runtime owns what it does best—HTTP, APIs, authentication, infrastructure, and business logic—while Runable provides the conventions and tooling required to build the Vue application around it.
+
 ## What you get
 
-- The conventions developers love in modern Vue frameworks
-- Server-side rendering and seamless hydration
-- A module system for building and sharing integrations
-- First-class TypeScript support and generated types
-- Freedom to run on the server stack your team already trusts
+* **File-system routing** — structure your application through files and directories.
+* **Server-side rendering** — render on the server with seamless client hydration.
+* **Data fetching** — load application data through framework-aware primitives.
+* **Layouts and middleware** — organize navigation and application behavior declaratively.
+* **Auto-imports** — use framework APIs and application utilities with less boilerplate.
+* **Modules and plugins** — extend Runable and package reusable integrations.
+* **Generated types** — keep framework-generated APIs strongly typed.
+* **Runtime freedom** — run the same Vue conventions on the server stack that fits your architecture.
 
 ## Discover Runable
 
-See how Runable works, explore supported runtimes, and build your first application on the official website.
+See how Runable works, explore supported server runtimes, and build your first application on the official website.
 
 ### [Explore Runable →](https://runablejs.com)
 
