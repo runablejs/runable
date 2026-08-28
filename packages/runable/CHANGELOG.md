@@ -1,5 +1,11 @@
 # runable
 
+## 1.0.0-alpha.18
+
+### Patch Changes
+
+- [#75](https://github.com/runablejs/runable/pull/75) [`61e3258`](https://github.com/runablejs/runable/commit/61e3258d1605d9b77c0d4085af3880a8270f39f6) Thanks [@domutala](https://github.com/domutala)! - Inject Runable auto-imports and auto-components into application resources explicitly registered by installed modules.
+
 ## 1.0.0-alpha.17
 
 ### Patch Changes
