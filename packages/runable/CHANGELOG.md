@@ -1,5 +1,11 @@
 # runable
 
+## 1.0.0-alpha.17
+
+### Patch Changes
+
+- [#73](https://github.com/runablejs/runable/pull/73) [`9cdc4da`](https://github.com/runablejs/runable/commit/9cdc4da776a25a7fd9d30e2dc5952e2220051bdb) Thanks [@domutala](https://github.com/domutala)! - Load the production SSR manifest without a JSON module import and remove an invalid Rolldown manifest option.
+
 ## 1.0.0-alpha.16
 
 ### Patch Changes
