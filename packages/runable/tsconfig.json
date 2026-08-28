@@ -5,6 +5,7 @@
     "module": "preserve",
     "moduleResolution": "bundler",
     "noUncheckedIndexedAccess": true,
+    "experimentalDecorators": true,
 
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
 

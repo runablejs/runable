@@ -131,7 +131,7 @@ Les frameworks supportés ne sont pas des dépendances runtime de `runable`. Ins
 | `fastify()` | `fastify` |
 | `hono()` | `hono` |
 | `koa()` | `koa` |
-| `nestjs()` | `@nestjs/common`, `@nestjs/core` et la plateforme Express |
+| `RunableModule.register()` | `@nestjs/common`, `@nestjs/core` et la plateforme Express |
 | `adonis()` | `@adonisjs/core` |
 | `bun()` | Aucune dépendance npm supplémentaire |
 | `deno()` | Aucune dépendance npm supplémentaire |

@@ -151,7 +151,7 @@ Supported frameworks are not runtime dependencies of `runable`. Install the one 
 | `fastify()` | `fastify` |
 | `hono()` | `hono` |
 | `koa()` | `koa` |
-| `nestjs()` | `@nestjs/common`, `@nestjs/core`, and the Express platform |
+| `RunableModule.register()` | `@nestjs/common`, `@nestjs/core`, and the Express platform |
 | `adonis()` | `@adonisjs/core` |
 | `bun()` | No additional npm dependency |
 | `deno()` | No additional npm dependency |

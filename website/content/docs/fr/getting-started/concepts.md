@@ -44,7 +44,7 @@ Chaque adaptateur initialise Runable une seule fois et traduit les objets du fra
 | `fastify()` | Plugin Fastify |
 | `hono()` | Middleware Hono |
 | `koa()` | Middleware Koa |
-| `nestjs()` | Middleware NestJS avec plateforme Express |
+| `RunableModule.register()` | Module NestJS avec plateforme Express |
 | `adonis()` | Handler de route catch-all AdonisJS |
 | `bun()` | Fonction `fetch` pour `Bun.serve()` |
 | `deno()` | Fonction `fetch` pour `Deno.serve()` |
@@ -99,14 +99,14 @@ app.listen(3000);
 ```
 
 ```ts [NestJS]
-// main.ts
-import { NestFactory } from "@nestjs/core";
-import { nestjs } from "runable/adapters/nestjs";
-import { AppModule } from "./app.module.js";
+// app.module.ts
+import { Module } from "@nestjs/common";
+import { RunableModule } from "runable/adapters/nestjs";
 
-const app = await NestFactory.create(AppModule);
-app.use(nestjs());
-await app.listen(3000);
+@Module({
+  imports: [RunableModule.register()],
+})
+export class AppModule {}
 ```
 
 ```ts [AdonisJS]

@@ -13,7 +13,7 @@ Un adaptateur relie les requêtes de votre backend au moteur de rendu Runable. I
 | Fastify | `fastify()` | Plugin |
 | Hono | `hono()` | Middleware |
 | Koa | `koa()` | Middleware |
-| NestJS | `nestjs()` | Middleware plateforme Express |
+| NestJS | `RunableModule.register()` | Module plateforme Express |
 | AdonisJS | `adonis()` | Handler catch-all |
 | Bun | `bun()` | Handler Fetch API |
 | Deno | `deno()` | Handler Fetch API |
@@ -41,4 +41,3 @@ title: Gardez vos routes API prioritaires
 Montez l'adaptateur comme fallback, après les routes métier, sauf lorsque le framework demande un middleware placé avant les routes pour pouvoir appeler `next()`.
 
 ::
-
