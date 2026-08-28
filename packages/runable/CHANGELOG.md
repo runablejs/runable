@@ -1,5 +1,11 @@
 # runable
 
+## 1.0.0-alpha.15
+
+### Minor Changes
+
+- [#69](https://github.com/runablejs/runable/pull/69) [`8841343`](https://github.com/runablejs/runable/commit/88413431f1d5e934aa63086aeba5ea95e88b0bda) Thanks [@domutala](https://github.com/domutala)! - Add a configurable NestJS catch-all module and update the NestJS starter to register it.
+
 ## 1.0.0-alpha.14
 
 ### Patch Changes
