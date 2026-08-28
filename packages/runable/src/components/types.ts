@@ -53,6 +53,9 @@ export type ComponentScanExtra = {
 export type ComponentDir = ScanDir<ComponentScanExtra>;
 
 export interface AutoComponentOptions {
+  /** Dependency files explicitly registered by Runable and allowed to use auto-components. */
+  transformInclude?: string[];
+
   /**
    * Directory(ies) to scan for local components.
    * Resolved relative to the project root (Vite's `root`).

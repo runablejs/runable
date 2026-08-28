@@ -31,7 +31,20 @@ export type GlobalConfig = {
   /** Directory where `globals.d.ts` is written. Defaults to `process.cwd()`. */
   output: string;
   imports: Arrayable<GlobalOptionsImports>;
+  /** Dependency files explicitly registered by Runable and allowed to use auto-imports. */
+  transformInclude?: string[];
 };
+
+export function shouldTransformGlobals(
+  id: string,
+  transformInclude: string[] = [],
+): boolean {
+  if (id.startsWith("\0")) return false;
+  if (!id.includes("node_modules")) return true;
+
+  const file = id.split("?", 1)[0];
+  return transformInclude.includes(file!);
+}
 
 // -----------------------------------------------------------------------
 // Export resolution — turns config `imports` entries into a flat map of
@@ -205,7 +218,7 @@ export default createUnplugin<GlobalConfig>((config) => {
       enforce: "post",
 
       async transform(code, id) {
-        if (id.includes("node_modules") || id.startsWith("\0")) return;
+        if (!shouldTransformGlobals(id, config.transformInclude)) return;
 
         const result = await unimport.injectImports(code, id);
         if (!result.s.hasChanged()) return;

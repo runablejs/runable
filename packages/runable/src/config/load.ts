@@ -399,15 +399,21 @@ function resolveAllConfigs(entries: Map<string, RawEntry>): {
  * ResolvedConfig.
  * ------------------------------------------------------------------------ */
 
-async function runConfigExtensions(resolved: Record<string, ResolvedConfig>) {
+async function runConfigExtensions(
+  resolved: Record<string, ResolvedConfig>,
+  pendingSetups: PendingSetup[],
+) {
   for (const key in resolved) {
     if (!Object.hasOwn(resolved, key)) continue;
 
-    let config = resolved[key]!;
-    config =
-      (await config.extendConfig?.(config, config._options ?? {})) ?? config;
+    const current = resolved[key]!;
+    const extended =
+      (await current.extendConfig?.(current, current._options ?? {})) ?? current;
 
-    resolved[key] = config;
+    resolved[key] = extended;
+
+    const pending = pendingSetups.find((entry) => entry.config === current);
+    if (pending) pending.config = extended;
   }
 
   return resolved;
@@ -577,7 +583,7 @@ export async function resolveConfigGraph(
     );
   }
 
-  resolved = await runConfigExtensions(resolved);
+  resolved = await runConfigExtensions(resolved, pendingSetups);
   const main = resolved.__main!;
 
   await runSetups(pendingSetups, main);

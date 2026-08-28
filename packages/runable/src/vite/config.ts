@@ -60,10 +60,12 @@ export function buildViteConfig(): UserConfig {
   const _globals: GlobalConfig & { imports: GlobalOptionsImports[] } = {
     output: main.output,
     imports: [],
+    transformInclude: [],
   };
   const _components: AutoComponentOptions & { dirs: ComponentDir[] } = {
     dts: join(main.output, "components.d.ts"),
     dirs: [],
+    transformInclude: [],
   };
 
   const _css: CssOptions = { cwd: main.cwd, dirs: [] };
@@ -133,6 +135,11 @@ export function buildViteConfig(): UserConfig {
       _globals.imports.length,
       ...builtinGlobalImports,
     );
+    _globals.transformInclude?.splice(0, _globals.transformInclude.length);
+    _components.transformInclude?.splice(
+      0,
+      _components.transformInclude.length,
+    );
     _components.dirs.splice(0, _components.dirs.length);
     _css.dirs.splice(0, _css.dirs.length);
     _layouts.dirs.splice(0, _layouts.dirs.length);
@@ -141,6 +148,17 @@ export function buildViteConfig(): UserConfig {
 
     for (const config of orderedConfigs) {
       _globals.imports.push(config.globals, config.composables);
+      const transformInclude = [
+        ...config.components,
+        ...config.layouts,
+        ...config.globals,
+        ...config.composables,
+        ...config.pages,
+        ...config.middlewares,
+        ...config.plugins,
+      ].map((entry) => entry.file);
+      _globals.transformInclude?.push(...transformInclude);
+      _components.transformInclude?.push(...transformInclude);
       _components.dirs.push(...config.components);
       _css.dirs.push(...config.css);
       _layouts.dirs.push(...config.layouts);
@@ -150,6 +168,12 @@ export function buildViteConfig(): UserConfig {
 
     _components.dirs.push(...builtinComponents);
     _plugins.dirs.push(...builtinPlugins);
+    const builtinTransformInclude = [
+      ...builtinComponents,
+      ...builtinPlugins,
+    ].map((entry) => entry.file);
+    _globals.transformInclude?.push(...builtinTransformInclude);
+    _components.transformInclude?.push(...builtinTransformInclude);
   };
 
   rebuildAggregates();
