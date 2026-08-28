@@ -65,7 +65,7 @@ export default defineModule<{ domain: string }>({
   meta: { name: "example" },
   defaults: { domain: "default.example" },
   extendConfig(config, options) {
-    config.siteUrl = "https://" + options.domain;
+    return { ...config, siteUrl: "https://" + options.domain };
   },
   setup(_options, config) {
     config._runtime.public.baseUrlSeenBySetup = config.baseUrl;

@@ -15,6 +15,16 @@ import { dirname, relative, resolve } from "node:path";
 const VIRTUAL_ID = ":components";
 const RESOLVED_VIRTUAL_ID = "\0" + VIRTUAL_ID;
 
+export function shouldTransformComponents(
+  id: string,
+  transformInclude: string[] = [],
+): boolean {
+  if (!id.includes("node_modules")) return true;
+
+  const file = id.split("?", 1)[0];
+  return transformInclude.includes(file!);
+}
+
 export async function scanComponents(
   options: AutoComponentOptions,
 ): Promise<Map<string, ComponentInfo>> {
@@ -127,7 +137,7 @@ export {}
       transform(code, id) {
         // On ne cible que le code JS compilé issu des .vue (le bloc <script>+<template>)
         // if (!id.endsWith(".vue") && !id.includes(".vue?vue&type=")) return;
-        if (id.includes("node_modules")) return;
+        if (!shouldTransformComponents(id, options.transformInclude)) return;
 
         return injectComponents(code, id, components);
       },
