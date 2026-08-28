@@ -6,16 +6,6 @@ await build();
 console.log("BUILD_OK");
 `;
 
-// ssr: false in both fixtures below: with SSR on (the default), `build()`
-// currently crashes in a *later*, unrelated step — production.ts's
-// `await import(".../manifest.json")` has no `{ with: { type: "json" } }"`
-// attribute, which Node now requires. That's a real, separate bug (not
-// #014 or #017, not one of the 19 tracked here) — flagged in the report,
-// deliberately not fixed. Disabling SSR sidesteps it so these two tests can
-// still exercise the actual regressions they're about: the entry array
-// (#014) and the vue-tsc dependency (#017) are both resolved well before
-// that later crash would occur.
-
 describe("regression #014 - building a minimal app (no pages/plugins/composables) does not fail", () => {
   it('does not throw "No input files"', () => {
     const dir = createFixtureDir("bug014-");
@@ -74,6 +64,36 @@ export default defineConfig({ ssr: false });
         result.status,
         `build() failed:\n${result.stdout}\n${result.stderr}`,
       ).toBe(0);
+      expect(result.stdout).toContain("BUILD_OK");
+    } finally {
+      cleanupFixtureDir(dir);
+    }
+  }, 120_000);
+});
+
+describe("SSR production manifest", () => {
+  it("builds without importing the Vite manifest as a JSON module", () => {
+    const dir = createFixtureDir("ssr-manifest-");
+    try {
+      linkWorkspacePackage(dir, "runable", "packages/runable");
+      linkNodeModule(dir, "vue");
+      linkNodeModule(dir, "vue-router");
+      writeFixtureFile(
+        dir,
+        "runable.config.ts",
+        `import { defineConfig } from "runable";
+export default defineConfig({ ssr: true });
+`,
+      );
+      writeFixtureFile(dir, "app/app.vue", `<template><main>SSR app</main></template>\n`);
+      writeFixtureFile(dir, "app/pages/index.vue", `<template><div>Home page</div></template>\n`);
+
+      const result = runInFixture(dir, BUILD_SCRIPT, { timeout: 120_000 });
+      const output = result.stdout + result.stderr;
+
+      expect(output).not.toContain("ERR_IMPORT_ATTRIBUTE_MISSING");
+      expect(output).not.toMatch(/Invalid input options/);
+      expect(result.status, `build() failed:\n${output}`).toBe(0);
       expect(result.stdout).toContain("BUILD_OK");
     } finally {
       cleanupFixtureDir(dir);

@@ -1,8 +1,9 @@
+import { readFile } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
 
 import cloneDeep from "lodash/cloneDeep.js";
 import merge from "lodash/merge.js";
-import { Manifest, build as viteBuilder } from "vite";
+import { type Manifest, build as viteBuilder } from "vite";
 
 import { useConfig } from "@/config/index.js";
 import { atomicWriteFile, normalizeDir } from "@/utils/index.js";
@@ -37,7 +38,6 @@ export async function buildProduction() {
 
       rolldownOptions: {
         input: resolve(import.meta.dirname, "../../entry/client.js"),
-        manifest: true,
         output: {
           entryFileNames: "assets/[name]-[hash].js",
           chunkFileNames: "assets/[name]-[hash].js",
@@ -118,9 +118,9 @@ export async function buildProduction() {
 
     // Vite's own build manifest (entry -> emitted file map), produced
     // because `manifest: true` was set on `servrConfig` above.
-    const vManifest = (await import(
-      join(distdir, "server", ".vite/manifest.json")
-    )) as Manifest;
+    const vManifest = JSON.parse(
+      await readFile(join(distdir, "server", ".vite/manifest.json"), "utf8"),
+    ) as Manifest;
 
     // Find the emitted file for the switcher entry so it can be
     // imported at runtime to dispatch requests to the SSR server.
