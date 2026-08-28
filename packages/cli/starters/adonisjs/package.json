@@ -3,29 +3,49 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch bin/server.ts",
-    "build": "runable build",
+    "preprepare": "runable prepare",
+    "prepare": "node ace generate:manifest",
+    "dev": "node ace serve --watch",
+    "prebuild": "runable build",
+    "build": "node ace build",
     "app:prepare": "runable prepare",
+    "app:build": "runable build",
+    "start": "node build/bin/server.js",
+    "lint": "eslint .",
+    "format": "prettier --write .",
     "typecheck": "tsc --noEmit"
   },
   "imports": {
-    "#config/*": "./config/*.js",
-    "#start/*": "./start/*.js"
+    "#generated/*": "./.adonisjs/server/*.js",
+    "#start/*": "./start/*.js",
+    "#config/*": "./config/*.js"
   },
   "dependencies": {
-    "@adonisjs/core": "^7.3.5",
+    "@adonisjs/core": "^7.5.0",
     "reflect-metadata": "^0.2.2",
     "runable": "latest",
     "vue": "^3.5.40",
     "vue-router": "^5.2.0"
   },
   "devDependencies": {
+    "@adonisjs/assembler": "^8.5.0",
+    "@adonisjs/eslint-config": "^3.1.0",
+    "@adonisjs/prettier-config": "^1.5.0",
+    "@adonisjs/tsconfig": "^2.0.0",
+    "@poppinss/ts-exec": "^1.4.4",
     "@runablejs/cli": "latest",
-    "@types/node": "^24.13.3",
-    "tsx": "^4.23.12",
+    "@types/node": "~26.2.0",
+    "eslint": "^10.9.0",
+    "prettier": "^3.9.6",
     "typescript": "~6.0.3"
   },
   "engines": {
     "node": ">=24.0.0"
-  }
+  },
+  "allowScripts": {
+    "@swc/core": true,
+    "esbuild": true,
+    "fsevents": true
+  },
+  "prettier": "@adonisjs/prettier-config"
 }
