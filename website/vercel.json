@@ -7,7 +7,7 @@
   "outputDirectory": ".output/client",
   "functions": {
     "api/index.ts": {
-      "includeFiles": ".output/**",
+      "includeFiles": ".output/**/*",
       "maxDuration": 60
     }
   },
