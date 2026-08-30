@@ -3,7 +3,7 @@
   "framework": null,
   "installCommand": "pnpm install --no-frozen-lockfile",
   "devCommand": "pnpm website:dev",
-  "buildCommand": "pnpm build && pnpm website:build",
+  "buildCommand": "pnpm --filter runable build && pnpm run website:build",
   "outputDirectory": ".output/client",
   "functions": {
     "api/index.ts": {
