@@ -6,7 +6,7 @@
   "buildCommand": "pnpm build && pnpm website:build",
   "outputDirectory": "website/.output/client",
   "functions": {
-    "api/index.ts": {
+    "vercel/index.ts": {
       "includeFiles": "website/.output/**",
       "maxDuration": 60
     }
@@ -17,7 +17,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/api/index"
+      "dest": "/vercel/index"
     }
   ]
 }

@@ -41,11 +41,4 @@ app.get("/api/health", (req, res) => {
 
 app.use(express());
 
-const port = Number(process.env.PORT ?? 3000);
-app.listen(port, () =>
-  console.log(
-    `Application Express SSR disponible sur http://localhost:${port}`,
-  ),
-);
-
 export default app;
