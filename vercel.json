@@ -1,0 +1,23 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "pnpm install --no-frozen-lockfile",
+  "devCommand": "pnpm website:dev",
+  "buildCommand": "pnpm build && pnpm website:build",
+  "outputDirectory": "website/.output/client",
+  "functions": {
+    "api/index.ts": {
+      "includeFiles": "website/.output/**",
+      "maxDuration": 60
+    }
+  },
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/website/api/index"
+    }
+  ]
+}
