@@ -1,4 +1,5 @@
-import { isAbsolute, join, resolve } from "node:path";
+import { readFile, stat } from "node:fs/promises";
+import { extname, isAbsolute, join, resolve, sep } from "node:path";
 import { Readable } from "node:stream";
 import type {
   IncomingMessage,
@@ -10,6 +11,7 @@ import type { ViteDevServer } from "vite";
 
 import { getIndexHtml } from "./html.js";
 import { useConfig } from "../config/load.js";
+import { isRunableProduction } from "../utils/mode.js";
 
 type HttpBody =
   | string
@@ -30,15 +32,77 @@ export type RequestResult =
       status?: 301 | 302 | 307 | 308;
     };
 
+const CONTENT_TYPES: Record<string, string> = {
+  ".css": "text/css; charset=utf-8",
+  ".gif": "image/gif",
+  ".html": "text/html; charset=utf-8",
+  ".ico": "image/x-icon",
+  ".jpeg": "image/jpeg",
+  ".jpg": "image/jpeg",
+  ".js": "text/javascript; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".map": "application/json; charset=utf-8",
+  ".mjs": "text/javascript; charset=utf-8",
+  ".png": "image/png",
+  ".svg": "image/svg+xml",
+  ".webp": "image/webp",
+  ".woff": "font/woff",
+  ".woff2": "font/woff2",
+};
+
+/** Reads a generated client asset in production, or returns undefined for an application route. */
+export async function readProductionAsset({
+  distdir,
+  url,
+  method = "GET",
+}: {
+  distdir: string;
+  url: string;
+  method?: string;
+}): Promise<RequestResult | undefined> {
+  if (method !== "GET" && method !== "HEAD") return;
+
+  let pathname: string;
+  try {
+    pathname = decodeURIComponent(new URL(url, "http://runable.local").pathname);
+  } catch {
+    return;
+  }
+
+  const clientDir = resolve(distdir, "client");
+  const file = resolve(clientDir, pathname.replace(/^\/+/, ""));
+  if (file === clientDir || !file.startsWith(`${clientDir}${sep}`)) return;
+
+  try {
+    const info = await stat(file);
+    if (!info.isFile()) return;
+
+    return {
+      content: method === "HEAD" ? null : await readFile(file),
+      status: 200,
+      type: CONTENT_TYPES[extname(file).toLowerCase()] ??
+        "application/octet-stream",
+      headers: {
+        "Content-Length": info.size,
+      },
+    };
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return;
+    throw error;
+  }
+}
+
 // ---------------------------------------------------------------------------
-// Core, runtime-agnostic: ne dépend d'aucune API réseau, juste d'une URL.
+// Shared request pipeline used by both Node and Fetch API adapters.
 // ---------------------------------------------------------------------------
 async function viteRequest({
   vite,
   url,
+  method,
 }: {
   vite?: ViteDevServer | null;
   url: string;
+  method?: string;
 }): Promise<RequestResult> {
   const config = useConfig();
   let entryPath = resolve(import.meta.dirname, "../entry/switcher.js");
@@ -47,6 +111,15 @@ async function viteRequest({
 
   try {
     let render: (typeof import("../entry/switcher.js"))["render"] | undefined;
+
+    if (!vite && isRunableProduction()) {
+      const asset = await readProductionAsset({
+        distdir: config.distdir,
+        url,
+        method,
+      });
+      if (asset) return asset;
+    }
 
     if (vite) {
       // --- Dev : lecture dynamique via le serveur Vite ---
@@ -205,13 +278,16 @@ export async function requestNode({
   req: IncomingMessage;
   res: ServerResponse;
 }): Promise<void> {
-  const result = await viteRequest({ vite: runableApp, url: req.url! });
+  const result = await viteRequest({
+    vite: runableApp,
+    url: req.url!,
+    method: req.method,
+  });
   sendRequestResult(result, res);
 }
 
 // ---------------------------------------------------------------------------
-// Adaptateur Web standard (Bun, Deno, Cloudflare Workers, Next.js Edge,
-// Hono, SvelteKit, Remix, h3 hors-Node...) — zéro dépendance Node.
+// Standard Fetch API adapter (Bun, Deno and Hono outside Node bindings).
 // ---------------------------------------------------------------------------
 export async function requestWeb({
   runableApp,
@@ -220,6 +296,10 @@ export async function requestWeb({
   runableApp?: ViteDevServer | null;
   req: globalThis.Request;
 }): Promise<globalThis.Response> {
-  const result = await viteRequest({ vite: runableApp, url: req.url });
+  const result = await viteRequest({
+    vite: runableApp,
+    url: req.url,
+    method: req.method,
+  });
   return toWebResponse(result);
 }

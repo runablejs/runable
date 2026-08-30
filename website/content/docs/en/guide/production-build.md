@@ -31,7 +31,7 @@ Add project commands:
 {
   "scripts": {
     "build": "tsx scripts/build.ts",
-    "start": "NODE_ENV=production tsx server.ts"
+    "start": "RUNABLE_MODE=production tsx server.ts"
   }
 }
 ```
@@ -71,7 +71,7 @@ server.use(express());
 server.listen(Number(process.env.PORT ?? 3000));
 ```
 
-With `NODE_ENV=production`, the adapter loads configuration but does not create a Vite server. It renders the application from `.output`.
+With `RUNABLE_MODE=production`, the adapter loads configuration but does not create a Vite server. It serves generated client assets and renders the application from `.output`. When `RUNABLE_MODE` is unset, Runable uses development mode.
 
 ## Prepare deployment
 
@@ -82,7 +82,7 @@ Copy into the production environment:
 - `runable.config.ts` or its compiled version;
 - required environment variables.
 
-Always test the startup command with `NODE_ENV=production` before deployment.
+Always test the startup command with `RUNABLE_MODE=production` before deployment.
 
 ::u-tip
 ---

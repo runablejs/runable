@@ -138,7 +138,7 @@ export default defineConfig({
   ssr: true,
 
   vite: {
-    ...(process.env.NODE_ENV === "production"
+    ...(process.env.RUNABLE_MODE === "production"
       ? { ssr: { noExternal: true, external: ["better-sqlite3"] } }
       : {}),
 

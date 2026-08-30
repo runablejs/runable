@@ -5,6 +5,7 @@ import vue from "@vitejs/plugin-vue";
 
 import { useAllConfigs } from "@/config/load.js";
 import { resolveScanDirs_v2 } from "@/utils/dir/index.js";
+import { isRunableProduction } from "@/utils/mode.js";
 
 import plugin, { type PluginOptions } from "../plugin/unplugin.js";
 import appVue from "../app-vue/unplugin.js";
@@ -100,7 +101,7 @@ export function buildViteConfig(): UserConfig {
     },
     appType: "custom",
     ssr: {
-      noExternal: process.env.NODE_ENV === "development" ? ["vue-router"] : [],
+      noExternal: !isRunableProduction() ? ["vue-router"] : [],
     },
     root: process.cwd(),
     runableConfig: main,

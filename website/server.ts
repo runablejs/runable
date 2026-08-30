@@ -12,7 +12,7 @@ let documentationPages: Map<string, DocPage> | undefined;
 app.get("/raw/docs/*", async (context, next) => {
   // Production builds expose pre-generated files at this path. Let Runable's
   // static handler serve them instead of reading source files at runtime.
-  if (process.env.NODE_ENV === "production") return next();
+  if (process.env.RUNABLE_MODE === "production") return next();
 
   let slug: string;
   try {
