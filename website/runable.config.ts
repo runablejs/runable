@@ -100,6 +100,8 @@ function defineModulesCollection() {
 }
 
 export default defineConfig({
+  distdir: process.env.VERCEL ? "vercel-output" : ".output",
+
   head: {
     titleTemplate: "%s %separator %siteName",
     templateParams: {

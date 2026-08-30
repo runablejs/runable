@@ -4,10 +4,10 @@
   "installCommand": "pnpm install --no-frozen-lockfile",
   "devCommand": "pnpm website:dev",
   "buildCommand": "pnpm --filter runable build && pnpm run website:build",
-  "outputDirectory": ".output/client",
+  "outputDirectory": "vercel-output/client",
   "functions": {
     "api/index.ts": {
-      "includeFiles": ".output/**",
+      "includeFiles": "vercel-output/**",
       "maxDuration": 60
     }
   },
