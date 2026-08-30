@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch dev.ts",
+    "dev": "tsx watch express.ts",
     "app:build": "NODE_ENV=production tsx ./build.ts",
+    "build": "NODE_ENV=production tsx ./build.ts",
     "deploy:cloudflare": "pnpm app:build && wrangler deploy"
   },
   "dependencies": {
