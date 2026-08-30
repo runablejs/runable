@@ -6,7 +6,7 @@ import { useConfig, build, prepare } from "runable";
 import { generateLlmsArtifacts } from "./scripts/llms/generate.js";
 import { SITE_URL } from "./app/lib/site-config.js";
 
-await prepare();
+await prepare(true);
 await build();
 
 const config = useConfig();
