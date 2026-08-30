@@ -4,10 +4,10 @@
   "installCommand": "pnpm install --no-frozen-lockfile",
   "devCommand": "pnpm website:dev",
   "buildCommand": "pnpm build && pnpm website:build",
-  "outputDirectory": "website/.output/client",
+  "outputDirectory": ".output/client",
   "functions": {
     "api/index.ts": {
-      "includeFiles": "website/.output/**",
+      "includeFiles": ".output/**",
       "maxDuration": 60
     }
   },
