@@ -122,6 +122,13 @@ export default defineConfig({
       { rel: "icon", href: "/favicon.svg" },
       { rel: "describedby", href: `${SITE_URL}/llms.txt` },
     ],
+
+    script: [
+      {
+        src: "https://analytics.runablejs.com/script.js",
+        "data-website-id": "e4a19f03-efc1-4c28-8dfe-b4487114153a",
+      },
+    ],
   },
 
   components: [
