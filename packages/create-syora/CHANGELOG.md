@@ -1,5 +1,12 @@
 # create-runable
 
+## 1.0.0-alpha.18
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @runablejs/cli@1.0.0-alpha.18
+
 ## 1.0.0-alpha.17
 
 ### Patch Changes
