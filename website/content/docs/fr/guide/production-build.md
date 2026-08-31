@@ -21,7 +21,7 @@ Ajoutez les commandes du projet :
 {
   "scripts": {
     "build": "tsx scripts/build.ts",
-    "start": "NODE_ENV=production tsx server.ts"
+    "start": "RUNABLE_MODE=production tsx server.ts"
   }
 }
 ```
@@ -61,7 +61,7 @@ server.use(express());
 server.listen(Number(process.env.PORT ?? 3000));
 ```
 
-Avec `NODE_ENV=production`, l'adaptateur charge la configuration mais ne crée pas de serveur Vite. Il rend l'application depuis `.output`.
+Avec `RUNABLE_MODE=production`, l'adaptateur charge la configuration mais ne crée pas de serveur Vite. Il sert les ressources client générées et effectue le rendu depuis `.output`. Lorsque `RUNABLE_MODE` n'est pas défini, Runable utilise le mode développement.
 
 ## Préparer le déploiement
 
@@ -72,7 +72,7 @@ Copiez dans l'environnement de production :
 - `runable.config.ts` ou sa version compilée ;
 - les variables d'environnement nécessaires.
 
-Testez toujours la commande de démarrage avec `NODE_ENV=production` avant le déploiement.
+Testez toujours la commande de démarrage avec `RUNABLE_MODE=production` avant le déploiement.
 
 ::u-tip
 ---

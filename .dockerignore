@@ -1,0 +1,11 @@
+.git
+.github
+.changeset
+.vercel
+**/.app
+**/.output
+**/vercel-output
+**/dist
+**/node_modules
+bugs
+coverage

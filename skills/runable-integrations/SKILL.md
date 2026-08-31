@@ -137,6 +137,8 @@ const runableApp = createRunableApp();
 app.use(express({ runableApp }));
 ```
 
+In production, the official adapters and the low-level `requestNode()` / `requestWeb()` primitives serve generated assets from `distdir/client` before rendering application routes. Do not add a second static-file handler for `.output/client`.
+
 ## Common mistakes
 
 - Applying one adapter's ordering rule to another without checking how that adapter implements fallback handling (e.g. assuming Hono needs the same strict "mount last" order as Express, or that Express will defer to a later route like Hono does).

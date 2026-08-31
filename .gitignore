@@ -64,3 +64,4 @@ dist-ssr/
 *.key
 
 bugs
+.vercel

@@ -10,7 +10,7 @@
     "build": "node ace build",
     "app:prepare": "runable prepare",
     "app:build": "runable build",
-    "start": "node build/bin/server.js",
+    "start": "RUNABLE_MODE=production node build/bin/server.js",
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit"

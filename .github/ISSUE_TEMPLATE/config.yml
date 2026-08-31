@@ -1,0 +1,10 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Questions & help
+    url: https://github.com/runablejs/runable/discussions
+    about: Ask questions and get help using Runable.
+
+  - name: Documentation
+    url: https://runablejs.com
+    about: Read the Runable documentation.

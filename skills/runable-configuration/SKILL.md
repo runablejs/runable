@@ -87,7 +87,7 @@ With the default `distdir`, this writes to `.output/`:
 
 `manifest.js` connects the running server to the built client template and (when SSR is enabled) the compiled server entry. The production server needs it — if startup fails looking for it, run the build or check the configured `distdir`.
 
-The project's own `server.ts` (or equivalent entry point) doesn't change for production; with `NODE_ENV=production`, the Runable adapter loads configuration without starting a Vite dev server and renders from `.output` instead. Always test the production startup command locally with `NODE_ENV=production` before deploying.
+The project's own `server.ts` (or equivalent entry point) doesn't change for production; with `RUNABLE_MODE=production`, the Runable adapter loads configuration without starting a Vite dev server and renders from `.output` instead. When `RUNABLE_MODE` is unset, Runable uses development mode. Always test the production startup command locally with `RUNABLE_MODE=production` before deploying.
 
 Deployment needs: `.output/`, the server and its runtime dependencies, `runable.config.ts` (or its compiled form), and the required environment variables.
 
@@ -96,7 +96,7 @@ Deployment needs: `.output/`, the server and its runtime dependencies, `runable.
 - Assuming a value is secret because it isn't referenced directly in a template — any `*_PUBLIC_*` variable is in the client bundle regardless of where it's used.
 - Reading a freshly added/renamed env var without restarting the dev server (the `.app/runtime.d.ts` declarations are stale until then).
 - Adding a `css/` directory and assuming Runable scans it like `app/pages/` or `app/components/` — it must be listed explicitly in `css`.
-- Deploying without `.output/manifest.js`, or without having tested the `NODE_ENV=production` startup command first.
+- Deploying without `.output/manifest.js`, or without having tested the `RUNABLE_MODE=production` startup command first.
 - Hardcoding a project's build/dev command instead of checking `package.json`'s `scripts`.
 
 ## When another skill is needed

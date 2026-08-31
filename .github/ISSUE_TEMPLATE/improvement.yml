@@ -1,0 +1,76 @@
+name: Improvement
+description: Propose an improvement or refactoring to existing Runable behavior
+title: "refactor: "
+labels:
+  - enhancement
+
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Describe the existing behavior, architecture, or implementation.
+    validations:
+      required: true
+
+  - type: textarea
+    id: limitation
+    attributes:
+      label: Current limitation
+      description: What makes the current implementation difficult, fragile, duplicated, or incomplete?
+    validations:
+      required: true
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: Describe the desired end state without prescribing unnecessary implementation details.
+    validations:
+      required: true
+
+  - type: textarea
+    id: directions
+    attributes:
+      label: Possible directions
+      description: Optional approaches or architectural directions worth investigating.
+
+  - type: textarea
+    id: requirements
+    attributes:
+      label: Requirements
+      description: What properties must a solution preserve?
+      placeholder: |
+        - Preserve backward compatibility
+        - Do not introduce...
+        - Continue supporting...
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: non-goals
+    attributes:
+      label: Non-goals
+      description: Explicitly describe what this issue should not attempt to solve.
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for related work.
+          required: true

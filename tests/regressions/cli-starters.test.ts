@@ -69,6 +69,9 @@ describe("CLI starter templates", () => {
 
       if (framework === "adonisjs") {
         expect(pkg.scripts.dev).toBe("node ace serve --watch");
+        expect(pkg.scripts.start).toBe(
+          "RUNABLE_MODE=production node build/bin/server.js",
+        );
         expect(pkg.scripts.lint).toBe("eslint .");
         expect(pkg.scripts.format).toBe("prettier --write .");
         expect(pkg.devDependencies).toHaveProperty("eslint");

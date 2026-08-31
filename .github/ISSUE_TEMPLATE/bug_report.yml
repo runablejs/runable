@@ -1,0 +1,104 @@
+name: Bug report
+description: Report a reproducible problem in Runable
+title: "bug: "
+labels:
+  - bug
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug.
+
+        Please provide enough information for us to reproduce and diagnose the issue.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Describe what you were trying to do and where the issue occurs.
+      placeholder: I was trying to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: bug
+    attributes:
+      label: Bug
+      description: Describe the actual behavior and why it is incorrect.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Provide the smallest possible repository, code sample, or exact commands.
+    validations:
+      required: true
+
+  - type: input
+    id: runable-version
+    attributes:
+      label: Runable version
+      placeholder: e.g. 1.0.0-alpha.3
+    validations:
+      required: true
+
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js version
+      placeholder: e.g. 22.14.0
+    validations:
+      required: true
+
+  - type: input
+    id: package-manager
+    attributes:
+      label: Package manager
+      placeholder: e.g. pnpm 10.15.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Linux
+        - macOS
+        - Windows
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or error output
+      description: Paste relevant logs or stack traces.
+      render: shell
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: I can reproduce this issue with the version reported above.
+          required: true
