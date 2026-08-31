@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "pnpm --filter './packages/**' build",
-    "play:prepare": "pnpm --filter runable-playground prepare",
     "play:dev": "pnpm --filter runable-playground dev",
+    "website:prepare": "pnpm --filter runable-playground website:prepare",
     "website:dev": "pnpm --filter runable-website website:dev",
     "website:build": "pnpm --filter runable-website website:build",
     "website:start": "pnpm --filter runable-website website:start",
