@@ -15,7 +15,10 @@ app.get(
   async (req: Request, res: Response, next: NextFunction) => {
     // Production builds expose pre-generated files at this path. Let Runable's
     // static handler serve them instead of reading source files at runtime.
-    if (process.env.RUNABLE_MODE === "production") return next();
+    if (process.env.RUNABLE_MODE === "production") {
+      res.setHeader("Content-Type", "text/markdown; charset=utf-8");
+      return next();
+    }
 
     let slug: string;
     try {
