@@ -1,5 +1,13 @@
 # @runablejs/cli
 
+## 1.0.0-alpha.19
+
+### Patch Changes
+
+- [#77](https://github.com/runablejs/runable/pull/77) [`c72c87f`](https://github.com/runablejs/runable/commit/c72c87f6736701f9711a74f81b542c6938c6fc18) Thanks [@domutala](https://github.com/domutala)! - Use `RUNABLE_MODE` instead of `NODE_ENV` to select Runable's production runtime.
+- Updated dependencies [[`c72c87f`](https://github.com/runablejs/runable/commit/c72c87f6736701f9711a74f81b542c6938c6fc18), [`83d018f`](https://github.com/runablejs/runable/commit/83d018fe15820e63d13885bc9de0055682396f06), [`c72c87f`](https://github.com/runablejs/runable/commit/c72c87f6736701f9711a74f81b542c6938c6fc18)]:
+  - runable@1.0.0-alpha.19
+
 ## 1.0.0-alpha.18
 
 ### Patch Changes
