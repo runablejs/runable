@@ -33,6 +33,26 @@ describe("production adapter assets", () => {
     }
   });
 
+  it("serves text assets inline with a text MIME type", async () => {
+    const distdir = createFixtureDir("production-text-assets-");
+
+    try {
+      writeFixtureFile(distdir, "client/llms.txt", "Runable documentation");
+
+      const result = await readProductionAsset({
+        distdir,
+        url: "/llms.txt",
+      });
+
+      expect(result).toMatchObject({
+        status: 200,
+        type: "text/plain; charset=utf-8",
+      });
+    } finally {
+      cleanupFixtureDir(distdir);
+    }
+  });
+
   it("supports HEAD and leaves routes and unsafe paths to the renderer", async () => {
     const distdir = createFixtureDir("production-assets-head-");
 
