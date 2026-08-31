@@ -6,9 +6,8 @@
   "scripts": {
     "website:dev": "tsx watch express.ts",
     "website:app:build": "RUNABLE_MODE=production tsx ./build.ts",
-    "website:build": "tsdown",
-    "website:build0": "tsdown && pnpm website:app:build",
-    "start": "RUNABLE_MODE=production tsx .output/runtime/start.mjs"
+    "website:build": "tsdown && pnpm website:app:build",
+    "start": "node .output/runtime/start.mjs"
   },
   "dependencies": {
     "@docsearch/css": "^5.0.3",
