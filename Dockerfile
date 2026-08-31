@@ -24,15 +24,15 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
 COPY packages/runable packages/runable
 COPY website website
 
-RUN pnpm --filter runable build \
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
+  pnpm --filter runable build \
+  && pnpm --filter runable-website run website:app:build \
   && pnpm --filter runable-website run website:build \
-  && pnpm --filter runable-website run server:build \
   && pnpm --filter runable-website deploy --prod --legacy /runtime \
+  && pnpm --filter runable deploy --prod --legacy /runable-runtime \
   && rm -f /runtime/.env /runtime/.env.* \
-  && rm /runtime/node_modules/runable \
-  && mkdir -p /runtime/node_modules/runable \
-  && cp packages/runable/package.json /runtime/node_modules/runable/package.json \
-  && cp -R packages/runable/dist /runtime/node_modules/runable/dist
+  && rm -f /runtime/node_modules/runable \
+  && mv /runable-runtime /runtime/node_modules/runable
 
 FROM node:24-bookworm-slim AS runtime
 

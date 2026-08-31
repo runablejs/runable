@@ -51,7 +51,6 @@
     "@tsconfig/node24": "^24.0.4",
     "@types/express": "catalog:",
     "@types/hast": "^3.0.5",
-    "@types/node": "^24.13.3",
     "@vue/tsconfig": "catalog:",
     "extend": "^3.0.2",
     "npm-run-all2": "^9.0.2",
@@ -61,7 +60,8 @@
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vue-tsc": "^3.3.7",
-    "wrangler": "^4.125.0"
+    "@types/node": "^26.4.0",
+    "vitest": "~4.1.0"
   },
   "engines": {
     "node": "^22.18.0 || >=24.12.0"
