@@ -7,6 +7,7 @@
     "play:dev": "pnpm --filter runable-playground dev",
     "website:dev": "pnpm --filter runable-website website:dev",
     "website:build": "pnpm --filter runable-website website:build",
+    "website:start": "pnpm --filter runable-website website:start",
     "lint": "pnpm -r --if-present run lint",
     "typecheck": "pnpm -r --if-present run typecheck && tsc --noEmit -p tests/tsconfig.json && tsc --noEmit -p tests/tsconfig.vitest-config.json",
     "test": "vitest run",
