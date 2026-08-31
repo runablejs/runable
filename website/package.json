@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "website:prepare": "runable prepare",
+    "website:prepare": "RUNABLE_MODE=production tsx ./prepare.ts",
     "website:dev": "tsx watch express.ts",
     "website:app:build": "RUNABLE_MODE=production tsx ./build.ts",
     "website:build": "tsdown && pnpm website:app:build",
