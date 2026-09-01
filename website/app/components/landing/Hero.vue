@@ -24,7 +24,7 @@ onMounted(() => {
   >
     <div aria-hidden="true" class="absolute inset-0 -z-20 bg-background" />
 
-    <div
+    <!-- <div
       aria-hidden="true"
       class="absolute inset-0 -z-10 opacity-10"
       style="
@@ -34,7 +34,7 @@ onMounted(() => {
         background-size: 64px 64px;
         mask-image: linear-gradient(to bottom, black, transparent 90%);
       "
-    />
+    /> -->
     <div
       aria-hidden="true"
       class="absolute -right-40 top-12 -z-10 size-160 rounded-full bg-accent/10 blur-3xl"
