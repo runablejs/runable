@@ -111,7 +111,7 @@ export default defineConfig({
     meta: [
       {
         name: "description",
-        content: "Build the Vue app you want. Keep the backend you chose",
+        content: "All the Vue conventions. Your server runtime.",
       },
       {
         name: "algolia-site-verification",

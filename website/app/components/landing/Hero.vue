@@ -35,10 +35,10 @@ onMounted(() => {
         mask-image: linear-gradient(to bottom, black, transparent 90%);
       "
     /> -->
-    <div
+    <!-- <div
       aria-hidden="true"
       class="absolute -right-40 top-12 -z-10 size-160 rounded-full bg-accent/10 blur-3xl"
-    />
+    /> -->
 
     <div
       class="mx-auto grid w-full max-w-7xl flex-1 items-center gap-16 px-6 py-16 sm:px-10 lg:grid-cols-[1.12fr_0.88fr] lg:px-12 lg:py-20"
@@ -112,17 +112,13 @@ onMounted(() => {
       </div>
 
       <div class="relative hidden lg:block">
-        <div
+        <!-- <div
           aria-hidden="true"
           class="absolute -inset-6 border border-dashed border-border"
-        />
+        /> -->
         <div
           aria-hidden="true"
           class="absolute -left-6 -top-6 size-3 bg-accent"
-        />
-        <div
-          aria-hidden="true"
-          class="absolute -bottom-6 -right-6 size-3 bg-accent"
         />
 
         <div
