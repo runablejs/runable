@@ -72,7 +72,7 @@ const table = useTable({
 </script>
 
 <template>
-  <div class="table-container border rounded-md">
+  <div class="table-container border">
     <UTable>
       <UTableHeader>
         <UTableRow
