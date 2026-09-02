@@ -72,7 +72,7 @@ const year = new Date().getFullYear();
             </a>
 
             <a
-              href="https://bsky.app/profile/runablejs.bsky.social"
+              href="https://bsky.app/profile/runablejs.com"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Runable on Bluesky"
