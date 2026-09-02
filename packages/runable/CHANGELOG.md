@@ -1,5 +1,11 @@
 # runable
 
+## 1.0.0-alpha.21
+
+### Patch Changes
+
+- [#82](https://github.com/runablejs/runable/pull/82) [`ad00d67`](https://github.com/runablejs/runable/commit/ad00d67943606c0e08875b99eaa7eb2a870e9498) Thanks [@domutala](https://github.com/domutala)! - Keep root lifecycle hooks working when the application renders through SSR or updates through HMR.
+
 ## 1.0.0-alpha.20
 
 ### Patch Changes
