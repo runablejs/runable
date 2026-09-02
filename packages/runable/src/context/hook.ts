@@ -1,5 +1,4 @@
 import type { App, ComponentPublicInstance } from "vue";
-import { useApp } from "../app/composables/context.js";
 import type { AppContext } from "./context.js";
 
 export type StripOnPrefix<T extends string> = T extends `on${infer Rest}`
@@ -87,13 +86,14 @@ export function createHooks(): HookSystem {
 
 export function installLifecycleBridge(app: App, hooks: HookSystem) {
   const mixin: Record<string, (this: ComponentPublicInstance) => unknown> = {};
+  const appContext = app as AppContext;
 
   for (const onHook of OPTIONS_HOOK_NAMES) {
     const key = toAppHookKey(onHook);
 
     mixin[toOptionName(onHook)] = function (this: ComponentPublicInstance) {
       if (this.$parent !== null) return;
-      return hooks.callHook(key, useApp());
+      return hooks.callHook(key, appContext);
     };
   }
 
@@ -108,7 +108,7 @@ export function installLifecycleBridge(app: App, hooks: HookSystem) {
  * whose name collides with one from another source.
  */
 export function registerHooks(
-  appCtx: ReturnType<typeof useApp>,
+  appCtx: AppContext,
   hooks: RuntimeHooks | RuntimeHooks[],
 ): void {
   for (const hookSet of Array.isArray(hooks) ? hooks : [hooks]) {

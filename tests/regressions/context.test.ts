@@ -5,6 +5,10 @@ import {
   callWithAppCtx,
   useVueApp,
 } from "../../packages/runable/src/context/context.js";
+import {
+  createHooks,
+  installLifecycleBridge,
+} from "../../packages/runable/src/context/hook.js";
 
 describe("SSR app context", () => {
   it("isolates concurrent application contexts", async () => {
@@ -24,5 +28,25 @@ describe("SSR app context", () => {
 
     expect(first).toBe(firstApp);
     expect(second).toBe(secondApp);
+  });
+
+  it("runs root lifecycle hooks without relying on the ambient context", async () => {
+    let mixin: Record<string, (this: { $parent: null }) => unknown> = {};
+    const app = {
+      mixin(value: typeof mixin) {
+        mixin = value;
+      },
+    } as unknown as App;
+    const hooks = createHooks();
+    let receivedApp: unknown;
+
+    hooks.hook("app:created", (appContext) => {
+      receivedApp = appContext;
+    });
+    installLifecycleBridge(app, hooks);
+
+    await mixin.created?.call({ $parent: null });
+
+    expect(receivedApp).toBe(app);
   });
 });
