@@ -46,7 +46,7 @@ onMounted(() => {
       <div>
         <div
           ref="metaRef"
-          class="sr-hidden mb-5 px-3 py-1 flex items-center gap-3 font-mono text-xs uppercase tracking-[0.18em] bg-accent text-accent-foreground w-max"
+          class="sr-hiddend mb-5 px-3 py-1 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.18em] bg-foreground text-background border-l-3 border-l-accent w-max"
           style="
             transition:
               opacity 250ms ease-out,

@@ -47,9 +47,9 @@ const year = new Date().getFullYear();
         <div class="max-w-md">
           <RunableLink to="/" class="inline-flex items-center gap-3">
             <span
-              class="flex size-11 items-center justify-center bg-accent text-accent-foreground"
+              class="flex size-8 items-center justify-center bg-foreground text-background"
             >
-              <div class="size-7">
+              <div class="size-8/12">
                 <Logo />
               </div>
             </span>
