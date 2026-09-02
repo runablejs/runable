@@ -131,200 +131,189 @@ const capabilityCount = groups.reduce(
 <template>
   <section
     aria-labelledby="capabilities-heading"
-    class="relative w-full border-b border-border bg-muted/20 dark:bg-muted/5"
+    class="relative overflow-hidden border-b border-border bg-background"
   >
-    <div class="mx-auto max-w-7xl px-10 py-32 md:py-40">
+    <div
+      aria-hidden="true"
+      class="absolute inset-x-0 top-0 h-[34rem] opacity-40 dark:opacity-20"
+      style="
+        background-image:
+          linear-gradient(to right, var(--border) 1px, transparent 1px),
+          linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+        background-size: 64px 64px;
+        mask-image: linear-gradient(to bottom, black, transparent 90%);
+      "
+    />
+
+    <div class="relative mx-auto max-w-7xl px-6 py-24 sm:px-10 md:py-36">
       <div
         ref="headingRef"
-        class="sr-hidden max-w-5xl"
+        class="sr-hidden grid gap-12 lg:grid-cols-3 lg:items-end"
         style="
           transition:
             opacity 300ms ease-out,
             transform 300ms ease-out;
         "
       >
-        <p class="mb-8 font-mono text-mono-sm tracking-[0.08em] text-tertiary">
-          03 — Capabilities
-        </p>
-        <h2 id="capabilities-heading" class="font-display text-h2 text-neutral">
-          Everything you expect from a Vue meta-framework.<br
-            class="hidden md:block"
-          />
-          <em class="font-display italic text-accent"
-            >None of the backend lock-in.</em
+        <div class="lg:col-span-2">
+          <p
+            class="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground"
           >
-        </h2>
-        <p class="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-          Runable connects the repetitive pieces of a modern Vue application so
-          you can focus on the product—and still control the server beneath it.
-        </p>
-      </div>
-
-      <div ref="groupsRef" class="mt-20 space-y-16">
-        <div
-          v-for="(group, groupIndex) in groups"
-          :key="group.ref"
-          data-capability-group
-          class="sr-hidden"
-          style="
-            transition:
-              opacity 250ms ease-out,
-              transform 250ms ease-out;
-          "
-        >
-          <div
-            class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
+            03 — Capabilities
+          </p>
+          <h2
+            id="capabilities-heading"
+            class="mt-6 max-w-4xl font-display text-h2 text-neutral"
           >
-            <div>
-              <div class="mb-3 flex items-center gap-3">
-                <span
-                  class="rounded-sm bg-accent px-2 py-1 font-mono text-xs font-bold text-accent-foreground"
-                >
-                  {{ group.ref }}
-                </span>
-                <span
-                  class="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground"
-                >
-                  {{ group.label }}
-                </span>
-              </div>
-              <h3 class="font-display text-2xl font-semibold tracking-tight">
-                {{ group.title }}
-              </h3>
-            </div>
-            <p
-              class="max-w-lg text-sm leading-relaxed text-muted-foreground sm:text-right"
+            One framework layer.<br />
+            <em class="font-display italic text-accent"
+              >Everything connected.</em
             >
-              {{ group.description }}
-            </p>
-          </div>
-
-          <div class="grid gap-3 lg:grid-cols-[1.05fr_1.95fr]">
-            <article
-              class="group/featured relative min-h-80 overflow-hidden rounded-md border border-border bg-background p-8 transition-all duration-fast ease-default hover:-translate-y-px hover:border-strong dark:bg-muted/20"
-              :class="{ 'lg:order-2': groupIndex % 2 === 1 }"
-            >
-              <div
-                aria-hidden="true"
-                class="absolute inset-0 opacity-[0.045] dark:opacity-[0.08]"
-                style="
-                  background-image:
-                    linear-gradient(
-                      to right,
-                      currentColor 1px,
-                      transparent 1px
-                    ),
-                    linear-gradient(
-                      to bottom,
-                      currentColor 1px,
-                      transparent 1px
-                    );
-                  background-size: 32px 32px;
-                  mask-image: linear-gradient(
-                    to bottom left,
-                    black,
-                    transparent 75%
-                  );
-                "
-              />
-              <div
-                aria-hidden="true"
-                class="absolute -right-16 -top-16 size-48 rounded-full bg-accent/10 blur-3xl transition-transform duration-500 group-hover/featured:scale-125"
-              />
-              <span
-                aria-hidden="true"
-                class="absolute left-0 top-8 h-16 w-1 origin-top rounded-r-md bg-accent transition-transform group-hover/featured:scale-y-110"
-              />
-
-              <div class="relative flex h-full flex-col">
-                <div class="flex items-start justify-between">
-                  <div
-                    class="flex size-12 items-center justify-center rounded-md bg-accent text-accent-foreground shadow-lg shadow-accent/20"
-                  >
-                    <UIcon :name="group.items[0]!.icon" class="size-6" />
-                  </div>
-                  <span
-                    class="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground"
-                  >
-                    Featured / 0{{ groupIndex + 1 }}
-                  </span>
-                </div>
-
-                <div class="mt-auto pt-16">
-                  <h4
-                    class="max-w-sm font-display text-2xl font-semibold leading-tight"
-                  >
-                    {{ group.items[0]!.title }}
-                  </h4>
-                  <p
-                    class="mt-3 max-w-sm leading-relaxed text-muted-foreground"
-                  >
-                    {{ group.items[0]!.description }}
-                  </p>
-                  <div
-                    class="mt-7 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground"
-                  >
-                    <span class="size-1.5 rounded-full bg-accent" />
-                    Built into Runable core
-                  </div>
-                </div>
-              </div>
-            </article>
-
-            <div class="grid gap-3 sm:grid-cols-2">
-              <article
-                v-for="(item, itemIndex) in group.items.slice(1)"
-                :key="item.title"
-                class="group/item relative min-h-42 overflow-hidden rounded-md border border-border bg-background p-6 transition-all duration-fast ease-default hover:-translate-y-px hover:border-strong dark:bg-muted/20"
-              >
-                <span
-                  aria-hidden="true"
-                  class="absolute left-0 top-6 h-10 w-0.75 origin-top rounded-r-md bg-accent/60 transition-all group-hover/item:scale-y-110 group-hover/item:bg-accent"
-                />
-                <div class="flex items-start justify-between gap-4">
-                  <div
-                    class="flex size-10 items-center justify-center rounded-md bg-accent/10 text-accent transition-colors group-hover/item:bg-accent group-hover/item:text-accent-foreground"
-                  >
-                    <UIcon :name="item.icon" class="size-5" />
-                  </div>
-                  <span class="font-mono text-[10px] text-muted-foreground/70">
-                    0{{ itemIndex + 2 }}
-                  </span>
-                </div>
-                <h4
-                  class="mt-7 font-display text-base font-semibold leading-snug"
-                >
-                  {{ item.title }}
-                </h4>
-                <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {{ item.description }}
-                </p>
-              </article>
-            </div>
-          </div>
+          </h2>
+          <p
+            class="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground"
+          >
+            Runable connects project structure, server rendering, and the Vue
+            ecosystem into one coherent development model—without taking over
+            your backend.
+          </p>
         </div>
       </div>
 
       <div
-        ref="footerRef"
-        class="sr-hidden mt-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"
-        style="
-          transition:
-            opacity 300ms ease-out,
-            transform 300ms ease-out;
-        "
+        class="mt-16 border border-border bg-background/95 shadow-2xl shadow-foreground/3 md:mt-24"
       >
-        <p class="font-body text-caption text-muted-foreground">
-          {{ capabilityCount }} capabilities. Zero backend lock-in. One
-          developer experience.
-        </p>
-        <UButton variant="outline" size="lg" as-child>
-          <RunableLink to="/docs/api">
-            Explore every API
-            <UIcon name="tabler:arrow-right" class="size-4" />
-          </RunableLink>
-        </UButton>
+        <div
+          class="flex min-h-12 items-center justify-between gap-4 border-b border-border px-4 sm:px-5"
+        >
+          <div class="flex items-center gap-2" aria-hidden="true">
+            <span class="size-2 rounded-full bg-accent" />
+            <span class="size-2 rounded-full bg-border" />
+            <span class="size-2 rounded-full bg-border" />
+          </div>
+          <p
+            class="truncate font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground"
+          >
+            Runable application layer
+          </p>
+          <div
+            class="hidden items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-muted-foreground sm:flex"
+          >
+            <span class="size-1.5 rounded-full bg-accent" />
+            Runtime connected
+          </div>
+        </div>
+
+        <div ref="groupsRef">
+          <article
+            v-for="group in groups"
+            :key="group.ref"
+            data-capability-group
+            class="capability-group sr-hidden grid border-b border-border last:border-b-0"
+            style="
+              transition:
+                opacity 250ms ease-out,
+                transform 250ms ease-out;
+            "
+          >
+            <header class="relative overflow-hidden p-6 sm:p-8 lg:p-9">
+              <span
+                aria-hidden="true"
+                class="absolute -right-2 -top-7 font-display text-[9rem] font-bold leading-none text-muted/40 dark:text-muted/20"
+                >{{ group.ref }}</span
+              >
+
+              <div class="relative flex h-full flex-col">
+                <div class="flex items-center gap-3">
+                  <span
+                    class="flex size-7 items-center justify-center bg-accent font-mono text-xs font-bold text-accent-foreground"
+                  >
+                    {{ group.ref }}
+                  </span>
+                  <span
+                    class="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground"
+                  >
+                    {{ group.label }}
+                  </span>
+                </div>
+                <h3
+                  class="mt-8 max-w-sm font-display text-2xl font-semibold leading-tight tracking-tight"
+                >
+                  {{ group.title }}
+                </h3>
+                <p
+                  class="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground lg:mt-auto lg:pt-12"
+                >
+                  {{ group.description }}
+                </p>
+              </div>
+            </header>
+
+            <div
+              class="grid border-t border-border sm:grid-cols-2 lg:grid-cols-5 lg:border-l lg:border-t-0"
+            >
+              <div
+                v-for="(item, itemIndex) in group.items"
+                :key="item.title"
+                class="group/item relative flex min-h-48 flex-col border-b border-border p-5 transition-colors last:border-b-0 sm:odd:border-r lg:min-h-72 lg:border-b-0 lg:border-r lg:last:border-r-0 lg:odd:border-r"
+              >
+                <div class="flex items-start justify-between gap-3">
+                  <span
+                    class="flex size-10 items-center justify-center border border-border bg-background text-muted-foreground transition-colors"
+                    :class="
+                      itemIndex === 0 &&
+                      'border-accent bg-accent text-accent-foreground'
+                    "
+                  >
+                    <UIcon :name="item.icon" class="size-5" />
+                  </span>
+                  <span class="font-mono text-[10px] text-muted-foreground">
+                    {{ group.ref }}.{{ String(itemIndex + 1).padStart(2, "0") }}
+                  </span>
+                </div>
+
+                <div class="mt-auto pt-10">
+                  <h4 class="font-display text-base font-semibold leading-snug">
+                    {{ item.title }}
+                  </h4>
+                  <p class="mt-2 text-xs leading-relaxed text-muted-foreground">
+                    {{ item.description }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div
+          ref="footerRef"
+          class="sr-hidden flex flex-col gap-5 border-t border-border bg-muted/20 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6"
+          style="
+            transition:
+              opacity 300ms ease-out,
+              transform 300ms ease-out;
+          "
+        >
+          <p class="flex items-center gap-3 text-sm text-muted-foreground">
+            <span class="hidden h-px w-10 bg-accent sm:block" />
+            Productive Vue conventions above. Your runtime underneath.
+          </p>
+          <UButton variant="outline" size="lg" as-child class="rounded-none">
+            <RunableLink to="/docs/api">
+              Explore every API
+              <UIcon name="tabler:arrow-right" class="size-4" />
+            </RunableLink>
+          </UButton>
+        </div>
       </div>
     </div>
   </section>
 </template>
+
+<style scoped>
+@media (min-width: 64rem) {
+  .capability-group {
+    grid-template-columns: minmax(15rem, 1fr) 3fr;
+  }
+}
+</style>

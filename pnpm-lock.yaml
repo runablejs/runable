@@ -916,8 +916,8 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0
       v-content:
-        specifier: ^1.4.2
-        version: 1.4.2(@vue/compiler-sfc@3.5.41)(better-sqlite3@13.0.3)(esbuild@0.28.2)(oxc-parser@0.106.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3))(rolldown@1.2.3)(typescript@6.0.3)(vite@8.2.1(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.102.0)(sass@1.102.0)(tsx@4.23.12)(yaml@2.9.0))
+        specifier: ^1.4.3
+        version: 1.4.3(@vue/compiler-sfc@3.5.41)(better-sqlite3@13.0.3)(esbuild@0.28.2)(oxc-parser@0.106.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3))(rolldown@1.2.3)(typescript@6.0.3)(vite@8.2.1(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.102.0)(sass@1.102.0)(tsx@4.23.12)(yaml@2.9.0))
       vee-validate:
         specifier: ^4.15.1
         version: 4.15.1(vue@3.5.41(typescript@6.0.3))
@@ -6256,8 +6256,8 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  v-content@1.4.2:
-    resolution: {integrity: sha512-Kp+Apo+hnFufNTcLrKQNV0IqMCIU2Z3jJTIi2bdZO+8cAXznWjigx1yRfdQ6YjLvnndFaT3mk58fWwJ66g4MQg==}
+  v-content@1.4.3:
+    resolution: {integrity: sha512-/BjKFXqNT8PbtSVf9dkfCvhdK90XkpDxmalGxNQE9knk2PqPJWszpPnqX2dMnnTWaiVZ6K86aSw8qa2YNAxMiQ==}
     engines: {node: '>=20.0.0', npm: '>=10.0.0'}
     peerDependencies:
       better-sqlite3: ^13.0.2
@@ -12419,7 +12419,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  v-content@1.4.2(@vue/compiler-sfc@3.5.41)(better-sqlite3@13.0.3)(esbuild@0.28.2)(oxc-parser@0.106.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3))(rolldown@1.2.3)(typescript@6.0.3)(vite@8.2.1(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.102.0)(sass@1.102.0)(tsx@4.23.12)(yaml@2.9.0)):
+  v-content@1.4.3(@vue/compiler-sfc@3.5.41)(better-sqlite3@13.0.3)(esbuild@0.28.2)(oxc-parser@0.106.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3))(rolldown@1.2.3)(typescript@6.0.3)(vite@8.2.1(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.102.0)(sass@1.102.0)(tsx@4.23.12)(yaml@2.9.0)):
     dependencies:
       '@shikijs/rehype': 4.4.3
       '@shikijs/transformers': 4.4.3
@@ -12429,6 +12429,7 @@ snapshots:
       fast-glob: 3.3.3
       hast-util-from-html: 2.0.3
       hast-util-to-html: 9.0.5
+      hast-util-to-text: 4.0.2
       minimatch: 10.2.6
       rehype: 13.0.2
       rehype-external-links: 3.0.0

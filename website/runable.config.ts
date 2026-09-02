@@ -111,7 +111,7 @@ export default defineConfig({
     meta: [
       {
         name: "description",
-        content: "Build the Vue app you want. Keep the backend you chose",
+        content: "All the Vue conventions. Your server runtime.",
       },
       {
         name: "algolia-site-verification",
@@ -121,6 +121,17 @@ export default defineConfig({
     link: [
       { rel: "icon", href: "/favicon.svg" },
       { rel: "describedby", href: `${SITE_URL}/llms.txt` },
+    ],
+
+    script: [
+      {
+        src: "https://analytics.runablejs.com/script.js",
+        "data-website-id": "e4a19f03-efc1-4c28-8dfe-b4487114153a",
+      },
+      {
+        src: "https://analytics.runablejs.com/recorder.js",
+        "data-website-id": "e4a19f03-efc1-4c28-8dfe-b4487114153a",
+      },
     ],
   },
 

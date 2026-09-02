@@ -28,11 +28,11 @@ async function copyCode() {
 <template>
   <div
     ref="root"
-    class="group w-full relative my-6 overflow-hidden rounded-md border border-border bg-code"
+    class="group w-full relative my-6 overflow-hidden border border-border bg-"
   >
     <!-- Header -->
     <div
-      class="flex items-center justify-between gap-1 border-b border-border px- h-8"
+      class="flex items-center justify-between gap-1 border-b border-border px- h-10 bg-code"
     >
       <span
         v-if="language"
@@ -47,7 +47,7 @@ async function copyCode() {
         type="button"
         variant="ghost"
         size="sm"
-        class="group-not-[&:hover]:hidden rounded-none sticky right-0"
+        class="group-not-[&:hover]:hidden rounded-none sticky right-0 h-full aspect-square"
         :aria-label="copied ? 'Code copied' : 'Copy code'"
         @click="copyCode"
       >

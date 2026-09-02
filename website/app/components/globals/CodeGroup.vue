@@ -38,18 +38,18 @@ async function copyCode() {
 
 <template>
   <div
-    class="u-code-group w-full group my-6 overflow-hidden rounded-md border border-border bg-code"
+    class="u-code-group w-full group my-6 overflow-hidden border border-border"
   >
     <!-- Tabs -->
     <div
       v-if="hasMultiple"
-      class="flex items-center gap-1 border-b border-border px-2 h-8"
+      class="flex items-center gap-1 border-b border-border pl-2 h-10 bg-code"
     >
       <button
         v-for="tab in tabs"
         :key="tab.index"
         type="button"
-        class="relative px-3 py-2 text-xs font-medium transition-colors"
+        class="relative px-3 py-2 text-xs font-medium transition-colors h-full"
         :class="[
           activeIndex === tab.index
             ? 'text-foreground'
@@ -64,17 +64,17 @@ async function copyCode() {
         />
       </button>
 
-      <Button
+      <UButton
         type="button"
         variant="ghost"
-        size="xs"
-        class="group-not-[&:hover]:hidden ml-auto"
+        size="sm"
+        class="group-not-[&:hover]:hidden ml-auto h-full aspect-square rounded-none"
         :aria-label="copied ? 'Code copied' : 'Copy code'"
         @click="copyCode"
       >
         <IconCheck v-if="copied" class="size-3.5" />
         <IconCopy v-else class="size-3.5" />
-      </Button>
+      </UButton>
     </div>
 
     <!-- Panels -->

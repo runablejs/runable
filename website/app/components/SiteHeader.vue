@@ -59,7 +59,7 @@ const active = computed(() => {
 
 <template>
   <header
-    class="px-4 md:px-6 backdrop-blur-sm bg-background sticky top-0 z-50 h-(--header-height) border-b"
+    class="px-4 md:px-6 bg-background sticky top-0 z-50 h-(--header-height) border-b"
   >
     <div class="flex h-full items-center justify-between gap-4">
       <!-- Left side -->
@@ -84,7 +84,7 @@ const active = computed(() => {
           <Logo class="size-7 h-9/12" />
           <span class="font-bold text-lg">Runable</span>
           <span
-            class="font-mono text-[10px] leading-none text-muted-foreground group-hover:text-accent-foreground/70"
+            class="font-mono text-[10px] leading-none text-muted-foreground group-hover:text-accent-foreground/70 whitespace-nowrap"
           >
             v{{ runableVersion }}
           </span>
@@ -93,7 +93,7 @@ const active = computed(() => {
 
       <!-- Middle area -->
       <nav
-        class="h-full flex max-md:hidden items-center gap-2"
+        class="h-full flex max-xl:hidden items-center gap-2"
         :class="cn('items-center gap-0')"
       >
         <RunableLink
@@ -131,23 +131,25 @@ const active = computed(() => {
       </NavigationMenu> -->
 
       <!-- Right side -->
-      <div class="flex flex-1 items-center justify-end gap- h-full">
-        <ClientOnly>
-          <ModeSwitcher class="rounded-none" />
-        </ClientOnly>
+      <div class="flex h-full flex-1 items-center justify-end">
+        <div class="hidden h-full items-center md:flex">
+          <ClientOnly>
+            <ModeSwitcher class="rounded-none" />
+          </ClientOnly>
 
-        <UGithubLink v-slot="{ href }">
-          <UButton
-            as-child
-            size="sm"
-            variant="ghost"
-            class="h-full rounded-none"
-          >
-            <a :href target="_blank" rel="noreferrer">
-              <UIcon name="simple-icons:github" />
-            </a>
-          </UButton>
-        </UGithubLink>
+          <UGithubLink v-slot="{ href }">
+            <UButton
+              as-child
+              size="sm"
+              variant="ghost"
+              class="h-full rounded-none"
+            >
+              <a :href target="_blank" rel="noreferrer">
+                <UIcon name="simple-icons:github" />
+              </a>
+            </UButton>
+          </UGithubLink>
+        </div>
 
         <MobileNav :nav="navigationLinks" />
       </div>
