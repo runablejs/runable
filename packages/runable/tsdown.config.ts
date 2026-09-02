@@ -18,6 +18,10 @@ export default defineConfig({
   clean: true,
   unbundle: true,
 
+  css: {
+    inject: true,
+  },
+
   dts: { vue: true },
 
   alias: {
