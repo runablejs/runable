@@ -94,7 +94,7 @@ onBeforeUnmount(() => {
     </UButton>
 
     <div
-      class="mobile-nav max-lg:hidden"
+      class="mobile-nav"
       :class="open && 'mobile-nav--open'"
       :data-position="position"
       :aria-hidden="!open"
