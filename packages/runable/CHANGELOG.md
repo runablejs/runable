@@ -1,5 +1,11 @@
 # runable
 
+## 1.0.0-alpha.20
+
+### Patch Changes
+
+- [#80](https://github.com/runablejs/runable/pull/80) [`c5dfc80`](https://github.com/runablejs/runable/commit/c5dfc806180509628dba19ba8b71eee9e23cb47b) Thanks [@domutala](https://github.com/domutala)! - Rename the built-in welcome component file to match its public `RunableWelcome` name and load its scoped styles automatically.
+
 ## 1.0.0-alpha.19
 
 ### Patch Changes
