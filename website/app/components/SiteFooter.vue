@@ -154,6 +154,12 @@ const year = new Date().getFullYear();
       >
         <p>© {{ year }} Runable. Released under the MIT License.</p>
         <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+          <RunableLink
+            to="/privacy"
+            class="transition-colors hover:text-accent"
+          >
+            Privacy
+          </RunableLink>
           <span class="inline-flex items-center gap-2">
             <span class="size-1.5 rounded-full bg-accent" />
             Open source
