@@ -121,7 +121,7 @@ export default defineConfig({
 });
 ```
 
-Les alias déclarés par les modules sont hérités par l'application et ajoutés à la résolution Vite ainsi qu'au fichier `.app/tsconfig.app.json` généré. En cas de conflit, l'application est prioritaire sur ses modules, et un module est prioritaire sur ses propres dépendances.
+Les alias déclarés par les modules locaux (référencés avec un chemin relatif comme `./module` ou `..`) sont hérités par l'application et ajoutés à la résolution Vite ainsi qu'au fichier `.app/tsconfig.app.json` généré. Les alias des modules installés ne sont pas hérités. En cas de conflit entre alias locaux, l'application est prioritaire sur ses modules, et un module est prioritaire sur ses propres dépendances.
 
 Runable ajoute aussi l'alias interne `#build`, qui pointe vers le dossier généré défini par `output`.
 
