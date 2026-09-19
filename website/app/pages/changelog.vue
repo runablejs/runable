@@ -1,12 +1,49 @@
 <script setup lang="ts">
 const releases = [
   {
+    version: "1.0.0",
+    date: "September 9, 2026",
+    title: "Runable v1 is ready",
+    description:
+      "The first stable release brings productive Vue conventions to the server runtime your application already uses.",
+    current: true,
+    groups: [
+      {
+        type: "Framework",
+        tone: "accent",
+        items: [
+          "File-system routing, layouts, middleware, plugins, components, and composables work together through generated application code.",
+          "Server-side rendering, client-side rendering, data fetching, head management, and error handling are available as first-class application features.",
+          "Generated types keep routes, runtime configuration, modules, and auto-imported APIs visible to TypeScript and your editor.",
+        ],
+      },
+      {
+        type: "Runtimes",
+        tone: "success",
+        items: [
+          "Runable integrates with Express, Fastify, Hono, NestJS, AdonisJS, Koa, Bun, Deno, and custom servers.",
+          "Applications keep control of their backend runtime instead of adopting a framework-owned server layer.",
+          "Runtime adapters expose a consistent entry point for development and production requests.",
+        ],
+      },
+      {
+        type: "Tooling",
+        tone: "neutral",
+        items: [
+          "The Runable CLI creates applications, prepares generated files, and produces production builds.",
+          "The module system lets official and community integrations extend configuration, hooks, auto-imports, and generated types.",
+          "New projects start with a responsive welcome screen and direct links to the documentation, modules, and source code.",
+        ],
+      },
+    ],
+  },
+  {
     version: "1.0.0-alpha.3",
     date: "August 19, 2026",
     title: "A more reliable foundation",
     description:
       "This release focuses on predictable builds, safer extension APIs, and cleaner generated types across minimal and advanced applications.",
-    current: true,
+    current: false,
     groups: [
       {
         type: "Fixed",
@@ -156,7 +193,7 @@ useSeoMeta({
                 Current release
               </p>
               <p class="mt-2 font-display text-2xl font-semibold">
-                v1.0.0-alpha.3
+                v1.0.0
               </p>
             </div>
             <span class="relative mt-1 flex size-2">
@@ -172,7 +209,7 @@ useSeoMeta({
             class="mt-6 flex items-center justify-between border-t border-border pt-5"
           >
             <span class="font-mono text-xs text-muted-foreground"
-              >Alpha channel</span
+              >Stable channel</span
             >
             <a
               href="https://github.com/runablejs/runable/releases"

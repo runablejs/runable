@@ -17,7 +17,12 @@ describe("CLI starter templates", () => {
     it(`copies a complete ${framework} starter`, async () => {
       expect(
         existsSync(
-          join(process.cwd(), "packages/cli/starters", framework, ".gitignore"),
+          join(
+            process.cwd(),
+            "packages/cli/starters",
+            framework,
+            "gitignore.template",
+          ),
         ),
       ).toBe(true);
 
@@ -32,6 +37,7 @@ describe("CLI starter templates", () => {
 
       expect(existsSync(join(target, "package.json"))).toBe(true);
       expect(existsSync(join(target, ".gitignore"))).toBe(true);
+      expect(existsSync(join(target, "gitignore.template"))).toBe(false);
       expect(existsSync(join(target, "runable.config.ts"))).toBe(true);
       expect(existsSync(join(target, "app/app.vue"))).toBe(true);
       expect(existsSync(join(target, "app/pages/index.vue"))).toBe(true);

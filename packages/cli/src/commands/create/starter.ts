@@ -1,4 +1,4 @@
-import { cp, mkdir, readFile, stat, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, rename, stat, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -75,6 +75,10 @@ export async function copyStarterTemplate(
   await mkdir(targetDir, { recursive: true });
   await cp(sharedTemplateDir, targetDir, { recursive: true, force: true });
   await cp(templateDir, targetDir, { recursive: true, force: true });
+  await rename(
+    resolve(targetDir, "gitignore.template"),
+    resolve(targetDir, ".gitignore"),
+  );
 
   const packageJsonPath = resolve(targetDir, "package.json");
   const packageJson = JSON.parse(await readFile(packageJsonPath, "utf8"));

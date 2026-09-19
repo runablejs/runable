@@ -76,6 +76,10 @@ describe("AGENTS.md is shipped to newly scaffolded Runable projects", () => {
         path.join(starterTemplateDir, "package.json"),
         JSON.stringify({ name: "fixture-starter", version: "1.0.0" }),
       );
+      writeFileSync(
+        path.join(starterTemplateDir, "gitignore.template"),
+        "node_modules\n.app\n.output\n",
+      );
 
       const { copyStarterTemplate } = await import(
         "../../packages/cli/dist/commands/create/starter.js"
@@ -95,6 +99,10 @@ describe("AGENTS.md is shipped to newly scaffolded Runable projects", () => {
       // The starter template itself is still there too — copyAgentsFile
       // must not have clobbered anything from copyStarterTemplate.
       expect(existsSync(path.join(projectDir, "package.json"))).toBe(true);
+      expect(existsSync(path.join(projectDir, ".gitignore"))).toBe(true);
+      expect(existsSync(path.join(projectDir, "gitignore.template"))).toBe(
+        false,
+      );
     } finally {
       rmSync(starterTemplateDir, { recursive: true, force: true });
       cleanupFixtureDir(projectDir);
