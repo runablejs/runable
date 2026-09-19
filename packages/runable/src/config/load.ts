@@ -497,6 +497,21 @@ export interface ConfigGraph {
 }
 
 /**
+ * Combines aliases from the resolved config graph. Dependencies are applied
+ * first, then their parents, and the main application last, so the closest
+ * consumer wins when two configs declare the same alias.
+ */
+function mergeConfigAliases(configs: ResolvedConfig[]) {
+  const aliases: ResolvedConfig["alias"] = {};
+
+  for (const config of [...configs].reverse()) {
+    Object.assign(aliases, config.alias);
+  }
+
+  return aliases;
+}
+
+/**
  * Resolves the full config graph for a project — the main config, every
  * module it transitively depends on, their options, and module `setup()`
  * hooks — as a **fresh, uncached, in-memory result, independent of
@@ -585,10 +600,12 @@ export async function resolveConfigGraph(
 
   resolved = await runConfigExtensions(resolved, pendingSetups);
   const main = resolved.__main!;
+  const all = Object.values(resolved).sort((a, b) => a._index - b._index);
+
+  main.alias = mergeConfigAliases(all);
 
   await runSetups(pendingSetups, main);
 
-  const all = Object.values(resolved).sort((a, b) => a._index - b._index);
   return { main, all };
 }
 

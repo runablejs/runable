@@ -40,7 +40,7 @@ export function writeTsConfig() {
   Object.entries(alias ?? {}).forEach(([key, value]) => {
     if (key === "#build") return;
 
-    tsconfig.app.addAlias(key, normalizeDir(relative(process.cwd(), value)));
+    tsconfig.app.addAlias(key, normalizeDir(relative(output, value)));
   });
 
   tsconfig.app.addAlias("#build", "./");
