@@ -436,6 +436,7 @@ export async function writeRunableConfig(
 export async function createPackageJson(
   targetDir: string,
   moduleName: string,
+  packageManager = "pnpm",
 ): Promise<void> {
   const pkgPath = resolve(targetDir, "package.json");
 
@@ -477,9 +478,10 @@ export async function createPackageJson(
     workspaces: ["playground"],
     scripts: {
       build: "runable build",
-      "app:prepare": "runable prepare",
+      prepare: "runable prepare",
       "playground:prepare": "cd playground && runable prepare",
       "playground:build": "cd playground && runable build",
+      "playground:dev": `cd playground && ${packageManager} run dev`,
     },
     devDependencies: {
       "@runablejs/cli": version,

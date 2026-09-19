@@ -1,4 +1,4 @@
-import { cp, mkdir, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -6,19 +6,24 @@ import * as p from "@clack/prompts";
 import { consola } from "consola";
 
 import {
+  askFramework,
+  askInstallDeps,
+  askPackageManager,
+  copyAgentsFile,
+  createPackageJson,
   exitOnCancel,
-  type BaseProjectAnswers,
-  handleSharedAnswers,
-  afterAnswer,
-  copyServerEntry,
   getCliPackageVersion,
-  writeRunableConfig,
+  installDependenciesIfWanted,
 } from "./shared.js";
+import { copyStarterTemplate } from "./starter.js";
 
 /** Answers collected for the "create a Runable module" flow: the shared answers plus the module's own identity (name and `configKey`). */
-export interface ModuleProjectAnswers extends BaseProjectAnswers {
+export interface ModuleProjectAnswers {
   moduleName: string;
   configKey: string;
+  framework: string;
+  packageManager: string;
+  installDeps: boolean;
 }
 
 /** Prompts for the module name, enforcing the same format as a valid (optionally scoped) npm package name. */
@@ -51,10 +56,7 @@ function printSummary(answers: ModuleProjectAnswers): void {
   consola.success("Configuration collected:");
   consola.info(`  Module name:      ${answers.moduleName}`);
   consola.info(`  Config key:       ${answers.configKey}`);
-  consola.info(`  appDir:           ${answers.appDir}`);
-  consola.info(`  outputDir:        ${answers.outputDir}`);
-  consola.info(`  distDir:          ${answers.distDir}`);
-  consola.info(`  publicDir:        ${answers.publicDir}`);
+  consola.info(`  Framework:        ${answers.framework}`);
   consola.info(`  packageManager:   ${answers.packageManager}`);
   consola.info(`  installDeps:      ${answers.installDeps ? "yes" : "no"}`);
 }
@@ -65,69 +67,111 @@ export async function createModulePlayground(
   options: {
     moduleName: string;
     framework: string;
-    createServerEntry: boolean;
   },
 ) {
   const __dirname = dirname(fileURLToPath(import.meta.url));
   const sharedStarterDir = resolve(__dirname, "../../../starters/_shared");
   const playgroundDir = resolve(moduleDir, "playground");
 
-  await mkdir(playgroundDir, { recursive: true });
-  await cp(resolve(sharedStarterDir, "app"), resolve(playgroundDir, "app"), {
-    recursive: true,
-    force: true,
-  });
+  if (options.framework !== "other") {
+    await copyStarterTemplate(options.framework, playgroundDir);
+  } else {
+    await mkdir(playgroundDir, { recursive: true });
+    await cp(sharedStarterDir, playgroundDir, {
+      recursive: true,
+      force: true,
+    });
+
+    const version = await getCliPackageVersion();
+    await writeFile(
+      resolve(playgroundDir, "package.json"),
+      `${JSON.stringify(
+        {
+          name: "playground",
+          private: true,
+          type: "module",
+          scripts: {
+            prepare: "runable prepare",
+            build: "runable build",
+            typecheck: "tsc --noEmit",
+          },
+          dependencies: {
+            runable: version,
+            vue: "^3.5.0",
+            "vue-router": "^5.2.0",
+          },
+          devDependencies: {
+            "@runablejs/cli": version,
+            "@types/node": "^24.13.3",
+            typescript: "^6.0.3",
+          },
+        },
+        null,
+        2,
+      )}\n`,
+    );
+  }
+
+  const packageJsonPath = resolve(playgroundDir, "package.json");
+  const packageJson = JSON.parse(await readFile(packageJsonPath, "utf8"));
+  packageJson.name = `${options.moduleName.replace(/^@/, "").replace("/", "-")}-playground`;
+  packageJson.private = true;
+  packageJson.scripts = packageJson.scripts ?? {};
+  packageJson.scripts.prepare = "runable prepare";
+  delete packageJson.scripts.preprepare;
+  delete packageJson.scripts.prebuild;
+  delete packageJson.scripts["app:prepare"];
+  delete packageJson.scripts["app:build"];
+  await writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
+
+  await writeFile(
+    resolve(playgroundDir, "runable.config.ts"),
+    `import { defineConfig } from "runable";
+
+export default defineConfig({
+  output: "../.app",
+  distdir: "../.output",
+  modules: [".."],
+});
+`,
+  );
+}
+
+/** Creates the publishable module package at the project root. */
+export async function createModuleRoot(
+  moduleDir: string,
+  options: {
+    moduleName: string;
+    configKey: string;
+    packageManager: string;
+  },
+) {
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+  const sharedStarterDir = resolve(__dirname, "../../../starters/_shared");
+
+  await mkdir(moduleDir, { recursive: true });
+  await copyAgentsFile(moduleDir);
+  await writeFile(
+    resolve(moduleDir, "runable.config.ts"),
+    `import { defineModule } from "runable";
+
+export default defineModule({
+  configKey: ${JSON.stringify(options.configKey)},
+});
+`,
+  );
   await cp(
     resolve(sharedStarterDir, "tsconfig.json"),
-    resolve(playgroundDir, "tsconfig.json"),
+    resolve(moduleDir, "tsconfig.json"),
   );
   await cp(
     resolve(sharedStarterDir, "tsconfig.node.json"),
-    resolve(playgroundDir, "tsconfig.node.json"),
+    resolve(moduleDir, "tsconfig.node.json"),
   );
-  await writeRunableConfig({ modules: [".."] }, { cwd: playgroundDir });
-  await copyServerEntry(
-    options.createServerEntry,
-    options.framework,
-    playgroundDir,
-  );
-
-  const version = await getCliPackageVersion();
-  const packageJson = {
-    name: `${options.moduleName.replace(/^@/, "").replace("/", "-")}-playground`,
-    private: true,
-    type: "module",
-    scripts: {
-      ...(options.createServerEntry
-        ? { dev: "runable prepare && tsx watch server.ts" }
-        : {}),
-      prepare: "runable prepare",
-      build: "runable build",
-      typecheck: "tsc --noEmit",
-    },
-    dependencies: {
-      [options.moduleName]: "*",
-      ...(options.framework === "express" && options.createServerEntry
-        ? { express: "^5.2.1" }
-        : {}),
-      runable: version,
-      vue: "^3.5.0",
-      "vue-router": "^5.2.0",
-    },
-    devDependencies: {
-      "@runablejs/cli": version,
-      ...(options.framework === "express" && options.createServerEntry
-        ? { "@types/express": "^5.0.6" }
-        : {}),
-      "@types/node": "^24.13.3",
-      tsx: "^4.23.12",
-      typescript: "^6.0.3",
-    },
-  };
-
-  await writeFile(
-    resolve(playgroundDir, "package.json"),
-    `${JSON.stringify(packageJson, null, 2)}\n`,
+  await createPackageJson(
+    moduleDir,
+    options.moduleName,
+    options.packageManager,
   );
 }
 
@@ -145,28 +189,22 @@ export async function handleModuleProject() {
   consola.info(`Selected module: ${moduleName}`);
   consola.info(`Config key: ${configKey}`);
 
-  const answers = await handleSharedAnswers();
+  const framework = await askFramework();
+  const packageManager = await askPackageManager();
+  const installDeps = await askInstallDeps();
 
   // Unlike the "existing project" flow, a module gets its own fresh
   // directory (named after it) rather than being added to `process.cwd()`.
   const moduleDir = resolve(process.cwd(), moduleName);
-  await mkdir(moduleDir, { recursive: true });
-
-  // Record the config key alongside the other shared config values so it
-  // ends up in the module's generated runable.config.
-  Object.assign(answers._config, { configKey });
-
-  await createModulePlayground(moduleDir, { moduleName, ...answers });
-
-  // `isModule: true` tells `afterAnswer` to scaffold module-specific output
-  // (e.g. `defineModule` instead of `defineConfig`) rather than a regular project.
-  await afterAnswer(
-    moduleDir,
-    { ...answers, createServerEntry: false },
-    { moduleName, isModule: true },
-  );
+  await createModuleRoot(moduleDir, {
+    moduleName,
+    configKey,
+    packageManager,
+  });
+  await createModulePlayground(moduleDir, { moduleName, framework });
+  await installDependenciesIfWanted(packageManager, installDeps, moduleDir);
 
   // printSummary(answers);
 
-  return answers;
+  return { moduleName, configKey, framework, packageManager, installDeps };
 }
