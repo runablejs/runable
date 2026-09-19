@@ -1,14 +1,7 @@
 {
-  "compilerOptions": {
-    "target": "ES2023",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "strict": true,
-    "skipLibCheck": true,
-    "noEmit": true,
-    "types": ["node"]
-  },
-  "include": ["**/*.ts", "**/*.vue"],
-  "exclude": ["node_modules", ".app", ".output"]
+  "files": [],
+  "references": [
+    { "path": ".app/tsconfig.app.json" },
+    { "path": "tsconfig.node.json" }
+  ]
 }
-

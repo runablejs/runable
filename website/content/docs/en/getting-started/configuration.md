@@ -117,7 +117,7 @@ export default defineConfig({
 });
 ```
 
-Aliases declared by modules are inherited by the application and included in both Vite resolution and the generated `.app/tsconfig.app.json`. When aliases conflict, the application overrides its modules, and a module overrides its own dependencies.
+Aliases declared by local modules (referenced with a relative path such as `./module` or `..`) are inherited by the application and included in both Vite resolution and the generated `.app/tsconfig.app.json`. Aliases from installed modules are not inherited. When local aliases conflict, the application overrides its modules, and a module overrides its own dependencies.
 
 Runable also adds the internal `#build` alias, which points to the generated directory defined by `output`.
 

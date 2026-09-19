@@ -109,6 +109,13 @@ and a `runable.config.ts` defined with `defineModule()` instead of
 the module, `runable`, `vue`, and `vue-router` are added to `devDependencies`
 rather than its runtime dependencies.
 
+It also creates a `playground/` Runable application for developing the module
+locally. Its `runable.config.ts` declares `modules: [".."]`, so it always loads
+the module from the project root without requiring the package to be published.
+Use `playground:prepare` and `playground:build` from the module root to run the
+corresponding Runable commands against that application. The playground has
+its own private `package.json` and is registered as a workspace of the module.
+
 See <a href="/docs/guide/modules.md">Modules</a> for the module API and
 authoring conventions.
 

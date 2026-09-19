@@ -35,7 +35,7 @@ export const tsconfig = {
 };
 
 export function writeTsConfig() {
-  const { output, appDir, alias, _configFile, _cwd } = useConfig();
+  const { output, appDir, alias, _configFile } = useConfig();
 
   Object.entries(alias ?? {}).forEach(([key, value]) => {
     if (key === "#build") return;
@@ -55,7 +55,7 @@ export function writeTsConfig() {
 
   for (const config of useAllConfigs()) {
     if (!config._isRunableModule) continue;
-    if (!config._cwd.startsWith(_cwd)) continue;
+    if (!config._isLocalModule) continue;
 
     tsconfig.app.addInclude(
       normalizeDir(join(relative(output, config.appDir), "**/*")),

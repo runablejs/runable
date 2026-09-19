@@ -41,6 +41,19 @@ describe("CLI starter templates", () => {
       expect(existsSync(join(target, "runable.config.ts"))).toBe(true);
       expect(existsSync(join(target, "app/app.vue"))).toBe(true);
       expect(existsSync(join(target, "app/pages/index.vue"))).toBe(true);
+      expect(existsSync(join(target, "app/tsconfig.json"))).toBe(false);
+
+      const tsconfig = JSON.parse(
+        readFileSync(join(target, "tsconfig.json"), "utf8"),
+      );
+      expect(tsconfig).toEqual({
+        files: [],
+        references: [
+          { path: ".app/tsconfig.app.json" },
+          { path: "tsconfig.node.json" },
+        ],
+      });
+      expect(existsSync(join(target, "tsconfig.node.json"))).toBe(true);
 
       const indexPage = readFileSync(
         join(target, "app/pages/index.vue"),

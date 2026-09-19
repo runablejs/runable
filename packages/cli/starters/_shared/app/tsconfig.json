@@ -1,7 +1,0 @@
-{
-  "extends": "../.app/tsconfig.app.json",
-  "compilerOptions": {
-    "paths": {}
-  }
-}
-

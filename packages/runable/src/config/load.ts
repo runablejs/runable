@@ -110,6 +110,8 @@ type RawEntry = {
   configFile?: string;
   /** The raw config as returned by `c12Load`, before `resolveConfig` runs on it. */
   loaded: ModuleDefinition;
+  /** Whether this module was referenced through a relative filesystem path. */
+  isLocalModule: boolean;
   /** Names of the configs whose `modules` list references this one. Empty for the root. */
   dependents: Set<string>;
   /** Position in discovery (completion) order — carried over to `_index` on the resolved config. */
@@ -225,6 +227,7 @@ async function loadAllConfigs(
     rawName: string,
     cwd: string | undefined,
     dependent?: string,
+    isLocalModule = false,
   ): Promise<RawEntry> {
     const name = normalizeModuleName(rawName);
 
@@ -246,26 +249,29 @@ async function loadAllConfigs(
           cwd: entryCwd,
           configFile,
           loaded: loaded ?? ({} as ModuleDefinition),
+          isLocalModule,
           dependents: new Set(),
           index: index++,
         };
 
         entries.set(resolvedName, entry);
 
-        const childModules = (entry.loaded.modules ?? []).map((childName) =>
-          resolveModuleName(childName, entryCwd),
-        );
+        const childModules = (entry.loaded.modules ?? []).map((childName) => ({
+          name: resolveModuleName(childName, entryCwd),
+          isLocal: childName.startsWith("."),
+        }));
 
-        for (const childName of childModules) {
-          addDependency(name, normalizeModuleName(childName));
+        for (const child of childModules) {
+          addDependency(name, normalizeModuleName(child.name));
         }
 
         await Promise.all(
-          childModules.map((childName) =>
+          childModules.map((child) =>
             load(
-              childName,
-              getModuleDir(childName, entryCwd, moduleDirCache),
+              child.name,
+              getModuleDir(child.name, entryCwd, moduleDirCache),
               resolvedName,
+              child.isLocal,
             ),
           ),
         );
@@ -277,6 +283,9 @@ async function loadAllConfigs(
     }
 
     const entry = await promise;
+    if (isLocalModule) {
+      entry.isLocalModule = true;
+    }
     moduleNameAliases?.set(normalizeDir(rawName), entry.name);
     moduleNameAliases?.set(normalizeModuleName(rawName), entry.name);
     if (dependent) entry.dependents.add(dependent);
@@ -338,6 +347,7 @@ function resolveAllConfigs(entries: Map<string, RawEntry>): {
     rConfig._configFile = entry.configFile;
     rConfig._isRunableModule = (entry.loaded as ResolvedConfig)
       ._isRunableModule as boolean;
+    rConfig._isLocalModule = entry.isLocalModule;
     rConfig._dependents = [...entry.dependents];
     rConfig._index = entry.index;
 
@@ -497,14 +507,16 @@ export interface ConfigGraph {
 }
 
 /**
- * Combines aliases from the resolved config graph. Dependencies are applied
- * first, then their parents, and the main application last, so the closest
- * consumer wins when two configs declare the same alias.
+ * Combines aliases from the main application and its local modules. Installed
+ * packages keep their aliases private. Local dependencies are applied first,
+ * then their parents, and the main application last, so the closest consumer
+ * wins when two configs declare the same alias.
  */
 function mergeConfigAliases(configs: ResolvedConfig[]) {
   const aliases: ResolvedConfig["alias"] = {};
 
   for (const config of [...configs].reverse()) {
+    if (config._isRunableModule && !config._isLocalModule) continue;
     Object.assign(aliases, config.alias);
   }
 

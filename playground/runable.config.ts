@@ -1,10 +1,7 @@
 import { defineConfig } from "runable";
-import { join } from "node:path";
 
 export default defineConfig({
-  // devtools: { enable: true },
-
-  modules: ["@runable/content"],
+  modules: ["./modules/test"],
 
   head: {
     title: "Runable/vue playground",
@@ -18,5 +15,5 @@ export default defineConfig({
 
   ssr: true,
 
-  content: {},
+  test01: {},
 });

@@ -474,9 +474,12 @@ export async function createPackageJson(
     module: "./dist/index.js",
     types: "./dist/index.d.ts",
     files: ["dist"],
+    workspaces: ["playground"],
     scripts: {
       build: "runable build",
       "app:prepare": "runable prepare",
+      "playground:prepare": "cd playground && runable prepare",
+      "playground:build": "cd playground && runable build",
     },
     devDependencies: {
       "@runablejs/cli": version,
@@ -512,6 +515,20 @@ export async function configurePnpmBuilds(
 
   const document = parseDocument(source);
   if (document.errors.length > 0) throw document.errors[0];
+
+  try {
+    const packageJson = JSON.parse(
+      await readFile(resolve(cwd, "package.json"), "utf8"),
+    );
+    if (
+      document.get("packages") === undefined &&
+      Array.isArray(packageJson.workspaces)
+    ) {
+      document.set("packages", packageJson.workspaces);
+    }
+  } catch {
+    // A package.json is optional for the existing-project flow.
+  }
 
   const esbuildPermission = document.getIn(["allowBuilds", "esbuild"]);
   if (esbuildPermission === undefined || esbuildPermission === null) {

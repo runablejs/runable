@@ -290,6 +290,9 @@ export type ResolvedConfig = {
   /** `true` if this config belongs to a Runable module rather than the root application. */
   _isRunableModule?: boolean;
 
+  /** `true` when the module was referenced through a relative filesystem path. */
+  _isLocalModule?: boolean;
+
   /**
    * A module's resolved options (`defaults` merged with the consumer's
    * overrides) — only ever set for a config loaded on behalf of a `parent`

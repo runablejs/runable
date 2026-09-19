@@ -1,12 +1,30 @@
 <script setup lang="ts">
 const releases = [
   {
+    version: "1.0.1",
+    date: "September 19, 2026",
+    title: "Module aliases and cleaner starters",
+    description:
+      "This patch improves module integration and ensures newly generated projects include the files expected from their chosen server framework.",
+    current: true,
+    groups: [
+      {
+        type: "Fixed",
+        tone: "success",
+        items: [
+          "Aliases declared by modules are now inherited by the application's Vite and TypeScript resolution.",
+          "Every generated starter now includes its framework-specific .gitignore file.",
+        ],
+      },
+    ],
+  },
+  {
     version: "1.0.0",
     date: "September 9, 2026",
     title: "Runable v1 is ready",
     description:
       "The first stable release brings productive Vue conventions to the server runtime your application already uses.",
-    current: true,
+    current: false,
     groups: [
       {
         type: "Framework",
@@ -193,7 +211,7 @@ useSeoMeta({
                 Current release
               </p>
               <p class="mt-2 font-display text-2xl font-semibold">
-                v1.0.0
+                v1.0.1
               </p>
             </div>
             <span class="relative mt-1 flex size-2">
