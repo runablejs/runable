@@ -1,5 +1,11 @@
 # runable
 
+## 1.1.0
+
+### Patch Changes
+
+- [#89](https://github.com/runablejs/runable/pull/89) [`b662988`](https://github.com/runablejs/runable/commit/b66298847553a30c81b3a026a69c35e6983d8e87) Thanks [@domutala](https://github.com/domutala)! - Include local modules located outside the application directory in the generated TypeScript configuration, and only inherit aliases from modules referenced by local paths.
+
 ## 1.0.1
 
 ### Patch Changes
