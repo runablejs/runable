@@ -1,5 +1,57 @@
 # runable
 
+## 1.0.0
+
+### Minor Changes
+
+- [#69](https://github.com/runablejs/runable/pull/69) [`8841343`](https://github.com/runablejs/runable/commit/88413431f1d5e934aa63086aeba5ea95e88b0bda) Thanks [@domutala](https://github.com/domutala)! - Add a configurable NestJS catch-all module and update the NestJS starter to register it.
+
+- [#51](https://github.com/runablejs/runable/pull/51) [`78f1a56`](https://github.com/runablejs/runable/commit/78f1a56275dc5b9fe32e09141b0ac222e3cacaf1) Thanks [@domutala](https://github.com/domutala)! - Add an `extendRoutes` configuration hook for modifying the complete file-based route tree before Vue Router writes generated routes and declarations.
+
+- [#57](https://github.com/runablejs/runable/pull/57) [`5bed854`](https://github.com/runablejs/runable/commit/5bed854ef5541d52e008ec6b35ffbb5addd02bda) Thanks [@domutala](https://github.com/domutala)! - Add an `extendConfig` hook that can mutate or replace the fully resolved Runable configuration.
+
+- [#51](https://github.com/runablejs/runable/pull/51) [`3404609`](https://github.com/runablejs/runable/commit/34046096250242914ea90bc4b85952b840341ae2) Thanks [@domutala](https://github.com/domutala)! - Add a Nuxt-compatible `useFetch` composable with reactive requests and options, SSR-aware async data, caching, transforms, key picking, deduplication, timeouts, manual execution, and clearing.
+
+- [#46](https://github.com/runablejs/runable/pull/46) [`180a915`](https://github.com/runablejs/runable/commit/180a915b441a2561ccc7be097139f9eb8e77f1a1) Thanks [@domutala](https://github.com/domutala)! - Add `runable/inspector`, a public, read-only API for programmatically inspecting how Runable resolves a project: `createRunableInspector({ rootDir })` returns an object with `getProject()`, `getConfig()`, `getRoutes()`, `getLayouts()`, `getMiddlewares()`, `getPlugins()`, `getModules()`, `getAutoImports()`, and `refresh()`. Every result is a plain, JSON-serializable value, and runtime environment variables follow Runable's existing public/private split — a private value's name is exposed, never its value. Built as the underlying primitive for future tooling (CLI diagnostics, IDE integrations, DevTools) to build on; it does not itself implement any of those.
+  
+  The Inspector itself never generates or modifies a Runable project/build file, never changes `process.cwd()`, and never touches the process-wide cache `loadConfig()`/`useConfig()`/`useAllConfigs()` use — each Inspector holds its own state, resolved and refreshed independently, so several can run concurrently for different projects (or alongside a live dev server in the same process) without their Runable-owned state interfering. This is powered by a new exported primitive, `resolveConfigGraph(rootDir)` (`runable`'s root export), which the existing `loadConfig()` now also uses internally — the two no longer duplicate the config/module resolution logic. Note that resolving a project's config still executes its `runable.config.*` files and module `setup()` hooks — ordinary project code, not sandboxed, that can have its own side effects (env vars, filesystem writes, ...) outside this isolation guarantee. As an incidental fix from threading `rootDir` explicitly through module resolution, a module referenced by another (non-root) module by a bare package name now resolves that package from the referencing module's own directory instead of always from `process.cwd()`.
+
+- [#49](https://github.com/runablejs/runable/pull/49) [`9a99a77`](https://github.com/runablejs/runable/commit/9a99a77b87d51fc7d48c3adb7621c0d6f73104c4) Thanks [@domutala](https://github.com/domutala)! - Add `resolveRoute(path)` to `runable/inspector`: given an absolute path, resolves it against the project's routes using Vue Router's own matcher (the same one a real navigation would use), returning the matched `InspectorRoute` plus extracted `params`/`query`/`hash`, or `null` if nothing matches. Supports dynamic, optional, and catch-all params, nested routes, and `definePageMeta({ path, name })` overrides. Like every other Inspector getter, it reflects state as of the last `refresh()`.
+
+### Patch Changes
+
+- [#49](https://github.com/runablejs/runable/pull/49) [`10421c7`](https://github.com/runablejs/runable/commit/10421c750b224c72503dc4edde1909b93f8a1a5e) Thanks [@domutala](https://github.com/domutala)! - Validate that dynamically loaded server entries export a render function before handling SSR requests.
+
+- [#59](https://github.com/runablejs/runable/pull/59) [`b129483`](https://github.com/runablejs/runable/commit/b129483a831db0812aa08213b2c0f910a2d4bebb) Thanks [@domutala](https://github.com/domutala)! - Call each `extendConfig` hook with its own resolved configuration and options.
+
+- [#53](https://github.com/runablejs/runable/pull/53) [`f6c9a82`](https://github.com/runablejs/runable/commit/f6c9a8232b3c6b29ec076808072d4d6d8c1ac44c) Thanks [@domutala](https://github.com/domutala)! - Fix generated application TypeScript configuration paths so aliases, source includes, configuration files, and local module directories resolve correctly from the build directory.
+
+- [#75](https://github.com/runablejs/runable/pull/75) [`61e3258`](https://github.com/runablejs/runable/commit/61e3258d1605d9b77c0d4085af3880a8270f39f6) Thanks [@domutala](https://github.com/domutala)! - Inject Runable auto-imports and auto-components into application resources explicitly registered by installed modules.
+
+- [#71](https://github.com/runablejs/runable/pull/71) [`6b0b398`](https://github.com/runablejs/runable/commit/6b0b398ca2d3b8232d2be5363b1981b391a5d98a) Thanks [@domutala](https://github.com/domutala)! - Include the Oxc decorator runtime required by the compiled NestJS adapter.
+
+- [#73](https://github.com/runablejs/runable/pull/73) [`9cdc4da`](https://github.com/runablejs/runable/commit/9cdc4da776a25a7fd9d30e2dc5952e2220051bdb) Thanks [@domutala](https://github.com/domutala)! - Load the production SSR manifest without a JSON module import and remove an invalid Rolldown manifest option.
+
+- [#63](https://github.com/runablejs/runable/pull/63) [`4dc97c8`](https://github.com/runablejs/runable/commit/4dc97c89c22e27de1ac08b93e758926307db0902) Thanks [@domutala](https://github.com/domutala)! - Ship `unctx` as a runtime dependency so installed applications can load Runable's context implementation.
+
+- [#49](https://github.com/runablejs/runable/pull/49) [`377d8e1`](https://github.com/runablejs/runable/commit/377d8e18c4f31580da5bbcc69c3241524d588454) Thanks [@domutala](https://github.com/domutala)! - Isolate the application context for concurrent SSR requests, avoid generated type writes and redundant configuration loading during production rendering, and resolve production manifest exports and server entry paths correctly.
+
+- [#67](https://github.com/runablejs/runable/pull/67) [`02ebe9a`](https://github.com/runablejs/runable/commit/02ebe9a5aca29a3f76e3cf8475fab91cc57dacb1) Thanks [@domutala](https://github.com/domutala)! - Add the internal Runable welcome component and use it as the home page of every generated starter.
+
+- [#82](https://github.com/runablejs/runable/pull/82) [`ad00d67`](https://github.com/runablejs/runable/commit/ad00d67943606c0e08875b99eaa7eb2a870e9498) Thanks [@domutala](https://github.com/domutala)! - Keep root lifecycle hooks working when the application renders through SSR or updates through HMR.
+
+- [#49](https://github.com/runablejs/runable/pull/49) [`6910aaf`](https://github.com/runablejs/runable/commit/6910aaf1d0757ac4e7e03b562a847a871c4cfdde) Thanks [@domutala](https://github.com/domutala)! - Fix `loadRuntimeEnv()` (used internally when resolving runtime config, e.g. by `runable/inspector`'s `getConfig()`) unconditionally writing an "injected env (...) from .env" notice to stdout via `dotenv` whenever a project's `.env` file defines any `RUN_`/`VITE_`-prefixed variable. This is now passed `quiet: true`, so loading runtime env stays silent on stdout — important for any host process that reserves stdout for something else, such as an MCP server speaking JSON-RPC over stdio.
+
+- [#80](https://github.com/runablejs/runable/pull/80) [`c5dfc80`](https://github.com/runablejs/runable/commit/c5dfc806180509628dba19ba8b71eee9e23cb47b) Thanks [@domutala](https://github.com/domutala)! - Rename the built-in welcome component file to match its public `RunableWelcome` name and load its scoped styles automatically.
+
+- [#77](https://github.com/runablejs/runable/pull/77) [`c72c87f`](https://github.com/runablejs/runable/commit/c72c87f6736701f9711a74f81b542c6938c6fc18) Thanks [@domutala](https://github.com/domutala)! - Serve generated client assets through every adapter in production.
+
+- [#77](https://github.com/runablejs/runable/pull/77) [`83d018f`](https://github.com/runablejs/runable/commit/83d018fe15820e63d13885bc9de0055682396f06) Thanks [@domutala](https://github.com/domutala)! - Serve `.txt` production assets with the `text/plain` MIME type so browsers display them inline.
+
+- [#65](https://github.com/runablejs/runable/pull/65) [`1ace040`](https://github.com/runablejs/runable/commit/1ace04043a171cc735ec6f18827e860d382efc72) Thanks [@domutala](https://github.com/domutala)! - Use the ESM Lodash build in browser runtime entries so Vite can load the merge helper without CommonJS interop errors.
+
+- [#77](https://github.com/runablejs/runable/pull/77) [`c72c87f`](https://github.com/runablejs/runable/commit/c72c87f6736701f9711a74f81b542c6938c6fc18) Thanks [@domutala](https://github.com/domutala)! - Use `RUNABLE_MODE` instead of `NODE_ENV` to select Runable's production runtime.
+
 ## 1.0.0-alpha.21
 
 ### Patch Changes
