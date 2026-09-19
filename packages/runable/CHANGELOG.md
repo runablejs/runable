@@ -1,5 +1,11 @@
 # runable
 
+## 1.0.1
+
+### Patch Changes
+
+- [#87](https://github.com/runablejs/runable/pull/87) [`c02b5de`](https://github.com/runablejs/runable/commit/c02b5de1d549382db6fcd752d313db39d83625f7) Thanks [@domutala](https://github.com/domutala)! - Inherit aliases declared by modules in application Vite and TypeScript resolution.
+
 ## 1.0.0
 
 ### Minor Changes

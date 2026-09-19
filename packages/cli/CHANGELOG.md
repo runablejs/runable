@@ -1,5 +1,13 @@
 # @runablejs/cli
 
+## 1.0.1
+
+### Patch Changes
+
+- [#87](https://github.com/runablejs/runable/pull/87) [`c02b5de`](https://github.com/runablejs/runable/commit/c02b5de1d549382db6fcd752d313db39d83625f7) Thanks [@domutala](https://github.com/domutala)! - Ensure every generated starter includes its framework-specific `.gitignore` file.
+- Updated dependencies [[`c02b5de`](https://github.com/runablejs/runable/commit/c02b5de1d549382db6fcd752d313db39d83625f7)]:
+  - runable@1.0.1
+
 ## 1.0.0
 
 ### Minor Changes
