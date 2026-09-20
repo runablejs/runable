@@ -1,5 +1,11 @@
 # runable
 
+## 1.2.0
+
+### Patch Changes
+
+- [#92](https://github.com/runablejs/runable/pull/92) [`3c8b19c`](https://github.com/runablejs/runable/commit/3c8b19c4cc656fcfbc96ad80f10d10eaeb1a858d) Thanks [@domutala](https://github.com/domutala)! - Generate modules as minimal publishable workspace packages with a complete framework playground. Include local module configuration files in the generated TypeScript project and let the welcome screen fill its container without the browser's default body gap.
+
 ## 1.1.0
 
 ### Patch Changes
