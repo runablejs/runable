@@ -1,12 +1,64 @@
 <script setup lang="ts">
 const releases = [
   {
+    version: "1.2.0",
+    date: "September 20, 2026",
+    title: "A complete module development workspace",
+    description:
+      "Module scaffolding now creates a minimal publishable package with a complete Runable playground for developing and testing the integration in place.",
+    current: true,
+    groups: [
+      {
+        type: "Modules",
+        tone: "accent",
+        items: [
+          "Generated modules are structured as minimal publishable workspace packages.",
+          "Each generated module includes a complete private Runable playground that loads the module directly from its workspace root.",
+          "Local module configuration files are included in the generated TypeScript project.",
+        ],
+      },
+      {
+        type: "Improved",
+        tone: "success",
+        items: [
+          "The built-in welcome screen now fills its container without inheriting the browser's default body margin.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "1.1.0",
+    date: "September 19, 2026",
+    title: "Better local module development",
+    description:
+      "This release improves TypeScript resolution and gives locally developed modules an isolated application for testing their complete Runable integration.",
+    current: false,
+    groups: [
+      {
+        type: "Modules",
+        tone: "accent",
+        items: [
+          "Local modules located outside the application directory are included in the generated TypeScript configuration.",
+          "Aliases are inherited only from modules referenced through local paths.",
+          "Module scaffolding creates a private workspace playground connected to the module root.",
+        ],
+      },
+      {
+        type: "Starters",
+        tone: "neutral",
+        items: [
+          "Generated starters use root TypeScript project references and keep server configuration in tsconfig.node.json.",
+        ],
+      },
+    ],
+  },
+  {
     version: "1.0.1",
     date: "September 19, 2026",
     title: "Module aliases and cleaner starters",
     description:
       "This patch improves module integration and ensures newly generated projects include the files expected from their chosen server framework.",
-    current: true,
+    current: false,
     groups: [
       {
         type: "Fixed",
@@ -211,7 +263,7 @@ useSeoMeta({
                 Current release
               </p>
               <p class="mt-2 font-display text-2xl font-semibold">
-                v1.0.1
+                v1.2.0
               </p>
             </div>
             <span class="relative mt-1 flex size-2">
