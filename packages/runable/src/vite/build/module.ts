@@ -149,7 +149,9 @@ export async function buildModule() {
     unbundle: true,
     minify: false,
 
-    css: {},
+    // PostCSS keeps remote `@import` URLs external. Lightning CSS attempts
+    // to resolve them as local files while bundling.
+    css: { transformer: "postcss" },
 
     plugins: [
       Vue(),

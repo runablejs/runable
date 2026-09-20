@@ -73,6 +73,7 @@ catalog:
 
   tsdown: ^0.22.14
   "@tsdown/css": ^0.22.14
+  postcss-import: ^16.0.0
   tsx: ^4.23.12
   npm-run-all2: ^9.0.2
 

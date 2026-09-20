@@ -1,6 +1,6 @@
 {
   "name": "runable",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": false,
   "license": "MIT",
   "repository": {
@@ -97,6 +97,7 @@
     "magic-string": "catalog:",
     "mlly": "catalog:",
     "ofetch": "catalog:",
+    "postcss-import": "catalog:",
     "syt": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",

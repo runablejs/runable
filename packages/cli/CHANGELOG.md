@@ -1,5 +1,12 @@
 # @runablejs/cli
 
+## 1.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`bbc38a1`](https://github.com/runablejs/runable/commit/bbc38a1d622d0dac6f96291e06a11353ed537cd1)]:
+  - runable@1.2.1
+
 ## 1.2.0
 
 ### Minor Changes
