@@ -117,11 +117,7 @@ export async function createModulePlayground(
   packageJson.name = `${options.moduleName.replace(/^@/, "").replace("/", "-")}-playground`;
   packageJson.private = true;
   packageJson.scripts = packageJson.scripts ?? {};
-  packageJson.scripts.prepare = "runable prepare";
-  delete packageJson.scripts.preprepare;
-  delete packageJson.scripts.prebuild;
-  delete packageJson.scripts["app:prepare"];
-  delete packageJson.scripts["app:build"];
+  packageJson.scripts.prepare ??= "runable prepare";
   await writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
 
   await writeFile(
