@@ -1,5 +1,12 @@
 # create-runable
 
+## 1.2.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @runablejs/cli@1.2.1
+
 ## 1.2.0
 
 ### Patch Changes
