@@ -60,6 +60,12 @@ export function writeTsConfig() {
     tsconfig.app.addInclude(
       normalizeDir(join(relative(output, config.appDir), "**/*")),
     );
+
+    if (config._configFile) {
+      tsconfig.app.addInclude(
+        normalizeDir(relative(output, config._configFile)),
+      );
+    }
   }
 
   const obj = tsconfig.app.toObject();
