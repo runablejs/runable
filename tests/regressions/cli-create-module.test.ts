@@ -108,4 +108,29 @@ describe("runable create --module", () => {
       cleanupFixtureDir(directory);
     }
   });
+
+  it("preserves framework-specific playground lifecycle scripts", async () => {
+    const directory = createFixtureDir("cli-module-adonis-playground-");
+
+    try {
+      const { createModulePlayground } = await import(
+        "../../packages/cli/dist/commands/create/module.js"
+      );
+      await createModulePlayground(directory, {
+        moduleName: "test-module",
+        framework: "adonisjs",
+      });
+
+      const packageJson = JSON.parse(
+        readFileSync(
+          path.join(directory, "playground/package.json"),
+          "utf8",
+        ),
+      );
+      expect(packageJson.scripts.prepare).toBe("node ace generate:manifest");
+      expect(packageJson.scripts.preprepare).toBe("runable prepare");
+    } finally {
+      cleanupFixtureDir(directory);
+    }
+  });
 });
