@@ -31,18 +31,21 @@ describe("runable create --module", () => {
     const directory = createFixtureDir("cli-module-playground-");
 
     try {
-      const { createModulePlayground } = await import(
+      const { createModulePlayground, createModuleRoot } = await import(
         "../../packages/cli/dist/commands/create/module.js"
       );
-      const { configurePnpmBuilds, createPackageJson } = await import(
+      const { configurePnpmBuilds } = await import(
         "../../packages/cli/dist/commands/create/shared.js"
       );
+      await createModuleRoot(directory, {
+        moduleName: "test-module",
+        configKey: "testModule",
+        packageManager: "pnpm",
+      });
       await createModulePlayground(directory, {
         moduleName: "test-module",
-        framework: "other",
-        createServerEntry: false,
+        framework: "fastify",
       });
-      await createPackageJson(directory, "test-module");
       await configurePnpmBuilds("pnpm", directory);
 
       expect(existsSync(path.join(directory, "playground/app/app.vue"))).toBe(
@@ -69,9 +72,14 @@ describe("runable create --module", () => {
       );
       expect(packageJson.workspaces).toEqual(["playground"]);
       expect(packageJson.scripts).toMatchObject({
+        prepare: "runable prepare",
         "playground:prepare": "cd playground && runable prepare",
         "playground:build": "cd playground && runable build",
+        "playground:dev": "cd playground && pnpm run dev",
       });
+      expect(existsSync(path.join(directory, "tsconfig.json"))).toBe(true);
+      expect(existsSync(path.join(directory, "tsconfig.node.json"))).toBe(true);
+      expect(existsSync(path.join(directory, "app"))).toBe(false);
 
       const playgroundPackageJson = JSON.parse(
         readFileSync(path.join(directory, "playground/package.json"), "utf8"),
@@ -80,7 +88,7 @@ describe("runable create --module", () => {
         name: "test-module-playground",
         private: true,
         dependencies: {
-          "test-module": "*",
+          fastify: expect.any(String),
           runable: expect.any(String),
           vue: expect.any(String),
           "vue-router": expect.any(String),
@@ -90,6 +98,9 @@ describe("runable create --module", () => {
           typescript: expect.any(String),
         },
       });
+      expect(playgroundPackageJson.dependencies).not.toHaveProperty(
+        "test-module",
+      );
       expect(
         readFileSync(path.join(directory, "pnpm-workspace.yaml"), "utf8"),
       ).toContain("- playground");

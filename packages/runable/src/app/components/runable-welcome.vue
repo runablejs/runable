@@ -153,6 +153,7 @@ const links = [
   background: var(--welcome-background);
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  margin: -8px;
 }
 
 .welcome-shell ::selection {

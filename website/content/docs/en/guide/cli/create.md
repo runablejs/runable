@@ -98,20 +98,22 @@ The module workflow asks for:
 
 1. **Module name** — a valid lowercase npm package name, optionally scoped.
 2. **Config key** — the property consumers use in `runable.config.ts`; it defaults to the module name.
-3. **Directories** — `appDir`, `outputDir`, `distDir`, and `publicDir`.
+3. **Backend framework** — used by the generated playground application.
 4. **Package manager** — detected from the current project when possible.
 5. **Install dependencies now?**
 
 It creates a **new directory** named after the module. The generated package
-contains the application template, `AGENTS.md`, a publishable `package.json`,
-and a `runable.config.ts` defined with `defineModule()` instead of
-`defineConfig()`. Because these packages are only needed to develop and build
-the module, `runable`, `vue`, and `vue-router` are added to `devDependencies`
-rather than its runtime dependencies.
+contains `AGENTS.md`, TypeScript configuration, a publishable `package.json`,
+and a minimal `runable.config.ts` defined with `defineModule()`. Application
+files and backend code live in the playground rather than the module root.
+Because the framework packages are only needed to develop and build the module,
+`runable`, `vue`, and `vue-router` are added to root `devDependencies` rather
+than runtime dependencies.
 
 It also creates a `playground/` Runable application for developing the module
-locally. Its `runable.config.ts` declares `modules: [".."]`, so it always loads
-the module from the project root without requiring the package to be published.
+locally using the selected backend starter. Its `runable.config.ts` writes
+generated output to the module root and declares `modules: [".."]`, so it
+always loads the module locally without requiring the package to be published.
 Use `playground:prepare` and `playground:build` from the module root to run the
 corresponding Runable commands against that application. The playground has
 its own private `package.json` and is registered as a workspace of the module.
