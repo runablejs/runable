@@ -1,5 +1,17 @@
 # @runablejs/cli
 
+## 1.1.0
+
+### Minor Changes
+
+- [#89](https://github.com/runablejs/runable/pull/89) [`b662988`](https://github.com/runablejs/runable/commit/b66298847553a30c81b3a026a69c35e6983d8e87) Thanks [@domutala](https://github.com/domutala)! - Create a private workspace Runable playground that loads the module root when scaffolding a module.
+
+### Patch Changes
+
+- [#89](https://github.com/runablejs/runable/pull/89) [`b662988`](https://github.com/runablejs/runable/commit/b66298847553a30c81b3a026a69c35e6983d8e87) Thanks [@domutala](https://github.com/domutala)! - Use root TypeScript project references in generated starters and keep server configuration in `tsconfig.node.json`.
+- Updated dependencies [[`b662988`](https://github.com/runablejs/runable/commit/b66298847553a30c81b3a026a69c35e6983d8e87)]:
+  - runable@1.1.0
+
 ## 1.0.1
 
 ### Patch Changes
