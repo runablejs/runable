@@ -1,0 +1,77 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+language: "en-US"
+early_access: false
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  commit_status: false
+  collapse_walkthrough: true
+
+  auto_review:
+    enabled: true
+    drafts: false
+    auto_incremental_review: true
+    ignore_title_keywords:
+      - "WIP"
+      - "DO NOT MERGE"
+
+  path_filters:
+    - "!**/dist/**"
+    - "!**/.app/**"
+    - "!**/.output/**"
+    - "!**/coverage/**"
+    - "!**/node_modules/**"
+    - "!pnpm-lock.yaml"
+
+  path_instructions:
+    - path: "packages/runable/src/**"
+      instructions: |
+        Focus on correctness, TypeScript type safety, Vue 3 and SSR behavior,
+        server/client boundaries, error handling, and backward compatibility of
+        public APIs and generated types. Check behavior across the supported
+        server adapters. Flag missing regression tests for behavioral fixes.
+
+    - path: "packages/cli/**"
+      instructions: |
+        Check that CLI behavior and generated starters work outside this
+        workspace with supported package managers. Do not suggest commands that
+        the CLI does not implement. Verify that published files and dependency
+        declarations are sufficient for clean consumer installations.
+
+    - path: "packages/create-syora/**"
+      instructions: |
+        Review scaffolding changes for clean-project behavior, correct package
+        versions, portable file paths, and compatibility with every starter and
+        supported package manager.
+
+    - path: "tests/**"
+      instructions: |
+        Prefer behavior-based integration and regression tests using the real
+        toolchain. Check that new tests would fail before the corresponding fix,
+        cover important edge cases, and avoid brittle source-text assertions.
+
+    - path: "website/content/docs/**"
+      instructions: |
+        Check that documented APIs, options, examples, and CLI commands match
+        the implementation and current starter structure.
+
+    - path: ".changeset/**"
+      instructions: |
+        Check that release impact and package selection match the change. This
+        repository is in prerelease mode; follow CONTRIBUTING.md for whether a
+        patch, minor, or major changeset is appropriate.
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "**/AGENTS.md"
+      - "CONTRIBUTING.md"
