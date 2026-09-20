@@ -20,9 +20,16 @@ function formatArticleDate(article: ResolvedPageEntry) {
   }).format(date);
 }
 
-const { data: articles, pending } = useAsyncData("blog:index", () =>
-  queryCollection("blog").all(),
-);
+const { data: articles, pending } = useAsyncData("blog:index", async () => {
+  const entries = await queryCollection("blog").all();
+
+  return [...entries].sort((first, second) => {
+    const firstDate = getArticleDate(first)?.getTime() ?? 0;
+    const secondDate = getArticleDate(second)?.getTime() ?? 0;
+
+    return secondDate - firstDate;
+  });
+});
 
 useHead({
   title: "Blog",
