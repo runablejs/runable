@@ -5,7 +5,7 @@ description: Branchez Runable à Express, Fastify, Hono, Koa, NestJS, AdonisJS, 
 
 Un adaptateur relie les requêtes de votre backend au moteur de rendu Runable. Il initialise l'application une seule fois, laisse Vite servir ses ressources en développement lorsque le runtime le permet, puis produit la réponse Vue.
 
-En production, chaque adaptateur officiel sert également les fichiers générés depuis `distdir/client` avant de déléguer le reste au rendu Vue. Il n'est pas nécessaire d'enregistrer un plugin de fichiers statiques supplémentaire pour `.output/client`.
+En production, chaque adaptateur officiel sert également les fichiers générés depuis `distDir/client` avant de déléguer le reste au rendu Vue. Il n'est pas nécessaire d'enregistrer un plugin de fichiers statiques supplémentaire pour `.output/client`.
 
 ## Adaptateurs disponibles
 

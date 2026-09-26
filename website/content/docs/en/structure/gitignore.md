@@ -18,6 +18,6 @@ node_modules/
 .DS_Store
 ```
 
-Adjust `.output/` and `.app/` if you changed `distdir` or `output` in `runable.config.ts`.
+Adjust `.output/` and `.app/` if you changed `distDir` or `output` in `runable.config.ts`.
 
 Commit sources, configuration, `package.json`, the lockfile, and `.env.example`. Generated directories must be reproducible with `pnpm install`, `runable prepare`, and `runable build`.

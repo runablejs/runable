@@ -30,7 +30,7 @@ Installez `tsx` en dépendance de développement si votre serveur et votre scrip
 
 ## Comprendre la sortie
 
-Avec le `distdir` par défaut, Runable écrit dans `.output/` :
+Avec le `distDir` par défaut, Runable écrit dans `.output/` :
 
 ```text
 .output/
@@ -80,6 +80,6 @@ variant: warning
 title: Le build doit précéder le démarrage
 ---
 
-Le serveur de production attend `.output/manifest.js`. Si ce fichier manque, lancez le build ou vérifiez la valeur de `distdir`.
+Le serveur de production attend `.output/manifest.js`. Si ce fichier manque, lancez le build ou vérifiez la valeur de `distDir`.
 
 ::

@@ -21,7 +21,7 @@ Avec `ssr: false`, Runable ne produit pas le bundle serveur. Le dossier `client/
 ```ts
 // runable.config.ts
 export default defineConfig({
-  distdir: "dist",
+  distDir: "dist",
 });
 ```
 

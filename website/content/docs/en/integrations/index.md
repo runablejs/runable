@@ -5,7 +5,7 @@ description: Connect Runable to Express, Fastify, Hono, Koa, NestJS, AdonisJS, B
 
 An adapter connects requests from your backend to the Runable rendering engine. It initializes the application once, lets Vite serve development assets when the runtime allows it, then produces the Vue response.
 
-In production, every official adapter also serves generated files from `distdir/client` before falling back to Vue rendering. You do not need to register an additional static-file plugin for `.output/client`.
+In production, every official adapter also serves generated files from `distDir/client` before falling back to Vue rendering. You do not need to register an additional static-file plugin for `.output/client`.
 
 ## Available adapters
 

@@ -53,11 +53,11 @@ const CONTENT_TYPES: Record<string, string> = {
 
 /** Reads a generated client asset in production, or returns undefined for an application route. */
 export async function readProductionAsset({
-  distdir,
+  distDir,
   url,
   method = "GET",
 }: {
-  distdir: string;
+  distDir: string;
   url: string;
   method?: string;
 }): Promise<RequestResult | undefined> {
@@ -65,12 +65,14 @@ export async function readProductionAsset({
 
   let pathname: string;
   try {
-    pathname = decodeURIComponent(new URL(url, "http://runable.local").pathname);
+    pathname = decodeURIComponent(
+      new URL(url, "http://runable.local").pathname,
+    );
   } catch {
     return;
   }
 
-  const clientDir = resolve(distdir, "client");
+  const clientDir = resolve(distDir, "client");
   const file = resolve(clientDir, pathname.replace(/^\/+/, ""));
   if (file === clientDir || !file.startsWith(`${clientDir}${sep}`)) return;
 
@@ -81,7 +83,8 @@ export async function readProductionAsset({
     return {
       content: method === "HEAD" ? null : await readFile(file),
       status: 200,
-      type: CONTENT_TYPES[extname(file).toLowerCase()] ??
+      type:
+        CONTENT_TYPES[extname(file).toLowerCase()] ??
         "application/octet-stream",
       headers: {
         "Content-Length": info.size,
@@ -115,7 +118,7 @@ async function viteRequest({
 
     if (!vite && isRunableProduction()) {
       const asset = await readProductionAsset({
-        distdir: config.distdir,
+        distDir: config.distDir,
         url,
         method,
       });
@@ -130,7 +133,7 @@ async function viteRequest({
       template = await vite.transformIndexHtml(url, template);
     } else {
       const manifestModule = (await import(
-        join(config.distdir, "manifest.js")
+        join(config.distDir, "manifest.js")
       )) as { default?: Record<string, string> } & Record<string, unknown>;
       const manifest = (manifestModule.default ?? manifestModule) as Record<
         string,
@@ -159,7 +162,7 @@ async function viteRequest({
 
       const serverEntry = isAbsolute(entryLoader)
         ? entryLoader
-        : join(config.distdir, "server", entryLoader);
+        : join(config.distDir, "server", entryLoader);
 
       render = (await import(serverEntry)).render;
     }

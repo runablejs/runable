@@ -25,7 +25,7 @@ export function resolveInspectorProject(
     paths: {
       appDir: toProjectRelative(rootDir, main.appDir),
       generatedDir: toProjectRelative(rootDir, main.output),
-      outputDir: toProjectRelative(rootDir, main.distdir),
+      outputDir: toProjectRelative(rootDir, main.distDir),
       publicDir:
         typeof main.publicDir === "string"
           ? toProjectRelative(rootDir, main.publicDir)

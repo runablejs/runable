@@ -26,7 +26,7 @@ Sans option supplémentaire, Runable utilise cette structure :
 | --- | --- | --- | --- |
 | `appDir` | `string` | `app` | Racine des sources Vue |
 | `output` | `string` | `.app` | Fichiers générés pour le développement et le typage |
-| `distdir` | `string` | `.output` | Build de production |
+| `distDir` | `string` | `.output` | Build de production |
 | `publicDir` | `string \| false` | `public` | Assets servis tels quels |
 | `ssr` | `boolean` | `true` | Active le rendu serveur |
 | `pages` | `string \| array` | `app/pages` | Fichiers de pages |
@@ -52,7 +52,7 @@ import { defineConfig } from "runable";
 export default defineConfig({
   appDir: "frontend",
   output: ".runable",
-  distdir: "dist",
+  distDir: "dist",
   publicDir: "static",
 });
 ```
@@ -214,7 +214,7 @@ import { defineConfig } from "runable";
 export default defineConfig({
   appDir: "app",
   output: ".app",
-  distdir: ".output",
+  distDir: ".output",
   publicDir: "public",
 
   ssr: true,

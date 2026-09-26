@@ -18,7 +18,7 @@ node_modules/
 .DS_Store
 ```
 
-Adaptez `.output/` et `.app/` si vous avez changé `distdir` ou `output` dans `runable.config.ts`.
+Adaptez `.output/` et `.app/` si vous avez changé `distDir` ou `output` dans `runable.config.ts`.
 
 Versionnez les sources, la configuration, `package.json`, le lockfile et `.env.example`. Les dossiers générés doivent pouvoir être recréés avec `pnpm install`, `runable prepare` et `runable build`.
 
