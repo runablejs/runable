@@ -25,7 +25,7 @@ Relative paths are resolved from the configuration directory. Main conventions u
 | --- | --- |
 | `appDir` | `app` |
 | `output` | `.app` |
-| `distdir` | `.output` |
+| `distDir` | `.output` |
 | `publicDir` | `public` |
 | `ssr` | `true` |
 

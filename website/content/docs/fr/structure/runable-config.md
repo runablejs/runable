@@ -25,7 +25,7 @@ Les chemins relatifs sont résolus depuis le dossier de la configuration. Les co
 | --- | --- |
 | `appDir` | `app` |
 | `output` | `.app` |
-| `distdir` | `.output` |
+| `distDir` | `.output` |
 | `publicDir` | `public` |
 | `ssr` | `true` |
 

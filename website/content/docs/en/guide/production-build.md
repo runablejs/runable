@@ -40,7 +40,7 @@ Install `tsx` as a development dependency when your server and script remain in 
 
 ## Understand the output
 
-With the default `distdir`, Runable writes to `.output/`:
+With the default `distDir`, Runable writes to `.output/`:
 
 ```text
 .output/
@@ -90,6 +90,6 @@ variant: warning
 title: Build before startup
 ---
 
-The production server expects `.output/manifest.js`. If it is missing, run the build or check `distdir`.
+The production server expects `.output/manifest.js`. If it is missing, run the build or check `distDir`.
 
 ::
