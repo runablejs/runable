@@ -22,8 +22,8 @@ export function resolveConfig(config: RunableConfig & { cwd: string }) {
   let _output = config.output ?? ".app";
   _output = resolveDir(_output, _cwd);
 
-  let _distdir = config.distdir ?? ".output";
-  _distdir = resolveDir(_distdir, _cwd);
+  let _distDir = config.distDir ?? config.distdir ?? ".output";
+  _distDir = resolveDir(_distDir, _cwd);
 
   // `publicDir: false` disables the public dir — leave it as-is instead of resolving it.
   let _publicDir = config.publicDir ?? "public";
@@ -92,7 +92,8 @@ export function resolveConfig(config: RunableConfig & { cwd: string }) {
 
     appDir: _appDir,
     output: _output,
-    distdir: _distdir,
+    distdir: _distDir,
+    distDir: _distDir,
     publicDir: _publicDir,
 
     components: _components,

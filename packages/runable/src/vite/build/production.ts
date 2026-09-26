@@ -22,7 +22,7 @@ function toPublicAssetPath(fileName: string): string {
 export async function buildProduction() {
   const config = useConfig();
   const viteConfig = buildViteConfig();
-  const distdir = config.distdir;
+  const distDir = config.distDir;
   // `html` is the generated client index.html; `switcher` (SSR-only) is the
   // built path to the server entry, filled in further down.
   const manifest = { switcher: "", html: "" };
@@ -31,7 +31,7 @@ export async function buildProduction() {
   // below don't leak into one another.
   const clientConfig = merge(cloneDeep(viteConfig), {
     build: {
-      outDir: join(distdir, "client"),
+      outDir: join(distDir, "client"),
       emptyOutDir: true,
       minify: true,
       // manifest: true,
@@ -49,7 +49,7 @@ export async function buildProduction() {
 
   const servrConfig = merge(cloneDeep(viteConfig), {
     build: {
-      outDir: join(distdir, "server"),
+      outDir: join(distDir, "server"),
       minify: true,
       manifest: true,
       // Building for SSR (rather than a plain library/app build) uses the
@@ -104,7 +104,7 @@ export async function buildProduction() {
       `  ${css.join("\n    ")}\n  </head>`,
     );
 
-    atomicWriteFile(join(distdir, "client/index.html"), htmlContent);
+    atomicWriteFile(join(distDir, "client/index.html"), htmlContent);
     manifest.html = htmlContent;
   }
 
@@ -119,7 +119,7 @@ export async function buildProduction() {
     // Vite's own build manifest (entry -> emitted file map), produced
     // because `manifest: true` was set on `servrConfig` above.
     const vManifest = JSON.parse(
-      await readFile(join(distdir, "server", ".vite/manifest.json"), "utf8"),
+      await readFile(join(distDir, "server", ".vite/manifest.json"), "utf8"),
     ) as Manifest;
 
     // Find the emitted file for the switcher entry so it can be
@@ -138,7 +138,7 @@ export async function buildProduction() {
   // Write the runtime manifest (server switcher path + client HTML) that the
   // production server reads to serve requests without rebuilding.
   atomicWriteFile(
-    join(distdir, "manifest.js"),
+    join(distDir, "manifest.js"),
     `export default ${JSON.stringify(manifest, null, 4)}`,
   );
 }

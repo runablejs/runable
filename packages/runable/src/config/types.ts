@@ -71,6 +71,12 @@ export interface RunableConfig {
   /** Build output mode/format. */
   output?: string;
 
+  /** Build output directory. Defaults to `.output`. */
+  distDir?: string;
+
+  /**
+   * @deprecated Use `distDir` instead. This option will be removed in the next major version.
+   */
   distdir?: string;
 
   /** Base URL the application is served from (routes/assets prefix). */
@@ -217,7 +223,15 @@ export type ResolvedConfig = {
   appDir: string;
   /** Resolved build output mode/format. */
   output: string;
+
+  /** Resolved build output directory. Defaults to `.output`. */
+  distDir: string;
+
+  /**
+   * @deprecated Use `distDir` instead. This option will be removed in the next major version.
+   */
   distdir: string;
+
   /** Resolved path to the directory of static assets served as-is, or `false` if disabled. */
   publicDir: string | false;
 
