@@ -1,5 +1,5 @@
 ---
-"runable": major
+"runable": minor
 ---
 
 Add distDir as the canonical configuration option in @runable/core and deprecate distdir.
