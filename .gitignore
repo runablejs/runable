@@ -1,0 +1,67 @@
+# Dependencies
+node_modules/
+
+# Logs
+logs
+*.log
+pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Build output
+dist/
+/build/
+coverage/
+.tmp/
+temp/
+.output
+.app
+
+# Copied at build time from the repo-root skills/ (the single editorial
+# source) into the CLI package for publishing — see
+# packages/cli/scripts/copy-skills.ts. Not the repo-root skills/ itself.
+/packages/cli/skills/
+
+# Cache
+.cache/
+.netlify/
+.eslintcache
+.parcel-cache/
+.vite/
+*.tsbuildinfo
+.content.db
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
+
+# Generated files
+*.tgz
+
+# pnpm
+.pnpm-store/
+
+# TypeScript
+*.tsbuildinfo
+
+# Vue
+dist-ssr/
+
+# Certificates
+*.pem
+*.key
+
+bugs
+.vercel
