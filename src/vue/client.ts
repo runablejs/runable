@@ -1,9 +1,10 @@
 import { createApp, createSSRApp } from "vue";
 import { createHead } from "@unhead/vue/client";
 
-import { callWithAppCtx, type AppContext } from "@/app/context.js";
+import { callWithAppCtx, type AppContext } from "@/engine/context.js";
 import { getRoot } from "./root.js";
 import { intall } from "./install.js";
+import { useRouter } from "@/app/composables/router.js";
 
 /**
  * Monte l'application Vue dans le navigateur.
@@ -26,7 +27,7 @@ export async function mountClient(ssr: boolean) {
     intall(app as AppContext);
     app.use(head);
 
-    const router = app.config.globalProperties.$router;
+    const router = useRouter();
     await router.isReady();
 
     app.mount("#app");

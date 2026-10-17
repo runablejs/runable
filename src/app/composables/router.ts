@@ -7,14 +7,14 @@ import type {
   useRouter as _useRouter,
 } from "vue-router";
 import { onScopeDispose } from "vue";
-import { useVueApp } from "../context.js";
+import { useVueApp } from "../../engine/context.js";
 
 export const useRouter: typeof _useRouter = () => {
-  return useVueApp()?.$router as unknown as Router;
+  return useVueApp().config.globalProperties.$router as Router;
 };
 
 export const useRoute: typeof _useRoute = (() => {
-  return useVueApp().$route;
+  return useVueApp().config.globalProperties.$route;
 }) as unknown as typeof _useRoute;
 
 export const onBeforeRouteUpdate = (guard: NavigationGuard): void => {

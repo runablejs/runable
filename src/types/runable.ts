@@ -2,12 +2,12 @@ import type { ResolvableHead } from "@unhead/vue";
 import type { UserConfig } from "vite";
 import type { Arrayable, Promisable } from "./reset.js";
 import type { ResolveScanDir, ScanDir } from "@/utils/dir-scan.js";
-import type { ComponentDir } from "@/app/components/types.js";
+import type { ComponentDir } from "@/engine/components/types.js";
 import type {
   EditableRouteTreeNode,
   RouterOptionsRaw,
   RouterOptionsRawResolved,
-} from "@/app/pages/types.js";
+} from "@/engine/pages/types.js";
 import type { AliasMap } from "@/utils/alias.js";
 
 /** Shape of a `runable.config.*` file, as authored by the user. */

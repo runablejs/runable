@@ -2,7 +2,7 @@ import { createSSRApp } from "vue";
 import { renderToString } from "vue/server-renderer";
 import { createHead, type SSRHeadPayload } from "@unhead/vue/server";
 
-import { callWithAppCtx, type AppContext } from "@/app/context.js";
+import { callWithAppCtx, type AppContext } from "@/engine/context.js";
 import { useRouter } from "@/app/composables/router.js";
 import { getRoot } from "./root.js";
 import { intall } from "./install.js";
@@ -36,9 +36,7 @@ export async function renderServer({ url }: ServerRenderOptions) {
     intall(app as AppContext);
     app.use(head);
 
-    app.config.globalProperties.$router;
-
-    const router = app.config.globalProperties.$router;
+    const router = useRouter();
 
     const { pathname, search, hash } = new URL(
       url ?? "/",
@@ -51,9 +49,4 @@ export async function renderServer({ url }: ServerRenderOptions) {
 
     return { html, head: head.render() };
   });
-
-  /**
-   * Transforme l'arbre de composants Vue en chaîne HTML.
-   */
-  // return { app: await renderToString(app), head: head.render() };
 }
