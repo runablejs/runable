@@ -40,7 +40,7 @@ export function resolveConfig(config: RunableConfig & { _cwd: string }) {
   );
 
   const _layouts = scanDirs(
-    resolveScanDirOptions(config.pages ?? [join(_appDir, "layouts")], {
+    resolveScanDirOptions(config.layouts ?? [join(_appDir, "layouts")], {
       extensions: ["vue"],
       cwd: _cwd,
     }),

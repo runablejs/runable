@@ -7,6 +7,7 @@ import { detectRuntime } from "../runtime/detect-runtime.js";
 import { Readable } from "node:stream";
 import type { ViteDevServer } from "vite";
 import { viteRequest } from "@/vite/request.js";
+import { useConfig } from "@/config/load.js";
 
 type NodeRequest = IncomingMessage;
 type NodeResponse = ServerResponse;
@@ -39,12 +40,13 @@ export async function handleRequest(
   res?: NodeResponse,
 ): Promise<HttpOutput> {
   const runtime = detectRuntime();
+  const config = useConfig();
 
   const result = await viteRequest({
     vite: vite ?? null,
     url: req.url ?? "/",
     method: req.method,
-    ssr: true,
+    ssr: config.ssr,
   });
 
   // Node.js requires both the incoming request and outgoing response.

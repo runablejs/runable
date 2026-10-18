@@ -1,4 +1,5 @@
 import { resolve } from "node:path";
+import { readFile } from "node:fs/promises";
 import type { OutgoingHttpHeaders } from "node:http";
 import { pathToFileURL } from "node:url";
 
@@ -9,6 +10,10 @@ import createRenderer, {
   type RendererOptions,
   type RenderRequest,
 } from "../vue/render.js";
+import { getClientEntry, getServerEntry } from "./entry.js";
+
+let productionRenderer: RenderFunction | undefined;
+let productionClientHtml: Promise<string> | undefined;
 
 /**
  * Configuration nécessaire au chargement du moteur de rendu.
@@ -39,6 +44,32 @@ type RenderFunction = (request: RenderRequest) => Promise<string>;
  * Contrat de la fonction d'initialisation exportée par switcher.ts.
  */
 type CreateRenderer = (options?: RendererOptions) => RenderFunction;
+
+async function getProductionClientHtml(): Promise<string> {
+  const { absolute } = await getClientEntry();
+  productionClientHtml ??= readFile(
+    resolve(absolute, "..", "..", "index.html"),
+    "utf8",
+  );
+
+  return productionClientHtml;
+}
+
+async function getProductionRenderer(): Promise<RenderFunction> {
+  if (productionRenderer) return productionRenderer;
+
+  const [{ url: clientEntry }, { absolute: entryPath }, template] =
+    await Promise.all([
+      getClientEntry(),
+      getServerEntry(),
+      getProductionClientHtml(),
+    ]);
+  const module = await import(pathToFileURL(entryPath).href);
+  const createRenderer = module.default as CreateRenderer;
+
+  productionRenderer = createRenderer({ ssr: true, clientEntry, template });
+  return productionRenderer;
+}
 
 /**
  * Traite une requête en utilisant le moteur de rendu Vue.
@@ -108,14 +139,12 @@ export async function viteRequest({
      * Ce fichier ne doit plus dépendre directement de fichiers .vue
      * non compilés par Vite.
      */
-    const clientEntry = resolve(import.meta.dirname, "../dist/vue/client.js");
-    const entryPath = resolve(import.meta.dirname, "../dist/vue/render.js");
-    const module = await import(pathToFileURL(entryPath).href);
-
-    const createRenderer = module.default as CreateRenderer;
-    const render = createRenderer({ ssr, clientEntry });
-
-    rendered = await render({ url, method });
+    if (!ssr) {
+      rendered = await getProductionClientHtml();
+    } else {
+      const render = await getProductionRenderer();
+      rendered = await render({ url, method });
+    }
   }
 
   return {

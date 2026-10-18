@@ -28,7 +28,7 @@ export interface RenderRequest {
  * Les marqueurs facultatifs permettent d'injecter les attributs
  * html/body et les balises Unhead positionnées dans le body.
  */
-const defaultTemplate = `<!doctype html>
+export const defaultTemplate = `<!doctype html>
 <html <!--html-attrs-->>
   <head>
     <meta charset="UTF-8" />
@@ -48,7 +48,7 @@ const defaultTemplate = `<!doctype html>
  *
  * Une erreur explicite permet de détecter un template incorrect.
  */
-function replaceMarker(
+export function replaceMarker(
   template: string,
   marker: string,
   value: string,
@@ -142,14 +142,15 @@ export default function createRenderer({
   data-ssr="${ssr}"
 ></script>`;
 
-    /**
-     * Commence par injecter les trois marqueurs principaux.
-     */
+    /** Injecte le contenu SSR et les métadonnées propres à la requête. */
     let html = template;
 
     html = replaceMarker(html, "<!--app-head-->", head?.headTags ?? "");
     html = replaceMarker(html, "<!--app-html-->", appHtml);
-    html = replaceMarker(html, "<!--app-entry-->", clientScript);
+
+    // A production template already contains the hashed client entry. Keep
+    // supporting source/custom templates, where the marker is still present.
+    html = replaceOptionalMarker(html, "<!--app-entry-->", clientScript);
 
     /**
      * Injecte les attributs <html> et <body> générés par Unhead.

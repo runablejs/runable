@@ -17,3 +17,6 @@ app.use("*all", async (req, res) => {
 app.listen(port, hostname, () => {
   console.log(`Serveur en cours d'exécution sur http://${hostname}:${port}`);
 });
+
+// import { buildProduction } from "@/build/production.js";
+// buildProduction();
