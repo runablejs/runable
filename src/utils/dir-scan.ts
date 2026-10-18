@@ -1,6 +1,6 @@
 import type { Arrayable } from "@/types/reset.js";
 import fg from "fast-glob";
-import { extname, join } from "node:path";
+import { extname, isAbsolute, join } from "node:path";
 
 export type DirOptions = Omit<fg.Options, "ignore"> & {
   exclude?: string | string[];
@@ -28,22 +28,27 @@ export function scanDir<Extra extends object = {}>(
 
   patterns = Array.isArray(patterns) ? patterns : [patterns];
 
-  if ("extensions" in options) {
-    const extensions = Array.isArray(options.extensions)
-      ? options.extensions
-      : [options.extensions];
+  if ("extensions" in rest) {
+    const extensions = Array.isArray(rest.extensions)
+      ? rest.extensions
+      : [rest.extensions];
 
-    patterns = extensions.map((extension) => {
+    rest.extensions = extensions.map((extension) => {
       const normalizedExtension = extension.startsWith(".")
         ? extension
         : `.${extension}`;
 
-      return `**/*${normalizedExtension}`;
+      return normalizedExtension;
+    });
+
+    patterns = rest.extensions.map((extension) => {
+      return `**/*${extension}`;
     });
   }
 
   if (folder) {
-    if (cwd) cwd = join(cwd, folder);
+    if (!cwd) cwd = folder;
+    else if (!isAbsolute(folder)) cwd = join(cwd, folder);
     else cwd = folder;
   }
 

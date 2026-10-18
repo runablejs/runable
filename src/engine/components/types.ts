@@ -54,3 +54,13 @@ export type ComponentScanExtra = {
 export type ComponentDir = ScanDir<ComponentScanExtra>;
 
 export type ComponentDirResolved = ResolveScanDir<ComponentScanExtra>;
+
+/** Metadata about a single discovered component. */
+export interface ComponentInfo {
+  /** Explicit SFC name when declared, otherwise the name inferred from the file path. */
+  name: string;
+  /** Absolute path to the component file. */
+  path: string;
+  /** File extension, without the leading dot. */
+  ext: string;
+}

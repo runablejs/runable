@@ -4,6 +4,7 @@ import { TsConfigBuilder } from "syt";
 import { normalizeDir } from "./dir.js";
 import { useAllConfigs, useConfig } from "../config/load.js";
 import { atomicWriteFile } from "./atomic-write-file.js";
+import { toTsconfigAlias } from "./alias.js";
 
 function createAppTsConfig() {
   return new TsConfigBuilder()
@@ -34,14 +35,12 @@ export const tsconfig = {
 export function writeTsConfig() {
   const { output, appDir, alias, _configFile } = useConfig();
 
-  Object.entries(alias ?? {}).forEach(([key, value]) => {
-    if (key === "#build") return;
-
-    tsconfig.app.addAlias(key, normalizeDir(relative(output, value)));
+  Object.entries(toTsconfigAlias(alias)).forEach(([key, value]) => {
+    tsconfig.app.addAlias(
+      key,
+      value.map((v) => normalizeDir(relative(output, v))),
+    );
   });
-
-  tsconfig.app.addAlias("#build", "./");
-  tsconfig.app.addAlias("#build/*", `./*`);
 
   tsconfig.app.addInclude("./**/*.d.ts");
   tsconfig.app.addInclude(join(normalizeDir(relative(output, appDir)), "**/*"));

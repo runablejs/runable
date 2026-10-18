@@ -34,14 +34,17 @@
     "vue-router": "^5.4.0"
   },
   "dependencies": {
+    "@babel/parser": "^8.0.7",
     "@unhead/vue": "^3.4.3",
     "@vitejs/plugin-vue": "^6.0.10",
     "c12": "4.0.0-rc.2",
     "fast-glob": "^3.3.3",
     "lodash": "^4.18.1",
+    "magic-string": "^1.4.3",
     "mlly": "^1.8.2",
     "syt": "^0.2.0",
     "unctx": "^3.0.1",
+    "unplugin": "^3.4.0",
     "vite": "^8.3.4"
   }
 }
