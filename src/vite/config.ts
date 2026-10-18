@@ -48,6 +48,7 @@ export function createViteConfig() {
       buildRoutes(main.output, pages),
       vue(),
       engine.componentPlugin({ dirs: components, output: main.output }),
+      engine.globalsPlugin({ dirs: globals, output: main.output }),
     ],
 
     resolve: {
