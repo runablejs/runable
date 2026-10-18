@@ -1,6 +1,6 @@
 import type { ResolvableHead } from "@unhead/vue";
 import type { UserConfig } from "vite";
-import type { Arrayable, Promisable } from "./reset.js";
+import type { Arrayable, Promisable } from "../types/reset.js";
 import type { ResolveScanDir, ScanDir } from "@/utils/dir-scan.js";
 import type { ComponentDir } from "@/engine/components/types.js";
 import type {
@@ -31,7 +31,7 @@ export interface RunableConfig {
 
   /** Routing options defining the application's pages. */
   //   pages?: RouterOptionsRaw[];
-  pages: Arrayable<RouterOptionsRaw>;
+  pages?: Arrayable<string | RouterOptionsRaw>;
 
   /**
    * Extends the complete file-based route tree before Vue Router writes its
@@ -39,28 +39,28 @@ export interface RunableConfig {
    */
   extendRoutes?: (routes: EditableRouteTreeNode) => Promisable<void>;
 
-  middlewares?: Arrayable<ComponentDir>;
+  middlewares?: Arrayable<string | ScanDir>;
 
   /** Paths to layout files/directories. */
-  layouts?: Arrayable<ComponentDir>;
+  layouts?: Arrayable<string | ScanDir>;
 
   /** Directory(ies) containing global components to auto-register. */
-  components?: Arrayable<ComponentDir>;
+  components?: Arrayable<string | ComponentDir>;
 
   /** Directory(ies) containing composables to auto-import in the application. */
-  composables?: Arrayable<ScanDir>;
+  composables?: Arrayable<string | ScanDir>;
 
   /** Directory(ies) containing global functions/variables to auto-import in the application. */
-  globals?: Arrayable<ScanDir>;
+  globals?: Arrayable<string | ScanDir>;
 
   /** Runable plugins to load, by name or relative path. */
-  plugins?: Arrayable<ScanDir>;
+  plugins?: Arrayable<string | ScanDir>;
 
   /** Names or relative paths of Runable modules to load alongside this config. */
   modules?: string[];
 
   /** Global CSS files to include in the application. */
-  css?: Arrayable<ScanDir>;
+  css?: Arrayable<string | ScanDir>;
 
   // --- Build & output -------------------------------------------------
 
@@ -69,11 +69,6 @@ export interface RunableConfig {
 
   /** Build output directory. Defaults to `.output`. */
   distDir?: string;
-
-  /**
-   * @deprecated Use `distDir` instead. This option will be removed in the next major version.
-   */
-  distdir?: string;
 
   /** Base URL the application is served from (routes/assets prefix). */
   baseUrl?: string;

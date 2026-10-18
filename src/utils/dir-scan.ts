@@ -1,5 +1,6 @@
+import type { Arrayable } from "@/types/reset.js";
 import fg from "fast-glob";
-import { join } from "node:path";
+import { extname, join } from "node:path";
 
 export type DirOptions = Omit<fg.Options, "ignore"> & {
   exclude?: string | string[];
@@ -16,6 +17,7 @@ export type ScanDir<Extra extends object = {}> = Omit<
   Extra;
 
 export type ResolveScanDir<Extra extends object = {}> = fg.Options & {
+  extensions?: string[];
   files: string[];
 } & Extra;
 
@@ -45,14 +47,44 @@ export function scanDir<Extra extends object = {}>(
     else cwd = folder;
   }
 
+  const defaultExcludes = ["**/-*/**", "**/-*", "**/*.d.*", "**/.git/**"];
+
   const _options: fg.Options = {
     ...rest,
     cwd,
     absolute: true,
-    ignore: exclude ? (Array.isArray(exclude) ? exclude : [exclude]) : [],
+    ignore: [
+      ...defaultExcludes,
+      ...(exclude ? (Array.isArray(exclude) ? exclude : [exclude]) : []),
+    ],
   };
 
   const files = fg.globSync(patterns, _options);
 
   return { ..._options, files } as ResolveScanDir<Extra>;
+}
+
+export function scanDirs(options: Arrayable<DirOptions>) {
+  const entries = Array.isArray(options) ? options : [options];
+  return entries.map((entry) => scanDir(entry));
+}
+
+export function resolveScanDirOptions(
+  options: Arrayable<ScanDir | string>,
+  merge?: DirOptions & Record<string, unknown>,
+): DirOptions[] {
+  const entries = Array.isArray(options) ? options : [options];
+
+  return entries.map((option) => {
+    if (typeof option !== "string") {
+      return { ...merge, ...option } as DirOptions;
+    }
+
+    const isFile = extname(option) !== "";
+
+    return {
+      ...merge,
+      ...(isFile ? { patterns: option } : { folder: option }),
+    } as DirOptions;
+  });
 }

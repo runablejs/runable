@@ -1,13 +1,16 @@
 import type { InlineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import VueRouter from "vue-router/vite";
 
 import { createRuntime } from "@/runtime/runtime.js";
-import { resolve } from "node:path";
+import { buildRoutes } from "@/engine/pages/build-routes.js";
+import { useAllConfigs } from "@/config/load.js";
 
 export function createViteConfig() {
   const runtime = createRuntime();
   const mode = runtime.getEnv("NODE_ENV") ?? "development";
+
+  const configs = useAllConfigs();
+  const main = configs[0]!;
 
   const config: InlineConfig = {
     server: { middlewareMode: true },
@@ -17,15 +20,10 @@ export function createViteConfig() {
       noExternal: mode === "development" ? ["vue-router"] : [],
     },
 
-    plugins: [
-      VueRouter({ routesFolder: [], extensions: [".vue", ".jsx", ".tsx"] }),
-      vue(),
-    ],
+    plugins: [buildRoutes(main.output, []), vue()],
 
     resolve: {
-      alias: {
-        "@": resolve(import.meta.dirname, ".."),
-      },
+      alias: main.alias,
     },
   };
 

@@ -37,7 +37,7 @@ export interface EditableRouteTreeNode extends Iterable<EditableRouteTreeNode> {
 type RouterScanExtra = { dynamic?: boolean };
 
 /**
- * @default folders: 'src/pages'
+ * @default folder: 'app/pages'
  */
 export type RouterOptionsRaw = ScanDir & RouterScanExtra;
 
@@ -49,3 +49,8 @@ export interface PageMeta extends RouteMeta {
   alias?: string[];
   middleware?: string[];
 }
+
+export type PagesOptions = {
+  output?: string;
+  dirs: RouterOptionsRawResolved[];
+};
